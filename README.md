@@ -1,1 +1,1 @@
-# web-panal
+# web-panel
