@@ -24,7 +24,7 @@ A modern, responsive website showcasing cybersecurity services and educational o
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/cybersecurity-website.git
+git clone https://yourusername:yourgithubtoken@github.com/scaninfoga-web/cybersecurity-website.git
 ```
 
 2. Install dependencies:
