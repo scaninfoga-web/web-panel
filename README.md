@@ -14,11 +14,14 @@ A modern, responsive website showcasing cybersecurity services and educational o
 
 ## 💻 Tech Stack
 
-- [Next.js](https://nextjs.org/) - React framework
-- [TailwindCSS](https://tailwindcss.com/) - Styling
-- [Framer Motion](https://www.framer.com/motion/) - Animations
-- [Radix UI](https://www.radix-ui.com/) - UI Components
-- [Lucide Icons](https://lucide.dev/) - Icons
+- [Next.js 14](https://nextjs.org/) - React framework with App Router
+- [TailwindCSS](https://tailwindcss.com/) - Utility-first CSS framework
+- [Framer Motion](https://www.framer.com/motion/) - Animation library
+- [Radix UI](https://www.radix-ui.com/) - Headless UI components
+- [Lucide Icons](https://lucide.dev/) - Beautiful & consistent icons
+- [shadcn/ui](https://ui.shadcn.com/) - Re-usable components
+- [TypeScript](https://www.typescriptlang.org/) - Type safety
+- [PNPM](https://pnpm.io/) - Fast, disk space efficient package manager
 
 ## 🛠️ Installation
 
@@ -34,7 +37,7 @@ npm install --legacy-peer-deps
 ```
 
 3. Run the development server:
-```bash
+```bash 
 npm run dev
 ```
 
