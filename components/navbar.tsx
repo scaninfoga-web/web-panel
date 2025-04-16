@@ -50,6 +50,12 @@ export default function Navbar() {
               Services
             </Link>
             <Link
+              href="/pricing"
+              className="text-sm font-medium text-white/90 hover:text-emerald-400 transition-colors"
+            >
+              Pricing
+            </Link>
+            <Link
               href="/courses"
               className="text-sm font-medium text-white/90 hover:text-emerald-400 transition-colors"
             >
@@ -118,6 +124,13 @@ export default function Navbar() {
               onClick={() => setIsOpen(false)}
             >
               Services
+            </Link>
+            <Link
+              href="/pricing"
+              className="text-lg font-medium text-white hover:text-emerald-400 transition-colors"
+              onClick={() => setIsOpen(false)}
+            >
+              Pricing
             </Link>
             <Link
               href="/courses"
