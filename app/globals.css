@@ -1,0 +1,69 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 255, 255, 255;
+  --background-start-rgb: 0, 0, 0;
+  --background-end-rgb: 10, 10, 10;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(to bottom, transparent, rgb(var(--background-end-rgb))) rgb(var(--background-start-rgb));
+}
+
+/* Matrix code animation */
+.matrix-code-animation {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.matrix-code-animation::before {
+  content: "";
+  position: absolute;
+  top: -100%;
+  left: 0;
+  width: 100%;
+  height: 300%;
+  background: linear-gradient(0deg, transparent 0%, rgba(16, 185, 129, 0.2) 75%, rgba(16, 185, 129, 0.8) 100%);
+  animation: matrix-fall 10s linear infinite;
+}
+
+@keyframes matrix-fall {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(33.33%);
+  }
+}
+
+/* Glowing effect for buttons and elements */
+.glow-effect {
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.5);
+  transition: box-shadow 0.3s ease;
+}
+
+.glow-effect:hover {
+  box-shadow: 0 0 25px rgba(16, 185, 129, 0.8);
+}
+
+/* Pulse animation for security elements */
+@keyframes security-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 15px rgba(16, 185, 129, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+  }
+}
+
+.security-pulse {
+  animation: security-pulse 2s infinite;
+}
