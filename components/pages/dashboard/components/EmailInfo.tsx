@@ -34,7 +34,7 @@ const COLORS = ['#10B981', '#3B82F6', '#EF4444', '#F59E0B'];
 export function EmailInfo() {
     return (
         <>
-            <Card className="bg-[#0e1421] border border-gray-700 shadow-xl p-6">
+            <Card className="bg-[#0e1421] border border-gray-700 shadow-xl p-6 my-6">
                 <h1 className="text-2xl font-bold text-emerald-500">Email Intelligence</h1>
                 <p className="text-sm mt-1 text-gray-400">john.doe@example.com</p>
                 <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-4">

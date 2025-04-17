@@ -24,22 +24,22 @@ const locationData = [
 export function ContactInfo() {
     return (
         <>
-            <Card className="bg-[#0e1421] border border-gray-700 shadow-xl p-6">
+            <Card className="bg-[#0e1421] border border-gray-700 shadow-xl p-6 my-6">
                 <h1 className="text-2xl font-bold text-emerald-500">Phone Number Summary</h1>
                 <p className="text-sm mt-1 text-gray-400">+91 9876543210</p>
                 <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <div>
-                    <p className="text-sm text-gray-400">Name</p>
-                    <p className="text-base font-medium">Ramesh Kumar</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-400">Carrier</p>
-                    <p className="text-base font-medium">Jio 4G</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-400">Location</p>
-                    <p className="text-base font-medium">New Delhi, India</p>
-                  </div>
+                    <div>
+                        <p className="text-sm text-gray-400">Name</p>
+                        <p className="text-base font-medium">Ramesh Kumar</p>
+                    </div>
+                    <div>
+                        <p className="text-sm text-gray-400">Carrier</p>
+                        <p className="text-base font-medium">Jio 4G</p>
+                    </div>
+                    <div>
+                        <p className="text-sm text-gray-400">Location</p>
+                        <p className="text-base font-medium">New Delhi, India</p>
+                    </div>
                 </div>
             </Card>
 
@@ -127,7 +127,7 @@ export function ContactInfo() {
                     <Progress value={82} className="h-4 bg-[#27323c]" />
                     <p className="text-right text-sm text-emerald-500">82%</p>
                 </DashboardCard>
-            </div>
-        </>
-    )
+
+                </div></>
+    );
 }

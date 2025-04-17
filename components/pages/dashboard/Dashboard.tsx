@@ -9,6 +9,7 @@ import { ContactInfo } from "./components/ContactInfo";
 import { EmailInfo } from "./components/EmailInfo";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
+import { Loader } from "@/components/ui/loader";
 
 export default function PhoneMetadata() {
   const [isLoading, setIsLoading] = useState(false);
@@ -29,9 +30,7 @@ export default function PhoneMetadata() {
       <SearchBar onSearch={handleSearch} />
       
       {isLoading ? (
-        <div className="flex items-center justify-center p-12">
-          <Loader2 className="h-8 w-8 animate-spin text-emerald-500" />
-        </div>
+        <Loader />
       ) : (
         <>
           {searchType === "phone" && <ContactInfo />}
