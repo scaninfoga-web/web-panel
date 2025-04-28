@@ -17,35 +17,38 @@ const baseSchema = {
   firstName: z.string().min(2, "First name is required"),
   lastName: z.string().min(2, "Last name is required"),
   password: z.string().min(6, "Password must be at least 6 characters"),
-  confirmPassword: z.string()
+  confirmPassword: z.string(),
 };
 
 // Normal registration schema
-const normalSchema = z.object(baseSchema)
+const normalSchema = z
+  .object(baseSchema)
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
-    path: ["confirmPassword"]
+    path: ["confirmPassword"],
   });
 
 // Corporate registration schema
-const corporateSchema = z.object({
-  ...baseSchema,
-  domain: z.string().min(3, "Domain is required"),
-  company: z.string().min(2, "Company name is required")
-})
+const corporateSchema = z
+  .object({
+    ...baseSchema,
+    domain: z.string().min(3, "Domain is required"),
+    company: z.string().min(2, "Company name is required"),
+  })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
-    path: ["confirmPassword"]
+    path: ["confirmPassword"],
   });
 
 // Developer registration schema
-const developerSchema = z.object(baseSchema)
+const developerSchema = z
+  .object(baseSchema)
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
-    path: ["confirmPassword"]
+    path: ["confirmPassword"],
   });
 
-type RegistrationType = 'normal' | 'corporate' | 'developer';
+type RegistrationType = "normal" | "corporate" | "developer";
 
 interface RegisterProps {
   type: RegistrationType;
@@ -54,10 +57,13 @@ interface RegisterProps {
 export function Register({ type: initialType }: RegisterProps) {
   const [type, setType] = useState<RegistrationType>(initialType);
   const router = useRouter();
-  
-  const schema = type === 'corporate' ? corporateSchema : 
-                type === 'developer' ? developerSchema : 
-                normalSchema;
+
+  const schema =
+    type === "corporate"
+      ? corporateSchema
+      : type === "developer"
+      ? developerSchema
+      : normalSchema;
 
   const form = useForm({
     resolver: zodResolver(schema),
@@ -67,8 +73,8 @@ export function Register({ type: initialType }: RegisterProps) {
       lastName: "",
       password: "",
       confirmPassword: "",
-      ...(type === 'corporate' ? { domain: "", company: "" } : {})
-    }
+      ...(type === "corporate" ? { domain: "", company: "" } : {}),
+    },
   });
 
   // Reset form when type changes
@@ -79,63 +85,72 @@ export function Register({ type: initialType }: RegisterProps) {
       lastName: "",
       password: "",
       confirmPassword: "",
-      ...(type === 'corporate' ? { domain: "", company: "" } : {})
+      ...(type === "corporate" ? { domain: "", company: "" } : {}),
     });
   }, [type, form]);
 
   const onSubmit = async (data: any) => {
     try {
-      const endpoint = type === 'normal' ? '/register' :
-                      type === 'corporate' ? '/register/corporate' :
-                      '/register/developer';
-                      
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}${endpoint}`, data);
-      
-      if (response.data.responseStatus?.status) {
+      const endpoint =
+        type === "normal"
+          ? "register"
+          : type === "corporate"
+          ? "register-corporate"
+          : "register-developer";
+
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/${endpoint}`,
+        data,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
         toast.success("Registration successful!");
-        router.push('/login');
-      } else {
-        toast.error(response.data.responseStatus?.message || "Registration failed");
-      }
+        router.push("/auth");
     } catch (error: any) {
-      toast.error(error.response?.data?.responseStatus?.message || "Registration failed");
+      console.error('Registration error:', error);
+      toast.error(
+        error.response?.data?.message || "Registration failed. Please try again."
+      );
     }
   };
 
   return (
     <Form {...form}>
-      <div className="mb-6">
+      <div className="my-16">
         <div className="flex gap-2 p-1 bg-[#0A0D14] rounded-lg">
           <button
             type="button"
             className={`flex-1 py-2 px-4 rounded-md transition-colors ${
-              type === 'normal' 
-                ? 'bg-emerald-500 text-black' 
-                : 'text-white hover:bg-emerald-500/20'
+              type === "normal"
+                ? "bg-emerald-500 text-black"
+                : "text-white hover:bg-emerald-500/20"
             }`}
-            onClick={() => setType('normal')}
+            onClick={() => setType("normal")}
           >
             User
           </button>
           <button
             type="button"
             className={`flex-1 py-2 px-4 rounded-md transition-colors ${
-              type === 'developer' 
-                ? 'bg-emerald-500 text-black' 
-                : 'text-white hover:bg-emerald-500/20'
+              type === "developer"
+                ? "bg-emerald-500 text-black"
+                : "text-white hover:bg-emerald-500/20"
             }`}
-            onClick={() => setType('developer')}
+            onClick={() => setType("developer")}
           >
             Developer
           </button>
           <button
             type="button"
             className={`flex-1 py-2 px-4 rounded-md transition-colors ${
-              type === 'corporate' 
-                ? 'bg-emerald-500 text-black' 
-                : 'text-white hover:bg-emerald-500/20'
+              type === "corporate"
+                ? "bg-emerald-500 text-black"
+                : "text-white hover:bg-emerald-500/20"
             }`}
-            onClick={() => setType('corporate')}
+            onClick={() => setType("corporate")}
           >
             Corporate
           </button>
@@ -143,7 +158,21 @@ export function Register({ type: initialType }: RegisterProps) {
       </div>
 
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid gap-y-4">
+          <FormInput
+            form={form}
+            name="firstName"
+            label="First Name"
+            placeholder="Enter your first name"
+          />
+
+          <FormInput
+            form={form}
+            name="lastName"
+            label="Last Name"
+            placeholder="Enter your last name"
+          />
+
           <FormInput
             form={form}
             name="email"
@@ -151,22 +180,8 @@ export function Register({ type: initialType }: RegisterProps) {
             type="email"
             placeholder="Enter your email"
           />
-          
-          <FormInput
-            form={form}
-            name="firstName"
-            label="First Name"
-            placeholder="Enter your first name"
-          />
-          
-          <FormInput
-            form={form}
-            name="lastName"
-            label="Last Name"
-            placeholder="Enter your last name"
-          />
-          
-          {type === 'corporate' && (
+
+          {type === "corporate" && (
             <>
               <FormInput
                 form={form}
@@ -174,7 +189,7 @@ export function Register({ type: initialType }: RegisterProps) {
                 label="Domain"
                 placeholder="Enter your domain"
               />
-              
+
               <FormInput
                 form={form}
                 name="company"
@@ -183,7 +198,7 @@ export function Register({ type: initialType }: RegisterProps) {
               />
             </>
           )}
-          
+
           <FormInput
             form={form}
             name="password"
@@ -191,7 +206,7 @@ export function Register({ type: initialType }: RegisterProps) {
             type="password"
             placeholder="Enter your password"
           />
-          
+
           <FormInput
             form={form}
             name="confirmPassword"
@@ -201,8 +216,8 @@ export function Register({ type: initialType }: RegisterProps) {
           />
         </div>
 
-        <Button 
-          type="submit" 
+        <Button
+          type="submit"
           className="w-full bg-emerald-500 text-black hover:bg-emerald-400"
         >
           Register

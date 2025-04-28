@@ -175,7 +175,7 @@ export default function AuthPage() {
       <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || ""}>
         <SpiderWebBackground />
         <div className="flex items-center justify-center min-h-screen">
-          <div className="w-full max-w-2xl p-8 bg-[#11151F] rounded-2xl shadow-2xl shadow-emerald-500 bg-[#0e1421]/30 backdrop-blur-xl">
+          <div className="w-full max-w-2xl p-8 bg-[#11151F] rounded-2xl shadow-2xl shadow-emerald-500 bg-[#0e1421]/30 backdrop-blur-xl my-8">
             <AnimatePresence mode="wait">
               {!isRegistering ? (
                 <motion.div

@@ -5,6 +5,7 @@ import Link from "next/link"
 import { Menu, X, Shield, User, ShoppingCart } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import { useRouter } from "next/navigation"
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
@@ -22,6 +23,8 @@ export default function Navbar() {
     window.addEventListener("scroll", handleScroll)
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
+
+  const router = useRouter();
 
   return (
     <header
@@ -94,10 +97,11 @@ export default function Navbar() {
             <Button
               variant="outline"
               className="border-emerald-500 text-emerald-500 hover:bg-emerald-500 hover:text-black"
+              onClick={() => router.push("/auth")}
             >
               Sign In
             </Button>
-            <Button className="bg-emerald-500 text-black hover:bg-emerald-600">Get Started</Button>
+            <Button className="bg-emerald-500 text-black hover:bg-emerald-600" onClick={() => router.push("/auth")}>Get Started</Button>
           </div>
 
           <Button variant="ghost" size="icon" className="md:hidden text-white" onClick={() => setIsOpen(!isOpen)}>
