@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { createContext, useContext, useState, useEffect } from 'react';
 import { GoogleLogin } from '@react-oauth/google';
@@ -57,11 +57,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     },
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export const useAuth = () => {

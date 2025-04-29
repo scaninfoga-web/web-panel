@@ -1,37 +1,37 @@
-"use client"
+'use client';
 
-import { Search } from "lucide-react"
-import { useState } from "react"
+import { Search } from 'lucide-react';
+import { useState } from 'react';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from '@/components/ui/select';
 
 interface SearchBar2Props {
   onSearch: (query: string, filter: string) => void;
 }
 
 export function SearchBar2({ onSearch }: SearchBar2Props) {
-  const [searchQuery, setSearchQuery] = useState("")
-  const [searchFilter, setSearchFilter] = useState("username")
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchFilter, setSearchFilter] = useState('username');
 
   const handleSearchTrigger = () => {
-    onSearch(searchQuery, searchFilter)
-  }
+    onSearch(searchQuery, searchFilter);
+  };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
-      handleSearchTrigger()
+      handleSearchTrigger();
     }
-  }
+  };
 
   return (
-    <div className="flex gap-4 items-center">
+    <div className="flex items-center gap-4">
       <Select value={searchFilter} onValueChange={setSearchFilter}>
-        <SelectTrigger className="w-[150px] bg-gray-900/50 border-gray-700">
+        <SelectTrigger className="w-[150px] border-gray-700 bg-gray-900/50">
           <SelectValue placeholder="Search by..." />
         </SelectTrigger>
         <SelectContent className="bg-[#0e1421]/30 backdrop-blur-xl">
@@ -47,7 +47,7 @@ export function SearchBar2({ onSearch }: SearchBar2Props) {
         <input
           type="text"
           placeholder={`Search by ${searchFilter}...`}
-          className="w-full bg-gray-900/50 border border-gray-700 pl-10 pr-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500/50 hover:border-emerald-500/50 transition-colors text-white placeholder:text-gray-500"
+          className="w-full rounded-md border border-gray-700 bg-gray-900/50 py-2 pl-10 pr-4 text-white transition-colors placeholder:text-gray-500 hover:border-emerald-500/50 focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           onKeyPress={handleKeyPress}
@@ -56,10 +56,10 @@ export function SearchBar2({ onSearch }: SearchBar2Props) {
 
       <button
         onClick={handleSearchTrigger}
-        className="px-4 py-2 bg-emerald-500 text-black font-medium rounded-md hover:bg-emerald-600 transition-colors"
+        className="rounded-md bg-emerald-500 px-4 py-2 font-medium text-black transition-colors hover:bg-emerald-600"
       >
         Search
       </button>
     </div>
-  )
+  );
 }

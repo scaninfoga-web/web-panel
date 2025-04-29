@@ -1,75 +1,72 @@
-"use client"
+'use client';
 
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
+import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
 import {
   Bookmark,
   Clock,
   FileText,
   LayoutDashboard,
   Monitor,
-} from "lucide-react"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
+} from 'lucide-react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 const sidebarLinks = [
   {
-    title: "Dashboard",
+    title: 'Dashboard',
     icon: LayoutDashboard,
-    href: "/dashboard",
+    href: '/dashboard',
   },
   {
-    title: "Bookmarks",
+    title: 'Bookmarks',
     icon: Bookmark,
-    href: "/dashboard/bookmarks",
+    href: '/dashboard/bookmarks',
   },
   {
-    title: "History",
+    title: 'History',
     icon: Clock,
-    href: "/dashboard/history",
+    href: '/dashboard/history',
   },
   {
-    title: "Reports",
+    title: 'Reports',
     icon: FileText,
-    href: "/dashboard/reports",
+    href: '/dashboard/reports',
   },
   {
-    title: "Monitor",
+    title: 'Monitor',
     icon: Monitor,
-    href: "/dashboard/monitor",
+    href: '/dashboard/monitor',
   },
-]
+];
 
 export function DashboardSidebar() {
-  const pathname = usePathname()
+  const pathname = usePathname();
 
   return (
     <aside className="fixed left-0 top-0 z-40 h-screen w-64 border-r border-gray-800 bg-gray-900/50 pt-16 backdrop-blur-sm">
       <div className="flex h-full flex-col px-3 py-4">
         <nav className="space-y-1">
           {sidebarLinks.map((link) => {
-            const isActive = pathname === link.href
+            const isActive = pathname === link.href;
             return (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="block"
-              >
+              <Link key={link.href} href={link.href} className="block">
                 <Button
                   variant="ghost"
                   className={cn(
-                    "w-full justify-start gap-2 hover:bg-gray-800/50",
-                    isActive && "bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20"
+                    'w-full justify-start gap-2 hover:bg-gray-800/50',
+                    isActive &&
+                      'bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20',
                   )}
                 >
                   <link.icon className="h-5 w-5" />
                   {link.title}
                 </Button>
               </Link>
-            )
+            );
           })}
         </nav>
       </div>
     </aside>
-  )
+  );
 }

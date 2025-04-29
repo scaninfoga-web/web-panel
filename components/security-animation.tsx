@@ -1,98 +1,108 @@
-"use client"
+'use client';
 
-import { useEffect, useRef, useState } from "react"
-import { motion } from "framer-motion"
-import { Shield, Lock, AlertTriangle, Eye, FileCode, Database } from "lucide-react"
+import { useEffect, useRef, useState } from 'react';
+import { motion } from 'framer-motion';
+import {
+  Shield,
+  Lock,
+  AlertTriangle,
+  Eye,
+  FileCode,
+  Database,
+} from 'lucide-react';
 
 export default function SecurityAnimation() {
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-  const [isHovering, setIsHovering] = useState(false)
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [isHovering, setIsHovering] = useState(false);
 
   useEffect(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
+    const canvas = canvasRef.current;
+    if (!canvas) return;
 
-    const ctx = canvas.getContext("2d")
-    if (!ctx) return
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
 
     // Set canvas dimensions
     const setCanvasDimensions = () => {
-      canvas.width = canvas.clientWidth
-      canvas.height = canvas.clientHeight
-    }
+      canvas.width = canvas.clientWidth;
+      canvas.height = canvas.clientHeight;
+    };
 
-    setCanvasDimensions()
-    window.addEventListener("resize", setCanvasDimensions)
+    setCanvasDimensions();
+    window.addEventListener('resize', setCanvasDimensions);
 
     // Particle class
     class Particle {
-      x: number
-      y: number
-      size: number
-      speedX: number
-      speedY: number
-      color: string
+      x: number;
+      y: number;
+      size: number;
+      speedX: number;
+      speedY: number;
+      color: string;
 
       constructor(canvas: HTMLCanvasElement) {
-        this.x = Math.random() * canvas.width
-        this.y = Math.random() * canvas.height
-        this.size = Math.random() * 3 + 1
-        this.speedX = (Math.random() - 0.5) * 0.5
-        this.speedY = (Math.random() - 0.5) * 0.5
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 3 + 1;
+        this.speedX = (Math.random() - 0.5) * 0.5;
+        this.speedY = (Math.random() - 0.5) * 0.5;
         this.color = `rgba(${Math.floor(Math.random() * 100 + 155)}, 255, ${Math.floor(
           Math.random() * 100 + 155,
-        )}, ${Math.random() * 0.5 + 0.1})`
+        )}, ${Math.random() * 0.5 + 0.1})`;
       }
 
       update(canvas: HTMLCanvasElement) {
-        this.x += this.speedX
-        this.y += this.speedY
+        this.x += this.speedX;
+        this.y += this.speedY;
 
         if (this.x < 0 || this.x > canvas.width) {
-          this.speedX = -this.speedX
+          this.speedX = -this.speedX;
         }
 
         if (this.y < 0 || this.y > canvas.height) {
-          this.speedY = -this.speedY
+          this.speedY = -this.speedY;
         }
       }
 
       draw(ctx: CanvasRenderingContext2D) {
-        ctx.fillStyle = this.color
-        ctx.beginPath()
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2)
-        ctx.fill()
+        ctx.fillStyle = this.color;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
       }
     }
 
     // Create particles
-    const particles: Particle[] = []
-    const particleCount = Math.min(100, Math.floor((canvas.width * canvas.height) / 10000))
+    const particles: Particle[] = [];
+    const particleCount = Math.min(
+      100,
+      Math.floor((canvas.width * canvas.height) / 10000),
+    );
 
     for (let i = 0; i < particleCount; i++) {
-      particles.push(new Particle(canvas))
+      particles.push(new Particle(canvas));
     }
 
     // Connect particles with lines
     function connectParticles() {
-      if (!ctx) return
-      
-      const maxDistance = 150
+      if (!ctx) return;
+
+      const maxDistance = 150;
 
       for (let i = 0; i < particles.length; i++) {
         for (let j = i; j < particles.length; j++) {
-          const dx = particles[i].x - particles[j].x
-          const dy = particles[i].y - particles[j].y
-          const distance = Math.sqrt(dx * dx + dy * dy)
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
 
           if (distance < maxDistance) {
-            const opacity = 1 - distance / maxDistance
-            ctx.strokeStyle = `rgba(100, 255, 180, ${opacity * 0.2})`
-            ctx.lineWidth = 1
-            ctx.beginPath()
-            ctx.moveTo(particles[i].x, particles[i].y)
-            ctx.lineTo(particles[j].x, particles[j].y)
-            ctx.stroke()
+            const opacity = 1 - distance / maxDistance;
+            ctx.strokeStyle = `rgba(100, 255, 180, ${opacity * 0.2})`;
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.stroke();
           }
         }
       }
@@ -100,25 +110,25 @@ export default function SecurityAnimation() {
 
     // Animation loop
     function animate() {
-      if (!ctx || !canvas) return
-      
-      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      if (!ctx || !canvas) return;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       for (const particle of particles) {
-        particle.update(canvas)
-        particle.draw(ctx)
+        particle.update(canvas);
+        particle.draw(ctx);
       }
 
-      connectParticles()
-      requestAnimationFrame(animate)
+      connectParticles();
+      requestAnimationFrame(animate);
     }
 
-    animate()
+    animate();
 
     return () => {
-      window.removeEventListener("resize", setCanvasDimensions)
-    }
-  }, [])
+      window.removeEventListener('resize', setCanvasDimensions);
+    };
+  }, []);
 
   // Animation variants for the icons
   const containerVariants = {
@@ -130,7 +140,7 @@ export default function SecurityAnimation() {
         delayChildren: 0.3,
       },
     },
-  }
+  };
 
   const itemVariants = {
     hidden: { y: 20, opacity: 0 },
@@ -139,7 +149,7 @@ export default function SecurityAnimation() {
       opacity: 1,
       transition: { duration: 0.5 },
     },
-  }
+  };
 
   const pulseVariants = {
     pulse: {
@@ -148,10 +158,10 @@ export default function SecurityAnimation() {
       transition: {
         duration: 2,
         repeat: Number.POSITIVE_INFINITY,
-        repeatType: "reverse" as const,
+        repeatType: 'reverse' as const,
       },
     },
-  }
+  };
 
   const floatVariants = {
     float: {
@@ -159,10 +169,10 @@ export default function SecurityAnimation() {
       transition: {
         duration: 3,
         repeat: Number.POSITIVE_INFINITY,
-        repeatType: "reverse" as const,
+        repeatType: 'reverse' as const,
       },
     },
-  }
+  };
 
   const rotateVariants = {
     rotate: {
@@ -170,31 +180,40 @@ export default function SecurityAnimation() {
       transition: {
         duration: 20,
         repeat: Number.POSITIVE_INFINITY,
-        ease: "linear",
+        ease: 'linear',
       },
     },
-  }
+  };
 
   return (
-    <section className="relative py-16 overflow-hidden">
+    <section className="relative overflow-hidden py-16">
       <div className="absolute inset-0 z-0">
-        <canvas ref={canvasRef} className="w-full h-full" />
+        <canvas ref={canvasRef} className="h-full w-full" />
       </div>
 
       {/* Animated cyber elements */}
-      <div className="absolute inset-0 z-0 pointer-events-none">
+      <div className="pointer-events-none absolute inset-0 z-0">
         {/* Rotating hexagon grid */}
         <motion.div
           className="absolute inset-0 opacity-10"
           animate={{ rotate: 360 }}
-          transition={{ duration: 120, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
+          transition={{
+            duration: 120,
+            repeat: Number.POSITIVE_INFINITY,
+            ease: 'linear',
+          }}
         >
-          <div className="w-full h-full bg-[url('/images/hexagon-grid.svg')] bg-repeat"></div>
+          <div className="h-full w-full bg-[url('/images/hexagon-grid.svg')] bg-repeat"></div>
         </motion.div>
 
         {/* Digital circuit */}
         <div className="absolute inset-0">
-          <svg width="100%" height="100%" viewBox="0 0 1000 300" className="opacity-20">
+          <svg
+            width="100%"
+            height="100%"
+            viewBox="0 0 1000 300"
+            className="opacity-20"
+          >
             <motion.path
               d="M0,150 C100,50 200,250 300,150 C400,50 500,250 600,150 C700,50 800,250 900,150 L1000,150"
               stroke="#10b981"
@@ -202,7 +221,7 @@ export default function SecurityAnimation() {
               fill="none"
               initial={{ pathLength: 0, opacity: 0 }}
               animate={{ pathLength: 1, opacity: 1 }}
-              transition={{ duration: 3, ease: "easeInOut" }}
+              transition={{ duration: 3, ease: 'easeInOut' }}
             />
             <motion.path
               d="M0,100 C150,50 250,150 400,100 C550,50 650,150 800,100 L1000,100"
@@ -211,7 +230,7 @@ export default function SecurityAnimation() {
               fill="none"
               initial={{ pathLength: 0, opacity: 0 }}
               animate={{ pathLength: 1, opacity: 0.7 }}
-              transition={{ duration: 3, delay: 0.5, ease: "easeInOut" }}
+              transition={{ duration: 3, delay: 0.5, ease: 'easeInOut' }}
             />
             <motion.path
               d="M0,200 C150,250 250,150 400,200 C550,250 650,150 800,200 L1000,200"
@@ -220,7 +239,7 @@ export default function SecurityAnimation() {
               fill="none"
               initial={{ pathLength: 0, opacity: 0 }}
               animate={{ pathLength: 1, opacity: 0.7 }}
-              transition={{ duration: 3, delay: 1, ease: "easeInOut" }}
+              transition={{ duration: 3, delay: 1, ease: 'easeInOut' }}
             />
 
             {/* Data pulse animations */}
@@ -236,7 +255,7 @@ export default function SecurityAnimation() {
               transition={{
                 duration: 8,
                 repeat: Number.POSITIVE_INFINITY,
-                ease: "linear",
+                ease: 'linear',
                 times: [0, 0.8, 1],
               }}
             />
@@ -252,7 +271,7 @@ export default function SecurityAnimation() {
               transition={{
                 duration: 10,
                 repeat: Number.POSITIVE_INFINITY,
-                ease: "linear",
+                ease: 'linear',
                 delay: 2,
                 times: [0, 0.8, 1],
               }}
@@ -269,7 +288,7 @@ export default function SecurityAnimation() {
               transition={{
                 duration: 12,
                 repeat: Number.POSITIVE_INFINITY,
-                ease: "linear",
+                ease: 'linear',
                 delay: 4,
                 times: [0, 0.8, 1],
               }}
@@ -278,41 +297,41 @@ export default function SecurityAnimation() {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 relative z-10">
+      <div className="container relative z-10 mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
-          className="text-center max-w-3xl mx-auto mb-16"
+          className="mx-auto mb-16 max-w-3xl text-center"
         >
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">
-            Cybersecurity in an{" "}
+          <h2 className="mb-6 text-3xl font-bold md:text-4xl">
+            Cybersecurity in an{' '}
             <motion.span
-              className="text-emerald-500 relative inline-block"
+              className="relative inline-block text-emerald-500"
               whileHover={{ scale: 1.05 }}
-              transition={{ type: "spring", stiffness: 300 }}
+              transition={{ type: 'spring', stiffness: 300 }}
             >
               Interconnected
               <motion.span
-                className="absolute -bottom-1 left-0 w-full h-0.5 bg-emerald-500"
+                className="absolute -bottom-1 left-0 h-0.5 w-full bg-emerald-500"
                 initial={{ width: 0 }}
-                whileInView={{ width: "100%" }}
+                whileInView={{ width: '100%' }}
                 transition={{ delay: 0.5, duration: 0.8 }}
                 viewport={{ once: true }}
               ></motion.span>
-            </motion.span>{" "}
+            </motion.span>{' '}
             World
           </h2>
-          <p className="text-lg text-white/70 mb-8">
-            Our network of security solutions works together to create a comprehensive defense system for your digital
-            infrastructure.
+          <p className="mb-8 text-lg text-white/70">
+            Our network of security solutions works together to create a
+            comprehensive defense system for your digital infrastructure.
           </p>
         </motion.div>
 
         {/* Animated security icons */}
         <motion.div
-          className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 max-w-4xl mx-auto"
+          className="mx-auto grid max-w-4xl grid-cols-2 gap-8 md:grid-cols-3 lg:grid-cols-6"
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
@@ -326,13 +345,15 @@ export default function SecurityAnimation() {
             whileHover={{ scale: 1.1 }}
           >
             <motion.div
-              className="w-16 h-16 rounded-full bg-emerald-500/10 flex items-center justify-center mb-3"
+              className="mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/10"
               variants={pulseVariants}
               animate="pulse"
             >
-              <Shield className="w-8 h-8 text-emerald-500" />
+              <Shield className="h-8 w-8 text-emerald-500" />
             </motion.div>
-            <h3 className="text-sm font-medium text-white">Threat Protection</h3>
+            <h3 className="text-sm font-medium text-white">
+              Threat Protection
+            </h3>
           </motion.div>
 
           <motion.div
@@ -341,11 +362,11 @@ export default function SecurityAnimation() {
             whileHover={{ scale: 1.1 }}
           >
             <motion.div
-              className="w-16 h-16 rounded-full bg-cyan-500/10 flex items-center justify-center mb-3"
+              className="mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-cyan-500/10"
               variants={floatVariants}
               animate="float"
             >
-              <Lock className="w-8 h-8 text-cyan-400" />
+              <Lock className="h-8 w-8 text-cyan-400" />
             </motion.div>
             <h3 className="text-sm font-medium text-white">Secure Access</h3>
           </motion.div>
@@ -356,11 +377,11 @@ export default function SecurityAnimation() {
             whileHover={{ scale: 1.1 }}
           >
             <motion.div
-              className="w-16 h-16 rounded-full bg-purple-500/10 flex items-center justify-center mb-3"
+              className="mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-purple-500/10"
               variants={pulseVariants}
               animate="pulse"
             >
-              <AlertTriangle className="w-8 h-8 text-purple-400" />
+              <AlertTriangle className="h-8 w-8 text-purple-400" />
             </motion.div>
             <h3 className="text-sm font-medium text-white">Breach Detection</h3>
           </motion.div>
@@ -371,11 +392,11 @@ export default function SecurityAnimation() {
             whileHover={{ scale: 1.1 }}
           >
             <motion.div
-              className="w-16 h-16 rounded-full bg-amber-500/10 flex items-center justify-center mb-3"
+              className="mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-amber-500/10"
               variants={floatVariants}
               animate="float"
             >
-              <Eye className="w-8 h-8 text-amber-400" />
+              <Eye className="h-8 w-8 text-amber-400" />
             </motion.div>
             <h3 className="text-sm font-medium text-white">Monitoring</h3>
           </motion.div>
@@ -386,11 +407,11 @@ export default function SecurityAnimation() {
             whileHover={{ scale: 1.1 }}
           >
             <motion.div
-              className="w-16 h-16 rounded-full bg-rose-500/10 flex items-center justify-center mb-3"
+              className="mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-rose-500/10"
               variants={pulseVariants}
               animate="pulse"
             >
-              <FileCode className="w-8 h-8 text-rose-400" />
+              <FileCode className="h-8 w-8 text-rose-400" />
             </motion.div>
             <h3 className="text-sm font-medium text-white">Secure Code</h3>
           </motion.div>
@@ -401,11 +422,11 @@ export default function SecurityAnimation() {
             whileHover={{ scale: 1.1 }}
           >
             <motion.div
-              className="w-16 h-16 rounded-full bg-blue-500/10 flex items-center justify-center mb-3"
+              className="mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-blue-500/10"
               variants={floatVariants}
               animate="float"
             >
-              <Database className="w-8 h-8 text-blue-400" />
+              <Database className="h-8 w-8 text-blue-400" />
             </motion.div>
             <h3 className="text-sm font-medium text-white">Data Security</h3>
           </motion.div>
@@ -413,7 +434,7 @@ export default function SecurityAnimation() {
 
         {/* Central security hub visualization */}
         <motion.div
-          className="mt-16 relative max-w-2xl mx-auto"
+          className="relative mx-auto mt-16 max-w-2xl"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ duration: 1, delay: 0.5 }}
@@ -422,59 +443,77 @@ export default function SecurityAnimation() {
           <div className="relative h-[200px]">
             {/* Central hub */}
             <motion.div
-              className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-24 h-24 rounded-full bg-emerald-500/20 flex items-center justify-center z-10"
+              className="absolute left-1/2 top-1/2 z-10 flex h-24 w-24 -translate-x-1/2 -translate-y-1/2 transform items-center justify-center rounded-full bg-emerald-500/20"
               animate={{
                 boxShadow: [
-                  "0 0 0 0 rgba(16, 185, 129, 0)",
-                  "0 0 0 20px rgba(16, 185, 129, 0.1)",
-                  "0 0 0 0 rgba(16, 185, 129, 0)",
+                  '0 0 0 0 rgba(16, 185, 129, 0)',
+                  '0 0 0 20px rgba(16, 185, 129, 0.1)',
+                  '0 0 0 0 rgba(16, 185, 129, 0)',
                 ],
               }}
               transition={{ duration: 3, repeat: Number.POSITIVE_INFINITY }}
             >
               <motion.div
-                className="w-16 h-16 rounded-full bg-emerald-500/30 flex items-center justify-center"
+                className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/30"
                 animate={{ scale: [1, 1.1, 1] }}
                 transition={{ duration: 3, repeat: Number.POSITIVE_INFINITY }}
               >
-                <Shield className="w-8 h-8 text-emerald-400" />
+                <Shield className="h-8 w-8 text-emerald-400" />
               </motion.div>
             </motion.div>
 
             {/* Orbiting elements */}
             <motion.div
-              className="absolute top-1/2 left-1/2 w-[300px] h-[300px] -translate-x-1/2 -translate-y-1/2"
+              className="absolute left-1/2 top-1/2 h-[300px] w-[300px] -translate-x-1/2 -translate-y-1/2"
               variants={rotateVariants}
               animate="rotate"
             >
               {[0, 60, 120, 180, 240, 300].map((angle, i) => (
                 <motion.div
                   key={i}
-                  className="absolute w-10 h-10 rounded-full bg-gray-800/80 border border-gray-700 flex items-center justify-center"
+                  className="absolute flex h-10 w-10 items-center justify-center rounded-full border border-gray-700 bg-gray-800/80"
                   style={{
                     top: `${50 + 40 * Math.sin((angle * Math.PI) / 180)}%`,
                     left: `${50 + 40 * Math.cos((angle * Math.PI) / 180)}%`,
-                    transform: "translate(-50%, -50%)",
+                    transform: 'translate(-50%, -50%)',
                   }}
-                  whileHover={{ scale: 1.2, backgroundColor: "rgba(16, 185, 129, 0.2)" }}
+                  whileHover={{
+                    scale: 1.2,
+                    backgroundColor: 'rgba(16, 185, 129, 0.2)',
+                  }}
                 >
                   <motion.div
                     animate={{ scale: [1, 1.2, 1] }}
-                    transition={{ duration: 2, delay: i * 0.3, repeat: Number.POSITIVE_INFINITY }}
+                    transition={{
+                      duration: 2,
+                      delay: i * 0.3,
+                      repeat: Number.POSITIVE_INFINITY,
+                    }}
                   >
-                    {i % 6 === 0 && <Lock className="w-5 h-5 text-cyan-400" />}
-                    {i % 6 === 1 && <AlertTriangle className="w-5 h-5 text-purple-400" />}
-                    {i % 6 === 2 && <Eye className="w-5 h-5 text-amber-400" />}
-                    {i % 6 === 3 && <FileCode className="w-5 h-5 text-rose-400" />}
-                    {i % 6 === 4 && <Database className="w-5 h-5 text-blue-400" />}
-                    {i % 6 === 5 && <Shield className="w-5 h-5 text-emerald-400" />}
+                    {i % 6 === 0 && <Lock className="h-5 w-5 text-cyan-400" />}
+                    {i % 6 === 1 && (
+                      <AlertTriangle className="h-5 w-5 text-purple-400" />
+                    )}
+                    {i % 6 === 2 && <Eye className="h-5 w-5 text-amber-400" />}
+                    {i % 6 === 3 && (
+                      <FileCode className="h-5 w-5 text-rose-400" />
+                    )}
+                    {i % 6 === 4 && (
+                      <Database className="h-5 w-5 text-blue-400" />
+                    )}
+                    {i % 6 === 5 && (
+                      <Shield className="h-5 w-5 text-emerald-400" />
+                    )}
                   </motion.div>
                 </motion.div>
               ))}
             </motion.div>
 
             {/* Connection lines */}
-            <svg className="absolute inset-0 w-full h-full" style={{ zIndex: -1 }}>
+            <svg
+              className="absolute inset-0 h-full w-full"
+              style={{ zIndex: -1 }}
+            >
               {[0, 60, 120, 180, 240, 300].map((angle, i) => (
                 <motion.line
                   key={i}
@@ -487,7 +526,11 @@ export default function SecurityAnimation() {
                   strokeDasharray="5,5"
                   initial={{ opacity: 0.3 }}
                   animate={{ opacity: [0.3, 0.8, 0.3] }}
-                  transition={{ duration: 3, delay: i * 0.5, repeat: Number.POSITIVE_INFINITY }}
+                  transition={{
+                    duration: 3,
+                    delay: i * 0.5,
+                    repeat: Number.POSITIVE_INFINITY,
+                  }}
                 />
               ))}
             </svg>
@@ -495,5 +538,5 @@ export default function SecurityAnimation() {
         </motion.div>
       </div>
     </section>
-  )
+  );
 }

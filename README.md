@@ -26,18 +26,21 @@ A modern, responsive website showcasing cybersecurity services and educational o
 ## 🛠️ Installation
 
 1. Clone the repository:
+
 ```bash
 git clone https://yourusername:yourgithubtoken@github.com/scaninfoga-web/cybersecurity-website.git
 ```
 
 2. Install dependencies:
+
 ```bash
 cd cybersecurity-website
 npm install --legacy-peer-deps
 ```
 
 3. Run the development server:
-```bash 
+
+```bash
 npm run dev
 ```
 
@@ -46,6 +49,7 @@ npm run dev
 ## 📝 Usage
 
 The website includes sections for:
+
 - Services showcase
 - Educational courses
 - Contact information
@@ -62,7 +66,6 @@ We love your input! We want to make contributing to Cybersecurity Website as eas
 3. Commit your changes (`git commit -m 'Add amazing feature'`)
 4. Push to the branch (`git push origin feature/amazing`)
 5. Open a Pull Request
-
 
 ## 📄 License
 

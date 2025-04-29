@@ -1,13 +1,13 @@
-import Hero from "@/components/hero"
-import Navbar from "@/components/navbar"
-import Services from "@/components/services"
-import Education from "@/components/education"
-import Features from "@/components/features"
-import Testimonials from "@/components/testimonials"
-import CTA from "@/components/cta"
-import Footer from "@/components/footer"
-import SecurityAnimation from "@/components/security-animation"
-import FAQ from "@/components/faq"
+import Hero from '@/components/hero';
+import Navbar from '@/components/navbar';
+import Services from '@/components/services';
+import Education from '@/components/education';
+import Features from '@/components/features';
+import Testimonials from '@/components/testimonials';
+import CTA from '@/components/cta';
+import Footer from '@/components/footer';
+import SecurityAnimation from '@/components/security-animation';
+import FAQ from '@/components/faq';
 
 export default function Home() {
   return (
@@ -26,5 +26,5 @@ export default function Home() {
       </main>
       <Footer />
     </div>
-  )
+  );
 }

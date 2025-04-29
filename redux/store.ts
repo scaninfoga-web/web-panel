@@ -1,0 +1,24 @@
+// redux/store.ts
+import { configureStore, combineReducers } from '@reduxjs/toolkit';
+import { persistStore } from 'redux-persist';
+import userReducer from './userSlice';
+import { getPersistedReducer } from './persistConfig';
+
+const rootReducer = combineReducers({
+  user: userReducer,
+});
+
+const reducer = getPersistedReducer(rootReducer);
+
+export const store = configureStore({
+  reducer,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }),
+});
+
+export const persistor = persistStore(store);
+
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;

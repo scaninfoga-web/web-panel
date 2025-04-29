@@ -1,27 +1,26 @@
-import type { Metadata } from 'next'
-import './globals.css'
-import { AuthProvider } from '@/components/providers/AuthProvider'
-import axios from 'axios'
-import { Toaster } from "sonner";
+import type { Metadata } from 'next';
+import './globals.css';
+import axios from 'axios';
+
+import { Providers } from './provider';
 
 export const metadata: Metadata = {
   title: 'Scaninfoga App',
   description: 'Created by Khailendra',
-}
+};
 
-axios.defaults.baseURL = "http://localhost:8000"
+axios.defaults.baseURL = 'http://localhost:8000';
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <html lang="en">
       <body>
-              <Toaster position="top-right" richColors />
-        <AuthProvider>{children}</AuthProvider>
+        <Providers>{children}</Providers>
       </body>
     </html>
-  )
+  );
 }

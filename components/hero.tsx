@@ -1,91 +1,91 @@
-"use client"
+'use client';
 
-import { useState, useEffect } from "react"
-import { motion } from "framer-motion"
-import { Button } from "@/components/ui/button"
-import { Shield, Lock, Database, Code } from "lucide-react"
+import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { Button } from '@/components/ui/button';
+import { Shield, Lock, Database, Code } from 'lucide-react';
 
 export default function Hero() {
-  const [typedText, setTypedText] = useState("")
-  const [typedHeading, setTypedHeading] = useState("")
-  const fullText = "Secure. Protect. Defend."
-  const fullHeading = "Protecting Your Digital Assets in a Connected World"
+  const [typedText, setTypedText] = useState('');
+  const [typedHeading, setTypedHeading] = useState('');
+  const fullText = 'Secure. Protect. Defend.';
+  const fullHeading = 'Protecting Your Digital Assets in a Connected World';
 
   useEffect(() => {
     // Original typing animation
-    let currentIndex = 0
+    let currentIndex = 0;
     const typingInterval = setInterval(() => {
       if (currentIndex <= fullText.length) {
-        setTypedText(fullText.slice(0, currentIndex))
-        currentIndex++
+        setTypedText(fullText.slice(0, currentIndex));
+        currentIndex++;
       } else {
-        clearInterval(typingInterval)
+        clearInterval(typingInterval);
 
         // Reset after a pause
         setTimeout(() => {
-          currentIndex = 0
+          currentIndex = 0;
           const resetInterval = setInterval(() => {
             if (currentIndex <= fullText.length) {
-              setTypedText(fullText.slice(0, currentIndex))
-              currentIndex++
+              setTypedText(fullText.slice(0, currentIndex));
+              currentIndex++;
             } else {
-              clearInterval(resetInterval)
+              clearInterval(resetInterval);
             }
-          }, 100)
-        }, 2000)
+          }, 100);
+        }, 2000);
       }
-    }, 100)
+    }, 100);
 
     // Heading typing animation - starts after a delay
     setTimeout(() => {
-      let headingIndex = 0
+      let headingIndex = 0;
       const headingInterval = setInterval(() => {
         if (headingIndex <= fullHeading.length) {
-          setTypedHeading(fullHeading.slice(0, headingIndex))
-          headingIndex++
+          setTypedHeading(fullHeading.slice(0, headingIndex));
+          headingIndex++;
         } else {
-          clearInterval(headingInterval)
+          clearInterval(headingInterval);
         }
-      }, 50) // Faster typing for the heading
+      }, 50); // Faster typing for the heading
 
-      return () => clearInterval(headingInterval)
-    }, 500) // Start after a short delay
+      return () => clearInterval(headingInterval);
+    }, 500); // Start after a short delay
 
-    return () => clearInterval(typingInterval)
-  }, [])
+    return () => clearInterval(typingInterval);
+  }, []);
 
   return (
-    <section className="relative pt-32 pb-16 md:pt-40 md:pb-24 overflow-hidden">
+    <section className="relative overflow-hidden pb-16 pt-32 md:pb-24 md:pt-40">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             className="space-y-6"
           >
-            <div className="inline-block px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-sm font-medium">
+            <div className="inline-block rounded-full border border-emerald-500/20 bg-emerald-500/10 px-4 py-1.5 text-sm font-medium text-emerald-500">
               Leading Cybersecurity Solutions
             </div>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight min-h-[180px] md:min-h-[220px]">
-              {typedHeading.includes("Digital") ? (
+            <h1 className="min-h-[180px] text-4xl font-bold tracking-tight md:min-h-[220px] md:text-5xl lg:text-6xl">
+              {typedHeading.includes('Digital') ? (
                 <>
-                  {typedHeading.split("Digital")[0]}Digital <br />
-                  {typedHeading.includes("Assets") ? (
+                  {typedHeading.split('Digital')[0]}Digital <br />
+                  {typedHeading.includes('Assets') ? (
                     <>
                       <span className="text-emerald-500">Assets</span>
-                      {typedHeading.includes("Assets in") ? (
+                      {typedHeading.includes('Assets in') ? (
                         <>
-                          {" in "}
+                          {' in '}
                           <br />
-                          {typedHeading.split("Assets in ")[1]}
+                          {typedHeading.split('Assets in ')[1]}
                         </>
                       ) : (
-                        ""
+                        ''
                       )}
                     </>
                   ) : (
-                    ""
+                    ''
                   )}
                 </>
               ) : (
@@ -93,21 +93,25 @@ export default function Hero() {
               )}
               <span className="animate-pulse">|</span>
             </h1>
-            <p className="text-xl text-white/70 max-w-lg">
-              Comprehensive cybersecurity services, education, and tools to defend against evolving threats.
+            <p className="max-w-lg text-xl text-white/70">
+              Comprehensive cybersecurity services, education, and tools to
+              defend against evolving threats.
             </p>
-            <div className="h-8 font-mono text-emerald-400 text-xl">
+            <div className="h-8 font-mono text-xl text-emerald-400">
               &gt; {typedText}
               <span className="animate-pulse">_</span>
             </div>
             <div className="flex flex-wrap gap-4 pt-2">
-              <Button size="lg" className="bg-emerald-500 text-black hover:bg-emerald-600">
+              <Button
+                size="lg"
+                className="bg-emerald-500 text-black hover:bg-emerald-600"
+              >
                 Explore Services
               </Button>
               <Button
                 size="lg"
                 variant="outline"
-                className="border-emerald-500/50 text-emerald-400 hover:bg-emerald-500/10 hover:border-emerald-500 hover:text-emerald-300"
+                className="border-emerald-500/50 text-emerald-400 hover:border-emerald-500 hover:bg-emerald-500/10 hover:text-emerald-300"
               >
                 Learn More
               </Button>
@@ -120,9 +124,9 @@ export default function Hero() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="relative"
           >
-            <div className="relative w-full h-[400px] md:h-[500px] bg-gradient-to-br from-emerald-500/20 to-cyan-500/20 rounded-2xl overflow-hidden border border-white/10">
+            <div className="relative h-[400px] w-full overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-emerald-500/20 to-cyan-500/20 md:h-[500px]">
               <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-64 h-64 rounded-full bg-emerald-500/20 animate-pulse"></div>
+                <div className="h-64 w-64 animate-pulse rounded-full bg-emerald-500/20"></div>
               </div>
 
               <motion.div
@@ -133,11 +137,11 @@ export default function Hero() {
                 transition={{
                   repeat: Number.POSITIVE_INFINITY,
                   duration: 5,
-                  ease: "easeInOut",
+                  ease: 'easeInOut',
                 }}
-                className="absolute top-1/4 left-1/4 transform -translate-x-1/2 -translate-y-1/2"
+                className="absolute left-1/4 top-1/4 -translate-x-1/2 -translate-y-1/2 transform"
               >
-                <Shield className="w-16 h-16 text-emerald-500" />
+                <Shield className="h-16 w-16 text-emerald-500" />
               </motion.div>
 
               <motion.div
@@ -148,11 +152,11 @@ export default function Hero() {
                 transition={{
                   repeat: Number.POSITIVE_INFINITY,
                   duration: 4,
-                  ease: "easeInOut",
+                  ease: 'easeInOut',
                 }}
-                className="absolute top-1/3 right-1/4 transform translate-x-1/2 -translate-y-1/2"
+                className="absolute right-1/4 top-1/3 -translate-y-1/2 translate-x-1/2 transform"
               >
-                <Lock className="w-12 h-12 text-cyan-400" />
+                <Lock className="h-12 w-12 text-cyan-400" />
               </motion.div>
 
               <motion.div
@@ -163,11 +167,11 @@ export default function Hero() {
                 transition={{
                   repeat: Number.POSITIVE_INFINITY,
                   duration: 6,
-                  ease: "easeInOut",
+                  ease: 'easeInOut',
                 }}
-                className="absolute bottom-1/3 left-1/3 transform -translate-x-1/2 translate-y-1/2"
+                className="absolute bottom-1/3 left-1/3 -translate-x-1/2 translate-y-1/2 transform"
               >
-                <Database className="w-14 h-14 text-purple-400" />
+                <Database className="h-14 w-14 text-purple-400" />
               </motion.div>
 
               <motion.div
@@ -178,20 +182,25 @@ export default function Hero() {
                 transition={{
                   repeat: Number.POSITIVE_INFINITY,
                   duration: 5.5,
-                  ease: "easeInOut",
+                  ease: 'easeInOut',
                 }}
-                className="absolute bottom-1/4 right-1/3 transform translate-x-1/2 translate-y-1/2"
+                className="absolute bottom-1/4 right-1/3 translate-x-1/2 translate-y-1/2 transform"
               >
-                <Code className="w-10 h-10 text-yellow-400" />
+                <Code className="h-10 w-10 text-yellow-400" />
               </motion.div>
 
               <div className="absolute inset-0 overflow-hidden">
                 {/* Digital code rain effect */}
-                <div className="absolute inset-0 code-rain-animation opacity-20"></div>
+                <div className="code-rain-animation absolute inset-0 opacity-100"></div>
 
                 {/* Animated security nodes */}
                 <div className="absolute inset-0">
-                  <svg width="100%" height="100%" viewBox="0 0 800 600" className="security-nodes">
+                  <svg
+                    width="100%"
+                    height="100%"
+                    viewBox="0 0 800 600"
+                    className="security-nodes"
+                  >
                     <g className="nodes">
                       {Array.from({ length: 15 }).map((_, i) => (
                         <circle
@@ -245,20 +254,20 @@ export default function Hero() {
                 </div>
 
                 {/* Binary overlay */}
-                <div className="absolute inset-0 binary-overlay opacity-10"></div>
+                <div className="binary-overlay absolute inset-0 opacity-10"></div>
 
                 {/* Grid pattern underneath */}
-                <div className="absolute inset-0 bg-grid-pattern opacity-20"></div>
+                <div className="bg-grid-pattern absolute inset-0 opacity-20"></div>
               </div>
 
               <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t from-black to-transparent"></div>
             </div>
 
-            <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-emerald-500/30 rounded-full blur-3xl"></div>
-            <div className="absolute -top-6 -left-6 w-24 h-24 bg-cyan-500/20 rounded-full blur-2xl"></div>
+            <div className="absolute -bottom-6 -right-6 h-32 w-32 rounded-full bg-emerald-500/30 blur-3xl"></div>
+            <div className="absolute -left-6 -top-6 h-24 w-24 rounded-full bg-cyan-500/20 blur-2xl"></div>
           </motion.div>
         </div>
       </div>
     </section>
-  )
+  );
 }

@@ -4,10 +4,10 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { UseFormReturn } from "react-hook-form";
-import { cn } from "@/lib/utils";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { UseFormReturn } from 'react-hook-form';
+import { cn } from '@/lib/utils';
 
 interface FormInputProps {
   form: UseFormReturn<any>;
@@ -23,7 +23,7 @@ export function FormInput({
   name,
   label,
   placeholder,
-  type = "text",
+  type = 'text',
   className,
 }: FormInputProps) {
   return (
@@ -38,8 +38,8 @@ export function FormInput({
               placeholder={placeholder}
               type={type}
               className={cn(
-                "border-emerald-500 bg-[#0A0D14] text-white placeholder-gray-400 rounded-xl py-6",
-                className
+                'rounded-xl border-emerald-500 bg-[#0A0D14] py-6 text-white placeholder-gray-400',
+                className,
               )}
               {...field}
             />
