@@ -1,17 +1,19 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
+interface User {
+  email: string;
+  firstName: string;
+  lastName: string;
+  userType?: string;
+  company?: string;
+  domain?: string;
+  approvalStatus?: string;
+}
+
 interface UserState {
   token: string | null;
   refreshToken: string | null;
-  user: {
-    email: string;
-    firstName: string;
-    lastName: string;
-    userType?: string;
-    company?: string;
-    domain?: string;
-    approvalStatus?: string;
-  } | null;
+  user: User | null;
 }
 
 const initialState: UserState = {
@@ -20,11 +22,17 @@ const initialState: UserState = {
   user: null,
 };
 
+type CredentialsPayload = {
+  token: string;
+  refreshToken: string;
+  user: User;
+};
+
 export const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    setCredentials: (state, action: PayloadAction<UserState>) => {
+    setCredentials: (state, action: PayloadAction<CredentialsPayload>) => {
       state.token = action.payload.token;
       state.refreshToken = action.payload.refreshToken;
       state.user = action.payload.user;

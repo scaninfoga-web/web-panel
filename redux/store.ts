@@ -1,4 +1,3 @@
-// redux/store.ts
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import { persistStore } from 'redux-persist';
 import userReducer from './userSlice';
@@ -8,10 +7,10 @@ const rootReducer = combineReducers({
   user: userReducer,
 });
 
-const reducer = getPersistedReducer(rootReducer);
+const persistedReducer = getPersistedReducer(rootReducer);
 
 export const store = configureStore({
-  reducer,
+  reducer: persistedReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: false,
@@ -20,5 +19,6 @@ export const store = configureStore({
 
 export const persistor = persistStore(store);
 
+// 🔑 Typed exports
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

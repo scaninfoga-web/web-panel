@@ -44,7 +44,7 @@ export function DashboardSidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="fixed left-0 top-0 z-40 h-screen w-64 border-r border-gray-800 bg-gray-900/50 pt-16 backdrop-blur-sm">
+    <aside className="left-0 top-0 z-40 hidden h-screen w-64 border-r border-gray-800 bg-gray-900/50 pt-16 backdrop-blur-sm md:fixed md:block">
       <div className="flex h-full flex-col px-3 py-4">
         <nav className="space-y-1">
           {sidebarLinks.map((link) => {
