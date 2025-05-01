@@ -6,7 +6,7 @@ import { Providers } from './provider';
 
 export const metadata: Metadata = {
   title: 'Scaninfoga App',
-  description: 'Created by Khailendra',
+  description: 'Created by ',
 };
 
 axios.defaults.baseURL = 'http://localhost:8000';
