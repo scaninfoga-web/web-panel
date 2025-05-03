@@ -22,7 +22,13 @@ export default function Home() {
         <Education />
         <Testimonials />
         <FAQ />
-        <CTA />
+        <CTA
+          whiteTitle="Ready to Secure Your"
+          description="Get in touch with our security experts for a free consultation
+                  and discover how we can help protect your organization from
+                  cyber threats."
+          greenTitle="Digital Assets"
+        />
       </main>
       <Footer />
     </div>

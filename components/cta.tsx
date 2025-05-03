@@ -6,7 +6,17 @@ import { Input } from '@/components/ui/input';
 import { Shield, Mail, ArrowRight, Lock, CheckCircle } from 'lucide-react';
 import { useState } from 'react';
 
-export default function CTA() {
+interface PageProps {
+  whiteTitle: string;
+  greenTitle: string;
+  description: string;
+}
+
+export default function CTA({
+  greenTitle,
+  whiteTitle,
+  description,
+}: PageProps) {
   const [formHovered, setFormHovered] = useState(false);
 
   const containerVariants = {
@@ -150,13 +160,13 @@ export default function CTA() {
                   variants={itemVariants}
                   className="text-3xl font-bold md:text-4xl lg:text-5xl"
                 >
-                  Ready to Secure Your <br />
+                  {whiteTitle} <br />
                   <motion.span
                     className="inline-block text-emerald-500"
                     whileHover={{ scale: 1.05 }}
                     transition={{ type: 'spring', stiffness: 300 }}
                   >
-                    Digital Assets
+                    {greenTitle}
                   </motion.span>
                   ?
                 </motion.h2>
@@ -165,9 +175,7 @@ export default function CTA() {
                   variants={itemVariants}
                   className="text-lg text-white/70"
                 >
-                  Get in touch with our security experts for a free consultation
-                  and discover how we can help protect your organization from
-                  cyber threats.
+                  {description}
                 </motion.p>
 
                 <motion.div
@@ -293,7 +301,7 @@ export default function CTA() {
                       id="message"
                       rows={4}
                       placeholder="Tell us about your security needs"
-                      className="w-full rounded-md border border-gray-700 bg-gray-800/50 p-3 text-white transition-all duration-300 focus:border-emerald-500"
+                      className="w-full rounded-md border border-gray-700 bg-gray-800/50 p-3 text-white transition-all duration-300 focus:border-emerald-500 focus:outline-none"
                     ></textarea>
                   </motion.div>
 

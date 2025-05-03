@@ -71,28 +71,22 @@ export default function Navbar() {
               Pricing
             </Link>
             <Link
-              href="/courses"
-              className="text-sm font-medium text-white/90 transition-colors hover:text-emerald-400"
-            >
-              Courses
-            </Link>
-            <Link
               href="/tools"
               className="text-sm font-medium text-white/90 transition-colors hover:text-emerald-400"
             >
               Tools
             </Link>
             <Link
-              href="/resources"
-              className="text-sm font-medium text-white/90 transition-colors hover:text-emerald-400"
-            >
-              Resources
-            </Link>
-            <Link
               href="/contact"
               className="text-sm font-medium text-white/90 transition-colors hover:text-emerald-400"
             >
               Contact
+            </Link>
+            <Link
+              href="/aboutUs"
+              className="text-sm font-medium text-white/90 transition-colors hover:text-emerald-400"
+            >
+              About us
             </Link>
           </nav>
 
@@ -179,13 +173,6 @@ export default function Navbar() {
               Pricing
             </Link>
             <Link
-              href="/courses"
-              className="text-lg font-medium text-white transition-colors hover:text-emerald-400"
-              onClick={() => setIsOpen(false)}
-            >
-              Courses
-            </Link>
-            <Link
               href="/tools"
               className="text-lg font-medium text-white transition-colors hover:text-emerald-400"
               onClick={() => setIsOpen(false)}
@@ -193,18 +180,18 @@ export default function Navbar() {
               Tools
             </Link>
             <Link
-              href="/resources"
-              className="text-lg font-medium text-white transition-colors hover:text-emerald-400"
-              onClick={() => setIsOpen(false)}
-            >
-              Resources
-            </Link>
-            <Link
               href="/contact"
               className="text-lg font-medium text-white transition-colors hover:text-emerald-400"
               onClick={() => setIsOpen(false)}
             >
               Contact
+            </Link>
+            <Link
+              href="/aboutUs"
+              className="text-lg font-medium text-white transition-colors hover:text-emerald-400"
+              onClick={() => setIsOpen(false)}
+            >
+              About us
             </Link>
             <div className="flex flex-col space-y-4 pt-6">
               <Button
