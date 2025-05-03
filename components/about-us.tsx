@@ -12,7 +12,7 @@ const fadeUp = {
 
 export default function AboutUsSection() {
   return (
-    <section className="relative z-30 flex flex-col items-center justify-center overflow-hidden px-4 py-16 text-white sm:px-6 sm:py-20 md:px-8 md:py-24">
+    <section className="relative z-30 flex flex-col items-center justify-center overflow-hidden px-4 text-white sm:px-6 sm:py-20 md:px-8 md:py-24">
       <div className="absolute left-0 top-32 -z-30 hidden h-56 w-56 rounded-full bg-emerald-500 opacity-30 blur-3xl sm:h-72 sm:w-72 md:visible"></div>
       <div className="absolute bottom-0 right-0 -z-30 hidden h-72 w-72 rounded-full bg-orange-800 opacity-30 blur-3xl sm:h-96 sm:w-96 md:visible"></div>
 
@@ -23,11 +23,11 @@ export default function AboutUsSection() {
         variants={fadeUp}
         className="w-full max-w-6xl space-y-8 text-center sm:space-y-10"
       >
-        <h2 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
+        <h2 className="text-3xl font-bold text-white sm:text-4xl md:text-5xl">
           About Us
         </h2>
 
-        <p className="px-2 text-base font-light text-gray-300 sm:px-6 sm:text-lg md:text-2xl">
+        <p className="px-2 text-xl text-gray-300 text-white/70 sm:px-6 sm:text-lg md:text-2xl">
           At <span className="font-semibold text-emerald-400">scaninfoga</span>,
           we specialize in protecting businesses from cyber threats through
           advanced penetration testing and tailored security strategies. Our
@@ -36,7 +36,7 @@ export default function AboutUsSection() {
           organization.
         </p>
 
-        <p className="px-2 text-base font-light text-gray-300 sm:px-6 sm:text-lg md:text-2xl">
+        <p className="px-2 text-xl text-gray-300 text-white/70 sm:px-6 sm:text-lg md:text-2xl">
           We empower businesses to operate confidently, knowing they are
           safeguarded by cutting-edge solutions designed to stay ahead of the
           ever-changing cyber landscape.
@@ -49,7 +49,7 @@ export default function AboutUsSection() {
           whileInView="show"
           viewport={{ once: true }}
           variants={fadeUp}
-          className="text-2xl font-semibold tracking-wide sm:text-3xl md:text-4xl"
+          className="text-3xl font-bold text-white sm:text-4xl md:text-5xl"
         >
           Why Choose Us?
         </motion.h3>
@@ -59,23 +59,23 @@ export default function AboutUsSection() {
           whileInView="show"
           viewport={{ once: true }}
           variants={fadeUp}
-          className="space-y-6 px-4 text-left text-base text-gray-300 sm:space-y-8 sm:text-lg md:text-2xl"
+          className="space-y-6 px-4 text-left text-base text-gray-300 text-white/70 sm:space-y-8 sm:text-lg md:text-2xl"
         >
           <li>
-            <strong className="text-white">🔒 Expertise You Can Trust:</strong>{' '}
+            <strong className="text-white/90">🔒 Expertise You Can Trust:</strong>{' '}
             Certified penetration testers with hands-on experience securing
             systems, applications, and networks.
           </li>
           <li>
-            <strong className="text-white">🧩 Tailored Services:</strong>{' '}
+            <strong className="text-white/90">🧩 Tailored Services:</strong>{' '}
             Customized testing to suit your organization’s specific needs.
           </li>
           <li>
-            <strong className="text-white">📊 Comprehensive Reporting:</strong>{' '}
+            <strong className="text-white/90">📊 Comprehensive Reporting:</strong>{' '}
             Clear, actionable insights with mitigation strategies.
           </li>
           <li>
-            <strong className="text-white">
+            <strong className="text-white/90">
               ⚙️ Cutting-Edge Tools and Techniques:
             </strong>{' '}
             We use modern tools, methodologies, and best practices to deliver
@@ -90,7 +90,7 @@ export default function AboutUsSection() {
           whileInView="show"
           viewport={{ once: true }}
           variants={fadeUp}
-          className="text-2xl font-semibold sm:text-3xl md:text-4xl"
+          className="text-3xl font-bold text-white sm:text-4xl md:text-5xl"
         >
           Meet the Team
         </motion.h3>

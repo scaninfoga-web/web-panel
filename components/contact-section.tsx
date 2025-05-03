@@ -9,7 +9,7 @@ export default function ContactSection() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
-        className="z-50 pt-10 text-8xl font-semibold text-emerald-500"
+        className="z-30 pt-8 text-5xl font-semibold text-emerald-500 sm:text-4xl md:text-7xl"
       >
         Feel Free
       </motion.div>
@@ -17,7 +17,7 @@ export default function ContactSection() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5 }}
-        className="z-50 pt-4 text-4xl"
+        className="z-30 pt-4 text-2xl font-bold text-white md:text-3xl"
       >
         To Contact Us
       </motion.div>

@@ -77,7 +77,7 @@ export default function ServicesSection() {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.6, ease: 'easeOut' }}
-        className="text-3xl md:text-5xl font-extrabold"
+        className="text-2xl md:text-4xl font-extrabold"
       >
         Services
       </motion.div>
@@ -86,7 +86,7 @@ export default function ServicesSection() {
         variants={containerVariants}
         initial="hidden"
         animate="show"
-        className="grid grid-cols-1 gap-x-4 gap-y-20 md:grid-cols-2 lg:grid-cols-3"
+        className="grid grid-cols-1 gap-x-4 gap-y-10 md:gap-y-20 md:grid-cols-2 lg:grid-cols-3"
       >
         {services.map((service, index) => (
           <motion.div key={index} variants={cardVariants}>

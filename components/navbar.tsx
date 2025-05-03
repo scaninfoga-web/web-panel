@@ -54,37 +54,37 @@ export default function Navbar() {
           <nav className="hidden items-center space-x-8 md:flex">
             <Link
               href="/"
-              className="text-sm font-medium text-white/90 transition-colors hover:text-emerald-400"
+              className="text-base font-medium text-white/90 transition-colors hover:text-emerald-400"
             >
               Home
             </Link>
             <Link
               href="/services"
-              className="text-sm font-medium text-white/90 transition-colors hover:text-emerald-400"
+              className="text-base font-medium text-white/90 transition-colors hover:text-emerald-400"
             >
               Services
             </Link>
             <Link
               href="/pricing"
-              className="text-sm font-medium text-white/90 transition-colors hover:text-emerald-400"
+              className="text-base font-medium text-white/90 transition-colors hover:text-emerald-400"
             >
               Pricing
             </Link>
             <Link
               href="/tools"
-              className="text-sm font-medium text-white/90 transition-colors hover:text-emerald-400"
+              className="text-base font-medium text-white/90 transition-colors hover:text-emerald-400"
             >
               Tools
             </Link>
             <Link
               href="/contact"
-              className="text-sm font-medium text-white/90 transition-colors hover:text-emerald-400"
+              className="text-base font-medium text-white/90 transition-colors hover:text-emerald-400"
             >
               Contact
             </Link>
             <Link
               href="/aboutUs"
-              className="text-sm font-medium text-white/90 transition-colors hover:text-emerald-400"
+              className="text-base font-medium text-white/90 transition-colors hover:text-emerald-400"
             >
               About us
             </Link>
