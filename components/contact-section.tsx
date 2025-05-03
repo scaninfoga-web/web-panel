@@ -1,7 +1,7 @@
-"use client"
+'use client';
 import React from 'react';
 import CTA from '@/components/cta';
-import {motion} from "framer-motion"
+import { motion } from 'framer-motion';
 export default function ContactSection() {
   return (
     <main className="flex min-h-screen flex-col items-center pt-20">

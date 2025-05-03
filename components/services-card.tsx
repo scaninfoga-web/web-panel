@@ -2,7 +2,14 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from './ui/card';
 import { Button } from './ui/button';
 
 interface PageProps {
@@ -17,7 +24,9 @@ export default function ServicesCard({ Svg, title, description }: PageProps) {
       <Card className="group flex h-full flex-col border-gray-800 bg-gray-900/50 transition-all duration-300 hover:border-emerald-500/50">
         <CardHeader>
           <CardTitle className="flex items-center space-x-2 text-xl font-bold text-white transition-colors duration-300 group-hover:text-emerald-400">
-            <span className='group-hover:-rotate-45 transition-all duration-500'>{Svg}</span>
+            <span className="transition-all duration-500 group-hover:-rotate-45">
+              {Svg}
+            </span>
             <span>{title}</span>
           </CardTitle>
           <CardDescription className="text-white/70">

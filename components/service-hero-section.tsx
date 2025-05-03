@@ -61,7 +61,7 @@ export default function ServiceHeroSection() {
           variants={item}
           className="group z-20 pt-16 text-2xl font-extralight opacity-70 hover:cursor-pointer"
         >
-          <span className="bg-emerald-500 px-4 md:px-10 py-3 font-semibold text-black transition-opacity duration-500 group-hover:opacity-50">
+          <span className="bg-emerald-500 px-4 py-3 font-semibold text-black transition-opacity duration-500 group-hover:opacity-50 md:px-10">
             Talk To An Expert
           </span>
         </motion.a>

@@ -62,7 +62,9 @@ export default function AboutUsSection() {
           className="space-y-6 px-4 text-left text-base text-gray-300 text-white/70 sm:space-y-8 sm:text-lg md:text-2xl"
         >
           <li>
-            <strong className="text-white/90">🔒 Expertise You Can Trust:</strong>{' '}
+            <strong className="text-white/90">
+              🔒 Expertise You Can Trust:
+            </strong>{' '}
             Certified penetration testers with hands-on experience securing
             systems, applications, and networks.
           </li>
@@ -71,7 +73,9 @@ export default function AboutUsSection() {
             Customized testing to suit your organization’s specific needs.
           </li>
           <li>
-            <strong className="text-white/90">📊 Comprehensive Reporting:</strong>{' '}
+            <strong className="text-white/90">
+              📊 Comprehensive Reporting:
+            </strong>{' '}
             Clear, actionable insights with mitigation strategies.
           </li>
           <li>
