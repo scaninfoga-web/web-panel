@@ -59,6 +59,12 @@ export default function Navbar() {
               Home
             </Link>
             <Link
+              href="/tools"
+              className="text-base font-medium text-white/90 transition-colors hover:text-emerald-400"
+            >
+              Tools
+            </Link>
+            <Link
               href="/services"
               className="text-base font-medium text-white/90 transition-colors hover:text-emerald-400"
             >
@@ -70,12 +76,7 @@ export default function Navbar() {
             >
               Pricing
             </Link>
-            <Link
-              href="/tools"
-              className="text-base font-medium text-white/90 transition-colors hover:text-emerald-400"
-            >
-              Tools
-            </Link>
+
             <Link
               href="/contact"
               className="text-base font-medium text-white/90 transition-colors hover:text-emerald-400"
@@ -159,6 +160,13 @@ export default function Navbar() {
               Home
             </Link>
             <Link
+              href="/tools"
+              className="text-lg font-medium text-white transition-colors hover:text-emerald-400"
+              onClick={() => setIsOpen(false)}
+            >
+              Tools
+            </Link>
+            <Link
               href="/services"
               className="text-lg font-medium text-white transition-colors hover:text-emerald-400"
               onClick={() => setIsOpen(false)}
@@ -172,13 +180,7 @@ export default function Navbar() {
             >
               Pricing
             </Link>
-            <Link
-              href="/tools"
-              className="text-lg font-medium text-white transition-colors hover:text-emerald-400"
-              onClick={() => setIsOpen(false)}
-            >
-              Tools
-            </Link>
+
             <Link
               href="/contact"
               className="text-lg font-medium text-white transition-colors hover:text-emerald-400"

@@ -13,6 +13,8 @@ import { useEffect, useState } from 'react';
 import { setCredentials } from '@/redux/userSlice';
 import { useDispatch } from 'react-redux';
 import { clearCookies } from '@/actions/clearCookies';
+import { GoogleLogin } from '@react-oauth/google';
+import { useAuth } from '@/components/providers/AuthProvider';
 
 // Base schema for common fields
 const baseSchema = {
@@ -61,6 +63,7 @@ export function Register({ type: initialType }: RegisterProps) {
   const [type, setType] = useState<RegistrationType>(initialType);
   const router = useRouter();
   const dispatch = useDispatch();
+  const { login } = useAuth();
 
   const schema =
     type === 'corporate'
@@ -81,6 +84,27 @@ export function Register({ type: initialType }: RegisterProps) {
     },
   });
 
+  // to check password strenght
+  const passwordValue = form.watch('password') || '';
+
+  const getStrength = (pwd: string) => {
+    let score = 0;
+    if (pwd.length > 5) score++;
+    if (/[A-Z]/.test(pwd)) score++;
+    if (/[0-9]/.test(pwd)) score++;
+    if (/[^A-Za-z0-9]/.test(pwd)) score++;
+    return score;
+  };
+
+  const strength = getStrength(passwordValue);
+  const strengthColors = [
+    'bg-red-500',
+    'bg-yellow-500',
+    'bg-blue-500',
+    'bg-green-500',
+  ];
+  const strengthLabels = ['Very Weak', 'Weak', 'Good', 'Strong'];
+
   // Reset form when type changes
   useEffect(() => {
     form.reset({
@@ -92,6 +116,43 @@ export function Register({ type: initialType }: RegisterProps) {
       ...(type === 'corporate' ? { domain: '', company: '' } : {}),
     });
   }, [type, form]);
+
+  const handleGoogleSuccess = async (credentialResponse: any) => {
+    try {
+      console.log('Credential Response:', credentialResponse);
+
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/google/`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+          },
+          body: JSON.stringify({
+            idToken: credentialResponse.credential,
+            backend: 'google-oauth2',
+            grant_type: 'convert_token',
+          }),
+        },
+      );
+
+      const data = await response.json();
+      console.log('Backend Response:', data);
+
+      if (data.responseStatus?.status) {
+        login(data.responseData.token);
+        toast.success('Logged in successfully!');
+        router.push('/combinedDash');
+      } else {
+        console.error('Authentication failed:', data.responseStatus?.message);
+        toast.error('Login failed. Check your credentials and try again.');
+      }
+    } catch (error) {
+      console.error('Authentication error:', error);
+      toast.error('Login failed. Check your credentials and try again.');
+    }
+  };
 
   const onSubmit = async (data: any) => {
     try {
@@ -152,7 +213,7 @@ export function Register({ type: initialType }: RegisterProps) {
             }`}
             onClick={() => setType('normal')}
           >
-            User
+            Agent
           </button>
           <button
             type="button"
@@ -198,9 +259,9 @@ export function Register({ type: initialType }: RegisterProps) {
           <FormInput
             form={form}
             name="email"
-            label="Email"
+            label="Secure email ID"
             type="email"
-            placeholder="Enter your email"
+            placeholder="Enter your email address encrypted"
           />
 
           {type === 'corporate' && (
@@ -224,7 +285,7 @@ export function Register({ type: initialType }: RegisterProps) {
           <FormInput
             form={form}
             name="password"
-            label="Password"
+            label="Enter passkey"
             type="password"
             placeholder="Enter your password"
           />
@@ -232,18 +293,48 @@ export function Register({ type: initialType }: RegisterProps) {
           <FormInput
             form={form}
             name="confirmPassword"
-            label="Confirm Password"
+            label="Confirm passkey"
             type="password"
             placeholder="Confirm your password"
           />
         </div>
+        {passwordValue && (
+          <div className="space-y-1">
+            <div className="flex h-2 gap-2">
+              {[0, 1, 2, 3].map((i) => (
+                <div
+                  key={i}
+                  className={`flex-1 rounded transition-all duration-300 ${
+                    strength > i ? strengthColors[strength - 1] : 'bg-gray-300'
+                  }`}
+                />
+              ))}
+            </div>
+            <p className="text-sm text-gray-400">
+              Encryption Level: {strengthLabels[strength - 1] || 'Very Weak'}
+            </p>
+          </div>
+        )}
 
         <Button
           type="submit"
           className="w-full bg-emerald-500 text-black hover:bg-emerald-400"
         >
-          Register
+          Request Authorization
         </Button>
+
+        {type === 'normal' ? (
+          <>
+            <div className="my-4 text-center text-gray-300">OR</div>
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={() => console.error('Login Failed')}
+              theme="filled_black"
+              text="signin_with"
+              shape="rectangular"
+            />
+          </>
+        ) : null}
       </form>
     </Form>
   );

@@ -184,9 +184,13 @@ export default function AuthPage() {
                   exit={{ opacity: 0, y: 20 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <h2 className="mb-6 text-center text-2xl font-bold text-white">
-                    Login
-                  </h2>
+                  <span className="flex items-center justify-center text-3xl font-bold tracking-tight">
+                    <span className="text-emerald-500">scan</span>
+                    <span>infoga</span>
+                  </span>
+                  <div className="mb-10 mt-2 w-full text-center text-lg text-white/80">
+                    access the Scaninfoga Intelligence of Investigation portal
+                  </div>
                   {/* <form className="space-y-4" onSubmit={handleLoginSubmit(onLogin)}>
                     <input
                       type="email"
@@ -212,16 +216,9 @@ export default function AuthPage() {
                     </button>
                   </form> */}
                   <Login />
-                  <div className="my-4 text-center text-gray-300">OR</div>
-                  <GoogleLogin
-                    onSuccess={handleGoogleSuccess}
-                    onError={() => console.error('Login Failed')}
-                    theme="filled_black"
-                    text="signin_with"
-                    shape="rectangular"
-                  />
+
                   <div className="mt-6 text-center">
-                    <span className="text-gray-400">New user? </span>
+                    <span className="text-gray-400">New credentials? </span>
                     <button
                       className="text-emerald-500 hover:underline"
                       onClick={() => setIsRegistering(true)}
@@ -229,6 +226,10 @@ export default function AuthPage() {
                       Register
                     </button>
                   </div>
+
+                  <span className="mt-8 flex w-full items-center justify-center text-center text-gray-400">
+                    connection is secured using AES-256 encryption
+                  </span>
                 </motion.div>
               ) : (
                 <motion.div
@@ -238,21 +239,18 @@ export default function AuthPage() {
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <h2 className="mb-6 text-center text-2xl font-bold text-white">
-                    Register
-                  </h2>
+                  <span className="flex items-center justify-center text-3xl font-bold tracking-tight">
+                    <span className="text-emerald-500">scan</span>
+                    <span>infoga</span>
+                  </span>
+                  <div className="mb-10 mt-2 w-full text-center text-lg text-white/80">
+                    access the Scaninfoga Intelligence of Investigation portal
+                  </div>
                   <Register type="normal" />
-                  <div className="my-4 text-center text-gray-300">OR</div>
-                  <GoogleLogin
-                    onSuccess={handleGoogleSuccess}
-                    onError={() => console.error('Login Failed')}
-                    theme="filled_black"
-                    text="signin_with"
-                    shape="rectangular"
-                  />
+
                   <div className="mt-6 text-center">
                     <span className="text-gray-400">
-                      Already have an account?{' '}
+                      Already have an credentials?{' '}
                     </span>
                     <button
                       className="text-emerald-500 hover:underline"
@@ -261,6 +259,10 @@ export default function AuthPage() {
                       Login
                     </button>
                   </div>
+
+                  <span className="mt-8 flex w-full items-center justify-center text-center text-gray-400">
+                    connection is secured using AES-256 encryption
+                  </span>
                 </motion.div>
               )}
             </AnimatePresence>
