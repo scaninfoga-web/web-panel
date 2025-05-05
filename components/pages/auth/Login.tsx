@@ -23,7 +23,7 @@ const loginSchema = z.object({
 type LoginFormValues = z.infer<typeof loginSchema>;
 
 const userTypeOptions = [
-  { label: 'User', value: 'user' },
+  { label: 'Agent', value: 'user' },
   { label: 'Corporate', value: 'corporate' },
   { label: 'Developer', value: 'developer' },
 ];
