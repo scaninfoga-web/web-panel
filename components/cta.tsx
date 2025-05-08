@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-duplicate-props */
 'use client';
 
 import { motion } from 'framer-motion';

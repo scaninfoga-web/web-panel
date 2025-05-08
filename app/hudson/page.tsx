@@ -59,7 +59,7 @@ import { SearchBar2 } from '@/components/search/SearchBar2';
 import { ContactInfo } from '@/components/pages/dashboard/components/ContactInfo';
 import { EmailInfo } from '@/components/pages/dashboard/components/EmailInfo';
 
-export default function page() {
+export default function Page() {
   const user = useAppSelector((state) => state.user);
   const [activeTab, setActiveTab] = useState('Detection 1');
   const [hudsonData, setHudsonData] = useState<HudsonResponseType | null>(
