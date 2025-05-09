@@ -249,7 +249,7 @@ const Login = () => {
             </Button>
           </form>
 
-          {userType === 'user' && (
+          {/* {userType === 'user' && (
             <GoogleLogin
               onSuccess={handleGoogleSuccess}
               onError={() => console.error('Login Failed')}
@@ -257,7 +257,7 @@ const Login = () => {
               text="signin_with"
               shape="rectangular"
             />
-          )}
+          )} */}
         </Form>
       </GoogleOAuthProvider>
     </div>

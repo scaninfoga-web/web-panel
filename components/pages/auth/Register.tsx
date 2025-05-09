@@ -339,7 +339,7 @@ export function Register({ type: initialType }: RegisterProps) {
           Request Authorization
         </Button>
 
-        {type === 'normal' ? (
+        {/* {type === 'normal' ? (
           <>
             <div className="my-4 text-center text-gray-300">OR</div>
             <GoogleLogin
@@ -350,7 +350,7 @@ export function Register({ type: initialType }: RegisterProps) {
               shape="rectangular"
             />
           </>
-        ) : null}
+        ) : null} */}
       </form>
     </Form>
   );
