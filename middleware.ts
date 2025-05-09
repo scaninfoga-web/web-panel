@@ -23,10 +23,6 @@ export async function middleware(request: NextRequest) {
     }
     return NextResponse.redirect(new URL('/auth', request.url));
   }
-  // Authenticated users should not access public routes
-  if (pathname === '/' || pathname.startsWith('/auth')) {
-    return NextResponse.redirect(new URL('/combinedDash', request.url));
-  }
 
   return NextResponse.next();
 }

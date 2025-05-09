@@ -17,6 +17,7 @@ import { clearCookies } from '@/actions/clearCookies';
 import { useState } from 'react';
 import Image from 'next/image';
 import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
+import { setCookie, getCookie, deleteCookie } from 'cookies-next';
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -161,28 +162,31 @@ const Login = () => {
         alert('QR CODE');
 
         setQrCode(responseData.qr_code);
-      }
-      const { user } = responseData;
+      } else {
+        const { user } = responseData;
 
-      // You will need to manually fetch the cookie for token
-      const res = await axios.get(`/api/get/tokens`, {
-        withCredentials: true,
-      });
-      const tokens = res.data;
-      if (tokens && tokens.accessToken && tokens.refreshToken) {
+        // You will need to manually fetch the cookie for token
+        // const res = await axios.get(`/api/get/tokens`, {
+        //   withCredentials: true,
+        // });
+        // const tokens = res.data;
+        // console.log("TOKENS",tokens)
+        // if (tokens && tokens.accessToken && tokens.refreshToken) {
+        setCookie('accessToken', '121212');
         dispatch(
           setCredentials({
-            token: tokens.accessToken,
-            refreshToken: tokens.refreshToken,
+            token: '212',
+            refreshToken: '123',
             user,
           }),
         );
         toast.success('Logged in successfully!', { duration: 800 });
-        return router.push('/combinedDash');
+        router.push('/combinedDash');
+        router.refresh();
+        // }
       }
-      return await clearCookies();
     } catch (error) {
-      await clearCookies();
+      // await clearCookies();
       toast.error('Login failed. Check your credentials and try again.');
       console.error(error);
     }
