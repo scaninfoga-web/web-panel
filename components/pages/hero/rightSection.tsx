@@ -1,127 +1,16 @@
-'use client';
+"use client"
 
-import { useState, useEffect } from 'react';
+import React from 'react'
 import { motion } from 'framer-motion';
-import { Button } from '@/components/ui/button';
 import { Shield, Lock, Database, Code } from 'lucide-react';
 
-export default function Hero() {
-  const [typedText, setTypedText] = useState('');
-  const [typedHeading, setTypedHeading] = useState('');
-  const fullText = 'Secure. Protect. Defend.';
-  const fullHeading = 'Protecting Your Digital Assets in a Connected World';
-
-  useEffect(() => {
-    // Original typing animation
-    let currentIndex = 0;
-    const typingInterval = setInterval(() => {
-      if (currentIndex <= fullText.length) {
-        setTypedText(fullText.slice(0, currentIndex));
-        currentIndex++;
-      } else {
-        clearInterval(typingInterval);
-
-        // Reset after a pause
-        setTimeout(() => {
-          currentIndex = 0;
-          const resetInterval = setInterval(() => {
-            if (currentIndex <= fullText.length) {
-              setTypedText(fullText.slice(0, currentIndex));
-              currentIndex++;
-            } else {
-              clearInterval(resetInterval);
-            }
-          }, 100);
-        }, 2000);
-      }
-    }, 100);
-
-    // Heading typing animation - starts after a delay
-    setTimeout(() => {
-      let headingIndex = 0;
-      const headingInterval = setInterval(() => {
-        if (headingIndex <= fullHeading.length) {
-          setTypedHeading(fullHeading.slice(0, headingIndex));
-          headingIndex++;
-        } else {
-          clearInterval(headingInterval);
-        }
-      }, 50); // Faster typing for the heading
-
-      return () => clearInterval(headingInterval);
-    }, 500); // Start after a short delay
-
-    return () => clearInterval(typingInterval);
-  }, []);
-
+const RightSection = () => {
   return (
-    <section className="relative overflow-hidden pb-16 pt-32 md:pb-24 md:pt-40">
-      <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="space-y-6"
-          >
-            <div className="inline-block rounded-full border border-emerald-500/20 bg-emerald-500/10 px-4 py-1.5 text-sm font-medium text-emerald-500">
-              Leading Cybersecurity Solutions
-            </div>
-            <h1 className="min-h-[180px] text-4xl font-bold tracking-tight md:min-h-[220px] md:text-5xl lg:text-6xl">
-              {typedHeading.includes('Digital') ? (
-                <>
-                  {typedHeading.split('Digital')[0]}Digital <br />
-                  {typedHeading.includes('Assets') ? (
-                    <>
-                      <span className="text-emerald-500">Assets</span>
-                      {typedHeading.includes('Assets in') ? (
-                        <>
-                          {' in '}
-                          <br />
-                          {typedHeading.split('Assets in ')[1]}
-                        </>
-                      ) : (
-                        ''
-                      )}
-                    </>
-                  ) : (
-                    ''
-                  )}
-                </>
-              ) : (
-                typedHeading
-              )}
-              <span className="animate-pulse">|</span>
-            </h1>
-            <p className="max-w-lg text-xl text-white/70">
-              Comprehensive cybersecurity services, education, and tools to
-              defend against evolving threats.
-            </p>
-            <div className="h-8 font-mono text-xl text-emerald-400">
-              &gt; {typedText}
-              <span className="animate-pulse">_</span>
-            </div>
-            <div className="flex flex-wrap gap-4 pt-2">
-              <Button
-                size="lg"
-                className="bg-emerald-500 text-black hover:bg-emerald-600"
-              >
-                Explore Services
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="border-emerald-500/50 text-emerald-400 hover:border-emerald-500 hover:bg-emerald-500/10 hover:text-emerald-300"
-              >
-                Learn More
-              </Button>
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
+    <div>
+                <motion.div
+            initial={{ opacity: 0, scale: 0, x: -1000 }}
+            animate={{ opacity: 1, scale: 1, x: 0 }}
+            transition={{ duration: 0.4 }}
             className="relative"
           >
             <div className="relative h-[400px] w-full overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-emerald-500/20 to-cyan-500/20 md:h-[500px]">
@@ -266,8 +155,8 @@ export default function Hero() {
             <div className="absolute -bottom-6 -right-6 h-32 w-32 rounded-full bg-emerald-500/30 blur-3xl"></div>
             <div className="absolute -left-6 -top-6 h-24 w-24 rounded-full bg-cyan-500/20 blur-2xl"></div>
           </motion.div>
-        </div>
-      </div>
-    </section>
-  );
+    </div>
+  )
 }
+
+export default RightSection

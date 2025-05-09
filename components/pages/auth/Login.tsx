@@ -1,3 +1,5 @@
+'use client';
+
 import { useForm } from 'react-hook-form';
 import { date, z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -12,12 +14,15 @@ import { FormInput } from '@/components/ui/form-input';
 import { FormRadioGroup } from '@/components/ui/form-radio-group';
 import { setCredentials } from '@/redux/userSlice';
 import { clearCookies } from '@/actions/clearCookies';
-import { GoogleLogin } from '@react-oauth/google';
+import { useState } from 'react';
+import Image from 'next/image';
+import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
   userType: z.enum(['user', 'corporate', 'developer']),
+  otp: z.string().optional(),
 });
 
 type LoginFormValues = z.infer<typeof loginSchema>;
@@ -79,6 +84,46 @@ const Login = () => {
     }
   };
 
+  const userType = form.watch('userType');
+
+  // const handleGoogleSuccess = async (credentialResponse: any) => {
+  //   try {
+  //     console.log('Credential Response:', credentialResponse);
+
+  //     const response = await fetch(
+  //       `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/google/`,
+  //       {
+  //         method: 'POST',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //           Accept: 'application/json',
+  //         },
+  //         body: JSON.stringify({
+  //           idToken: credentialResponse.credential,
+  //           backend: 'google-oauth2',
+  //           grant_type: 'convert_token',
+  //         }),
+  //       },
+  //     );
+
+  //     const data = await response.json();
+
+  //     if (data.responseStatus?.status) {
+  //       login(data.responseData.token);
+  //       toast.success('Logged in successfully!');
+  //       router.push('/combinedDash');
+  //     } else {
+  //       console.error('Authentication failed:', data.responseStatus?.message);
+  //       toast.error('Login failed. Check your credentials and try again.');
+  //     }
+  //   } catch (error) {
+  //     console.error('Authentication error:', error);
+  //     toast.error('Login failed. Check your credentials and try again.');
+  //   }
+  // };
+
+  const [qrCode, setQrCode] = useState<string | null>(null);
+
   const onLogin = async (data: LoginFormValues) => {
     try {
       const response = await axios.post(
@@ -93,6 +138,13 @@ const Login = () => {
       );
 
       const { responseData } = response.data;
+
+      if (responseData.qr_code) {
+        console.log('QR CODE');
+        alert('QR CODE');
+
+        setQrCode(responseData.qr_code);
+      }
       const { user } = responseData;
 
       // You will need to manually fetch the cookie for token
@@ -119,53 +171,82 @@ const Login = () => {
     }
   };
 
+  // if(qrCode){
+  //   return (
+
+  //   )
+  // }
   return (
     <div className="w-full space-y-6">
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onLogin)} className="space-y-4">
-          <FormRadioGroup
-            form={form}
-            name="userType"
-            label="Account Type"
-            options={userTypeOptions}
-          />
+      <GoogleOAuthProvider
+        clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || ''}
+      >
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onLogin)} className="space-y-4">
+            <FormRadioGroup
+              form={form}
+              name="userType"
+              label="Account Type"
+              options={userTypeOptions}
+            />
 
-          <FormInput
-            form={form}
-            name="email"
-            label="Agent ID"
-            type="email"
-            placeholder="Enter your email ID"
-          />
+            <FormInput
+              form={form}
+              name="email"
+              label="Email"
+              type="email"
+              placeholder="Enter your email"
+            />
 
-          <FormInput
-            form={form}
-            name="password"
-            label="Encrypted passkey"
-            type="password"
-            placeholder="Enter your secure passkey"
-          />
+            <FormInput
+              form={form}
+              name="password"
+              label="Password"
+              type="password"
+              placeholder="Enter your password"
+            />
 
-          <Button
-            type="submit"
-            className="w-full bg-emerald-500 text-black hover:bg-emerald-400"
-          >
-            Access System
-          </Button>
-          {currentType === 'user' ? (
-            <>
-              <div className="my-4 text-center text-gray-300">OR</div>
+            {qrCode && (
+              <>
+                <Image
+                  src={`data:image/png;base64,${qrCode}`}
+                  alt="QR Code"
+                  width={200}
+                  height={200}
+                />
+                <FormInput
+                  form={form}
+                  name="otp"
+                  label="OTP"
+                  type="text"
+                  placeholder="Enter OTP"
+                />
+              </>
+            )}
+
+            <Button
+              type="submit"
+              className="w-full bg-emerald-500 text-black hover:bg-emerald-400"
+            >
+              Login
+            </Button>
+          </form>
+
+          {
+            userType === 'user' && (
               <GoogleLogin
-                onSuccess={handleGoogleSuccess}
-                onError={() => console.error('Login Failed')}
-                theme="filled_black"
-                text="signin_with"
-                shape="rectangular"
-              />
-            </>
-          ) : null}
-        </form>
-      </Form>
+              onSuccess={handleGoogleSuccess}
+              onError={() => console.error('Login Failed')}
+              theme="filled_black"
+              text="signin_with"
+              shape="rectangular"
+            />
+            )
+          }
+
+         
+        </Form>
+      </GoogleOAuthProvider>
     </div>
   );
 };

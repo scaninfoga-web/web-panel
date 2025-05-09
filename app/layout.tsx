@@ -3,6 +3,7 @@ import './globals.css';
 import axios from 'axios';
 
 import { Providers } from './provider';
+import Navbar from '@/components/navbar';
 
 export const metadata: Metadata = {
   title: 'Scaninfoga App',
@@ -19,7 +20,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <Providers>{children}</Providers>
+        <Providers>
+          <Navbar />
+          {children}
+          </Providers>
       </body>
     </html>
   );

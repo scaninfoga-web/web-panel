@@ -107,42 +107,41 @@ export default function AuthPage() {
 
   const { login } = useAuth();
 
-  const handleGoogleSuccess = async (credentialResponse: any) => {
-    try {
-      console.log('Credential Response:', credentialResponse);
+  // const handleGoogleSuccess = async (credentialResponse: any) => {
+  //   try {
+  //     console.log('Credential Response:', credentialResponse);
 
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/google/`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-          },
-          body: JSON.stringify({
-            idToken: credentialResponse.credential,
-            backend: 'google-oauth2',
-            grant_type: 'convert_token',
-          }),
-        },
-      );
+  //     const response = await fetch(
+  //       `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/google/`,
+  //       {
+  //         method: 'POST',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //           Accept: 'application/json',
+  //         },
+  //         body: JSON.stringify({
+  //           idToken: credentialResponse.credential,
+  //           backend: 'google-oauth2',
+  //           grant_type: 'convert_token',
+  //         }),
+  //       },
+  //     );
 
-      const data = await response.json();
-      console.log('Backend Response:', data);
+  //     const data = await response.json();
 
-      if (data.responseStatus?.status) {
-        login(data.responseData.token);
-        toast.success('Logged in successfully!');
-        router.push('/combinedDash');
-      } else {
-        console.error('Authentication failed:', data.responseStatus?.message);
-        toast.error('Login failed. Check your credentials and try again.');
-      }
-    } catch (error) {
-      console.error('Authentication error:', error);
-      toast.error('Login failed. Check your credentials and try again.');
-    }
-  };
+  //     if (data.responseStatus?.status) {
+  //       login(data.responseData.token);
+  //       toast.success('Logged in successfully!');
+  //       router.push('/combinedDash');
+  //     } else {
+  //       console.error('Authentication failed:', data.responseStatus?.message);
+  //       toast.error('Login failed. Check your credentials and try again.');
+  //     }
+  //   } catch (error) {
+  //     console.error('Authentication error:', error);
+  //     toast.error('Login failed. Check your credentials and try again.');
+  //   }
+  // };
 
   const onLogin = async (payload: any) => {
     try {
@@ -216,7 +215,6 @@ export default function AuthPage() {
                     </button>
                   </form> */}
                   <Login />
-
                   <div className="mt-6 text-center">
                     <span className="text-gray-400">New credentials? </span>
                     <button
@@ -247,7 +245,6 @@ export default function AuthPage() {
                     access the Scaninfoga Intelligence of Investigation portal
                   </div>
                   <Register type="normal" />
-
                   <div className="mt-6 text-center">
                     <span className="text-gray-400">
                       Already have an credentials?{' '}
