@@ -62,7 +62,7 @@ interface RegisterProps {
 export function Register({ type: initialType }: RegisterProps) {
   const [type, setType] = useState<RegistrationType>(initialType);
   const router = useRouter();
-  const dispatch = useDispatch();
+
   const { login } = useAuth();
 
   const schema =
@@ -189,30 +189,16 @@ export function Register({ type: initialType }: RegisterProps) {
         },
       );
       const { responseData } = response.data;
-      const { user } = responseData;
-      const res = await axios.get(`/api/get/tokens`, {
-        withCredentials: true,
-      });
-      const tokens = res.data;
-      if (tokens && tokens.accessToken && tokens.refreshToken) {
-        dispatch(
-          setCredentials({
-            token: tokens.accessToken,
-            refreshToken: tokens.refreshToken,
-            user,
-          }),
-        );
-        toast.success('Logged in successfully!');
-        return router.push('/combinedDash');
+      if (responseData) {
+        toast.success('Successfully registered', { duration: 1000 });
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+        window.location.reload();
       }
-      return await clearCookies();
     } catch (error: any) {
-      await clearCookies();
       console.error('Registration error:', error);
-      toast.error(
-        error.response?.data?.message ||
-          'Registration failed. Please try again.',
-      );
+      toast.error('Email already exits ');
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      window.location.reload();
     }
   };
 
