@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Menu, X, Shield, User, ShoppingCart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useSelector } from 'react-redux';
 import { clearCookies } from '@/actions/clearCookies';
 import { useDispatch } from 'react-redux';
@@ -16,6 +16,16 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const user = useSelector((state: any) => state.user);
   const dispatch = useDispatch();
+  const pathname = usePathname();
+  const paths = [
+    '/',
+    '/services',
+    '/aboutUs',
+    '/contact',
+    '/pricing',
+    '/tools',
+    'auth',
+  ];
   console.log('USER', user);
 
   useEffect(() => {
@@ -132,6 +142,13 @@ export default function Navbar() {
                 onClick={() => router.push('/auth')}
               >
                 Get Started
+              </Button>
+            ) : paths.includes(pathname) ? (
+              <Button
+                className="bg-emerald-500 text-black hover:bg-emerald-600"
+                onClick={() => router.push('/dashboard')}
+              >
+                Go to dashoard
               </Button>
             ) : null}
           </div>

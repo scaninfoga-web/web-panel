@@ -119,8 +119,6 @@ export function Register({ type: initialType }: RegisterProps) {
 
   const handleGoogleSuccess = async (credentialResponse: any) => {
     try {
-      console.log('Credential Response:', credentialResponse);
-
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/google/`,
         {
@@ -139,6 +137,24 @@ export function Register({ type: initialType }: RegisterProps) {
 
       const data = await response.json();
       console.log('Backend Response:', data);
+
+      const res = await axios.get(`/api/get/tokens`, {
+        withCredentials: true,
+      });
+      const tokens = res.data;
+      console.log('TOKENS SET IS', tokens);
+      // if (tokens && tokens.accessToken && tokens.refreshToken) {
+      //   dispatch(
+      //     setCredentials({
+      //       token: tokens.accessToken,
+      //       refreshToken: tokens.refreshToken,
+      //       user,
+      //     }),
+      //   );
+      //   toast.success('Logged in successfully!');
+      //   return router.push('/combinedDash');
+      // }
+      // return await clearCookies();
 
       if (data.responseStatus?.status) {
         login(data.responseData.token);

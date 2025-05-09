@@ -37,6 +37,7 @@ const Login = () => {
   const router = useRouter();
   const { login } = useAuth();
   const dispatch = useDispatch();
+  const [qrCode, setQrCode] = useState<string | null>(null);
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -69,6 +70,24 @@ const Login = () => {
 
       const data = await response.json();
       console.log('Backend Response:', data);
+      const { user } = data.responseData;
+
+      const res = await axios.get(`/api/get/tokens`, {
+        withCredentials: true,
+      });
+      const tokens = res.data;
+      if (tokens && tokens.accessToken && tokens.refreshToken) {
+        dispatch(
+          setCredentials({
+            token: tokens.accessToken,
+            refreshToken: tokens.refreshToken,
+            user,
+          }),
+        );
+        toast.success('Logged in successfully!', { duration: 800 });
+        return router.push('/combinedDash');
+      }
+      return await clearCookies();
 
       if (data.responseStatus?.status) {
         login(data.responseData.token);
@@ -121,8 +140,6 @@ const Login = () => {
   //     toast.error('Login failed. Check your credentials and try again.');
   //   }
   // };
-
-  const [qrCode, setQrCode] = useState<string | null>(null);
 
   const onLogin = async (data: LoginFormValues) => {
     try {
@@ -232,19 +249,15 @@ const Login = () => {
             </Button>
           </form>
 
-          {
-            userType === 'user' && (
-              <GoogleLogin
+          {userType === 'user' && (
+            <GoogleLogin
               onSuccess={handleGoogleSuccess}
               onError={() => console.error('Login Failed')}
               theme="filled_black"
               text="signin_with"
               shape="rectangular"
             />
-            )
-          }
-
-         
+          )}
         </Form>
       </GoogleOAuthProvider>
     </div>
