@@ -9,16 +9,17 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useSelector, useDispatch } from 'react-redux';
 import { clearCookies } from '@/actions/clearCookies';
 import { logout } from '@/redux/userSlice';
+import { getCookie } from 'cookies-next';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [hasMounted, setHasMounted] = useState(false);
-
   const user = useSelector((state: any) => state.user);
   const dispatch = useDispatch();
   const pathname = usePathname();
   const router = useRouter();
+  const accessToken = getCookie('accessToken');
 
   const paths = [
     '/',
@@ -127,7 +128,7 @@ export default function Navbar() {
               variant="outline"
               className="border-emerald-500 text-emerald-500 hover:bg-emerald-500 hover:text-black"
               onClick={async () => {
-                if (user.token) {
+                if (accessToken || user.token) {
                   dispatch(logout());
                   await clearCookies();
                   return router.refresh();
@@ -135,7 +136,7 @@ export default function Navbar() {
                 router.push('/auth');
               }}
             >
-              {user.token ? 'Sign out' : 'Sign in'}
+              {accessToken ? 'Sign out' : 'Sign in'}
             </Button>
             {user.token ? (
               paths.includes(pathname) && (
