@@ -138,7 +138,7 @@ export default function Navbar() {
             >
               {accessToken ? 'Sign out' : 'Sign in'}
             </Button>
-            {user.token ? (
+            {accessToken ? (
               paths.includes(pathname) && (
                 <Button
                   className="bg-emerald-500 text-black hover:bg-emerald-600"
