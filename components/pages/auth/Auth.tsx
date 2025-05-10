@@ -153,7 +153,6 @@ export default function AuthPage() {
           withCredentials: true,
         },
       );
-
       toast.success('Logged in successfully!');
 
       router.push('/combinedDash');

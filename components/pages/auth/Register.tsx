@@ -198,7 +198,7 @@ export function Register({ type: initialType }: RegisterProps) {
       console.error('Registration error:', error);
       toast.error('Email already exits ');
       await new Promise((resolve) => setTimeout(resolve, 2000));
-      window.location.reload();
+      // window.location.reload();
     }
   };
 

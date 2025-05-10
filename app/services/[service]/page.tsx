@@ -8,6 +8,12 @@ interface PageProps {
   }>;
 }
 
+export async function generateStaticParams() {
+  return providedServices.map((service) => ({
+    service: service.title.toLowerCase().replace(/\s|_/g, ''),
+  }));
+}
+
 export default async function Page({ params }: PageProps) {
   const { service } = await params;
   const matchedService = providedServices.find((s) => {
