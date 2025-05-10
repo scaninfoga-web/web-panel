@@ -59,10 +59,10 @@ export default function ServiceHeroSection() {
         </motion.span>
         <motion.a
           variants={item}
-          className="group z-20 pt-16 text-2xl font-extralight opacity-70 hover:cursor-pointer"
+          className="group z-20 rounded-xl pt-16 text-2xl font-extralight opacity-70 hover:cursor-pointer"
         >
-          <span className="bg-emerald-500 px-4 py-3 font-semibold text-black transition-opacity duration-500 group-hover:opacity-50 md:px-10">
-            Talk To An Expert
+          <span className="rounded-xl bg-emerald-600 px-4 py-3 font-medium text-black transition-opacity duration-500 group-hover:opacity-50 md:px-10">
+            Talk to an expert
           </span>
         </motion.a>
       </motion.div>

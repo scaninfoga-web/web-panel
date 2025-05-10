@@ -70,6 +70,7 @@ export default function ServicesSection() {
       >
         {providedServices.map((service, index) => (
           <motion.div
+            whileHover={{ scale: 1.05 }}
             onClick={() => {
               router.push(
                 `/services/${service.title.replaceAll(/\s|_/g, '').toLowerCase()}`,

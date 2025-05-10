@@ -1,3 +1,4 @@
+import Footer from '@/components/footer';
 import FullServiceCard from '@/components/full-service-card';
 import { providedServices } from '@/lib/constant';
 import React from 'react';
@@ -34,8 +35,10 @@ export default async function Page({ params }: PageProps) {
     <div>
       <FullServiceCard
         title={matchedService.title}
-        description={matchedService.description}
+        smallDescription={matchedService.description}
+        longDescription={matchedService.detailedDescription}
       />
+      <Footer />
     </div>
   );
 }
