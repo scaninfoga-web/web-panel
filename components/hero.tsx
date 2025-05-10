@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Shield, Lock, Database, Code } from 'lucide-react';
-
+import { Typewriter } from 'react-simple-typewriter';
 export default function Hero() {
   const [typedText, setTypedText] = useState('');
   const [typedHeading, setTypedHeading] = useState('');
@@ -55,7 +55,7 @@ export default function Hero() {
   }, []);
 
   return (
-    <section className="relative overflow-hidden pb-16 pt-32 md:pb-24 md:pt-40">
+    <section className="relative overflow-hidden bg-gradient-to-b from-black/70 via-black/40 to-transparent pb-16 pt-32 md:pb-24">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
           <motion.div
@@ -91,15 +91,29 @@ export default function Hero() {
               ) : (
                 typedHeading
               )}
-              <span className="animate-pulse">|</span>
+              {typedHeading === fullHeading ? (
+                <span className="animate-pulse pl-2">!</span>
+              ) : (
+                <span className="animate-pulse">|</span>
+              )}
             </h1>
             <p className="max-w-lg text-xl text-white/70">
               Comprehensive cybersecurity services, education, and tools to
               defend against evolving threats.
             </p>
             <div className="h-8 font-mono text-xl text-emerald-400">
-              &gt; {typedText}
-              <span className="animate-pulse">_</span>
+              <h1 className="font-mono text-2xl text-emerald-400">
+                &gt; &nbsp;
+                <Typewriter
+                  words={['Secure.', 'Defend.', 'Strengthen.']}
+                  loop={true}
+                  cursor
+                  cursorStyle="_"
+                  typeSpeed={100}
+                  deleteSpeed={50}
+                  delaySpeed={1000}
+                />
+              </h1>
             </div>
             <div className="flex flex-wrap gap-4 pt-2">
               <Button

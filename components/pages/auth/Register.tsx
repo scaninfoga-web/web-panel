@@ -62,7 +62,7 @@ interface RegisterProps {
 export function Register({ type: initialType }: RegisterProps) {
   const [type, setType] = useState<RegistrationType>(initialType);
   const router = useRouter();
-  const dispatch = useDispatch();
+
   const { login } = useAuth();
 
   const schema =
@@ -119,8 +119,6 @@ export function Register({ type: initialType }: RegisterProps) {
 
   const handleGoogleSuccess = async (credentialResponse: any) => {
     try {
-      console.log('Credential Response:', credentialResponse);
-
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/google/`,
         {
@@ -139,6 +137,24 @@ export function Register({ type: initialType }: RegisterProps) {
 
       const data = await response.json();
       console.log('Backend Response:', data);
+
+      const res = await axios.get(`/api/get/tokens`, {
+        withCredentials: true,
+      });
+      const tokens = res.data;
+      console.log('TOKENS SET IS', tokens);
+      // if (tokens && tokens.accessToken && tokens.refreshToken) {
+      //   dispatch(
+      //     setCredentials({
+      //       token: tokens.accessToken,
+      //       refreshToken: tokens.refreshToken,
+      //       user,
+      //     }),
+      //   );
+      //   toast.success('Logged in successfully!');
+      //   return router.push('/combinedDash');
+      // }
+      // return await clearCookies();
 
       if (data.responseStatus?.status) {
         login(data.responseData.token);
@@ -173,30 +189,16 @@ export function Register({ type: initialType }: RegisterProps) {
         },
       );
       const { responseData } = response.data;
-      const { user } = responseData;
-      const res = await axios.get(`/api/get/tokens`, {
-        withCredentials: true,
-      });
-      const tokens = res.data;
-      if (tokens && tokens.accessToken && tokens.refreshToken) {
-        dispatch(
-          setCredentials({
-            token: tokens.accessToken,
-            refreshToken: tokens.refreshToken,
-            user,
-          }),
-        );
-        toast.success('Logged in successfully!');
-        return router.push('/combinedDash');
+      if (responseData) {
+        toast.success('Successfully registered', { duration: 1000 });
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+        window.location.reload();
       }
-      return await clearCookies();
     } catch (error: any) {
-      await clearCookies();
       console.error('Registration error:', error);
-      toast.error(
-        error.response?.data?.message ||
-          'Registration failed. Please try again.',
-      );
+      toast.error('Email already exits ');
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      window.location.reload();
     }
   };
 
@@ -323,7 +325,7 @@ export function Register({ type: initialType }: RegisterProps) {
           Request Authorization
         </Button>
 
-        {type === 'normal' ? (
+        {/* {type === 'normal' ? (
           <>
             <div className="my-4 text-center text-gray-300">OR</div>
             <GoogleLogin
@@ -334,7 +336,7 @@ export function Register({ type: initialType }: RegisterProps) {
               shape="rectangular"
             />
           </>
-        ) : null}
+        ) : null} */}
       </form>
     </Form>
   );

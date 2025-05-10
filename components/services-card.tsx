@@ -20,7 +20,7 @@ interface PageProps {
 
 export default function ServicesCard({ Svg, title, description }: PageProps) {
   return (
-    <motion.div className="hover:bg-emeraland-900/50 group space-y-10 border border-slate-800 bg-transparent shadow-lg transition-all duration-500 hover:cursor-pointer hover:border-emerald-500">
+    <motion.div className="hover:bg-emeraland-900/50 group space-y-10 border border-slate-800 bg-slate-900 shadow-lg transition-all duration-500 hover:cursor-pointer hover:border-emerald-500">
       <Card className="group flex h-full flex-col border-gray-800 bg-gray-900/50 transition-all duration-300 hover:border-emerald-500/50">
         <CardHeader>
           <CardTitle className="flex items-center space-x-2 text-xl font-bold text-white transition-colors duration-300 group-hover:text-emerald-400">

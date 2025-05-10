@@ -28,7 +28,7 @@ const registerSchema = z
     path: ['confirmPassword'],
   });
 
-function SpiderWebBackground() {
+export function SpiderWebBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -173,7 +173,7 @@ export default function AuthPage() {
         clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || ''}
       >
         <SpiderWebBackground />
-        <div className="flex min-h-screen items-center justify-center">
+        <div className="flex min-h-screen items-center justify-center pt-4 md:pt-8">
           <div className="my-8 w-full max-w-2xl rounded-2xl bg-[#0e1421]/30 bg-[#11151F] p-8 shadow-2xl shadow-emerald-500 backdrop-blur-xl">
             <AnimatePresence mode="wait">
               {!isRegistering ? (

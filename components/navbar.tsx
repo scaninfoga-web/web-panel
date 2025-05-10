@@ -5,33 +5,45 @@ import Link from 'next/link';
 import { Menu, X, Shield, User, ShoppingCart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { useRouter } from 'next/navigation';
-import { useSelector } from 'react-redux';
+import { usePathname, useRouter } from 'next/navigation';
+import { useSelector, useDispatch } from 'react-redux';
 import { clearCookies } from '@/actions/clearCookies';
-import { useDispatch } from 'react-redux';
 import { logout } from '@/redux/userSlice';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [hasMounted, setHasMounted] = useState(false);
+
   const user = useSelector((state: any) => state.user);
   const dispatch = useDispatch();
-  console.log('USER', user);
+  const pathname = usePathname();
+  const router = useRouter();
+
+  const paths = [
+    '/',
+    '/services',
+    '/aboutUs',
+    '/contact',
+    '/pricing',
+    '/tools',
+    '/auth',
+  ];
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 10) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
-      }
+      setScrolled(window.scrollY > 10);
     };
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const router = useRouter();
+  if (!hasMounted) return null;
 
   return (
     <header
@@ -54,38 +66,37 @@ export default function Navbar() {
           <nav className="hidden items-center space-x-8 md:flex">
             <Link
               href="/"
-              className="text-base font-medium text-white/90 transition-colors hover:text-emerald-400"
+              className="text-base font-medium text-white/90 hover:text-emerald-400"
             >
               Home
             </Link>
             <Link
               href="/tools"
-              className="text-base font-medium text-white/90 transition-colors hover:text-emerald-400"
+              className="text-base font-medium text-white/90 hover:text-emerald-400"
             >
               Tools
             </Link>
             <Link
               href="/services"
-              className="text-base font-medium text-white/90 transition-colors hover:text-emerald-400"
+              className="text-base font-medium text-white/90 hover:text-emerald-400"
             >
               Services
             </Link>
             <Link
               href="/pricing"
-              className="text-base font-medium text-white/90 transition-colors hover:text-emerald-400"
+              className="text-base font-medium text-white/90 hover:text-emerald-400"
             >
               Pricing
             </Link>
-
             <Link
               href="/contact"
-              className="text-base font-medium text-white/90 transition-colors hover:text-emerald-400"
+              className="text-base font-medium text-white/90 hover:text-emerald-400"
             >
               Contact
             </Link>
             <Link
               href="/aboutUs"
-              className="text-base font-medium text-white/90 transition-colors hover:text-emerald-400"
+              className="text-base font-medium text-white/90 hover:text-emerald-400"
             >
               About us
             </Link>
@@ -124,16 +135,25 @@ export default function Navbar() {
                 router.push('/auth');
               }}
             >
-              {user.token === null ? 'Sign in' : 'Sign out'}
+              {user.token ? 'Sign out' : 'Sign in'}
             </Button>
-            {user.token === null ? (
+            {user.token ? (
+              paths.includes(pathname) && (
+                <Button
+                  className="bg-emerald-500 text-black hover:bg-emerald-600"
+                  onClick={() => router.push('/dashboard')}
+                >
+                  Go to dashboard
+                </Button>
+              )
+            ) : (
               <Button
                 className="bg-emerald-500 text-black hover:bg-emerald-600"
                 onClick={() => router.push('/auth')}
               >
                 Get Started
               </Button>
-            ) : null}
+            )}
           </div>
 
           <Button
@@ -152,57 +172,38 @@ export default function Navbar() {
       {isOpen && (
         <div className="fixed inset-0 top-16 z-40 bg-black/95 backdrop-blur-sm md:hidden">
           <nav className="flex flex-col space-y-6 p-8">
-            <Link
-              href="/"
-              className="text-lg font-medium text-white transition-colors hover:text-emerald-400"
-              onClick={() => setIsOpen(false)}
-            >
-              Home
-            </Link>
-            <Link
-              href="/tools"
-              className="text-lg font-medium text-white transition-colors hover:text-emerald-400"
-              onClick={() => setIsOpen(false)}
-            >
-              Tools
-            </Link>
-            <Link
-              href="/services"
-              className="text-lg font-medium text-white transition-colors hover:text-emerald-400"
-              onClick={() => setIsOpen(false)}
-            >
-              Services
-            </Link>
-            <Link
-              href="/pricing"
-              className="text-lg font-medium text-white transition-colors hover:text-emerald-400"
-              onClick={() => setIsOpen(false)}
-            >
-              Pricing
-            </Link>
+            {[
+              '/',
+              '/tools',
+              '/services',
+              '/pricing',
+              '/contact',
+              '/aboutUs',
+            ].map((href) => (
+              <Link
+                key={href}
+                href={href}
+                className="text-lg font-medium text-white hover:text-emerald-400"
+                onClick={() => setIsOpen(false)}
+              >
+                {href === '/'
+                  ? 'Home'
+                  : href.slice(1).replace(/([A-Z])/g, ' $1')}
+              </Link>
+            ))}
 
-            <Link
-              href="/contact"
-              className="text-lg font-medium text-white transition-colors hover:text-emerald-400"
-              onClick={() => setIsOpen(false)}
-            >
-              Contact
-            </Link>
-            <Link
-              href="/aboutUs"
-              className="text-lg font-medium text-white transition-colors hover:text-emerald-400"
-              onClick={() => setIsOpen(false)}
-            >
-              About us
-            </Link>
             <div className="flex flex-col space-y-4 pt-6">
               <Button
                 variant="outline"
                 className="w-full border-emerald-500 text-emerald-500 hover:bg-emerald-500 hover:text-black"
+                onClick={() => router.push('/auth')}
               >
                 Sign In
               </Button>
-              <Button className="w-full bg-emerald-500 text-black hover:bg-emerald-600">
+              <Button
+                className="w-full bg-emerald-500 text-black hover:bg-emerald-600"
+                onClick={() => router.push('/auth')}
+              >
                 Get Started
               </Button>
             </div>

@@ -3,56 +3,35 @@ import { motion } from 'framer-motion';
 import ServicesCard from '@/components/services-card';
 import {
   FluentPeopleTeamAdd20Filled,
-  MaterialSymbolsEnterprise,
   MdiCloudSecurityOutline,
   MdiWeb,
   MeteorIconsAppStore,
   PhCodeDuotone,
   TablerNetwork,
 } from '@/svg/constant';
+import { providedServices } from '@/lib/constant';
+import { useRouter } from 'next/navigation';
 
-interface Services {
+const servicesSvg: {
   Svg: React.ReactNode;
-  title: string;
-  description: string;
-}
-
-const services: Services[] = [
+}[] = [
   {
     Svg: <MeteorIconsAppStore width={25} height={25} />,
-    title: 'Mobile_Application Pentest',
-    description:
-      'We test your Android/iOS apps for vulnerabilities like insecure storage, weak encryption, and exposed APIs to keep user data safe and secure.',
   },
   {
     Svg: <MdiWeb width={25} height={25} />,
-    title: 'Web_Application Pentest',
-    description:
-      'We identify and fix security flaws in your web apps, including injection attacks, authentication issues, and misconfigurations—before hackers exploit them.',
   },
   {
     Svg: <TablerNetwork width={25} height={25} />,
-    title: 'Network Pentest',
-    description:
-      'We simulate real-world attacks on your network to uncover weaknesses like open ports, outdated systems, and poor firewall rules.',
   },
   {
     Svg: <MdiCloudSecurityOutline width={25} height={25} />,
-    title: 'Cloud Pentest',
-    description:
-      'We assess your cloud setup (AWS, Azure, GCP) for misconfigurations, weak access controls, and data exposure risks.',
   },
   {
     Svg: <FluentPeopleTeamAdd20Filled width={25} height={25} />,
-    title: 'Red-Team Assessment',
-    description:
-      'A stealthy, real-world attack simulation that tests your organization’s detection, response, and resilience across people, processes, and technology.',
   },
   {
     Svg: <PhCodeDuotone width={25} height={25} />,
-    title: 'Source_Code Audit',
-    description:
-      'Get an in-depth understanding of your enterprises security foundations. We take a magnifying glass to your source code to find undetected bugs and...',
   },
 ];
 
@@ -71,6 +50,7 @@ const cardVariants = {
 };
 
 export default function ServicesSection() {
+  const router = useRouter();
   return (
     <section className="flex min-h-screen flex-col items-center justify-center space-y-20">
       <motion.div
@@ -88,10 +68,18 @@ export default function ServicesSection() {
         animate="show"
         className="grid grid-cols-1 gap-x-4 gap-y-10 md:grid-cols-2 md:gap-y-20 lg:grid-cols-3"
       >
-        {services.map((service, index) => (
-          <motion.div key={index} variants={cardVariants}>
+        {providedServices.map((service, index) => (
+          <motion.div
+            onClick={() => {
+              router.push(
+                `/services/${service.title.replaceAll(/\s|_/g, '').toLowerCase()}`,
+              );
+            }}
+            key={index}
+            variants={cardVariants}
+          >
             <ServicesCard
-              Svg={service.Svg}
+              Svg={servicesSvg[index].Svg}
               title={service.title}
               description={service.description}
             />

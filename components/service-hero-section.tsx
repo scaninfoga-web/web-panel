@@ -23,7 +23,7 @@ export default function ServiceHeroSection() {
         variants={container}
         initial="hidden"
         animate="show"
-        className="flex flex-col space-y-2 text-center"
+        className="flex flex-col space-y-1 text-center"
       >
         <motion.span
           variants={item}
