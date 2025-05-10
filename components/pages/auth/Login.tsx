@@ -81,7 +81,6 @@ const Login = () => {
         dispatch(
           setCredentials({
             token: tokens.accessToken,
-            refreshToken: tokens.refreshToken,
             user,
           }),
         );
@@ -158,12 +157,9 @@ const Login = () => {
       const { responseData } = response.data;
 
       if (responseData.qr_code) {
-        console.log('QR CODE');
-        alert('QR CODE');
-
         setQrCode(responseData.qr_code);
       } else {
-        const { user } = responseData;
+        const { user, accessToken } = responseData;
 
         // You will need to manually fetch the cookie for token
         // const res = await axios.get(`/api/get/tokens`, {
@@ -172,11 +168,11 @@ const Login = () => {
         // const tokens = res.data;
         // console.log("TOKENS",tokens)
         // if (tokens && tokens.accessToken && tokens.refreshToken) {
-        setCookie('accessToken', '121212');
+
+        setCookie('accessToken', accessToken);
         dispatch(
           setCredentials({
-            token: '212',
-            refreshToken: '123',
+            token: accessToken,
             user,
           }),
         );

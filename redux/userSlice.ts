@@ -24,7 +24,6 @@ const initialState: UserState = {
 
 type CredentialsPayload = {
   token: string;
-  refreshToken: string;
   user: User;
 };
 
@@ -34,7 +33,6 @@ export const userSlice = createSlice({
   reducers: {
     setCredentials: (state, action: PayloadAction<CredentialsPayload>) => {
       state.token = action.payload.token;
-      state.refreshToken = action.payload.refreshToken;
       state.user = action.payload.user;
     },
     logout: (state) => {

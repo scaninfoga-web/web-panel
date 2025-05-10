@@ -83,10 +83,8 @@ export function Register({ type: initialType }: RegisterProps) {
       ...(type === 'corporate' ? { domain: '', company: '' } : {}),
     },
   });
-
   // to check password strenght
   const passwordValue = form.watch('password') || '';
-
   const getStrength = (pwd: string) => {
     let score = 0;
     if (pwd.length > 5) score++;
@@ -95,7 +93,6 @@ export function Register({ type: initialType }: RegisterProps) {
     if (/[^A-Za-z0-9]/.test(pwd)) score++;
     return score;
   };
-
   const strength = getStrength(passwordValue);
   const strengthColors = [
     'bg-red-500',
@@ -198,7 +195,7 @@ export function Register({ type: initialType }: RegisterProps) {
       console.error('Registration error:', error);
       toast.error('Email already exits ');
       await new Promise((resolve) => setTimeout(resolve, 2000));
-      // window.location.reload();
+      window.location.reload();
     }
   };
 

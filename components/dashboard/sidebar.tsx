@@ -19,6 +19,11 @@ const sidebarLinks = [
     href: '/dashboard',
   },
   {
+    title: 'Dashboard1',
+    icon: LayoutDashboard,
+    href: '/combinedDash',
+  },
+  {
     title: 'Bookmarks',
     icon: Bookmark,
     href: '/dashboard/bookmarks',

@@ -46,6 +46,7 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { CustomProgress } from '@/components/ui/custom-progress';
+import { SearchBar2 } from '@/components/search/SearchBar2';
 
 // Add these interfaces before the Dashboard component
 interface CardItem {
@@ -119,34 +120,8 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className="flex items-center gap-4">
-          <Select value={searchFilter} onValueChange={setSearchFilter}>
-            <SelectTrigger className="w-[150px] border-gray-700 bg-gray-900/50">
-              <SelectValue placeholder="Search by..." />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="username">Username</SelectItem>
-              <SelectItem value="email">Email</SelectItem>
-              <SelectItem value="phone">Phone</SelectItem>
-              <SelectItem value="ip">IP Address</SelectItem>
-            </SelectContent>
-          </Select>
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
-            <input
-              type="text"
-              placeholder={`Search by ${searchFilter}...`}
-              className="w-full rounded-md border border-gray-700 bg-gray-900/50 py-2 pl-10 pr-4 text-white transition-colors placeholder:text-gray-500 hover:border-emerald-500/50 focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
-              value={searchQuery}
-              onChange={(e) => handleSearch(e.target.value)}
-            />
-          </div>
-          <Button
-            variant="outline"
-            className="border-emerald-500 text-emerald-500 hover:bg-emerald-500 hover:text-black"
-          >
-            Search
-          </Button>
+        <div className="">
+          <SearchBar2 onSearch={handleSearch} />
         </div>
       </div>
 

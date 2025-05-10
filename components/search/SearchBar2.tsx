@@ -34,7 +34,7 @@ export function SearchBar2({ onSearch }: SearchBar2Props) {
         <SelectTrigger className="w-[150px] border-gray-700 bg-gray-900/50">
           <SelectValue placeholder="Search by..." />
         </SelectTrigger>
-        <SelectContent className="bg-[#0e1421]/30 backdrop-blur-xl">
+        <SelectContent className="bg-[#0e1421]/30 backdrop-blur-xl hover:cursor-pointer">
           <SelectItem value="username">Username</SelectItem>
           <SelectItem value="email">Email</SelectItem>
           <SelectItem value="phone">Phone</SelectItem>
