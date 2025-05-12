@@ -1,6 +1,6 @@
 'use client';
-import { motion } from 'framer-motion';
-import ServicesCard from '@/components/services-card';
+import ServicesCard from '@/components/services/ServicesCard';
+import { providedServices } from '@/lib/constant';
 import {
   FluentPeopleTeamAdd20Filled,
   MdiCloudSecurityOutline,
@@ -9,7 +9,7 @@ import {
   PhCodeDuotone,
   TablerNetwork,
 } from '@/svg/constant';
-import { providedServices } from '@/lib/constant';
+import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 
 const servicesSvg: {

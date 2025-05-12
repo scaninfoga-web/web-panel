@@ -1,5 +1,6 @@
-import React from 'react';
 import { ArrowRight } from 'lucide-react';
+import React from 'react';
+import { Button } from '../ui/button';
 import {
   Card,
   CardContent,
@@ -7,8 +8,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from './ui/card';
-import { Button } from './ui/button';
+} from '../ui/card';
 
 interface PageProps {
   Svg: React.ReactNode;

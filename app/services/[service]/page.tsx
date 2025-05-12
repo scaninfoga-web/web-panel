@@ -1,7 +1,8 @@
 import Footer from '@/components/footer';
-import FullServiceCard from '@/components/full-service-card';
+import LeftRightComponents from '@/components/services/LeftRightComponents';
 import { providedServices } from '@/lib/constant';
-import React from 'react';
+import FullServiceHeroSection from '@/components/services/FullServiceHeroSection';
+import EndingInformation from '@/components/services/EndingInformation';
 
 interface PageProps {
   params: Promise<{
@@ -23,6 +24,7 @@ export default async function Page({ params }: PageProps) {
       service.toLowerCase().replace(/\s|_/g, '')
     );
   });
+  matchedService?.leftRightComponents;
   if (!matchedService) {
     return (
       <div className="flex h-screen animate-pulse items-center justify-center text-xl font-semibold text-white/75">
@@ -32,12 +34,14 @@ export default async function Page({ params }: PageProps) {
   }
 
   return (
-    <div>
-      <FullServiceCard
+    <div className="flex flex-col space-y-32">
+      <FullServiceHeroSection
         title={matchedService.title}
         smallDescription={matchedService.description}
         longDescription={matchedService.detailedDescription}
       />
+      <LeftRightComponents leftRight={matchedService.leftRightComponents} />
+      <EndingInformation endDescription={matchedService.endDescription} />
       <Footer />
     </div>
   );
