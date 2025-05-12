@@ -1,19 +1,19 @@
 import { NextAuthOptions } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 
-function getGoogleCredentials() {
-  const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
-  const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+// function getGoogleCredentials() {
+//   const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+//   const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
 
-  if (!clientId || clientId.length === 0) {
-    throw new Error('client id missing');
-  }
-  if (!clientSecret || clientSecret.length == 0) {
-    throw new Error('client secret missing');
-  }
+//   if (!clientId || clientId.length === 0) {
+//     throw new Error('client id missing');
+//   }
+//   if (!clientSecret || clientSecret.length == 0) {
+//     throw new Error('client secret missing');
+//   }
 
-  return { clientId, clientSecret };
-}
+//   return { clientId, clientSecret };
+// }
 
 export const authOptions: NextAuthOptions = {
   session: {
@@ -26,8 +26,8 @@ export const authOptions: NextAuthOptions = {
   },
   providers: [
     GoogleProvider({
-      clientId: getGoogleCredentials().clientId,
-      clientSecret: getGoogleCredentials().clientSecret,
+      clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
   ],
   callbacks: {
