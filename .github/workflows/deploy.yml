@@ -30,7 +30,6 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
         env:
@@ -38,7 +37,7 @@ jobs:
           IMAGE_TAG: ${{ github.sha }}
           REPOSITORY: nextjs-app
         run: |
-          docker build \
+          docker buildx build \
             --build-arg NEXT_PUBLIC_GOOGLE_CLIENT_ID=${{ secrets.NEXT_PUBLIC_GOOGLE_CLIENT_ID }} \
             --build-arg GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} \
             --build-arg NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }} \
@@ -49,8 +48,6 @@ jobs:
           docker push $ECR_REGISTRY/$REPOSITORY:$IMAGE_TAG
           echo "image=$ECR_REGISTRY/$REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
-
-
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
@@ -58,10 +55,11 @@ jobs:
           task-definition: nextjs-app-task-definition.json
           container-name: nextjs-app
           image: ${{ steps.build-image.outputs.image }}    
+
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
           service: nextjs-app-service
           cluster: ProductionCluster
-          wait-for-service-stability: true    
+          wait-for-service-stability: true
