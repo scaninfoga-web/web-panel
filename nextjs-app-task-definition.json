@@ -101,6 +101,5 @@
   },
   "registeredAt": "2025-05-12T12:39:24.478Z",
   "registeredBy": "arn:aws:iam::123938353815:user/ashish-scaninfoga",
-  "enableFaultInjection": false,
   "tags": []
 }
