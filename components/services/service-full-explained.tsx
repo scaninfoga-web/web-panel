@@ -80,8 +80,13 @@ const itemVariants = {
     },
   },
 };
+interface PageProps {
+  longDescription: string;
+}
 
-export default function MobilePentestComponent() {
+export default function ServicesExplainedComponent({
+  longDescription,
+}: PageProps) {
   return (
     <motion.div className="min-h-screen space-y-32">
       <motion.div className="flex flex-col items-center justify-center space-y-8">
@@ -91,19 +96,7 @@ export default function MobilePentestComponent() {
           </span>
           <span>Advantages</span>
         </div>
-        <div className="text-center text-xl font-medium">
-          Our mobile application penetration testing process targets common and
-          advanced vulnerabilities in iOS and Android apps. We analyze app
-          binaries, inspect local storage, assess communication channels, and
-          evaluate authentication mechanisms. Our team checks for insecure data
-          storage, improper session handling, and unsafe API interactions. We
-          simulate attacks such as man-in-the-middle, code tampering, and
-          reverse engineering. With deep insights into platform-specific
-          security flaws, we help you secure sensitive user data and maintain
-          compliance with industry standards like OWASP Mobile Top 10. Our final
-          report includes actionable remediation guidance tailored to your
-          development stack and business use case.
-        </div>
+        <div className="text-center text-xl font-medium">{longDescription}</div>
       </motion.div>
       <motion.div className="flex flex-col items-center justify-center space-y-16">
         <motion.div className="group relative flex flex-col p-2 text-4xl">

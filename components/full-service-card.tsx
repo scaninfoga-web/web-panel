@@ -6,12 +6,11 @@ import NetwrokPentest from '@/public/services-image/Network Pentesting.svg';
 import CloudPentest from '@/public/services-image/Cloud Pentesting.svg';
 import RedTeam from '@/public/services-image/Red-Team Assessment.svg';
 import SourceCodeAudit from '@/public/services-image/Source_Code Audit.svg';
-
 import Image from 'next/image';
-import MobilePentestComponent from './services/mobile-pentest';
+import ServicesExplainedComponent from './services/service-full-explained';
 
 const imageMap = new Map<string, any[]>([
-  ['Mobile_App Pentesting', [MobilePentest, MobilePentestComponent]],
+  ['Mobile_App Pentesting', [MobilePentest]],
   ['Web_App Pentesting', [WebPentest]],
   ['Network Pentesting', [NetwrokPentest]],
   ['Cloud Pentesting', [CloudPentest]],
@@ -31,7 +30,6 @@ export default function FullServiceCard({
   longDescription,
 }: PageProps) {
   const imageSrc = imageMap.get(title)?.[0];
-  const Component = imageMap.get(title)?.[1];
   const spacedTitle = title.replaceAll('_', ' ');
 
   return (
@@ -47,7 +45,7 @@ export default function FullServiceCard({
           <Image src={imageSrc} alt="img" width={400} height={400} />
         </div>
       </div>
-      <Component />
+      <ServicesExplainedComponent longDescription={longDescription} />
     </div>
   );
 }
