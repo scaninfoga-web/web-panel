@@ -36,13 +36,13 @@ export default function FullServiceCard({
     <div className="flex min-h-screen flex-col items-center justify-between px-24">
       <div className="flex h-screen w-full items-center justify-between">
         <div className="flex flex-col space-y-8">
-          <h1 className="text-6xl">{spacedTitle}</h1>
+          <h1 className="text-6xl font-medium">{spacedTitle}</h1>
           <h2 className="max-w-[35vw] pl-1 text-xl text-white/75">
             {smallDescription}
           </h2>
         </div>
         <div>
-          <Image src={imageSrc} alt="img" width={400} height={400} />
+          <Image src={imageSrc} alt="img" width={500} height={500} />
         </div>
       </div>
       <ServicesExplainedComponent longDescription={longDescription} />

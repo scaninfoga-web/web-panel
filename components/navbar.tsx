@@ -128,7 +128,7 @@ export default function Navbar() {
               variant="outline"
               className="border-emerald-500 text-emerald-500 hover:bg-emerald-500 hover:text-black"
               onClick={async () => {
-                if (accessToken || user.token) {
+                if (accessToken) {
                   dispatch(logout());
                   await clearCookies();
                   return router.refresh();
