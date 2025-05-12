@@ -23,7 +23,7 @@ export default function LeftRightComponents({ leftRight }: PageProps) {
           <span className="duration-400 absolute inset-x-0 -bottom-1 mx-auto h-[4px] w-full bg-gradient-to-r from-transparent via-green-500 to-transparent opacity-0 blur-sm transition-opacity group-hover:opacity-100"></span>
         </motion.div>
         <motion.div
-          className="flex flex-col"
+          className="flex flex-col px-24"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
