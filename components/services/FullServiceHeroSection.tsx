@@ -41,7 +41,7 @@ export default function FullServiceHeroSection({
           </h2>
         </div>
         <div>
-          <Image src={imageSrc} alt="img" width={500} height={500} />
+          <Image src={imageSrc || '/'} alt="img" width={500} height={500} />
         </div>
       </div>
       <motion.div className="flex flex-col items-center justify-center space-y-8">
