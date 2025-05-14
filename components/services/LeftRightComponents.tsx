@@ -15,14 +15,14 @@ interface PageProps {
 export default function LeftRightComponents({ leftRight }: PageProps) {
   return (
     <div>
-      <motion.div className="flex flex-col items-center justify-center space-y-16">
+      <motion.div className="flex flex-col items-center justify-center space-y-20">
         <motion.div className="group relative flex flex-col p-2 text-4xl">
           <span className="text-5xl font-semibold">What we offer</span>
           <span className="absolute inset-x-0 -bottom-1 h-1 bg-gradient-to-r from-transparent via-green-500 to-transparent opacity-75"></span>
           <span className="duration-400 absolute inset-x-0 -bottom-1 mx-auto h-[4px] w-full bg-gradient-to-r from-transparent via-green-500 to-transparent opacity-0 blur-sm transition-opacity group-hover:opacity-100"></span>
         </motion.div>
         <motion.div
-          className="flex flex-col px-24"
+          className="flex flex-col space-y-20 px-24"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}

@@ -7,41 +7,70 @@ interface Services {
     title: string;
     description: string;
   }[];
-  endDescription: string;
+  endingComponents: {
+    title: string;
+    serviceCard: {
+      icon: string;
+      iconStyle: string;
+      title: string;
+      description: string;
+    }[];
+  };
 }
 
 export const providedServices: Services[] = [
   {
-    title: 'Mobile App Pentesting',
+    title: 'Application Security',
     description:
-      'We test your Android/iOS apps for vulnerabilities like insecure storage, weak encryption, and exposed APIs to keep user data safe and secure.',
+      'Your applications are the front door to your business and a prime target for attackers. At Scan Infoga, we provide comprehensive security testing for Web Apps, Mobile Apps, and Thick Client applications to identify and fix critical vulnerabilities before hackers exploit them. We follow industry standards like OWASP, SANS, and NIST, simulating real-world attacks to ensure your applications are secure, compliant, and resilient.',
     detailedDescription:
-      'Our mobile application penetration testing process targets common and advanced vulnerabilities in iOS and Android apps. We analyze app binaries, inspect local storage, assess communication channels, and evaluate authentication mechanisms. Our team checks for insecure data storage, improper session handling, and unsafe API interactions. We simulate attacks such as man-in-the-middle, code tampering, and reverse engineering. With deep insights into platform-specific security flaws, we help you secure sensitive user data and maintain compliance with industry standards like OWASP Mobile Top 10. Our final report includes actionable remediation guidance tailored to your development stack and business use case.',
+      'At Scan Infoga, we combine real-world attack simulation with deep technical expertise to deliver actionable and accurate applications security assessments. Our team of certified security professionals has secured over 100+ mobile applications for startups, enterprises, and fintech companies. We do not just find vulnerabilities we provide clear remediation guidance to fix them fast. With a strong focus on business logic testing, API security, and reverse engineering, we uncover what automated tools often miss. We ensure complete confidentiality through strict NDAs, and we offer free re-testing after fixes to guarantee your app’s security posture is rock solid. At Scaninfoga our goal is simple to make your mobile app unbreakable.',
     leftRightComponents: [
       {
-        imageUrl:
-          'https://securelayer7.net/new/assets/image/services-page/frame1-new.png',
-        title: 'Binary & Storage Analysis',
+        imageUrl: '/services-image/app-pentesting-1.svg',
+        title: 'Web App Pentesting',
         description:
-          'We decompile mobile binaries to detect sensitive data exposure, analyze storage techniques, and identify risks like hardcoded credentials or unencrypted databases.',
+          'Testing is a proactive security service that simulates real-world attacks on your web applications to uncover vulnerabilities before malicious actors can exploit them. This critical assessment helps safeguard sensitive data, maintain customer trust, and ensure compliance with industry regulations.',
       },
       {
-        imageUrl:
-          'https://securelayer7.net/new/assets/image/services-page/frame1-new.png',
-        title: 'Secure API & Communication Testing',
+        imageUrl: '/services-image/mobile-pentesting-1.svg',
+        title: 'Mobile App Pentesting',
         description:
-          'We test how your app communicates with servers, ensuring encryption, certificate pinning, and proper token handling are enforced to block MITM attacks.',
+          'Testing uncovers hidden vulnerabilities in Android, iOS, and hybrid apps by simulating real-world attacks. Our advanced testing approach includes static and dynamic analysis, reverse engineering, and backend API assessment to identify security flaws and logic issues—ensuring your app is secure against modern threat actors.',
       },
       {
-        imageUrl:
-          'https://securelayer7.net/new/assets/image/services-page/frame1-new.png',
-        title: 'Binary & Storage Analysis',
+        imageUrl: '/services-image//thick-client.svg',
+        title: 'Thick Client',
         description:
-          'We decompile mobile binaries to detect sensitive data exposure, analyze storage techniques, and identify risks like hardcoded credentials or unencrypted databases.',
+          'Testing identifies vulnerabilities in desktop apps by analyzing traffic, data storage, and application logic. Using advanced techniques like reverse engineering and memory manipulation, we ensure your software is protected against real-world threats.',
       },
     ],
-    endDescription:
-      "Empower Your Application's Security. Experience measurable outcomes that elevate your application's security posture with our proven process.",
+    endingComponents: {
+      title: 'Comprehensive Application Penetration Testing Advantage',
+      serviceCard: [
+        {
+          icon: 'IconRadar2',
+          iconStyle: 'text-yellow-500',
+          title: 'Find Every Vulnerability',
+          description:
+            'pentesting process goes beyond checklists and scanners, ensuring every undetected vulnerability is found and exposed.',
+        },
+        {
+          icon: 'IconRadar2',
+          iconStyle: 'text-green-500',
+          title: 'Find Every Vulnerability',
+          description:
+            'pentesting process goes beyond checklists and scanners, ensuring every undetected vulnerability is found and exposed.',
+        },
+        {
+          icon: 'IconRadar2',
+          iconStyle: 'text-red-500',
+          title: 'Find Every Vulnerability',
+          description:
+            'pentesting process goes beyond checklists and scanners, ensuring every undetected vulnerability is found and exposed.',
+        },
+      ],
+    },
   },
   {
     title: 'Web App Pentesting',
@@ -65,8 +94,32 @@ export const providedServices: Services[] = [
           'Our team simulates real attack scenarios to identify privilege escalation, insecure workflows, and logical vulnerabilities unique to your app.',
       },
     ],
-    endDescription:
-      "Empower Your Application's Security. Experience measurable outcomes that elevate your application's security posture with our proven process.",
+    endingComponents: {
+      title: 'Comprehensive Application Penetration Testing Advantage',
+      serviceCard: [
+        {
+          icon: 'IconRadar2',
+          iconStyle: 'text-green-500',
+          title: 'Find Every Vulnerability',
+          description:
+            'pentesting process goes beyond checklists and scanners, ensuring every undetected vulnerability is found and exposed.',
+        },
+        {
+          icon: 'IconRadar2',
+          iconStyle: 'text-green-500',
+          title: 'Find Every Vulnerability',
+          description:
+            'pentesting process goes beyond checklists and scanners, ensuring every undetected vulnerability is found and exposed.',
+        },
+        {
+          icon: 'IconRadar2',
+          iconStyle: 'text-green-500',
+          title: 'Find Every Vulnerability',
+          description:
+            'pentesting process goes beyond checklists and scanners, ensuring every undetected vulnerability is found and exposed.',
+        },
+      ],
+    },
   },
   {
     title: 'Network Pentesting',
@@ -90,8 +143,18 @@ export const providedServices: Services[] = [
           'We simulate stealth attacks to test how well your IDS/IPS and firewall configurations can detect and respond to malicious activities.',
       },
     ],
-    endDescription:
-      "Empower Your Application's Security. Experience measurable outcomes that elevate your application's security posture with our proven process.",
+    endingComponents: {
+      title: 'Comprehensive Application Penetration Testing Advantage',
+      serviceCard: [
+        {
+          icon: 'IconRadar2',
+          iconStyle: 'text-green-500',
+          title: 'Find Every Vulnerability',
+          description:
+            'pentesting process goes beyond checklists and scanners, ensuring every undetected vulnerability is found and exposed.',
+        },
+      ],
+    },
   },
   {
     title: 'Cloud Pentesting',
@@ -115,8 +178,18 @@ export const providedServices: Services[] = [
           'We check for open S3 buckets, public endpoints, and weak API keys that could expose sensitive data in your cloud environment.',
       },
     ],
-    endDescription:
-      "Empower Your Application's Security. Experience measurable outcomes that elevate your application's security posture with our proven process.",
+    endingComponents: {
+      title: 'Comprehensive Application Penetration Testing Advantage',
+      serviceCard: [
+        {
+          icon: 'IconRadar2',
+          iconStyle: 'text-green-500',
+          title: 'Find Every Vulnerability',
+          description:
+            'pentesting process goes beyond checklists and scanners, ensuring every undetected vulnerability is found and exposed.',
+        },
+      ],
+    },
   },
   {
     title: 'Red-Team Assessment',
@@ -140,11 +213,21 @@ export const providedServices: Services[] = [
           'We attempt to breach your environment using social engineering, phishing campaigns, and physical bypasses to test human-layer resilience.',
       },
     ],
-    endDescription:
-      "Empower Your Application's Security. Experience measurable outcomes that elevate your application's security posture with our proven process.",
+    endingComponents: {
+      title: 'Comprehensive Application Penetration Testing Advantage',
+      serviceCard: [
+        {
+          icon: 'IconRadar2',
+          iconStyle: 'text-green-500',
+          title: 'Find Every Vulnerability',
+          description:
+            'pentesting process goes beyond checklists and scanners, ensuring every undetected vulnerability is found and exposed.',
+        },
+      ],
+    },
   },
   {
-    title: 'Source_Code Audit',
+    title: 'Source Code Audit',
     description:
       'Get an in-depth understanding of your enterprises security foundations. We take a magnifying glass to your source code to find undetected bugs and...',
     detailedDescription:
@@ -165,7 +248,17 @@ export const providedServices: Services[] = [
           'We assess your use of libraries, SDKs, and APIs to detect unpatched vulnerabilities or insecure integrations with external services.',
       },
     ],
-    endDescription:
-      "Empower Your Application's Security. Experience measurable outcomes that elevate your application's security posture with our proven process.",
+    endingComponents: {
+      title: 'Comprehensive Application Penetration Testing Advantage',
+      serviceCard: [
+        {
+          icon: 'IconRadar2',
+          iconStyle: 'text-green-500',
+          title: 'Find Every Vulnerability',
+          description:
+            'pentesting process goes beyond checklists and scanners, ensuring every undetected vulnerability is found and exposed.',
+        },
+      ],
+    },
   },
 ];

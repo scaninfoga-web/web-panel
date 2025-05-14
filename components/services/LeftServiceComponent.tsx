@@ -14,7 +14,7 @@ export default function LeftServiceComponent({
 }: PageProps) {
   return (
     <div className="flex w-full items-center justify-between space-x-40">
-      <Image src={imageUrl} width={600} height={600} alt="service-image" />
+      <Image src={imageUrl} width={550} height={550} alt="service-image" />
       <div className="flex flex-col space-y-8">
         <div className="text-5xl font-semibold">{title}</div>
         <div className="text-2xl text-white/80">{description}</div>

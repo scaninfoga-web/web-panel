@@ -8,13 +8,13 @@ import WebPentest from '@/public/services-image/Web_App Pentesting.svg';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 
-const imageMap = new Map<string, any[]>([
-  ['Mobile_App Pentesting', [MobilePentest]],
-  ['Web_App Pentesting', [WebPentest]],
-  ['Network Pentesting', [NetwrokPentest]],
-  ['Cloud Pentesting', [CloudPentest]],
-  ['Red-Team Assessment', [RedTeam]],
-  ['Source_Code Audit', [SourceCodeAudit]],
+const imageMap = new Map<string, any>([
+  ['Application Security', MobilePentest],
+  ['Web App Pentesting', WebPentest],
+  ['Network Pentesting', NetwrokPentest],
+  ['Cloud Pentesting', CloudPentest],
+  ['Red-Team Assessment', RedTeam],
+  ['Source Code Audit', SourceCodeAudit],
 ]);
 
 interface PageProps {
@@ -28,7 +28,7 @@ export default function FullServiceHeroSection({
   smallDescription,
   longDescription,
 }: PageProps) {
-  const imageSrc = imageMap.get(title)?.[0];
+  const imageSrc = imageMap.get(title);
   const spacedTitle = title.replaceAll('_', ' ');
 
   return (
@@ -41,7 +41,7 @@ export default function FullServiceHeroSection({
           </h2>
         </div>
         <div>
-          <Image src={imageSrc || '/'} alt="img" width={500} height={500} />
+          <Image src={imageSrc} alt="img" width={500} height={500} />
         </div>
       </div>
       <motion.div className="flex flex-col items-center justify-center space-y-8">

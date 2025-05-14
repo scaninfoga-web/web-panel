@@ -18,7 +18,7 @@ export default function RightServiceComponent({
         <div className="text-5xl font-semibold">{title}</div>
         <div className="text-2xl text-white/80">{description}</div>
       </div>
-      <Image src={imageUrl} width={600} height={600} alt="service-image" />
+      <Image src={imageUrl} width={550} height={550} alt="service-image" />
     </div>
   );
 }

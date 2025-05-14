@@ -2,7 +2,8 @@ import Footer from '@/components/footer';
 import LeftRightComponents from '@/components/services/LeftRightComponents';
 import { providedServices } from '@/lib/constant';
 import FullServiceHeroSection from '@/components/services/FullServiceHeroSection';
-import EndingInformation from '@/components/services/EndingInformation';
+import ServicesMiniCards from '@/components/services/ServicesMiniCards';
+import BookInformation from '@/components/services/BookInformation';
 
 interface PageProps {
   params: Promise<{
@@ -41,7 +42,11 @@ export default async function Page({ params }: PageProps) {
         longDescription={matchedService.detailedDescription}
       />
       <LeftRightComponents leftRight={matchedService.leftRightComponents} />
-      <EndingInformation endDescription={matchedService.endDescription} />
+      <ServicesMiniCards
+        title={matchedService.endingComponents.title}
+        serviceCard={matchedService.endingComponents.serviceCard}
+      />
+      <BookInformation />
       <Footer />
     </div>
   );
