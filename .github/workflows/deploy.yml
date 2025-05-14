@@ -47,9 +47,7 @@ jobs:
         run: |
           docker buildx create --use
           docker buildx inspect --bootstrap
-          docker buildx build --platform linux/amd64 -t scaninfoga-web .
-          docker tag scaninfoga-web 123938353815.dkr.ecr.ap-south-1.amazonaws.com/scaninfoga-web:latest
-          docker push 123938353815.dkr.ecr.ap-south-1.amazonaws.com/scaninfoga-web:latest
+          docker buildx build --platform linux/amd64 -t 123938353815.dkr.ecr.ap-south-1.amazonaws.com/scaninfoga-web:latest --push .
 
       - name: Deploy to ECS
         uses: imehedi/actions-awscli-v2@latest
