@@ -15,7 +15,6 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [hasMounted, setHasMounted] = useState(false);
-  const user = useSelector((state: any) => state.user);
   const dispatch = useDispatch();
   const pathname = usePathname();
   const router = useRouter();
@@ -67,37 +66,55 @@ export default function Navbar() {
           <nav className="hidden items-center space-x-8 md:flex">
             <Link
               href="/"
-              className="text-base font-medium text-white/90 hover:text-emerald-400"
+              className={cn(
+                `text-base font-medium text-white/90 hover:text-emerald-400`,
+                pathname === '/' && 'text-emerald-500',
+              )}
             >
               Home
             </Link>
             <Link
               href="/tools"
-              className="text-base font-medium text-white/90 hover:text-emerald-400"
+              className={cn(
+                `text-base font-medium text-white/90 hover:text-emerald-400`,
+                pathname === '/tools' && 'text-emerald-500',
+              )}
             >
               Tools
             </Link>
             <Link
               href="/services"
-              className="text-base font-medium text-white/90 hover:text-emerald-400"
+              className={cn(
+                `text-base font-medium text-white/90 hover:text-emerald-400`,
+                pathname === '/services' && 'text-emerald-500',
+              )}
             >
               Services
             </Link>
             <Link
               href="/pricing"
-              className="text-base font-medium text-white/90 hover:text-emerald-400"
+              className={cn(
+                `text-base font-medium text-white/90 hover:text-emerald-400`,
+                pathname === '/pricing' && 'text-emerald-500',
+              )}
             >
               Pricing
             </Link>
             <Link
               href="/contact"
-              className="text-base font-medium text-white/90 hover:text-emerald-400"
+              className={cn(
+                `text-base font-medium text-white/90 hover:text-emerald-400`,
+                pathname === '/contact' && 'text-emerald-500',
+              )}
             >
               Contact
             </Link>
             <Link
               href="/aboutUs"
-              className="text-base font-medium text-white/90 hover:text-emerald-400"
+              className={cn(
+                `text-base font-medium text-white/90 hover:text-emerald-400`,
+                pathname === '/aboutUs' && 'text-emerald-500',
+              )}
             >
               About us
             </Link>
@@ -197,13 +214,19 @@ export default function Navbar() {
               <Button
                 variant="outline"
                 className="w-full border-emerald-500 text-emerald-500 hover:bg-emerald-500 hover:text-black"
-                onClick={() => router.push('/auth')}
+                onClick={() => {
+                  setIsOpen(false);
+                  router.push('/auth');
+                }}
               >
                 Sign In
               </Button>
               <Button
                 className="w-full bg-emerald-500 text-black hover:bg-emerald-600"
-                onClick={() => router.push('/auth')}
+                onClick={() => {
+                  setIsOpen(false);
+                  router.push('/auth');
+                }}
               >
                 Get Started
               </Button>
