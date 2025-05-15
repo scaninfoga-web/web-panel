@@ -7,6 +7,7 @@ import {
   Clock,
   FileText,
   LayoutDashboard,
+  Telescope,
   Monitor,
 } from 'lucide-react';
 import Link from 'next/link';
@@ -22,6 +23,11 @@ const sidebarLinks = [
     title: 'Dashboard1',
     icon: LayoutDashboard,
     href: '/combinedDash',
+  },
+  {
+    title: 'Ghunt',
+    icon: Telescope,
+    href: '/ghunt',
   },
   {
     title: 'Bookmarks',

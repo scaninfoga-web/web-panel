@@ -40,27 +40,47 @@ export function DashboardCard({
 
 interface InfoTextProps {
   label: string;
-  value: string;
+  value: React.ReactElement | string;
 }
 
 export function InfoText({ label, value }: InfoTextProps) {
-  return <p className="text-sm text-gray-400">{value}</p>;
+  // return <p className="text-sm text-gray-400">{value}</p>;
+  return (
+    <div className="flex items-center justify-between gap-x-8">
+      <p className="text-sm text-white">{label}</p>
+      <p className="break-all text-sm text-gray-400">{value}</p>
+    </div>
+  );
 }
 
 interface StatusBadgeProps {
   status: string;
-  variant?: 'default' | 'outline';
+  variant?: 'default' | 'outline' | 'destructive';
+  className?: string;
 }
 
-export function StatusBadge({ status, variant = 'default' }: StatusBadgeProps) {
+export function StatusBadge({
+  status,
+  variant = 'default',
+  className,
+}: StatusBadgeProps) {
   return (
     <Badge
       variant={variant}
-      className={
-        variant === 'outline'
-          ? 'border-emerald-500 text-emerald-500'
-          : 'bg-emerald-500 text-black'
-      }
+      // className={
+      //   variant === 'outline'
+      //     ? 'border-emerald-500 text-emerald-500'
+      //     : variant === "outline-danger" ? 'border-red-500 text-red-500' : 'bg-emerald-500 text-black'
+      // }
+
+      className={cn(
+        {
+          'border-emerald-500 text-emerald-500': variant === 'outline',
+          'border-red-500 text-red-500': variant === 'destructive',
+          'bg-emerald-500 text-black': variant === 'default',
+        },
+        className,
+      )}
     >
       {status}
     </Badge>

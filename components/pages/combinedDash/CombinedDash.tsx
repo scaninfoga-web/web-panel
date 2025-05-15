@@ -6,6 +6,12 @@ import { ContactInfo } from '../dashboard/components/ContactInfo';
 import { EmailInfo } from '../dashboard/components/EmailInfo';
 import { useState } from 'react';
 
+const searchFilterOptions = [
+  { label: 'Email', value: 'email' },
+  { label: 'Username', value: 'username' },
+  { label: 'Phone', value: 'phone' },
+];
+
 function CombinedDash() {
   const [isLoading, setIsLoading] = useState(false);
   const [searchType, setSearchType] = useState<string>('');
@@ -30,7 +36,11 @@ function CombinedDash() {
       </section>
 
       <section className="py-6">
-        <SearchBar2 onSearch={handleSearch} />
+        <SearchBar2
+          onSearch={handleSearch}
+          searchFilterOptions={searchFilterOptions}
+          selectedFilter="email"
+        />
 
         {isLoading ? (
           <div className="mt-8">

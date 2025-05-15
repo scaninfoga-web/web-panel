@@ -9,14 +9,25 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Button } from '../ui/button';
 
 interface SearchBar2Props {
   onSearch: (query: string, filter: string) => void;
+  selectedFilter?: string; // Add this prop to receive the selected search filter from the parent component
+  searchFilterOptions?: Array<{ label: string; value: string }>;
+  showOptions?: boolean; // Add this prop to control the visibility of the search filter options
 }
 
-export function SearchBar2({ onSearch }: SearchBar2Props) {
+export function SearchBar2({
+  onSearch,
+  selectedFilter,
+  searchFilterOptions,
+  showOptions,
+}: SearchBar2Props) {
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchFilter, setSearchFilter] = useState('username');
+  const [searchFilter, setSearchFilter] = useState(
+    selectedFilter || 'username',
+  );
 
   const handleSearchTrigger = () => {
     onSearch(searchQuery, searchFilter);
@@ -29,21 +40,30 @@ export function SearchBar2({ onSearch }: SearchBar2Props) {
   };
 
   return (
-    <div className="flex items-center gap-4">
-      <Select value={searchFilter} onValueChange={setSearchFilter}>
-        <SelectTrigger className="w-[150px] border-gray-700 bg-gray-900/50">
-          <SelectValue placeholder="Search by..." />
-        </SelectTrigger>
-        <SelectContent className="bg-[#0e1421]/30 backdrop-blur-xl hover:cursor-pointer">
-          <SelectItem value="username">Username</SelectItem>
+    <div className="grid grid-cols-12 gap-x-4">
+      <div className="col-span-2 h-full">
+        <Select value={searchFilter} onValueChange={setSearchFilter}>
+          <SelectTrigger className="border-gray-700 bg-gray-900/50">
+            <SelectValue placeholder="Search by..." />
+          </SelectTrigger>
+          <SelectContent className="bg-[#0e1421]/30 backdrop-blur-xl hover:cursor-pointer">
+            {searchFilterOptions?.map((option, index) => {
+              return (
+                <SelectItem key={index} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              );
+            })}
+            {/* <SelectItem value="username">Username</SelectItem>
           <SelectItem value="email">Email</SelectItem>
           <SelectItem value="phone">Phone</SelectItem>
-          <SelectItem value="ip">IP Address</SelectItem>
-        </SelectContent>
-      </Select>
+          <SelectItem value="ip">IP Address</SelectItem> */}
+          </SelectContent>
+        </Select>
+      </div>
 
-      <div className="relative flex-1">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
+      <div className="relative col-span-8">
+        <Search className="absolute left-3 top-1/2 z-20 -translate-y-1/2 text-gray-500" />
         <input
           type="text"
           placeholder={`Search by ${searchFilter}...`}
@@ -54,12 +74,13 @@ export function SearchBar2({ onSearch }: SearchBar2Props) {
         />
       </div>
 
-      <button
+      <Button
         onClick={handleSearchTrigger}
-        className="rounded-md bg-emerald-500 px-4 py-2 font-medium text-black transition-colors hover:bg-emerald-600"
+        className="col-span-2 rounded-none"
+        // className="rounded-md bg-emerald-500 px-4 py-2 font-medium text-black transition-colors hover:bg-emerald-600"
       >
         Search
-      </button>
+      </Button>
     </div>
   );
 }
