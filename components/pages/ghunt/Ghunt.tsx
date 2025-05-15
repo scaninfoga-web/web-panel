@@ -128,8 +128,8 @@ export default function Ghunt() {
       // }
     };
 
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    setAccountData(dummyData);
+    // await new Promise((resolve) => setTimeout(resolve, 2000));
+    // setAccountData(dummyData);
     setIsLoading(false);
   };
 
