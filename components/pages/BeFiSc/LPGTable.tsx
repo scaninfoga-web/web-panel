@@ -6,6 +6,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { DashboardCard } from '../dashboard/components/DashboardCard';
 
 type LPGInfo = {
   code: 'SUC';
@@ -29,12 +30,16 @@ type LPGInfo = {
 };
 
 type LPGInfoTableProps = {
-  lpgInfo: LPGInfo;
+  lpgInfo: LPGInfo | null;
 };
 
 export function LPGInfoTable({ lpgInfo }: LPGInfoTableProps) {
   const getValue = (value: string | undefined | null) =>
     value && value.trim().length > 0 ? value : 'No Data';
+
+  if (!lpgInfo) {
+    return <DashboardCard title="LPG Info"> Data Not Found</DashboardCard>;
+  }
 
   return (
     <div className="w-full overflow-x-auto rounded-xl">

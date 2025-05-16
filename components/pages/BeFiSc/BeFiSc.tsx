@@ -38,8 +38,6 @@ export default function BeFiSc() {
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/mobile360/getMobile360Dtls`,
         { mobileNumber: query, realtimeData: isChecked },
       );
-
-      console.log('Respnse:', data.responseData);
       setMobile360Data(data.responseData);
       setIsLoading(false);
     } catch (err) {

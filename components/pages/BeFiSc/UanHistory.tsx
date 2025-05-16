@@ -17,8 +17,8 @@ export default function UanHistory({ data }: PageProps) {
     <div>
       <DashboardCard title="UAN History" className="flex flex-col gap-y-2 pt-1">
         <div className="flex flex-col">
-          <InfoText label="Name" value={data.result.name} />
-          <InfoText label="isBusiness" value={data.result.dob} />
+          <InfoText label="Name" value={data.result?.name} />
+          <InfoText label="isBusiness" value={data.result?.dob} />
         </div>
       </DashboardCard>
       <DashboardCard
@@ -26,10 +26,10 @@ export default function UanHistory({ data }: PageProps) {
         className="flex flex-col gap-y-2 pt-1"
       >
         <div className="flex flex-col gap-2">
-          {data.result.employmentHistory.map((val, index) => (
+          {data.result.employmentHistory?.map((val, index) => (
             <div key={index} className="flex flex-col">
-              <InfoText label="Company Name" value={val.companyName} />
-              <InfoText label="Company Address" value={val.companyAddress} />
+              <InfoText label="Company Name" value={val?.companyName} />
+              <InfoText label="Company Address" value={val?.companyAddress} />
             </div>
           ))}
         </div>
