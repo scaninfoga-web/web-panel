@@ -52,7 +52,7 @@ export function LPGInfoTable({ lpgInfo }: LPGInfoTableProps) {
               <TableHead className="whitespace-nowrap">Gas Provider</TableHead>
               <TableHead className="whitespace-nowrap">Name</TableHead>
               <TableHead>Mobile</TableHead>
-              <TableHead>Consumer ID</TableHead>
+              <TableHead className="whitespace-nowrap">Consumer ID</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Type</TableHead>
               <TableHead>Address</TableHead>

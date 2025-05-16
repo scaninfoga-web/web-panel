@@ -38,7 +38,11 @@ export default function BeFiSc() {
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/mobile360/getMobile360Dtls`,
         { mobileNumber: query, realtimeData: isChecked },
       );
-      setMobile360Data(data.responseData);
+      if (Number(data.responseData?.status) === 1) {
+        setMobile360Data(data.responseData);
+      } else {
+        toast.error('Mobile 360 Data Not Found');
+      }
       setIsLoading(false);
     } catch (err) {
       toast.error('Something went wrong');
