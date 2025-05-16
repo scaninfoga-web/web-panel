@@ -38,28 +38,28 @@ export default function Mobile360({ data }: PageProps) {
     <div className="grid grid-cols-1 gap-2 space-y-4">
       <Card className="my-6 border border-gray-700 bg-[#0e1421] p-6 shadow-xl">
         <h1 className="text-2xl font-bold text-emerald-500">Banking Info</h1>
-        <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-4">
+        <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-5">
           <div>
             <p className="text-sm text-gray-400">Name</p>
             <p className="text-base font-medium">
-              {data.result.digitalPaymentIdInfo.data.name}
+              {getValue(data.result.digitalPaymentIdInfo?.data.name)}
             </p>
           </div>
           <div>
             <p className="text-sm text-gray-400">Bank</p>
             <p className="text-base font-medium">
-              {data.result.digitalPaymentIdInfo.data.bank}
+              {getValue(data.result.digitalPaymentIdInfo?.data.bank)}
             </p>
           </div>
 
           <div>
             <p className="text-sm text-gray-400">Branch Address</p>
-            <p className="text-base font-medium">
-              {data.result.digitalPaymentIdInfo.data.address +
+            <p className="text-sm font-medium">
+              {getValue(data.result.digitalPaymentIdInfo?.data.address) +
                 ', ' +
-                data.result.digitalPaymentIdInfo.data.district +
+                getValue(data.result.digitalPaymentIdInfo?.data.district) +
                 ', ' +
-                data.result.digitalPaymentIdInfo.data.city}
+                getValue(data.result.digitalPaymentIdInfo?.data.city)}
             </p>
           </div>
           <div>
@@ -77,13 +77,13 @@ export default function Mobile360({ data }: PageProps) {
             </div> */}
             <p className="text-sm text-gray-400">Branch Contact</p>
             <p className="text-base font-medium">
-              {data.result.digitalPaymentIdInfo.data.contact}
+              {getValue(data.result.digitalPaymentIdInfo?.data.contact)}
             </p>
           </div>
           <div>
             <p className="text-sm text-gray-400">State</p>
             <p className="text-base font-medium">
-              {data.result.digitalPaymentIdInfo.data.state}
+              {getValue(data.result.digitalPaymentIdInfo?.data.state)}
             </p>
           </div>
         </div>
@@ -92,7 +92,7 @@ export default function Mobile360({ data }: PageProps) {
 
       {/* lpgInfo */}
       <DashboardCard title="LPG Info">
-        <LPGInfoTable lpgInfo={data.result.lpgInfo} />
+        <LPGInfoTable lpgInfo={data.result?.lpgInfo} />
       </DashboardCard>
 
       {/* light */}
@@ -100,10 +100,16 @@ export default function Mobile360({ data }: PageProps) {
         {/* msmeInfo */}
         <DashboardCard title="MSME Info" className="flex flex-col gap-y-2 pt-1">
           <div className="grid grid-rows-2 gap-6">
-            {data.result.msmeInfo.data.map((val, index) => (
+            {data.result.msmeInfo?.data?.map((val, index) => (
               <div key={index} className="flex flex-col">
-                <InfoText label="Udyam Number" value={val.udyamNumber} />
-                <InfoText label="Enterprise Name" value={val.enterpriseName} />
+                <InfoText
+                  label="Udyam Number"
+                  value={getValue(val.udyamNumber)}
+                />
+                <InfoText
+                  label="Enterprise Name"
+                  value={getValue(val.enterpriseName)}
+                />
               </div>
             ))}
           </div>
@@ -111,7 +117,7 @@ export default function Mobile360({ data }: PageProps) {
         {/* epfoInfo */}
         <DashboardCard title="EPFO Info" className="flex flex-col gap-y-2 pt-1">
           <div className="flex gap-2">
-            {data.result.epfoInfo.data.map((val, index) => (
+            {data.result.epfoInfo?.data?.map((val, index) => (
               <div
                 key={index}
                 className="flex flex-col border border-slate-700 p-2"
@@ -127,7 +133,7 @@ export default function Mobile360({ data }: PageProps) {
           className="flex flex-col gap-y-2 pt-1"
         >
           <div className="flex flex-row gap-6">
-            {data.result.directorPanInfo.data.map((val, index) => (
+            {data.result.directorPanInfo?.data?.map((val, index) => (
               <div
                 key={index}
                 className="flex flex-col border border-slate-700 p-2"
@@ -140,7 +146,7 @@ export default function Mobile360({ data }: PageProps) {
         {/* dinInfo */}
         <DashboardCard title="Din Info" className="flex flex-col gap-y-2 pt-1">
           <div className="flex flex-row gap-6">
-            {data.result.dinInfo.data.map((val, index) => (
+            {data.result.dinInfo?.data?.map((val, index) => (
               <div
                 key={index}
                 className="flex flex-col border border-slate-700 p-2"
@@ -155,7 +161,7 @@ export default function Mobile360({ data }: PageProps) {
         {/* gstList */}
         <DashboardCard title="GST List" className="flex flex-col gap-y-2 pt-1">
           <div className="flex flex-row gap-6">
-            {data.result.gstList.data.map((val, index) => (
+            {data.result.gstList?.data?.map((val, index) => (
               <div
                 key={index}
                 className="flex flex-col border border-slate-700 p-2"
@@ -173,11 +179,11 @@ export default function Mobile360({ data }: PageProps) {
           <div className="flex flex-col">
             <InfoText
               label="Status"
-              value={data.result.whatsappInfo.data.status}
+              value={getValue(data.result.whatsappInfo?.data?.status)}
             />
             <InfoText
               label="isBusiness"
-              value={data.result.whatsappInfo.data.isBusiness}
+              value={getValue(data.result.whatsappInfo?.data.isBusiness)}
             />
           </div>
         </DashboardCard>
@@ -190,11 +196,11 @@ export default function Mobile360({ data }: PageProps) {
           <div className="flex flex-col">
             <InfoText
               label="Revoke Status"
-              value={data.result.revokeInfo.data.revokeStatus}
+              value={getValue(data.result.revokeInfo?.data.revokeStatus)}
             />
             <InfoText
               label="Revoke Date"
-              value={getValue(data.result.revokeInfo.data.revokeDate)}
+              value={getValue(data.result.revokeInfo?.data.revokeDate)}
             />
           </div>
         </DashboardCard>
@@ -202,7 +208,7 @@ export default function Mobile360({ data }: PageProps) {
         {/* esicInfo */}
         <DashboardCard title="ESIC Info" className="flex flex-col gap-y-2 pt-1">
           <div className="flex flex-row gap-6">
-            {data.result.esicInfo.data.map((val, index) => (
+            {data.result.esicInfo?.data?.map((val, index) => (
               <div
                 key={index}
                 className="flex flex-col border border-slate-700 p-2"
@@ -210,12 +216,6 @@ export default function Mobile360({ data }: PageProps) {
                 {getValue(val)}
               </div>
             ))}
-            {/* {data.result.esicInfo.data.length === 0 ? (
-              "No Data Found"
-            ): (
-              
-              
-            )} */}
           </div>
         </DashboardCard>
       </div>
@@ -230,9 +230,11 @@ export default function Mobile360({ data }: PageProps) {
             label="isValid"
             value={
               <StatusBadge
-                status={String(data.result.telcoInfo.data.isValid)}
+                status={String(data.result.telcoInfo?.data?.isValid)}
                 variant={
-                  data.result.telcoInfo.data.isValid ? 'outline' : 'destructive'
+                  data.result.telcoInfo?.data?.isValid
+                    ? 'outline'
+                    : 'destructive'
                 }
               />
             }
@@ -241,7 +243,7 @@ export default function Mobile360({ data }: PageProps) {
             label="Subscriber Status"
             value={
               <StatusBadge
-                status={data.result.telcoInfo.data.subscriberStatus}
+                status={getValue(data.result.telcoInfo?.data?.subscriberStatus)}
                 variant={'outline'}
               />
             }
@@ -250,7 +252,9 @@ export default function Mobile360({ data }: PageProps) {
             label="Connection Status"
             value={
               <StatusBadge
-                status={data.result.telcoInfo.data.connectionStatus.statusCode}
+                status={getValue(
+                  data.result.telcoInfo?.data?.connectionStatus?.statusCode,
+                )}
                 variant={'outline'}
               />
             }
@@ -259,68 +263,76 @@ export default function Mobile360({ data }: PageProps) {
             label="Connection Type"
             value={
               <StatusBadge
-                status={data.result.telcoInfo.data.connectionType}
+                status={data.result.telcoInfo?.data?.connectionType}
                 variant={'outline'}
               />
             }
           />
           <InfoText
             label="msisdn Country Code"
-            value={data.result.telcoInfo.data.msisdn.msisdnCountryCode}
+            value={data.result.telcoInfo?.data?.msisdn.msisdnCountryCode}
           />
           <InfoText
             label="msisdn"
-            value={data.result.telcoInfo.data.msisdn.msisdn}
+            value={data.result.telcoInfo?.data?.msisdn.msisdn}
           />
           <InfoText
             label="Type"
-            value={data.result.telcoInfo.data.msisdn.type}
+            value={data.result.telcoInfo?.data?.msisdn.type}
           />
-          <InfoText label="mnc" value={data.result.telcoInfo.data.msisdn.mnc} />
+          <InfoText
+            label="mnc"
+            value={data.result.telcoInfo?.data?.msisdn.mnc}
+          />
           <InfoText
             label="imsi"
-            value={data.result.telcoInfo.data.msisdn.imsi}
+            value={data.result.telcoInfo?.data?.msisdn.imsi}
           />
-          <InfoText label="mcc" value={data.result.telcoInfo.data.msisdn.mcc} />
+          <InfoText
+            label="mcc"
+            value={data.result.telcoInfo?.data?.msisdn.mcc}
+          />
           <InfoText
             label="mccMnc"
-            value={data.result.telcoInfo.data.msisdn.mccMnc}
+            value={data.result.telcoInfo?.data?.msisdn.mccMnc}
           />
           <InfoText
             label="Current Network Name"
             value={
-              data.result.telcoInfo.data.currentServiceProvider.networkName
+              data.result.telcoInfo?.data?.currentServiceProvider?.networkName
             }
           />
           <InfoText
             label="Current Network Region"
             value={
-              data.result.telcoInfo.data.currentServiceProvider.networkRegion +
+              data.result.telcoInfo?.data?.currentServiceProvider
+                ?.networkRegion +
               ', ' +
-              data.result.telcoInfo.data.currentServiceProvider.countryName
+              data.result.telcoInfo?.data?.currentServiceProvider?.countryName
             }
           />
           <InfoText
             label="Original Network Name"
             value={
-              data.result.telcoInfo.data.originalServiceProvider.networkName
+              data.result.telcoInfo?.data?.originalServiceProvider?.networkName
             }
           />
           <InfoText
             label="Original Network Region"
             value={
-              data.result.telcoInfo.data.originalServiceProvider.networkRegion +
+              data.result.telcoInfo?.data?.originalServiceProvider
+                ?.networkRegion +
               ', ' +
-              data.result.telcoInfo.data.originalServiceProvider.countryName
+              data.result.telcoInfo?.data?.originalServiceProvider?.countryName
             }
           />
           <InfoText
             label="isRoaming"
             value={
               <StatusBadge
-                status={String(data.result.telcoInfo.data.isRoaming)}
+                status={String(data.result.telcoInfo?.data?.isRoaming)}
                 variant={
-                  data.result.telcoInfo.data.isRoaming
+                  data.result.telcoInfo?.data?.isRoaming
                     ? 'outline'
                     : 'destructive'
                 }
@@ -339,9 +351,9 @@ export default function Mobile360({ data }: PageProps) {
               label="isPorted"
               value={
                 <StatusBadge
-                  status={data.result.mobileAgeInfo.data.isPorted}
+                  status={data.result.mobileAgeInfo?.data?.isPorted}
                   variant={
-                    data.result.mobileAgeInfo.data.isPorted === 'Yes'
+                    data.result.mobileAgeInfo?.data?.isPorted === 'Yes'
                       ? 'outline'
                       : 'destructive'
                   }
@@ -350,15 +362,15 @@ export default function Mobile360({ data }: PageProps) {
             />
             <InfoText
               label="Mobile Age"
-              value={data.result.mobileAgeInfo.data.mobileAge}
+              value={data.result.mobileAgeInfo?.data?.mobileAge}
             />
             <InfoText
               label="Number Active"
               value={
                 <StatusBadge
-                  status={data.result.mobileAgeInfo.data.numberActive}
+                  status={data.result.mobileAgeInfo?.data?.numberActive}
                   variant={
-                    data.result.mobileAgeInfo.data.numberActive === 'Yes'
+                    data.result.mobileAgeInfo?.data?.numberActive === 'Yes'
                       ? 'outline'
                       : 'destructive'
                   }
@@ -369,9 +381,9 @@ export default function Mobile360({ data }: PageProps) {
               label="Number Valid"
               value={
                 <StatusBadge
-                  status={data.result.mobileAgeInfo.data.numberValid}
+                  status={data.result.mobileAgeInfo?.data?.numberValid}
                   variant={
-                    data.result.mobileAgeInfo.data.numberValid === 'Yes'
+                    data.result.mobileAgeInfo?.data?.numberValid === 'Yes'
                       ? 'outline'
                       : 'destructive'
                   }
@@ -380,19 +392,19 @@ export default function Mobile360({ data }: PageProps) {
             />
             <InfoText
               label="Ported Telecom"
-              value={data.result.mobileAgeInfo.data.portedTelecom}
+              value={data.result.mobileAgeInfo?.data?.portedTelecom}
             />
             <InfoText
               label="Region"
-              value={data.result.mobileAgeInfo.data.region}
+              value={data.result.mobileAgeInfo?.data?.region}
             />
             <InfoText
               label="Roaming"
               value={
                 <StatusBadge
-                  status={data.result.mobileAgeInfo.data.roaming}
+                  status={data.result.mobileAgeInfo?.data?.roaming}
                   variant={
-                    data.result.mobileAgeInfo.data.roaming === 'Yes'
+                    data.result.mobileAgeInfo?.data?.roaming === 'Yes'
                       ? 'outline'
                       : 'destructive'
                   }
@@ -401,11 +413,11 @@ export default function Mobile360({ data }: PageProps) {
             />
             <InfoText
               label="Telecom"
-              value={data.result.mobileAgeInfo.data.telecom}
+              value={data.result.mobileAgeInfo?.data?.telecom}
             />
           </div>
         </DashboardCard>
-        {/* keyHighlights */}
+        {/* keyHighlights? */}
         <DashboardCard
           title="Key Highlights"
           className="flex flex-col gap-y-2 pt-1"
@@ -413,51 +425,51 @@ export default function Mobile360({ data }: PageProps) {
           <div className="flex flex-col">
             <InfoText
               label="Digital PaymentId Name"
-              value={data.result.keyHighlights.digitalPaymentIdName}
+              value={data.result.keyHighlights?.digitalPaymentIdName}
             />
             <InfoText
               label="Gas Connection Found"
-              value={data.result.keyHighlights.gasConnectionFound}
+              value={data.result.keyHighlights?.gasConnectionFound}
             />
             <InfoText
               label="Udyam Numbers"
-              value={JSON.stringify(data.result.keyHighlights.udyamNumbers)}
+              value={JSON.stringify(data.result.keyHighlights?.udyamNumbers)}
             />
             <InfoText
               label="GST Numbers"
-              value={JSON.stringify(data.result.keyHighlights.gstNumbers)}
+              value={JSON.stringify(data.result.keyHighlights?.gstNumbers)}
             />
             <InfoText
               label="DIN Numbers"
-              value={JSON.stringify(data.result.keyHighlights.dinNumbers)}
+              value={JSON.stringify(data.result.keyHighlights?.dinNumbers)}
             />
             <InfoText
               label="ESIC Number"
-              value={JSON.stringify(data.result.keyHighlights.esicNumber)}
+              value={JSON.stringify(data.result.keyHighlights?.esicNumber)}
             />
             <InfoText
               label="IE Codes"
-              value={JSON.stringify(data.result.keyHighlights.ieCodes)}
+              value={JSON.stringify(data.result.keyHighlights?.ieCodes)}
             />
             <InfoText
               label="Connection Type"
-              value={data.result.keyHighlights.connectionType}
+              value={data.result.keyHighlights?.connectionType}
             />
             <InfoText
               label="Whatsapp Business Status"
-              value={data.result.keyHighlights.whatsappBusinessAccountStatus}
+              value={data.result.keyHighlights?.whatsappBusinessAccountStatus}
             />
             <InfoText
               label="Age Of Mobile"
-              value={data.result.keyHighlights.ageOfMobile}
+              value={data.result.keyHighlights?.ageOfMobile}
             />
             <InfoText
               label="Active Status"
               value={
                 <StatusBadge
-                  status={data.result.keyHighlights.activeStatus}
+                  status={data.result.keyHighlights?.activeStatus}
                   variant={
-                    data.result.keyHighlights.activeStatus === 'Yes'
+                    data.result.keyHighlights?.activeStatus === 'Yes'
                       ? 'outline'
                       : 'destructive'
                   }
@@ -466,7 +478,7 @@ export default function Mobile360({ data }: PageProps) {
             />
             <InfoText
               label="Revoke Date"
-              value={data.result.keyHighlights.revokeDate ?? 'No Data'}
+              value={data.result.keyHighlights?.revokeDate ?? 'No Data'}
             />
           </div>
         </DashboardCard>
