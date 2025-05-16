@@ -25,6 +25,7 @@ import {
   StatusBadge,
 } from '../dashboard/components/DashboardCard';
 import axios from 'axios';
+import { toast } from 'sonner';
 
 interface GoogleAccountData {
   //   responseStatus: {
@@ -84,7 +85,7 @@ export default function Ghunt() {
       console.log('Respnse:', data.responseData);
       setAccountData(data.responseData);
     } catch (err) {
-      alert('ERROR');
+      toast.error('Something went wrong');
     }
 
     // Simulate API response

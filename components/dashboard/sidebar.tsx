@@ -30,6 +30,11 @@ const sidebarLinks = [
     href: '/ghunt',
   },
   {
+    title: 'BeFiSc',
+    icon: Telescope,
+    href: '/BeFiSc',
+  },
+  {
     title: 'Bookmarks',
     icon: Bookmark,
     href: '/dashboard/bookmarks',
