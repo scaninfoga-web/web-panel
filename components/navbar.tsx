@@ -64,60 +64,64 @@ export default function Navbar() {
           </Link>
 
           <nav className="hidden items-center space-x-8 md:flex">
-            <Link
-              href="/"
-              className={cn(
-                `text-base font-medium text-white/90 hover:text-emerald-400`,
-                pathname === '/' && 'text-emerald-500',
-              )}
-            >
-              Home
-            </Link>
-            <Link
-              href="/tools"
-              className={cn(
-                `text-base font-medium text-white/90 hover:text-emerald-400`,
-                pathname === '/tools' && 'text-emerald-500',
-              )}
-            >
-              Tools
-            </Link>
-            <Link
-              href="/services"
-              className={cn(
-                `text-base font-medium text-white/90 hover:text-emerald-400`,
-                pathname === '/services' && 'text-emerald-500',
-              )}
-            >
-              Services
-            </Link>
-            <Link
-              href="/pricing"
-              className={cn(
-                `text-base font-medium text-white/90 hover:text-emerald-400`,
-                pathname === '/pricing' && 'text-emerald-500',
-              )}
-            >
-              Pricing
-            </Link>
-            <Link
-              href="/contact"
-              className={cn(
-                `text-base font-medium text-white/90 hover:text-emerald-400`,
-                pathname === '/contact' && 'text-emerald-500',
-              )}
-            >
-              Contact
-            </Link>
-            <Link
-              href="/aboutUs"
-              className={cn(
-                `text-base font-medium text-white/90 hover:text-emerald-400`,
-                pathname === '/aboutUs' && 'text-emerald-500',
-              )}
-            >
-              About us
-            </Link>
+            {paths.includes(pathname) ? (
+              <>
+                <Link
+                  href="/"
+                  className={cn(
+                    `text-base font-medium text-white/90 hover:text-emerald-400`,
+                    pathname === '/' && 'text-emerald-500',
+                  )}
+                >
+                  Home
+                </Link>
+                <Link
+                  href="/tools"
+                  className={cn(
+                    `text-base font-medium text-white/90 hover:text-emerald-400`,
+                    pathname === '/tools' && 'text-emerald-500',
+                  )}
+                >
+                  Tools
+                </Link>
+                <Link
+                  href="/services"
+                  className={cn(
+                    `text-base font-medium text-white/90 hover:text-emerald-400`,
+                    pathname === '/services' && 'text-emerald-500',
+                  )}
+                >
+                  Services
+                </Link>
+                <Link
+                  href="/pricing"
+                  className={cn(
+                    `text-base font-medium text-white/90 hover:text-emerald-400`,
+                    pathname === '/pricing' && 'text-emerald-500',
+                  )}
+                >
+                  Pricing
+                </Link>
+                <Link
+                  href="/contact"
+                  className={cn(
+                    `text-base font-medium text-white/90 hover:text-emerald-400`,
+                    pathname === '/contact' && 'text-emerald-500',
+                  )}
+                >
+                  Contact
+                </Link>
+                <Link
+                  href="/aboutUs"
+                  className={cn(
+                    `text-base font-medium text-white/90 hover:text-emerald-400`,
+                    pathname === '/aboutUs' && 'text-emerald-500',
+                  )}
+                >
+                  About us
+                </Link>
+              </>
+            ) : null}
           </nav>
 
           <div className="hidden items-center space-x-4 md:flex">

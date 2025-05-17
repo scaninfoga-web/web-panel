@@ -20,7 +20,7 @@ const sidebarLinks = [
     href: '/dashboard',
   },
   {
-    title: 'Dashboard1',
+    title: 'Combined Dash',
     icon: LayoutDashboard,
     href: '/combinedDash',
   },

@@ -1,31 +1,19 @@
 'use client';
-import Dashboard from '@/app/dashboard/page';
 import DashboardTitle from '@/components/common/DashboardTitle';
 import { SearchBar2 } from '@/components/search/SearchBar2';
 
-import {
-  Shield,
-  Share2,
-  Key,
-  Globe,
-  Activity,
-  AlertTriangle,
-  LineChart,
-  PieChart as PieChartIcon,
-} from 'lucide-react';
+import { Activity } from 'lucide-react';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Calendar, Mail, MapPin, User2, Users } from 'lucide-react';
 import { Loader } from '@/components/ui/loader';
+import axios from 'axios';
+import { Mail, Users } from 'lucide-react';
 import { useState } from 'react';
+import { toast } from 'sonner';
 import {
   DashboardCard,
   InfoText,
   StatusBadge,
 } from '../dashboard/components/DashboardCard';
-import axios from 'axios';
-import { toast } from 'sonner';
 
 interface GoogleAccountData {
   //   responseStatus: {
