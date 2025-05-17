@@ -81,37 +81,37 @@ export function LPGInfoTable({ lpgInfo }: LPGInfoTableProps) {
               lpgInfo.data.map((item, index) => (
                 <TableRow key={index}>
                   <TableCell className="whitespace-nowrap">
-                    {getValue(item.gasProvider)}
+                    {getValue(item?.gasProvider)}
                   </TableCell>
                   <TableCell className="whitespace-nowrap">
-                    {getValue(item.name)}
+                    {getValue(item?.name)}
                   </TableCell>
                   <TableCell className="whitespace-nowrap">
-                    {getValue(item.consumerDetails.consumerMobile)}
+                    {getValue(item?.consumerDetails.consumerMobile)}
                   </TableCell>
                   <TableCell className="whitespace-nowrap">
-                    {getValue(item.consumerDetails.consumerId)}
+                    {getValue(item?.consumerDetails.consumerId)}
                   </TableCell>
                   <TableCell className="whitespace-nowrap">
-                    {getValue(item.consumerDetails.consumerStatus)}
+                    {getValue(item?.consumerDetails.consumerStatus)}
                   </TableCell>
                   <TableCell className="whitespace-nowrap">
-                    {getValue(item.consumerDetails.consumerType)}
+                    {getValue(item?.consumerDetails.consumerType)}
                   </TableCell>
                   <TableCell className="whitespace-nowrap">
-                    {getValue(item.address)}
+                    {getValue(item?.address)}
                   </TableCell>
                   <TableCell className="whitespace-nowrap">
-                    {getValue(item.distributorDetails.distributorCode)}
+                    {getValue(item?.distributorDetails.distributorCode)}
                   </TableCell>
                   <TableCell className="whitespace-nowrap">
-                    {getValue(item.distributorDetails.distributorName)}
+                    {getValue(item?.distributorDetails.distributorName)}
                   </TableCell>
                   <TableCell className="whitespace-nowrap">
-                    {getValue(item.distributorDetails.distributorContact)}
+                    {getValue(item?.distributorDetails.distributorContact)}
                   </TableCell>
                   <TableCell className="whitespace-nowrap">
-                    {getValue(item.distributorDetails.distributorAddress)}
+                    {getValue(item?.distributorDetails.distributorAddress)}
                   </TableCell>
                 </TableRow>
               ))

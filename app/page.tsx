@@ -1,5 +1,4 @@
 import Hero from '@/components/hero';
-import Navbar from '@/components/navbar';
 import Services from '@/components/services';
 import Education from '@/components/education';
 import Features from '@/components/features';

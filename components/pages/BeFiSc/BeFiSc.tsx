@@ -17,12 +17,21 @@ function isValidIndianMobileNumber(input: string): boolean {
 export default function BeFiSc() {
   const [searchType, setSearchType] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isChecked, setIsChecked] = useState(false);
   const [mobile360Data, setMobile360Data] = useState<Mobile360Type | null>(
     null,
   );
-  const [isChecked, setIsChecked] = useState(false);
+
+  const resetAllData = () => {
+    setMobile360Data(null);
+  };
 
   const handleSearch = async (query: string, searchFilter: string) => {
+    // setIsLoading(true)
+    // await new Promise((resolve) => setTimeout(resolve, 1000))
+    // setMobile360Data(mobile360DummyData)
+    // setIsLoading(false)
+    // return
     if (query.length < 1) {
       return;
     }
@@ -31,6 +40,7 @@ export default function BeFiSc() {
       toast.error('Invalid mobile number', { duration: 800 });
       return;
     }
+    resetAllData();
     setIsLoading(true);
     setSearchType(searchFilter);
     try {
@@ -48,16 +58,9 @@ export default function BeFiSc() {
       toast.error('Something went wrong');
       setIsLoading(false);
     }
-    // await new Promise((resolve) => setTimeout(resolve, 2000));
-    // setMobile360Data(mobile360DummyData)
-    // setIsLoading(false);
   };
 
   const searchFilterOptions = [{ label: 'Mobile No', value: 'mobileNumber' }];
-
-  // const handleSearch = (query: string, searchFilter: string) => {
-  //     console.log(query, searchFilter)
-  // }
 
   return (
     <div className="space-y-4">
@@ -84,7 +87,7 @@ export default function BeFiSc() {
           <Loader />
         </div>
       ) : mobile360Data ? (
-        <div className="grid grid-cols-1">
+        <div className="grid grid-cols-1 pb-4">
           <Mobile360 data={mobile360Data} />
         </div>
       ) : null}

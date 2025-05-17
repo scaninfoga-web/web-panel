@@ -98,7 +98,7 @@ export default function Dashboard() {
 
   if (isLoading) {
     return (
-      <div className="flex h-screen w-full items-center justify-center bg-[#0a0e17]">
+      <div className="flex h-screen w-full items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <Shield className="h-12 w-12 animate-pulse text-emerald-500" />
           <h1 className="text-2xl font-bold text-white">ScanInfoga</h1>
@@ -109,7 +109,7 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="container mx-auto mt-12 flex flex-1 flex-col gap-4 p-4 px-4 py-8 md:gap-8 md:p-8">
+    <div className="container mb-2 flex flex-1 flex-col gap-y-4">
       <div className="mb-8 space-y-4">
         <div className="flex items-center justify-between">
           <div>

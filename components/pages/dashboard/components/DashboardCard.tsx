@@ -47,10 +47,10 @@ export function InfoText({ label, value }: InfoTextProps) {
   // return <p className="text-sm text-gray-400">{value}</p>;
   return (
     <div className="flex items-center justify-between gap-x-8">
-      <p className="text-sm text-white">{label}</p>
-      <p className="whitespace-nowrap break-all text-sm text-gray-400">
+      <p className="whitespace-nowrap text-sm text-white">{label}</p>
+      <div className="whitespace-nowrap break-all text-sm text-gray-400">
         {value}
-      </p>
+      </div>
     </div>
   );
 }
