@@ -16,6 +16,7 @@ export default function GstTurnover({
 }: {
   GstTurnoverData: GstTurnoverType | null;
 }) {
+  console.log('GST DATA', GstTurnoverData);
   if (!GstTurnoverData) {
     return <></>;
   }
