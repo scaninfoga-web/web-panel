@@ -1,4 +1,9 @@
-import { VerifyUdyamType } from '@/types/BeFiSc';
+import {
+  EsicDetailsType,
+  GstTurnoverType,
+  GstVerificationAdvanceType,
+  VerifyUdyamType,
+} from '@/types/BeFiSc';
 import React from 'react';
 import { Loader } from '@/components/ui/loader';
 import CustomBeFiScCard from './CustomBeFiScCard';
@@ -7,27 +12,19 @@ import { Card } from '@/components/ui/card';
 const getValue = (value: string | undefined | null) =>
   value && value.trim().length > 0 ? value : 'No Data';
 
-export default function VerifyUdyam({
-  verfiyUdyamData,
+export default function Esics({
+  EsicsData,
 }: {
-  verfiyUdyamData: VerifyUdyamType | null;
+  EsicsData: EsicDetailsType | null;
 }) {
-  if (!verfiyUdyamData) {
+  if (!EsicsData) {
     return <></>;
   }
 
-  const remainingData = {
-    mobile: verfiyUdyamData.result?.mobile,
-    email: verfiyUdyamData.result?.email,
-    dic: verfiyUdyamData.result?.dic,
-    'msme-dfo': verfiyUdyamData.result?.['msme-dfo'],
-    date_of_udyam_registeration:
-      verfiyUdyamData.result?.date_of_udyam_registeration,
-  };
   return (
     <div className="grid grid-cols-1 gap-2 space-y-4">
       {/* digitalPaymentIdInfo */}
-      <Card className="my-6 border border-gray-700 bg-[#0e1421] p-6 shadow-xl">
+      {/* <Card className="my-6 border border-gray-700 bg-[#0e1421] p-6 shadow-xl">
         <h1 className="text-2xl font-bold text-emerald-500">Udyam Details</h1>
         <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-5">
           <div>
@@ -74,26 +71,13 @@ export default function VerifyUdyam({
             </p>
           </div>
         </div>
-      </Card>
+      </Card> */}
 
       {/* light */}
       <div className="grid grid-cols-3 gap-4">
         <CustomBeFiScCard
-          data={verfiyUdyamData.result?.address}
-          title="Address"
-        />
-        <CustomBeFiScCard title="Details" data={remainingData} />
-        <CustomBeFiScCard
-          title="Plant Details"
-          data={verfiyUdyamData.result?.plant_details}
-        />
-        <CustomBeFiScCard
-          title="Enterprise Type"
-          data={verfiyUdyamData.result?.enterprise_type}
-        />
-        <CustomBeFiScCard
-          data={verfiyUdyamData.result?.nic_code}
-          title="NIC Code"
+          data={EsicsData?.result?.esic_details}
+          title={`Esic Details :${EsicsData?.result?.esic_number}`}
         />
       </div>
     </div>

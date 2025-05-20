@@ -37,8 +37,9 @@ export function LPGInfoTable({ lpgInfo }: LPGInfoTableProps) {
   const getValue = (value: string | undefined | null) =>
     value && value.trim().length > 0 ? value : 'No Data';
 
-  if (!lpgInfo) {
-    return <DashboardCard title="LPG Info"> Data Not Found</DashboardCard>;
+  const length = lpgInfo?.data?.length || 0;
+  if (!lpgInfo || length === 0) {
+    return <></>;
   }
 
   return (

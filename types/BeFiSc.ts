@@ -312,6 +312,30 @@ export interface GstTurnoverType {
   };
 }
 
+export interface EsicDetailsType {
+  txn_id: string;
+  api_category: string;
+  api_name: string;
+  billable: boolean;
+  message: string;
+  status: number;
+  datetime: string;
+  result: {
+    esic_number: string;
+    esic_details: {
+      esic_number: string;
+      name: string;
+      employer_code: string;
+      employer_name: string;
+      mobile: string;
+      uan_number: string;
+      bank_name: string;
+      branch_name: string;
+      bank_account_status: string;
+    }[];
+  };
+}
+
 export interface ProfileAdvanceType {
   txn_id: string;
   api_category: string;

@@ -17,9 +17,8 @@ export default function ProfileAdvance({
   ProfileAdvanceData: ProfileAdvanceType | null;
 }) {
   if (!ProfileAdvanceData) {
-    return <div className="mt-8">no data</div>;
+    return <></>;
   }
-
   return (
     <div className="grid grid-cols-1 gap-2 space-y-4">
       {/* digitalPaymentIdInfo */}
