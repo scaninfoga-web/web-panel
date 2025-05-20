@@ -6,6 +6,7 @@ import { AuthProvider } from '@/components/providers/AuthProvider';
 
 import { PersistGate } from 'redux-persist/integration/react';
 import Navbar from '@/components/navbar';
+import { collectClientInfo } from '@/lib/naviagtorGeo';
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (

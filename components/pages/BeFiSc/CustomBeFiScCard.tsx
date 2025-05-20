@@ -100,14 +100,7 @@ interface PageProps {
     | null;
 }
 
-export default function CustomBeFiScCard({
-  title,
-  data,
-  objectData,
-  obectArrayData,
-  stringArrayData,
-  objectInsideObjectArrayData,
-}: PageProps) {
+export default function CustomBeFiScCard({ title, data }: PageProps) {
   if (isValidObjectInsideObjectArrayData(data)) {
     return (
       <DashboardCard
@@ -183,7 +176,10 @@ export default function CustomBeFiScCard({
 
   if (Array.isArray(data) && data.every((item) => typeof item === 'string')) {
     return (
-      <DashboardCard title={title} className="flex flex-col gap-y-2 pt-1">
+      <DashboardCard
+        title={title}
+        className="scrollbar-custom flex max-h-[350px] flex-col gap-y-2 overflow-auto pt-1"
+      >
         {data.length > 0 ? (
           <div className="flex gap-2">
             {data.map((val, index) => (
@@ -212,7 +208,10 @@ export default function CustomBeFiScCard({
     )
   ) {
     return (
-      <DashboardCard title={title} className="flex flex-col gap-y-2 pt-1">
+      <DashboardCard
+        title={title}
+        className="scrollbar-custom flex flex-col gap-y-2 overflow-auto pt-1"
+      >
         {data.length > 0 ? (
           <div className="flex gap-2">
             {data.map((val, index) => (
@@ -231,16 +230,17 @@ export default function CustomBeFiScCard({
     );
   }
 
-  return (
-    <DashboardCard
-      title={formatKey(title)}
-      className="flex max-h-[450px] flex-col gap-y-2 py-10 pt-1"
-    >
-      <div className="scrollbar-custom grid max-h-[350px] grid-rows-2 gap-6 overflow-auto pb-4">
-        <div className="flex flex-col font-semibold text-white/75">No Data</div>
-      </div>
-    </DashboardCard>
-  );
+  // return (
+  //   // <DashboardCard
+  //   //   title={formatKey(title)}
+  //   //   className="flex max-h-[450px] flex-col gap-y-2 py-10 pt-1"
+  //   // >
+  //   //   <div className="scrollbar-custom grid max-h-[350px] grid-rows-2 gap-6 overflow-auto pb-4">
+  //   //     <div className="flex flex-col font-semibold text-white/75">No Data</div>
+  //   //   </div>
+  //   // </DashboardCard>
+
+  // );
 
   // if (objectData) {
   // return (

@@ -11,20 +11,20 @@ import { DashboardCard } from '../dashboard/components/DashboardCard';
 type LPGInfo = {
   code: 'SUC';
   data: Array<{
-    gasProvider: 'Indane Gas' | 'Bharat Gas' | 'HP Gas';
+    gas_provider: 'Indane Gas' | 'Bharat Gas' | 'HP Gas';
     name: string;
-    consumerDetails: {
-      consumerMobile: string;
-      consumerId: string;
-      consumerStatus: string;
-      consumerType: string;
+    consumer_details: {
+      consumer_mobile: string;
+      consumer_id: string;
+      consumer_status: string;
+      consumer_type: string;
     };
     address: string;
-    distributorDetails: {
-      distributorCode: string;
-      distributorName: string;
-      distributorContact: string;
-      distributorAddress: string;
+    distributor_details: {
+      distributor_code: string;
+      distributor_name: string;
+      distributor_contact: string;
+      distributor_address: string;
     };
   }>;
 };
@@ -81,37 +81,37 @@ export function LPGInfoTable({ lpgInfo }: LPGInfoTableProps) {
               lpgInfo.data.map((item, index) => (
                 <TableRow key={index}>
                   <TableCell className="whitespace-nowrap">
-                    {getValue(item?.gasProvider)}
+                    {getValue(item?.gas_provider)}
                   </TableCell>
                   <TableCell className="whitespace-nowrap">
                     {getValue(item?.name)}
                   </TableCell>
                   <TableCell className="whitespace-nowrap">
-                    {getValue(item?.consumerDetails.consumerMobile)}
+                    {getValue(item?.consumer_details.consumer_mobile)}
                   </TableCell>
                   <TableCell className="whitespace-nowrap">
-                    {getValue(item?.consumerDetails.consumerId)}
+                    {getValue(item?.consumer_details.consumer_id)}
                   </TableCell>
                   <TableCell className="whitespace-nowrap">
-                    {getValue(item?.consumerDetails.consumerStatus)}
+                    {getValue(item?.consumer_details.consumer_status)}
                   </TableCell>
                   <TableCell className="whitespace-nowrap">
-                    {getValue(item?.consumerDetails.consumerType)}
+                    {getValue(item?.consumer_details.consumer_type)}
                   </TableCell>
                   <TableCell className="whitespace-nowrap">
                     {getValue(item?.address)}
                   </TableCell>
                   <TableCell className="whitespace-nowrap">
-                    {getValue(item?.distributorDetails.distributorCode)}
+                    {getValue(item?.distributor_details.distributor_code)}
                   </TableCell>
                   <TableCell className="whitespace-nowrap">
-                    {getValue(item?.distributorDetails.distributorName)}
+                    {getValue(item?.distributor_details.distributor_name)}
                   </TableCell>
                   <TableCell className="whitespace-nowrap">
-                    {getValue(item?.distributorDetails.distributorContact)}
+                    {getValue(item?.distributor_details.distributor_address)}
                   </TableCell>
                   <TableCell className="whitespace-nowrap">
-                    {getValue(item?.distributorDetails.distributorAddress)}
+                    {getValue(item?.distributor_details.distributor_address)}
                   </TableCell>
                 </TableRow>
               ))

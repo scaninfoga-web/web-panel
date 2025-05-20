@@ -45,36 +45,36 @@ export default function Mobile360({ data }: PageProps) {
           <div>
             <p className="text-sm text-gray-400">Name</p>
             <p className="text-base font-medium">
-              {getValue(data.result.digitalPaymentIdInfo?.data?.name)}
+              {getValue(data.result?.digital_payment_id_info?.data?.name)}
             </p>
           </div>
           <div>
             <p className="text-sm text-gray-400">Bank</p>
             <p className="text-base font-medium">
-              {getValue(data.result.digitalPaymentIdInfo?.data?.bank)}
+              {getValue(data.result?.digital_payment_id_info?.data?.bank)}
             </p>
           </div>
 
           <div>
             <p className="text-sm text-gray-400">Branch Address</p>
             <p className="text-sm font-medium">
-              {getValue(data.result.digitalPaymentIdInfo?.data?.address) +
+              {getValue(data.result?.digital_payment_id_info?.data?.address) +
                 ', ' +
-                getValue(data.result.digitalPaymentIdInfo?.data?.district) +
+                getValue(data.result?.digital_payment_id_info?.data?.district) +
                 ', ' +
-                getValue(data.result.digitalPaymentIdInfo?.data?.city)}
+                getValue(data.result?.digital_payment_id_info?.data?.city)}
             </p>
           </div>
           <div>
             <p className="text-sm text-gray-400">Branch Contact</p>
             <p className="text-base font-medium">
-              {getValue(data.result.digitalPaymentIdInfo?.data?.contact)}
+              {getValue(data.result?.digital_payment_id_info?.data?.contact)}
             </p>
           </div>
           <div>
             <p className="text-sm text-gray-400">State</p>
             <p className="text-base font-medium">
-              {getValue(data.result.digitalPaymentIdInfo?.data?.state)}
+              {getValue(data.result?.digital_payment_id_info?.data?.state)}
             </p>
           </div>
         </div>
@@ -82,42 +82,51 @@ export default function Mobile360({ data }: PageProps) {
 
       {/* lpgInfo */}
       <DashboardCard title="LPG Info">
-        <LPGInfoTable lpgInfo={data.result?.lpgInfo} />
+        <LPGInfoTable lpgInfo={data.result?.lpg_info} />
       </DashboardCard>
 
       {/* light */}
       <div className="grid grid-cols-3 gap-4">
-        <CustomBeFiScCard data={data.result.msmeInfo?.data} title="MSME Info" />
-        <CustomBeFiScCard title="EPFO Info" data={data.result.epfoInfo?.data} />
+        <CustomBeFiScCard
+          data={data.result?.msme_info?.data}
+          title="MSME Info"
+        />
+        <CustomBeFiScCard
+          title="EPFO Info"
+          data={data.result?.epfo_info?.data}
+        />
         <CustomBeFiScCard
           title="Director Pan Info"
-          data={data.result.directorPanInfo?.data}
+          data={data.result?.director_pan_info?.data}
         />
-        <CustomBeFiScCard data={data.result.dinInfo?.data} title="Din Info" />
-        <CustomBeFiScCard title="GST List" data={data.result.gstList?.data} />
+        <CustomBeFiScCard data={data.result?.din_info?.data} title="Din Info" />
+        <CustomBeFiScCard title="GST List" data={data.result?.gst_list?.data} />
         <CustomBeFiScCard
           title="Whatsapp Info"
-          data={data.result.whatsappInfo?.data}
+          data={data.result?.whatsapp_info?.data}
         />
         <CustomBeFiScCard
           title="Revoke Info"
-          data={data.result.revokeInfo?.data}
+          data={data.result?.revoke_info?.data}
         />
-        <CustomBeFiScCard title="ESIC Info" data={data.result.esicInfo?.data} />
+        <CustomBeFiScCard
+          title="ESIC Info"
+          data={data.result?.esic_info?.data}
+        />
       </div>
 
       <div className="grid grid-cols-3 gap-4">
         {/* telcoInfo */}
         <CustomBeFiScCard
-          data={[data.result.telcoInfo?.data]}
+          data={[data.result?.telco_info?.data]}
           title="Telco Info"
         />
         <CustomBeFiScCard
-          data={[data.result.mobileAgeInfo?.data]}
+          data={[data.result?.mobile_age_info?.data]}
           title="Mobile Age Info"
         />
         <CustomBeFiScCard
-          data={data.result?.keyHighlights}
+          data={data.result?.key_highlights}
           title="Key Highlights"
         />
       </div>

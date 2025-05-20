@@ -30,9 +30,9 @@ const sidebarLinks = [
     href: '/ghunt',
   },
   {
-    title: 'BeFiSc',
+    title: 'Scaninfoga Intelligence',
     icon: Telescope,
-    href: '/BeFiSc',
+    href: '/scaninfogaIntelligence',
   },
   {
     title: 'Bookmarks',
