@@ -64,6 +64,14 @@ export default function BeFiSc() {
     setProfileAdvanceLoading(true);
     setEsicsLoading(true);
   };
+  const clearOldData = () => {
+    setMobile360Data(null);
+    setVerfiyUdyamData(null);
+    setGstAdvanceData(null);
+    setGstTurnoverData(null);
+    setProfileAdvanceData(null);
+    setEsicsData(null);
+  };
 
   const setAllOffLoading = () => {
     setIsLoading(false);
@@ -84,6 +92,7 @@ export default function BeFiSc() {
     // setVerfiyUdyamData(dummyUdyamResponse);
     // setVerifyUdyamLoading(false);
     // return;
+    clearOldData();
 
     if (query.length < 1) {
       return;
@@ -193,7 +202,7 @@ export default function BeFiSc() {
             {
               gst_no: gstAdvanceNumberArray[0],
               realtimeData: isRealtime,
-              year: '2024-25',
+              year: '2022-23',
             },
           );
 
