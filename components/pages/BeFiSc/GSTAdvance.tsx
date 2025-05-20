@@ -13,7 +13,7 @@ export default function GSTAdvance({
   GstAdvanceData: GstVerificationAdvanceType | null;
 }) {
   if (!GstAdvanceData) {
-    return <div className="mt-8">no data</div>;
+    return <></>;
   }
   const remainingData = {
     aggregate_turn_over: GstAdvanceData.result?.aggregate_turn_over,

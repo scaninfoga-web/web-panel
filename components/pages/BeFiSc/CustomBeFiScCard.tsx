@@ -68,6 +68,7 @@ function isValidObjectInsideObjectArrayData(
 ): data is Array<{ [key: string]: string | boolean | Record<string, string> }> {
   return (
     Array.isArray(data) &&
+    data.length > 0 &&
     data.every(
       (item) =>
         typeof item === 'object' &&
@@ -174,7 +175,11 @@ export default function CustomBeFiScCard({ title, data }: PageProps) {
     );
   }
 
-  if (Array.isArray(data) && data.every((item) => typeof item === 'string')) {
+  if (
+    Array.isArray(data) &&
+    data.length > 0 &&
+    data.every((item) => typeof item === 'string')
+  ) {
     return (
       <DashboardCard
         title={title}
@@ -200,6 +205,7 @@ export default function CustomBeFiScCard({ title, data }: PageProps) {
 
   if (
     Array.isArray(data) &&
+    data.length > 0 &&
     data.every(
       (item) =>
         typeof item === 'object' &&

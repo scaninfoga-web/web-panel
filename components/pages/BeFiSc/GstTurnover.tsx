@@ -17,7 +17,7 @@ export default function GstTurnover({
   GstTurnoverData: GstTurnoverType | null;
 }) {
   if (!GstTurnoverData) {
-    return <div className="mt-8">no data</div>;
+    return <></>;
   }
 
   return (

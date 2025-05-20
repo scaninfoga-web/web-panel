@@ -3,7 +3,7 @@ import DashboardTitle from '@/components/common/DashboardTitle';
 import { SearchBar2 } from '@/components/search/SearchBar2';
 import { Loader } from '@/components/ui/loader';
 import { useState } from 'react';
-import axios, { Axios } from 'axios';
+import axios, { Axios, AxiosError } from 'axios';
 import { toast } from 'sonner';
 import CustomCheckBox from '@/components/checkbox';
 import {
@@ -14,6 +14,7 @@ import {
   GstVerificationAdvanceType,
   GstTurnoverType,
   ProfileAdvanceType,
+  EsicDetailsType,
 } from '@/types/BeFiSc';
 import Mobile360 from './Mobile360';
 import VerifyUdyam from './VerifyUdyam';
@@ -22,6 +23,7 @@ import { CustomAxios } from '@/lib/Axios';
 import GSTAdvance from './GSTAdvance';
 import GstTurnover from './GstTurnover';
 import ProfileAdvance from './ProfileAdvance';
+import Esics from './Esics';
 
 function isValidIndianMobileNumber(input: string): boolean {
   const mobileRegex = /^(?:\+91[\-\s]?)?[6-9]\d{9}$/;
@@ -51,17 +53,25 @@ export default function BeFiSc() {
   const [profileAdvanceData, setProfileAdvanceData] =
     useState<ProfileAdvanceType | null>(null);
 
-  const setAllLoading = () => {
+  const [esicsLoading, setEsicsLoading] = useState(false);
+  const [esicsData, setEsicsData] = useState<EsicDetailsType | null>(null);
+
+  const setAllOnLoading = () => {
     setIsLoading(true);
     setVerifyUdyamLoading(true);
     setGstAdvanceLoading(true);
     setGstTurnoverLoading(true);
     setProfileAdvanceLoading(true);
+    setEsicsLoading(true);
   };
 
-  const resetAllData = () => {
-    setMobile360Data(null);
-    setVerfiyUdyamData(null);
+  const setAllOffLoading = () => {
+    setIsLoading(false);
+    setVerifyUdyamLoading(false);
+    setGstAdvanceLoading(false);
+    setGstTurnoverLoading(false);
+    setProfileAdvanceLoading(false);
+    setEsicsLoading(false);
   };
 
   const handleSearch = async (query: string, searchFilter: string) => {
@@ -83,7 +93,7 @@ export default function BeFiSc() {
       toast.error('Invalid mobile number', { duration: 800 });
       return;
     }
-    setAllLoading();
+    setAllOnLoading();
     // setSearchType(searchFilter);
     try {
       // get mobile 360 data
@@ -100,83 +110,119 @@ export default function BeFiSc() {
       setIsLoading(false);
 
       // profile advance
-      const { data: ProfileAdvance } = await axios.post(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/mobile/profileadvance`,
-        { mobile_number: query, realtimeData: isRealtime },
-      );
-      if (
-        Number(ProfileAdvance.responseData?.status) === 1 ||
-        Number(ProfileAdvance.responseData?.status) === 2
-      ) {
-        setProfileAdvanceData(ProfileAdvance.responseData);
-      } else {
+      try {
+        const { data: ProfileAdvance } = await axios.post(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/mobile/profileadvance`,
+          { mobile_number: query, realtimeData: isRealtime },
+        );
+        if (
+          Number(ProfileAdvance.responseData?.status) === 1 ||
+          Number(ProfileAdvance.responseData?.status) === 2
+        ) {
+          setProfileAdvanceData(ProfileAdvance.responseData);
+        }
+      } catch (error) {
         toast.error('Profile advance Data Not Found');
+        setProfileAdvanceLoading(false);
       }
-      setProfileAdvanceLoading(false);
+
+      // epicsInfo
+      const EsicsArray = data.responseData?.result?.key_highlights?.epics_info;
+      if (EsicsArray?.length > 0) {
+        try {
+          const { data: EsicsInfo } = await axios.post(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/mobile/esicsearch`,
+            { esic_number: EsicsArray[0], realtimeData: isRealtime },
+          );
+          if (
+            Number(EsicsInfo.responseData?.status) === 1 ||
+            Number(EsicsInfo.responseData?.status) === 2
+          ) {
+            setEsicsData(EsicsInfo.responseData);
+          }
+          setEsicsLoading(false);
+        } catch (error) {
+          setEsicsLoading(false);
+          toast.error('Esics Data Not Found');
+        }
+      }
 
       // get verify udyam data
-      const udyamNumberArray =
-        data.responseData.result.key_highlights?.udyam_numbers;
+      try {
+        const udyamNumberArray =
+          data.responseData.result.key_highlights?.udyam_numbers;
 
-      if (udyamNumberArray.length > 0) {
-        setVerifyUdyamLoading(true);
-        const { data: UdyamData } = await axios.post(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/mobile/verifyudyam`,
-          { registration_no: udyamNumberArray[0], realtimeData: isRealtime },
-        );
-        if (Number(UdyamData.responseData?.status) === 1) {
-          setVerfiyUdyamData(UdyamData.responseData);
-        } else {
-          toast.error('Udyam Data Not Found');
+        if (udyamNumberArray?.length > 0) {
+          const { data: UdyamData } = await axios.post(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/mobile/verifyudyam`,
+            { registration_no: udyamNumberArray[0], realtimeData: isRealtime },
+          );
+          if (Number(UdyamData.responseData?.status) === 1) {
+            setVerfiyUdyamData(UdyamData.responseData);
+          } else {
+            toast.error('Udyam Data Not Found');
+          }
+          setVerifyUdyamLoading(false);
         }
-        setVerifyUdyamLoading(false);
-      } else {
+      } catch (error) {
         toast.error('Udyam Number Not Found');
+        setVerifyUdyamLoading(false);
       }
 
       // get gst advance data
-      const gstAdvanceNumberArray =
-        data.responseData.result.key_highlights?.gst_numbers;
+      try {
+        const gstAdvanceNumberArray =
+          data.responseData.result?.key_highlights?.gst_numbers;
 
-      if (gstAdvanceNumberArray.length > 0) {
-        const { data: GSTDATA } = await axios.post(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/mobile/gstadvance`,
-          { gst_no: gstAdvanceNumberArray[0], realtimeData: isRealtime },
-        );
-        // toast.success(data.message);
-        if (Number(GSTDATA.responseData?.status) === 1) {
-          setGstAdvanceData(GSTDATA.responseData);
-        } else {
-          toast.error('GST Not Found');
+        if (gstAdvanceNumberArray?.length > 0) {
+          const { data: GSTDATA } = await axios.post(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/mobile/gstadvance`,
+            { gst_no: gstAdvanceNumberArray[0], realtimeData: isRealtime },
+          );
+          // toast.success(data.message);
+          if (Number(GSTDATA.responseData?.status) === 1) {
+            setGstAdvanceData(GSTDATA.responseData);
+          } else {
+            toast.error('GST Not Found');
+          }
+          setGstAdvanceLoading(false);
+
+          // calling gst turnover api
+          const { data: GstTurnover } = await axios.post(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/mobile/gstturnover`,
+            {
+              gst_no: gstAdvanceNumberArray[0],
+              realtimeData: isRealtime,
+              year: '2024-25',
+            },
+          );
+
+          if (
+            Number(GstTurnover.responseData?.status) === 1 ||
+            Number(GstTurnover.responseData?.status) === 2
+          ) {
+            setGstTurnoverData(GstTurnover.responseData);
+          } else {
+            toast.error('GST Turnover Not Found');
+          }
+          setGstTurnoverLoading(false);
         }
-        setGstAdvanceLoading(false);
-
-        // calling gst turnover api
-        const { data: GstTurnover } = await axios.post(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/mobile/gstturnover`,
-          {
-            gst_no: gstAdvanceNumberArray[0],
-            realtimeData: isRealtime,
-            year: '2024-25',
-          },
-        );
-
-        if (
-          Number(GstTurnover.responseData?.status) === 1 ||
-          Number(GstTurnover.responseData?.status) === 2
-        ) {
-          setGstTurnoverData(GstTurnover.responseData);
-        } else {
-          toast.error('GST Turnover Not Found');
-        }
-        setGstTurnoverLoading(false);
-      } else {
+      } catch (error) {
         toast.error('GST Not Found');
+        setGstAdvanceLoading(false);
+        setGstTurnoverLoading(false);
       }
+      setAllOffLoading();
     } catch (err) {
+      if (err instanceof AxiosError) {
+        toast.error(err.response?.data?.responseStatus?.message);
+        setIsLoading(false);
+        setAllOffLoading();
+        return;
+      }
       toast.error('Something went wrong');
       setIsLoading(false);
-      // resetAllData();
+      setAllOffLoading();
     }
   };
 
@@ -236,6 +282,13 @@ export default function BeFiSc() {
             <BeFiScLoadingSkeleton />
           ) : (
             <GstTurnover GstTurnoverData={gstTurnoverData} />
+          )}
+
+          {/* Esics */}
+          {esicsLoading ? (
+            <BeFiScLoadingSkeleton />
+          ) : (
+            <Esics EsicsData={esicsData} />
           )}
         </div>
       ) : null}

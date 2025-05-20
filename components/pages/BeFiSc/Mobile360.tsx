@@ -11,11 +11,7 @@ interface PageProps {
 
 export default function Mobile360({ data }: PageProps) {
   if (!data) {
-    return (
-      <div className="mt-8">
-        <Loader />
-      </div>
-    );
+    return <></>;
   }
   const options: Intl.DateTimeFormatOptions = {
     day: '2-digit',
@@ -81,9 +77,11 @@ export default function Mobile360({ data }: PageProps) {
       </Card>
 
       {/* lpgInfo */}
-      <DashboardCard title="LPG Info">
-        <LPGInfoTable lpgInfo={data.result?.lpg_info} />
-      </DashboardCard>
+      {data.result?.lpg_info?.data?.length > 0 && (
+        <DashboardCard title="LPG Info">
+          <LPGInfoTable lpgInfo={data.result?.lpg_info} />
+        </DashboardCard>
+      )}
 
       {/* light */}
       <div className="grid grid-cols-3 gap-4">
