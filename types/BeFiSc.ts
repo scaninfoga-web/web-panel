@@ -1,12 +1,13 @@
 export interface Mobile360Type {
-  txnId: string;
-  apiCategory: 'Fraud Check';
-  apiName: 'Mobile 360';
+  txn_id: string;
+  api_category: 'Fraud Check';
+  api_name: 'Mobile 360';
   billable: true;
   message: 'Success';
-  status: 1;
+  status: number;
+  datetime: string;
   result: {
-    digitalPaymentIdInfo: {
+    digital_payment_id_info: {
       code: 'SUC';
       data: {
         name: string;
@@ -20,42 +21,42 @@ export interface Mobile360Type {
         bank: string;
       };
     };
-    lpgInfo: {
+    lpg_info: {
       code: 'SUC';
       data: Array<{
-        gasProvider: 'Indane Gas' | 'Bharat Gas' | 'HP Gas';
+        gas_provider: 'Indane Gas' | 'Bharat Gas' | 'HP Gas';
         name: string;
-        consumerDetails: {
-          consumerMobile: string;
-          consumerId: string;
-          consumerStatus: string;
-          consumerType: string;
+        consumer_details: {
+          consumer_mobile: string;
+          consumer_id: string;
+          consumer_status: string;
+          consumer_type: string;
         };
         address: string;
-        distributorDetails: {
-          distributorCode: string;
-          distributorName: string;
-          distributorContact: string;
-          distributorAddress: string;
+        distributor_details: {
+          distributor_code: string;
+          distributor_name: string;
+          distributor_contact: string;
+          distributor_address: string;
         };
       }>;
     };
-    msmeInfo: {
+    msme_info: {
       code: 'SUC';
       data: Array<{
-        udyamNumber: string;
-        enterpriseName: string;
+        udyam_number: string;
+        enterprise_name: string;
       }>;
     };
-    epfoInfo: {
+    epfo_info: {
       code: 'SUC';
       data: string[];
     };
-    directorPanInfo: {
+    director_pan_info: {
       code: 'SUC';
       data: string[];
     };
-    dinInfo: {
+    din_info: {
       code: 'SUC';
       data: Array<{
         pan: string;
@@ -65,115 +66,365 @@ export interface Mobile360Type {
         };
       }>;
     };
-    telcoInfo: {
+    telco_info: {
       code: 'SUC';
       data: {
-        isValid: boolean;
-        subscriberStatus: 'CONNECTED';
-        connectionStatus: {
-          statusCode: 'DELIVERED';
-          errorCodeId: string;
+        is_valid: boolean;
+        subscriber_status: string;
+        connection_status: {
+          status_code: string;
+          error_code_id: string;
         };
-        connectionType: 'prepaid';
+        connection_type: string;
         msisdn: {
-          msisdnCountryCode: 'IN';
+          msisdn_country_code: 'IN';
           msisdn: string;
-          type: 'MOBILE';
+          type: string;
           mnc: string;
           imsi: string;
           mcc: string;
-          mccMnc: string;
+          mcc_mnc: string;
         };
-        currentServiceProvider: {
-          networkPrefix: string;
-          networkName: string;
-          networkRegion: string;
+        current_service_provider: {
+          network_prefix: string;
+          network_name: string;
+          network_region: string;
           mcc: string;
           mnc: string;
-          countryPrefix: string;
-          countryCode: string;
-          countryName: string;
+          country_prefix: string;
+          country_code: string;
+          country_name: string;
         };
-        originalServiceProvider: {
-          networkPrefix: string;
-          networkName: string;
-          networkRegion: string;
+        original_service_provider: {
+          network_prefix: string;
+          network_name: string;
+          network_region: string;
           mcc: string;
           mnc: string;
-          countryPrefix: string;
-          countryCode: string;
-          countryName: string;
+          country_prefix: string;
+          country_code: string;
+          country_name: string;
         };
-        isRoaming: boolean;
-        roamingServiceProvider: {
-          networkPrefix: string;
-          networkName: string;
-          networkRegion: string;
+        is_roaming: boolean;
+        roaming_service_provider: {
+          network_prefix: string;
+          network_name: string;
+          network_region: string;
           mcc: string;
           mnc: string;
-          countryPrefix: string;
-          countryCode: string;
-          countryName: string;
+          country_prefix: string;
+          country_code: string;
+          country_name: string;
         };
       };
     };
-    mobileAgeInfo: {
+    mobile_age_info: {
       code: 'SUC';
       data: {
-        isPorted: string;
-        mobileAge: string;
-        numberActive: string;
-        numberValid: string;
-        portedRegion: string;
-        portedTelecom: string;
+        is_ported: string;
+        mobile_age: string;
+        number_active: string;
+        number_valid: string;
+        ported_region: string;
+        ported_telecom: string;
         region: string;
         roaming: string;
         telecom: string;
       };
     };
-    gstList: {
+    gst_list: {
       code: 'SUC';
       data: string[];
     };
-    iecList: {
+    iec_list: {
       code: 'NRF';
       data: [];
     };
-    whatsappInfo: {
+    whatsapp_info: {
       code: 'SUC';
       data: {
         status: string;
-        isBusiness: string;
+        is_business: string;
       };
     };
-    revokeInfo: {
+    revoke_info: {
       code: 'SUC';
       data: {
-        revokeDate: string;
-        revokeStatus: string;
+        revoke_date: string;
+        revoke_status: string;
       };
     };
-    esicInfo: {
+    esic_info: {
       code: 'NRF';
       data: [];
     };
-    keyHighlights: {
-      digitalPaymentIdName: string;
-      gasConnectionFound: string;
-      udyamNumbers: string[];
-      gstNumbers: string[];
-      dinNumbers: string[];
-      esicNumber: [];
-      ieCodes: [];
-      connectionType: string;
-      whatsappBusinessAccountStatus: string;
-      ageOfMobile: string;
-      activeStatus: string;
-      revokeDate: string;
+    key_highlights: {
+      digital_payment_id_name: string;
+      gas_connection_found: string;
+      udyam_numbers: string[];
+      gst_numbers: string[];
+      din_numbers: string[];
+      esic_number: [];
+      ie_codes: [];
+      connection_type: string;
+      whatsapp_business_account_status: string;
+      age_of_mobile: string;
+      active_status: string;
+      revoke_date: string;
     };
   };
-  datetime: string;
 }
+
+export interface GstVerificationAdvanceType {
+  api_category: string;
+  api_name: string;
+  billable: boolean;
+  txn_id: string;
+  message: string;
+  status: number;
+  datetime: string;
+  result: {
+    aggregate_turn_over: string;
+    authorized_signatory: string[];
+    business_constitution: string;
+    business_details: {
+      saccd: string;
+      sdes: string;
+    }[];
+    business_nature: string[];
+    can_flag: string;
+    central_jurisdiction: string;
+    compliance_rating: string;
+    current_registration_status: string;
+    filing_status: {
+      fy: string;
+      taxp: string;
+      mof: string;
+      dof: string;
+      rtntype: string;
+      arn: string;
+      status: string;
+    }[][];
+    gstin: string;
+    is_field_visit_conducted: string;
+    legal_name: string;
+    mandate_e_invoice: string;
+    other_business_address: Record<string, unknown>;
+    primary_business_address: {
+      business_nature: string;
+      detailed_address: string;
+      last_updated_date: string;
+      registered_address: string;
+    };
+    register_cancellation_date: string;
+    register_date: string;
+    state_jurisdiction: string;
+    tax_payer_type: string;
+    trade_name: string;
+    gross_total_income: string;
+    gross_total_income_financial_year: string;
+    business_email: string;
+    business_mobile: string;
+  };
+}
+
+export interface VerifyUdyamType {
+  api_category: string;
+  api_name: string;
+  billable: boolean;
+  txn_id: string;
+  message: string;
+  status: number;
+  datetime: string;
+  result: {
+    enterprise_name: string;
+    organisation_type: string;
+    service_type: string;
+    gender: string;
+    social_category: string;
+    date_of_incorporation: string;
+    date_of_commencement: string;
+    address: {
+      flat_no: string;
+      building: string;
+      village: string;
+      block: string;
+      street: string;
+      district: string;
+      city: string;
+      state: string;
+      pin: string;
+    };
+    mobile: string;
+    email: string;
+    plant_details: {
+      unit_name: string;
+      flat: string;
+      building: string;
+      village: string;
+      block: string;
+      road: string;
+      district: string;
+      city: string;
+      state: string;
+      pin: string;
+    }[];
+    enterprise_type: {
+      classification_year: string;
+      enterprise_type: string;
+      classification_date: string;
+    }[];
+    nic_code: {
+      nic_2_digit: string;
+      nic_4_digit: string;
+      nic_5_digit: string;
+      activity: string;
+      date: string;
+    }[];
+    dic: string;
+    'msme-dfo': string;
+    date_of_udyam_registeration: string;
+  };
+}
+
+export interface GstTurnoverType {
+  api_category: string;
+  api_name: string;
+  billable: boolean;
+  txn_id: string;
+  message: string;
+  status: number;
+  datetime: string;
+  result: {
+    gst_estimated_total: string;
+    gst_filed_total: string;
+    year: string;
+    filing_date: string;
+    pan_estimated_total: string;
+    pan_filed_total: string;
+    gst_status: string;
+    legal_name: string;
+    trade_name: string;
+    register_date: string;
+    tax_payer_type: string;
+    authorized_signatory: string[];
+    business_nature: string[];
+  };
+}
+
+export interface ProfileAdvanceType {
+  txn_id: string;
+  api_category: string;
+  api_name: string;
+  billable: boolean;
+  message: string;
+  status: number;
+  datetime: string;
+  result: {
+    personal_information: {
+      full_name: string;
+      gender: string;
+      age: string;
+      date_of_birth: string;
+      income: string;
+    };
+    alternate_phone: {
+      serial_number: string;
+      value: string;
+    }[];
+    email: {
+      serial_number: string;
+      value: string;
+    }[];
+    address: {
+      detailed_address: string;
+      state: string;
+      pincode: string;
+      type: string;
+      date_of_reporting: string;
+    }[];
+    document_data: {
+      pan: {
+        serial_number: string;
+        value: string;
+      }[];
+    };
+  };
+}
+
+export const dummyUdyamResponse: VerifyUdyamType = {
+  api_category: 'Know Your Business (KYB)',
+  api_name: 'Udyam',
+  billable: true,
+  txn_id: '123e4567-e89b-12d3-a456-426614174000',
+  message: 'Record Found Successfully',
+  status: 1,
+  datetime: '2025-05-19 10:30:00.123456',
+  result: {
+    enterprise_name: 'ABC FOODS',
+    organisation_type: 'Proprietary',
+    service_type: 'Manufacturing',
+    gender: 'Male',
+    social_category: 'General',
+    date_of_incorporation: '01/01/2015',
+    date_of_commencement: '01/01/2015',
+    address: {
+      flat_no: 'A-101',
+      building: 'Sunshine Residency',
+      village: 'Sector 45',
+      block: 'Main Block',
+      street: 'Park Street',
+      district: 'Gurgaon',
+      city: 'Gurgaon',
+      state: 'Haryana',
+      pin: '122003',
+    },
+    mobile: '98*****321',
+    email: 'abcfoods@example.com',
+    plant_details: [
+      {
+        unit_name: 'ABC FOODS UNIT 1',
+        flat: 'B-201',
+        building: 'Industrial Plaza',
+        village: 'Manesar',
+        block: '',
+        road: 'NH-8',
+        district: 'Gurgaon',
+        city: 'Gurgaon',
+        state: 'Haryana',
+        pin: '122051',
+      },
+    ],
+    enterprise_type: [
+      {
+        classification_year: '2023-24',
+        enterprise_type: 'Micro',
+        classification_date: '01/04/2023',
+      },
+    ],
+    nic_code: [
+      {
+        nic_2_digit: '10 - Manufacture of food products',
+        nic_4_digit: '1071 - Manufacture of bakery products',
+        nic_5_digit: '10711 - Manufacture of bread',
+        activity: 'Manufacturing',
+        date: '01/04/2023',
+      },
+      {
+        nic_2_digit:
+          '47 - Retail trade, except of motor vehicles and motorcycles',
+        nic_4_digit: '4721 - Retail sale of food in specialized stores',
+        nic_5_digit:
+          '47214 - Retail sale of bakery products, dairy products and eggs',
+        activity: 'Trading',
+        date: '01/04/2023',
+      },
+    ],
+    dic: 'GURGAON',
+    'msme-dfo': 'DELHI',
+    date_of_udyam_registeration: '01/04/2023',
+  },
+};
 
 export interface UanHistoryType {
   txnId: string;
@@ -224,15 +475,15 @@ export const dummyData: UanHistoryType = {
   },
 };
 
-export const mobile360DummyData: Mobile360Type = {
-  txnId: '77d89227-0dbd-4778-8cfb-e224df2a80a6',
-  apiCategory: 'Fraud Check',
-  apiName: 'Mobile 360',
+export const mobile_360_dummy_data: Mobile360Type = {
+  txn_id: '77d89227-0dbd-4778-8cfb-e224df2a80a6',
+  api_category: 'Fraud Check',
+  api_name: 'Mobile 360',
   billable: true,
   message: 'Success',
   status: 1,
   result: {
-    digitalPaymentIdInfo: {
+    digital_payment_id_info: {
       code: 'SUC',
       data: {
         name: 'Ramesh Kumar',
@@ -246,80 +497,80 @@ export const mobile360DummyData: Mobile360Type = {
         bank: 'Paytm Payments Bank',
       },
     },
-    lpgInfo: {
+    lpg_info: {
       code: 'SUC',
       data: [
         {
-          gasProvider: 'Indane Gas',
+          gas_provider: 'Indane Gas',
           name: 'RAM KUMAR',
-          consumerDetails: {
-            consumerMobile: '6789999999',
-            consumerId: '7500000001234567',
-            consumerStatus: 'ACTIVE',
-            consumerType: 'Single Bottle Connection',
+          consumer_details: {
+            consumer_mobile: '6789999999',
+            consumer_id: '7500000001234567',
+            consumer_status: 'ACTIVE',
+            consumer_type: 'Single Bottle Connection',
           },
           address: '123 ABC Colony XYZ',
-          distributorDetails: {
-            distributorCode: '000987654',
-            distributorName: 'GAYATRI INDANE SERVICE',
-            distributorContact: '1800987654',
-            distributorAddress: '456 MNOP Marg XYZ',
+          distributor_details: {
+            distributor_code: '000987654',
+            distributor_name: 'GAYATRI INDANE SERVICE',
+            distributor_contact: '1800987654',
+            distributor_address: '456 MNOP Marg XYZ',
           },
         },
         {
-          gasProvider: 'Bharat Gas',
+          gas_provider: 'Bharat Gas',
           name: 'Sham Kumar',
-          consumerDetails: {
-            consumerMobile: '',
-            consumerId: '1234567890',
-            consumerStatus: '',
-            consumerType: '',
+          consumer_details: {
+            consumer_mobile: '',
+            consumer_id: '1234567890',
+            consumer_status: '',
+            consumer_type: '',
           },
           address: '123 ABC Colony XYZ',
-          distributorDetails: {
-            distributorCode: '1234567',
-            distributorName: 'CHANDAN GAS SERVICE',
-            distributorContact: '',
-            distributorAddress: '456 MNOP Marg XYZ',
+          distributor_details: {
+            distributor_code: '1234567',
+            distributor_name: 'CHANDAN GAS SERVICE',
+            distributor_contact: '',
+            distributor_address: '456 MNOP Marg XYZ',
           },
         },
         {
-          gasProvider: 'HP Gas',
+          gas_provider: 'HP Gas',
           name: 'Sham Kumar',
-          consumerDetails: {
-            consumerMobile: '',
-            consumerId: '',
-            consumerStatus: '',
-            consumerType: '456 MNOP Marg XYZ',
+          consumer_details: {
+            consumer_mobile: '',
+            consumer_id: '',
+            consumer_status: '',
+            consumer_type: '456 MNOP Marg XYZ',
           },
           address: '1XX ABC Colony GXXXX 123456',
-          distributorDetails: {
-            distributorCode: '1234567',
-            distributorName: 'CHITRA GAS SERVICE',
-            distributorContact: '',
-            distributorAddress: '',
+          distributor_details: {
+            distributor_code: '1234567',
+            distributor_name: 'CHITRA GAS SERVICE',
+            distributor_contact: '',
+            distributor_address: '',
           },
         },
       ],
     },
-    msmeInfo: {
+    msme_info: {
       code: 'SUC',
       data: [
         {
-          udyamNumber: 'UDYAM-MH-11-12345678',
-          enterpriseName: 'M/S Ramesh Electronics',
+          udyam_number: 'UDYAM-MH-11-12345678',
+          enterprise_name: 'M/S Ramesh Electronics',
         },
       ],
     },
-    epfoInfo: {
+    epfo_info: {
       code: 'SUC',
       data: ['100004314123'],
     },
-    directorPanInfo: {
+    director_pan_info: {
       code: 'SUC',
       data: ['ABCPD1234E'],
     },
-    dinInfo: {
+    din_info: {
       code: 'SUC',
       data: [
         {
@@ -331,111 +582,111 @@ export const mobile360DummyData: Mobile360Type = {
         },
       ],
     },
-    telcoInfo: {
+    telco_info: {
       code: 'SUC',
       data: {
-        isValid: true,
-        subscriberStatus: 'CONNECTED',
-        connectionStatus: {
-          statusCode: 'DELIVERED',
-          errorCodeId: '',
+        is_valid: true,
+        subscriber_status: 'CONNECTED',
+        connection_status: {
+          status_code: 'DELIVERED',
+          error_code_id: '',
         },
-        connectionType: 'prepaid',
+        connection_type: 'prepaid',
         msisdn: {
-          msisdnCountryCode: 'IN',
+          msisdn_country_code: 'IN',
           msisdn: '+919582773885',
           type: 'MOBILE',
           mnc: '109',
           imsi: '404109582773885',
           mcc: '404',
-          mccMnc: '40410',
+          mcc_mnc: '40410',
         },
-        currentServiceProvider: {
-          networkPrefix: '81302',
-          networkName: 'Airtel',
-          networkRegion: 'Delhi',
+        current_service_provider: {
+          network_prefix: '81302',
+          network_name: 'Airtel',
+          network_region: 'Delhi',
           mcc: '404',
           mnc: '109',
-          countryPrefix: '+91',
-          countryCode: 'IN',
-          countryName: 'India',
+          country_prefix: '+91',
+          country_code: 'IN',
+          country_name: 'India',
         },
-        originalServiceProvider: {
-          networkPrefix: '95827',
-          networkName: 'Vodafone',
-          networkRegion: 'Delhi',
+        original_service_provider: {
+          network_prefix: '95827',
+          network_name: 'Vodafone',
+          network_region: 'Delhi',
           mcc: '404',
           mnc: '109',
-          countryPrefix: '+91',
-          countryCode: 'IN',
-          countryName: 'India',
+          country_prefix: '+91',
+          country_code: 'IN',
+          country_name: 'India',
         },
-        isRoaming: false,
-        roamingServiceProvider: {
-          networkPrefix: '',
-          networkName: '',
-          networkRegion: '',
+        is_roaming: false,
+        roaming_service_provider: {
+          network_prefix: '',
+          network_name: '',
+          network_region: '',
           mcc: '',
           mnc: '',
-          countryPrefix: '',
-          countryCode: '',
-          countryName: '',
+          country_prefix: '',
+          country_code: '',
+          country_name: '',
         },
       },
     },
-    mobileAgeInfo: {
+    mobile_age_info: {
       code: 'SUC',
       data: {
-        isPorted: 'Yes',
-        mobileAge: '15 to 16 Years',
-        numberActive: 'Yes',
-        numberValid: 'Yes',
-        portedRegion: 'Delhi',
-        portedTelecom: 'Airtel ',
+        is_ported: 'Yes',
+        mobile_age: '15 to 16 Years',
+        number_active: 'Yes',
+        number_valid: 'Yes',
+        ported_region: 'Delhi',
+        ported_telecom: 'Airtel ',
         region: ' Delhi',
         roaming: 'No',
         telecom: 'Vodafone ',
       },
     },
-    gstList: {
+    gst_list: {
       code: 'SUC',
       data: ['27ABCPD1234E1ZN'],
     },
-    iecList: {
+    iec_list: {
       code: 'NRF',
       data: [],
     },
-    whatsappInfo: {
+    whatsapp_info: {
       code: 'SUC',
       data: {
         status: 'Account Found',
-        isBusiness: '0',
+        is_business: '0',
       },
     },
-    revokeInfo: {
+    revoke_info: {
       code: 'SUC',
       data: {
-        revokeDate: '',
-        revokeStatus: 'No',
+        revoke_date: '',
+        revoke_status: 'No',
       },
     },
-    esicInfo: {
+    esic_info: {
       code: 'NRF',
       data: [],
     },
-    keyHighlights: {
-      digitalPaymentIdName: 'Ramesh Kumar',
-      gasConnectionFound: 'Yes',
-      udyamNumbers: ['UDYAM-MH-11-12345678'],
-      gstNumbers: ['27ABCPD1234E1ZN', '27ABCPD1234E1ZN'],
-      dinNumbers: ['09812345'],
-      esicNumber: [],
-      ieCodes: [],
-      connectionType: 'prepaid',
-      whatsappBusinessAccountStatus: 'Non-business',
-      ageOfMobile: '15 to 16 Years',
-      activeStatus: 'Yes',
-      revokeDate: '',
+    key_highlights: {
+      digital_payment_id_name: 'Ramesh Kumar',
+      gas_connection_found: 'Yes',
+      udyam_numbers: ['UDYAM-MH-11-12345678'],
+      gst_numbers: ['27ABCPD1234E1ZN', '27ABCPD1234E1ZN'],
+      din_numbers: ['09812345'],
+      esic_number: [],
+      ie_codes: [],
+      connection_type: 'prepaid',
+      whatsapp_business_account_status: 'Non-business',
+      age_of_mobile: '15 to 16 Years',
+      active_status: 'Yes',
+      revoke_date: '',
     },
   },
   datetime: '2024-12-24 07:15:53.41087',

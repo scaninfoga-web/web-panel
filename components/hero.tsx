@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Shield, Lock, Database, Code } from 'lucide-react';
 import { Typewriter } from 'react-simple-typewriter';
+import { collectClientInfo } from '@/lib/naviagtorGeo';
 export default function Hero() {
   const [typedText, setTypedText] = useState('');
   const [typedHeading, setTypedHeading] = useState('');
@@ -12,6 +13,12 @@ export default function Hero() {
   const fullHeading = 'Protecting Your Digital Assets in a Connected World';
 
   useEffect(() => {
+    const getData = async () => {
+      console.log('HEY THERE');
+      const ClientData = await collectClientInfo();
+      console.log(ClientData);
+    };
+    getData();
     // Original typing animation
     let currentIndex = 0;
     const typingInterval = setInterval(() => {
