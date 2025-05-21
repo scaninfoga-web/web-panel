@@ -70,7 +70,6 @@ export default function Ghunt() {
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/ghunt/getEmailDetails`,
         { email: query },
       );
-      console.log('Respnse:', data.responseData);
       setAccountData(data.responseData);
     } catch (err) {
       toast.error('Something went wrong');

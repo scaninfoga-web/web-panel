@@ -4,18 +4,19 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Menu, X, Shield, User, ShoppingCart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
+import { cn, getClientInfo } from '@/lib/utils';
 import { usePathname, useRouter } from 'next/navigation';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { clearCookies } from '@/actions/clearCookies';
 import { logout } from '@/redux/userSlice';
 import { getCookie } from 'cookies-next';
+import { setInfo } from '@/redux/infoSlice';
+import { AppDispatch } from '@/redux/store';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [hasMounted, setHasMounted] = useState(false);
-  const dispatch = useDispatch();
   const pathname = usePathname();
   const router = useRouter();
   const accessToken = getCookie('accessToken');
@@ -33,6 +34,21 @@ export default function Navbar() {
   useEffect(() => {
     setHasMounted(true);
   }, []);
+
+  const dispatch = useDispatch<AppDispatch>();
+
+  useEffect(() => {
+    const fetchInfo = async () => {
+      try {
+        const info = await getClientInfo();
+        dispatch(setInfo(info));
+      } catch (e) {
+        console.error('Error fetching client info:', e);
+      }
+    };
+
+    fetchInfo();
+  }, [dispatch]);
 
   useEffect(() => {
     const handleScroll = () => {

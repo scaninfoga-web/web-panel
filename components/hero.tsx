@@ -13,12 +13,11 @@ export default function Hero() {
   const fullHeading = 'Protecting Your Digital Assets in a Connected World';
 
   useEffect(() => {
-    const getData = async () => {
-      console.log('HEY THERE');
-      const ClientData = await collectClientInfo();
-      console.log(ClientData);
-    };
-    getData();
+    // const getData = async () => {
+    //   const ClientData = await collectClientInfo();
+    //   console.log(ClientData);
+    // };
+    // getData();
     // Original typing animation
     let currentIndex = 0;
     const typingInterval = setInterval(() => {

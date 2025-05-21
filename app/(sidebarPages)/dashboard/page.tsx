@@ -93,7 +93,7 @@ export default function Dashboard() {
   const handleSearch = (query: string) => {
     setSearchQuery(query);
     // Implement your search logic here based on searchFilter
-    console.log(`Searching for ${query} in ${searchFilter}`);
+    // console.log(`Searching for ${query} in ${searchFilter}`);
   };
 
   if (isLoading) {
