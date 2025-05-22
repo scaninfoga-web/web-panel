@@ -164,7 +164,7 @@ export interface Mobile360Type {
       udyam_numbers: string[];
       gst_numbers: string[];
       din_numbers: string[];
-      esic_number: [];
+      esic_number: string[];
       ie_codes: [];
       connection_type: string;
       whatsapp_business_account_status: string;
@@ -372,6 +372,255 @@ export interface ProfileAdvanceType {
         serial_number: string;
         value: string;
       }[];
+    };
+  };
+}
+
+export interface MobileToAccountNumberType {
+  txn_id: string;
+  api_category: string;
+  api_name: string;
+  billable: boolean;
+  message: string;
+  status: number;
+  datetime: string;
+  result: {
+    account_details: {
+      account_ifsc: string;
+      account_number: string;
+      amount_deposited: string;
+    };
+    vpa_details: {
+      account_holder_name: string;
+      vpa: string;
+    };
+  };
+}
+
+export interface EquifaxV3Type {
+  api_category: string;
+  api_name: string;
+  billable: boolean;
+  txn_id: string;
+  message: string;
+  status: number;
+  datetime: string;
+  result: {
+    id_number: string;
+    id_type: string;
+    mobile: string;
+    name: string;
+    credit_score: string;
+    credit_report: {
+      InquiryResponseHeader: {
+        ClientID: string;
+        CustRefField: string;
+        ReportOrderNO: string;
+        ProductCode: string[];
+        SuccessCode: string;
+        Date: string;
+        Time: string;
+      };
+      InquiryRequestInfo: {
+        InquiryPurpose: string;
+        TransactionAmount: string;
+        FirstName: string;
+        InquiryPhones: {
+          seq: string;
+          PhoneType: string[];
+          Number: string;
+        }[];
+        IDDetails: {
+          seq: string;
+          IDType: string;
+          Source: string;
+        }[];
+      };
+      Score: {
+        Type: string;
+        Version: string;
+      }[];
+      CCRResponse: {
+        CIRReportDataLst: {
+          CIRReportData: {
+            Enquiries: {
+              Amount: string;
+              Date: string;
+              Institution: string;
+              RequestPurpose: string;
+              Time: string;
+              seq: string;
+            }[];
+            EnquirySummary: {
+              Past12Months: string;
+              Past24Months: string;
+              Past30Days: string;
+              Purpose: string;
+              Recent: string;
+              Total: string;
+            };
+            IDAndContactInfo: {
+              AddressInfo: {
+                Address: string;
+                Postal: string;
+                ReportedDate: string;
+                Seq: string;
+                State: string;
+                Type?: string;
+              }[];
+              EmailAddressInfo: {
+                EmailAddress: string;
+                ReportedDate: string;
+                seq: string;
+              }[];
+              IdentityInfo: {
+                OtherId: {
+                  IdNumber: string;
+                  ReportedDate: string;
+                  seq: string;
+                }[];
+                PANId: {
+                  IdNumber: string;
+                  ReportedDate: string;
+                  seq: string;
+                }[];
+              };
+              PersonalInfo: {
+                ' AliasName': object;
+                Age: {
+                  Age: string;
+                };
+                DateOfBirth: string;
+                Gender: string;
+                Name: {
+                  FirstName: string;
+                  FullName: string;
+                  LastName: string;
+                  MiddleName: string;
+                };
+                Occupation: string;
+                PlaceOfBirthInfo: object;
+                TotalIncome: string;
+              };
+              PhoneInfo: {
+                Number: string;
+                ReportedDate: string;
+                seq: string;
+                typeCode: string;
+              }[];
+            };
+            OtherKeyInd: {
+              AgeOfOldestTrade: string;
+              AllLinesEVERWritten: string;
+              AllLinesEVERWrittenIn6Months: string;
+              AllLinesEVERWrittenIn9Months: string;
+              NumberOfOpenTrades: string;
+            };
+            RecentActivities: {
+              AccountsDeliquent: string;
+              AccountsOpened: string;
+              AccountsUpdated: string;
+              TotalInquiries: string;
+            };
+            RetailAccountDetails: {
+              AccountNumber: string;
+              AccountStatus: string;
+              AccountType: string;
+              Balance: string;
+              DateOpened: string;
+              DateReported: string;
+              History48Months: {
+                AssetClassificationStatus: string;
+                PaymentStatus: string;
+                SuitFiledStatus: string;
+                key: string;
+              }[];
+              Institution: string;
+              LastPaymentDate: string;
+              Open: string;
+              OwnershipType: string;
+              PastDueAmount: string;
+              SanctionAmount: string;
+              TermFrequency: string;
+              seq: string;
+              source: string;
+            }[];
+            RetailAccountsSummary: {
+              AverageOpenBalance: string;
+              MostSevereStatusWithIn24Months: string;
+              NoOfAccounts: string;
+              NoOfActiveAccounts: string;
+              NoOfPastDueAccounts: string;
+              NoOfWriteOffs: string;
+              NoOfZeroBalanceAccounts: string;
+              OldestAccount: string;
+              RecentAccount: string;
+              SingleHighestBalance: string;
+              SingleHighestCredit: string;
+              SingleHighestSanctionAmount: string;
+              TotalBalanceAmount: string;
+              TotalCreditLimit: string;
+              TotalHighCredit: string;
+              TotalMonthlyPaymentAmount: string;
+              TotalPastDue: string;
+              TotalSanctionAmount: string;
+            };
+            ScoreDetails: {
+              Name: string;
+              ScoringElements: {
+                Description: string;
+                code: string;
+                seq: string;
+                type: string;
+              }[];
+              Type: string;
+              Value: string;
+              Version: string;
+            }[];
+          };
+          InquiryRequestInfo: {
+            DOB: string;
+            FirstName: string;
+            Gender: string;
+            IDDetails: {
+              IDType: string;
+              IDValue: string;
+              seq: string;
+            }[];
+            InquiryAddresses: {
+              AddressLine1: string;
+              AddressType: string[];
+              City: string;
+              Postal: string;
+              State: string;
+              seq: string;
+            }[];
+            InquiryPhones: {
+              Number: string;
+              PhoneType: string[];
+              seq: string;
+            }[];
+            InquiryPurpose: string;
+            TransactionAmount: string;
+          };
+          InquiryResponseHeader: {
+            CustRefField: string;
+            CustomerCode: string;
+            CustomerName: string;
+            Date: string;
+            HitCode: string;
+            ProductCode: string[];
+            ReportOrderNO: string;
+            SuccessCode: string;
+            Time: string;
+          };
+          Score: {
+            Type: string;
+            Version: string;
+          }[];
+        }[];
+        Status: string;
+      };
     };
   };
 }
