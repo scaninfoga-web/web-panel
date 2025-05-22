@@ -1,6 +1,7 @@
 import {
+  GstTurnoverType,
   GstVerificationAdvanceType,
-  ProfileAdvanceType,
+  MobileToAccountNumberType,
   VerifyUdyamType,
 } from '@/types/BeFiSc';
 import React from 'react';
@@ -11,14 +12,15 @@ import { Card } from '@/components/ui/card';
 const getValue = (value: string | undefined | null) =>
   value && value.trim().length > 0 ? value : 'No Data';
 
-export default function ProfileAdvance({
-  ProfileAdvanceData,
+export default function MobileToAccountNumber({
+  MobileToAccountNumberData,
 }: {
-  ProfileAdvanceData: ProfileAdvanceType | null;
+  MobileToAccountNumberData: MobileToAccountNumberType | null;
 }) {
-  if (!ProfileAdvanceData) {
+  if (!MobileToAccountNumberData) {
     return <></>;
   }
+
   return (
     <div className="grid grid-cols-1 gap-2 space-y-4">
       {/* digitalPaymentIdInfo */}
@@ -74,24 +76,12 @@ export default function ProfileAdvance({
       {/* light */}
       <div className="grid grid-cols-3 gap-4">
         <CustomBeFiScCard
-          data={ProfileAdvanceData.result?.personal_information}
-          title="Personal Information"
+          data={MobileToAccountNumberData?.result?.account_details}
+          title="Account Details"
         />
         <CustomBeFiScCard
-          data={ProfileAdvanceData?.result?.alternate_phone}
-          title="Alternate Phone"
-        />
-        <CustomBeFiScCard
-          data={ProfileAdvanceData?.result?.email}
-          title="Profile Email"
-        />
-        <CustomBeFiScCard
-          title="Profile Address"
-          data={ProfileAdvanceData?.result?.address}
-        />
-        <CustomBeFiScCard
-          title="Document data"
-          data={ProfileAdvanceData?.result?.document_data?.pan}
+          data={MobileToAccountNumberData?.result?.vpa_details}
+          title="Vpa Details"
         />
       </div>
     </div>

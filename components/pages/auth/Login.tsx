@@ -52,8 +52,6 @@ const Login = () => {
 
   const handleGoogleSuccess = async (credentialResponse: any) => {
     try {
-      console.log('Credential Response:', credentialResponse);
-
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/google/`,
         {
@@ -71,7 +69,6 @@ const Login = () => {
       );
 
       const data = await response.json();
-      console.log('Backend Response:', data);
       const { user } = data.responseData;
 
       const res = await axios.get(`/api/get/tokens`, {

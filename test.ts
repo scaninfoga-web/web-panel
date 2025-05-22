@@ -11,5 +11,5 @@ const data = {
 };
 
 for (const [key, value] of Object.entries(data)) {
-  console.log(key.toUpperCase(), value);
+  // console.log(key.toUpperCase(), value);
 }

@@ -109,8 +109,6 @@ export default function AuthPage() {
 
   const handleGoogleSuccess = async (credentialResponse: any) => {
     try {
-      console.log('Credential Response:', credentialResponse);
-
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/google/`,
         {
@@ -128,7 +126,6 @@ export default function AuthPage() {
       );
 
       const data = await response.json();
-      console.log('Backend Response:', data);
 
       if (data.responseStatus?.status) {
         login(data.responseData.token);
@@ -160,10 +157,6 @@ export default function AuthPage() {
       toast.error('Login failed. Check your credentials and try again.');
       console.error(error);
     }
-  };
-
-  const onRegister = (data: any) => {
-    console.log('Register Data:', data);
   };
 
   return (

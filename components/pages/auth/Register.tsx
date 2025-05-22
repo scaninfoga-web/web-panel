@@ -133,13 +133,11 @@ export function Register({ type: initialType }: RegisterProps) {
       );
 
       const data = await response.json();
-      console.log('Backend Response:', data);
 
       const res = await axios.get(`/api/get/tokens`, {
         withCredentials: true,
       });
       const tokens = res.data;
-      console.log('TOKENS SET IS', tokens);
       // if (tokens && tokens.accessToken && tokens.refreshToken) {
       //   dispatch(
       //     setCredentials({
