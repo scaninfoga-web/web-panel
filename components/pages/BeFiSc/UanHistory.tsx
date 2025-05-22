@@ -1,17 +1,13 @@
 import { UanHistoryType } from '@/types/BeFiSc';
 import React from 'react';
 import { DashboardCard, InfoText } from '../dashboard/components/DashboardCard';
-import { Loader } from '@/components/ui/loader';
+
 interface PageProps {
   data: UanHistoryType | null;
 }
 export default function UanHistory({ data }: PageProps) {
   if (!data) {
-    return (
-      <div className="mt-8">
-        <Loader />
-      </div>
-    );
+    return <></>;
   }
   return (
     <div>

@@ -1,11 +1,8 @@
 import { VerifyUdyamType } from '@/types/BeFiSc';
 import React from 'react';
 import { Loader } from '@/components/ui/loader';
-import CustomBeFiScCard from './CustomBeFiScCard';
+import CustomBeFiScCard, { getValue } from './CustomBeFiScCard';
 import { Card } from '@/components/ui/card';
-
-const getValue = (value: string | undefined | null) =>
-  value && value.trim().length > 0 ? value : 'No Data';
 
 export default function VerifyUdyam({
   verfiyUdyamData,

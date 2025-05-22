@@ -12,7 +12,9 @@ function formatKey(key: string): string {
   return withSpaces.charAt(0).toUpperCase() + withSpaces.slice(1);
 }
 
-const getValue = (value: string | undefined | null | Array<any> | Boolean) => {
+export const getValue = (
+  value: string | undefined | null | Array<any> | Boolean,
+) => {
   if (typeof value === 'string') {
     if (value.length < 0) {
       return 'No Data';
