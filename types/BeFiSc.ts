@@ -625,6 +625,54 @@ export interface EquifaxV3Type {
   };
 }
 
+export interface PanAllInOneType {
+  status: number;
+  txn_id: string;
+  message: string;
+  api_name: string;
+  billable: boolean;
+  datetime: string;
+  api_category: string;
+  result: {
+    dob: string;
+    tax: boolean;
+    email: string | null;
+    fname: string;
+    gender: string;
+    address: {
+      zip: string;
+      city: string;
+      full: string;
+      state: string;
+      line_1: string;
+      line_2: string;
+      country: string;
+      street_name: string;
+    };
+    category: string;
+    din_info: {
+      din: string;
+      company_list: any[];
+      dinAllocationDate: string;
+    };
+    full_name: string;
+    less_info: boolean;
+    pan_number: string;
+    is_director: {
+      info: any[];
+      found: string;
+    };
+    phone_number: string | null;
+    aadhaar_linked: boolean;
+    masked_aadhaar: string;
+    full_name_split: [string, string, string];
+    is_sole_proprietor: {
+      info: any[];
+      found: string;
+    };
+  };
+}
+
 export const dummyUdyamResponse: VerifyUdyamType = {
   api_category: 'Know Your Business (KYB)',
   api_name: 'Udyam',

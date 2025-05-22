@@ -14,6 +14,7 @@ import {
   EsicDetailsType,
   MobileToAccountNumberType,
   EquifaxV3Type,
+  PanAllInOneType,
 } from '@/types/BeFiSc';
 import Mobile360 from './Mobile360';
 import VerifyUdyam from './VerifyUdyam';
@@ -24,6 +25,7 @@ import ProfileAdvance from './ProfileAdvance';
 import Esics from './Esics';
 import MobileToAccountNumber from './MobileToAccount';
 import EquifaxV3 from './EquiFaxV3';
+import PanAllInOne from './PanAllInOne';
 
 function isValidIndianMobileNumber(input: string): boolean {
   const mobileRegex = /^(?:\+91[\-\s]?)?[6-9]\d{9}$/;
@@ -67,6 +69,10 @@ export default function BeFiSc() {
     null,
   );
 
+  const [panAllInOneLoading, setPanAllInOneLoading] = useState(false);
+  const [panAllInOneData, setPanAllInOneData] =
+    useState<PanAllInOneType | null>(null);
+
   const setAllOnLoading = () => {
     setIsLoading(true);
     setVerifyUdyamLoading(true);
@@ -76,6 +82,7 @@ export default function BeFiSc() {
     setEsicsLoading(true);
     setMobileToAccountLoading(true);
     setEquifaxV3Loading(false);
+    setPanAllInOneLoading(true);
   };
   const clearOldData = () => {
     setMobile360Data(null);
@@ -86,6 +93,7 @@ export default function BeFiSc() {
     setEsicsData(null);
     setMobileToAccountData(null);
     setEquifaxV3Data(null);
+    setPanAllInOneData(null);
   };
 
   const setAllOffLoading = () => {
@@ -97,6 +105,7 @@ export default function BeFiSc() {
     setEsicsLoading(false);
     setMobileToAccountLoading(false);
     setEquifaxV3Loading(false);
+    setPanAllInOneLoading(false);
   };
 
   useEffect(() => {
@@ -147,6 +156,33 @@ export default function BeFiSc() {
                 );
               }
             }
+
+            // calling panAllInone
+            try {
+              const { data: panAllInOne } = await axios.post(
+                `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/mobile/panallinone`,
+                {
+                  pan_number: panNumber,
+                  realtimeData: isRealtime,
+                },
+              );
+              if (
+                panAllInOne.responseData?.status === 1 ||
+                panAllInOne.responseData?.status === 2
+              ) {
+                setPanAllInOneData(panAllInOne.responseData);
+                console.log('panAllInOne', panAllInOne.responseData);
+              }
+            } catch (error) {
+              if (error instanceof AxiosError) {
+                toast.error(
+                  'Pan All In One Data Not Found' +
+                    error.response?.data?.responseStatus?.message,
+                  { id: toastRef.current! },
+                );
+              }
+            }
+            setPanAllInOneLoading(false);
           }
           setEquifaxV3Loading(false);
         } catch (error) {
@@ -329,11 +365,24 @@ export default function BeFiSc() {
             mobile360R = Mobile360Data;
             mobile360ResponseMessage = Mobile360Data?.responseStatus?.message;
             return true;
-          } else {
-            mobile360R = null;
-            return false;
           }
+          mobile360R = null;
+          return false;
         } catch (error) {
+          console.log(error);
+          if (error instanceof AxiosError) {
+            mobile360ResponseMessage =
+              error.response?.data?.responseStatus?.message;
+            if (
+              mobile360ResponseMessage ===
+              'No data found in database for this mobile number'
+            ) {
+              toast.error('Mobile number not found in the database', {
+                id: toastId,
+              });
+              return true;
+            }
+          }
           return false;
         }
       };
@@ -345,7 +394,9 @@ export default function BeFiSc() {
 
             if (success || Date.now() - startTime >= MAXDURATION) {
               if (!success)
-                toast.error('Timed out after 2 minutes', { id: toastId });
+                toast.error('Server Timeout. Try again after some time', {
+                  id: toastId,
+                });
               setIsLoading(false);
               resolve(); // Exit the loop
             } else {
@@ -361,7 +412,7 @@ export default function BeFiSc() {
 
       await retryUntilSuccess();
       if (!mobile360R) {
-        toast.error('Server timeout. Please try again later.', { id: toastId });
+        // toast.error('Server timeout. Please try again later.', { id: toastId });
         return;
       } else {
         toast.success(`${mobile360ResponseMessage}`, { id: toastId });
@@ -417,6 +468,14 @@ export default function BeFiSc() {
           ) : (
             <ProfileAdvance ProfileAdvanceData={profileAdvanceData} />
           )}
+
+          {/* panAllInOne */}
+          {panAllInOneLoading ? (
+            <BeFiScLoadingSkeleton />
+          ) : (
+            <PanAllInOne PanAllInOneData={panAllInOneData} />
+          )}
+
           {/* Verify Udyam */}
           {verifyUdyamLoading ? (
             <BeFiScLoadingSkeleton />
