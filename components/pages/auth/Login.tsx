@@ -120,7 +120,7 @@ const Login = () => {
         setQrCode(responseData.qr_code);
       } else {
         const { user, accessToken } = responseData;
-        setCookie('accessToken', accessToken);
+        setCookie('accessToken', accessToken, { maxAge: 60 * 60 * 24 * 10 });
         dispatch(
           setCredentials({
             token: accessToken,
