@@ -45,8 +45,6 @@ export function LPGInfoTable({ lpgInfo }: LPGInfoTableProps) {
   return (
     <div className="w-full overflow-x-auto rounded-xl">
       <div className="scrollbar-custom min-w-full">
-        {' '}
-        {/* Increased min-width for better scroll */}
         <Table>
           <TableHeader>
             <TableRow>

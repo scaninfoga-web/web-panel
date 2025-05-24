@@ -15,7 +15,29 @@ import {
   MobileToAccountNumberType,
   EquifaxV3Type,
   PanAllInOneType,
+  UPIType,
 } from '@/types/BeFiSc';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Separator } from '@/components/ui/separator';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+
 import Mobile360 from './Mobile360';
 import VerifyUdyam from './VerifyUdyam';
 import BeFiScLoadingSkeleton from './BeFiScLoadingSkeleton';
@@ -26,6 +48,8 @@ import Esics from './Esics';
 import MobileToAccountNumber from './MobileToAccount';
 import EquifaxV3 from './EquiFaxV3';
 import PanAllInOne from './PanAllInOne';
+import { motion } from 'framer-motion';
+import UpiDetails from './UpiDetails';
 
 function isValidIndianMobileNumber(input: string): boolean {
   const mobileRegex = /^(?:\+91[\-\s]?)?[6-9]\d{9}$/;
@@ -34,6 +58,8 @@ function isValidIndianMobileNumber(input: string): boolean {
 
 export default function BeFiSc() {
   const [searchType, setSearchType] = useState<string>('');
+  const [activeTab, setActiveTab] = useState('overview');
+
   const [mobileNo, setMobileNo] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
   const toastRef = useRef<string | null | number>(null);
@@ -73,6 +99,9 @@ export default function BeFiSc() {
   const [panAllInOneData, setPanAllInOneData] =
     useState<PanAllInOneType | null>(null);
 
+  const [upiDetailsLoading, setUpiDetailsLoading] = useState(false);
+  const [upiDetailsData, setUpiDetailsData] = useState<UPIType | null>(null);
+
   const setAllOnLoading = () => {
     setIsLoading(true);
     setVerifyUdyamLoading(true);
@@ -81,8 +110,9 @@ export default function BeFiSc() {
     setProfileAdvanceLoading(true);
     setEsicsLoading(true);
     setMobileToAccountLoading(true);
-    setEquifaxV3Loading(false);
+    setEquifaxV3Loading(true);
     setPanAllInOneLoading(true);
+    setUpiDetailsLoading(true);
   };
   const clearOldData = () => {
     setMobile360Data(null);
@@ -94,6 +124,7 @@ export default function BeFiSc() {
     setMobileToAccountData(null);
     setEquifaxV3Data(null);
     setPanAllInOneData(null);
+    setUpiDetailsData(null);
   };
 
   const setAllOffLoading = () => {
@@ -106,6 +137,7 @@ export default function BeFiSc() {
     setMobileToAccountLoading(false);
     setEquifaxV3Loading(false);
     setPanAllInOneLoading(false);
+    setUpiDetailsLoading(false);
   };
 
   useEffect(() => {
@@ -299,6 +331,29 @@ export default function BeFiSc() {
           setGstTurnoverLoading(false);
         }
 
+        // calling upi details
+        try {
+          const { data: UpiDetails } = await axios.post(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/mobile/digitalpayment`,
+            {
+              mobile_number: mobileNo,
+              realtimeData: isRealtime,
+            },
+          );
+          if (UpiDetails.responseStatus?.status === true) {
+            setUpiDetailsData(UpiDetails);
+          }
+        } catch (error) {
+          if (error instanceof AxiosError) {
+            toast.error(
+              'Mobile To Account ' +
+                error.response?.data?.responseStatus?.message,
+              { id: toastRef.current! },
+            );
+          }
+        }
+        setUpiDetailsLoading(false);
+
         try {
           const { data: ActDetails } = await axios.post(
             `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/mobile/getAcDtlsFromMobNo`,
@@ -459,66 +514,125 @@ export default function BeFiSc() {
         </div>
       ) : mobile360Data ? (
         <div className="grid grid-cols-1 gap-4 pb-4">
-          {/* Mobile 360 */}
-          {mobile360Data && <Mobile360 data={mobile360Data} />}
-          {/* Profile Advance */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+          >
+            <Tabs
+              value={activeTab}
+              className="w-full"
+              onValueChange={setActiveTab}
+            >
+              <TabsList className="grid h-auto w-full grid-cols-7 rounded-lg border border-slate-800 bg-slate-900 p-1 text-white sm:w-auto sm:grid-cols-7">
+                <TabsTrigger
+                  value="overview"
+                  className="rounded-md data-[state=active]:bg-slate-800 data-[state=active]:text-emerald-500"
+                >
+                  Overview
+                </TabsTrigger>
+                <TabsTrigger
+                  value="simTrace"
+                  className="rounded-md data-[state=active]:bg-slate-800 data-[state=active]:text-emerald-500"
+                >
+                  Profile Advance
+                </TabsTrigger>
+                <TabsTrigger
+                  value="personal"
+                  className="rounded-md data-[state=active]:bg-slate-800 data-[state=active]:text-emerald-500"
+                >
+                  Personal
+                </TabsTrigger>
+                <TabsTrigger
+                  value="financial"
+                  className="rounded-md data-[state=active]:bg-slate-800 data-[state=active]:text-emerald-500"
+                >
+                  Financial
+                </TabsTrigger>
+                <TabsTrigger
+                  value="business"
+                  className="rounded-md data-[state=active]:bg-slate-800 data-[state=active]:text-emerald-500"
+                >
+                  Business
+                </TabsTrigger>
+                <TabsTrigger
+                  value="digitalInfo"
+                  className="rounded-md data-[state=active]:bg-slate-800 data-[state=active]:text-emerald-500"
+                >
+                  Digital Info
+                </TabsTrigger>
+                <TabsTrigger
+                  value="breachInfo"
+                  className="rounded-md data-[state=active]:bg-slate-800 data-[state=active]:text-emerald-500"
+                >
+                  Breach Info
+                </TabsTrigger>
+              </TabsList>
 
-          {profileAdvanceLoading ? (
-            <BeFiScLoadingSkeleton />
-          ) : (
-            <ProfileAdvance ProfileAdvanceData={profileAdvanceData} />
-          )}
+              <TabsContent value="overview" className="mt-6">
+                {mobile360Data && <Mobile360 data={mobile360Data} />}
+              </TabsContent>
 
-          {/* panAllInOne */}
-          {panAllInOneLoading ? (
-            <BeFiScLoadingSkeleton />
-          ) : (
-            <PanAllInOne PanAllInOneData={panAllInOneData} />
-          )}
-
-          {/* Verify Udyam */}
-          {verifyUdyamLoading ? (
-            <BeFiScLoadingSkeleton />
-          ) : (
-            <VerifyUdyam verfiyUdyamData={verfiyUdyamData} />
-          )}
-
-          {/* Gst Advance */}
-          {gstAdvanceLoading ? (
-            <BeFiScLoadingSkeleton />
-          ) : (
-            <GSTAdvance GstAdvanceData={gstAdvanceData} />
-          )}
-
-          {/* Gst turnover */}
-          {gstTurnoverLoading ? (
-            <BeFiScLoadingSkeleton />
-          ) : (
-            <GstTurnover GstTurnoverData={gstTurnoverData} />
-          )}
-
-          {/* Esics */}
-          {esicsLoading ? (
-            <BeFiScLoadingSkeleton />
-          ) : (
-            <Esics EsicsData={esicsData} />
-          )}
-
-          {/* mobile to account */}
-          {mobileToAccountLoading ? (
-            <BeFiScLoadingSkeleton />
-          ) : (
-            <MobileToAccountNumber
-              MobileToAccountNumberData={mobileToAccountData}
-            />
-          )}
-
-          {/* Equifax V3 */}
-          {EquifaxV3Loading ? (
-            <BeFiScLoadingSkeleton />
-          ) : (
-            <EquifaxV3 EquifaxV3Data={EquifaxV3Data} />
-          )}
+              <TabsContent value="simTrace" className="mt-6">
+                {profileAdvanceLoading ? (
+                  <BeFiScLoadingSkeleton />
+                ) : (
+                  <ProfileAdvance ProfileAdvanceData={profileAdvanceData} />
+                )}
+              </TabsContent>
+              <TabsContent value="personal" className="mt-6">
+                {panAllInOneLoading ? (
+                  <BeFiScLoadingSkeleton />
+                ) : (
+                  <PanAllInOne PanAllInOneData={panAllInOneData} />
+                )}
+                {esicsLoading ? (
+                  <BeFiScLoadingSkeleton />
+                ) : (
+                  <Esics EsicsData={esicsData} />
+                )}
+              </TabsContent>
+              <TabsContent value="financial" className="mt-6">
+                {verifyUdyamLoading ? (
+                  <BeFiScLoadingSkeleton />
+                ) : (
+                  <VerifyUdyam verfiyUdyamData={verfiyUdyamData} />
+                )}
+                {mobileToAccountLoading ? (
+                  <BeFiScLoadingSkeleton />
+                ) : (
+                  <MobileToAccountNumber
+                    MobileToAccountNumberData={mobileToAccountData}
+                  />
+                )}
+              </TabsContent>
+              <TabsContent value="business" className="mt-6">
+                {gstAdvanceLoading ? (
+                  <BeFiScLoadingSkeleton />
+                ) : (
+                  <GSTAdvance GstAdvanceData={gstAdvanceData} />
+                )}
+                {EquifaxV3Loading ? (
+                  <BeFiScLoadingSkeleton />
+                ) : (
+                  <EquifaxV3 EquifaxV3Data={EquifaxV3Data} />
+                )}
+                {gstTurnoverLoading ? (
+                  <BeFiScLoadingSkeleton />
+                ) : (
+                  <GstTurnover GstTurnoverData={gstTurnoverData} />
+                )}
+              </TabsContent>
+              <TabsContent value="digitalInfo" className="mt-6">
+                {upiDetailsLoading ? (
+                  <BeFiScLoadingSkeleton />
+                ) : (
+                  <UpiDetails UpiData={upiDetailsData} />
+                )}
+              </TabsContent>
+              <TabsContent value="breachInfo" className="mt-6"></TabsContent>
+            </Tabs>
+          </motion.div>
         </div>
       ) : null}
     </div>

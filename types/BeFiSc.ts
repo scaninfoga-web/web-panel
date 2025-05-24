@@ -175,6 +175,40 @@ export interface Mobile360Type {
   };
 }
 
+export interface UPIType {
+  responseStatus: {
+    status: boolean;
+    message: string;
+  };
+  responseData: {
+    [upiId: string]: {
+      success: boolean;
+      upi_handle: string;
+      platform: 'PhonePe';
+      data: {
+        txn_id: string;
+        api_category: string;
+        api_name: string;
+        billable: boolean;
+        message: string;
+        status: number;
+        result: {
+          name: string;
+          bank: string;
+          branch: string;
+          center: string;
+          district: string;
+          state: string;
+          address: string;
+          contact: string;
+          city: string;
+        };
+        datetime: '2025-05-24 05:40:33.141852';
+      };
+    };
+  };
+}
+
 export interface GstVerificationAdvanceType {
   api_category: string;
   api_name: string;
