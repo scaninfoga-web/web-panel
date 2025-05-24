@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { DashboardCard } from '../dashboard/components/DashboardCard';
 
 export default function UpiDetails({ UpiData }: { UpiData: UPIType | null }) {
   if (!UpiData) {
@@ -18,53 +19,49 @@ export default function UpiDetails({ UpiData }: { UpiData: UPIType | null }) {
   }
 
   return (
-    <div className="grid grid-cols-1 gap-2 space-y-4">
-      <Card className="border-slate-800 bg-slate-900 text-white">
-        <CardHeader>
-          <CardTitle>Multiple UPI IDs</CardTitle>
-        </CardHeader>
-        <CardContent className="p-0">
-          <ScrollArea className="h-[400px]">
-            <Table>
-              <TableHeader>
-                <TableRow className="border-slate-800">
-                  <TableHead className="text-slate-400">UPI ID</TableHead>
-                  <TableHead className="text-slate-400">Bank</TableHead>
-                  <TableHead className="text-slate-400">Platform</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {Object.entries(UpiData.responseData).map(([upiId, data]) => {
-                  if (!data.success) {
-                    return null;
-                  }
+    <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+      {Object.entries(UpiData.responseData).map(([upiId, data]) => {
+        if (!data.success) {
+          return null;
+        }
 
+        return (
+          <DashboardCard title={`${upiId}`} key={data.data.txn_id}>
+            <div>
+              {Object.entries(data?.data?.result).map(([key, value], index) => {
+                if (key === 'center') {
+                  return null;
+                }
+                if (key === 'address') {
                   return (
-                    <TableRow key={upiId} className="border-slate-800">
-                      <TableCell className="font-medium">{upiId}</TableCell>
-                      <TableCell>
-                        {data.success ? (
-                          data.data?.result.bank
-                        ) : (
-                          <span className="text-red-500">—</span>
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        <Badge
-                          variant="secondary"
-                          className="bg-green-600 text-white"
-                        >
-                          {data?.platform}
-                        </Badge>
-                      </TableCell>
-                    </TableRow>
+                    <div className="flex justify-between" key={index}>
+                      <span className="text-sm font-medium text-gray-200">
+                        {key}
+                      </span>
+                      <span className="h-10 whitespace-pre-wrap pl-9 text-xs font-medium text-gray-400">
+                        {value}
+                      </span>
+                    </div>
                   );
-                })}
-              </TableBody>
-            </Table>
-          </ScrollArea>
-        </CardContent>
-      </Card>
+                }
+                return (
+                  <div className="flex justify-between" key={index}>
+                    <span className="text-sm font-medium text-gray-200">
+                      {key}
+                    </span>
+                    <span className="text-sm font-medium text-gray-400">
+                      {value}
+                    </span>
+                  </div>
+                );
+              })}
+              {/* <Badge variant="secondary" className="bg-green-600 text-white">
+                {data?.platform}
+              </Badge> */}
+            </div>
+          </DashboardCard>
+        );
+      })}
     </div>
   );
 }
