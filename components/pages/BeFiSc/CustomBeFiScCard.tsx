@@ -5,39 +5,53 @@ import {
   StatusBadge,
 } from '../dashboard/components/DashboardCard';
 
-function formatKey(key: string): string {
+export function formatKey(key: string): string {
+  key = key.replaceAll('_', ' ');
   const withSpaces = key
     .replace(/([a-z])([A-Z])/g, '$1 $2')
     .replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2');
   return withSpaces.charAt(0).toUpperCase() + withSpaces.slice(1);
 }
 
+const greenWord = [
+  'Yes',
+  'CONNECTED',
+  'DELIVERED',
+  'Filed',
+  'postpaid',
+  'postpaid',
+];
+const redWord = ['No', 'DISCONNECTED', 'NA'];
+const yellowWord = ['Pending', 'In Progress'];
+
 export const getValue = (
   value: string | undefined | null | Array<any> | Boolean,
 ) => {
+  if (typeof value === 'undefined' || typeof value === null) {
+    return '----';
+  }
   if (typeof value === 'string') {
     if (value.length < 0) {
-      return 'No Data';
+      return '----';
     }
-    if (
-      value === 'Yes' ||
-      value === 'No' ||
-      value === 'CONNECTED' ||
-      value === 'DISCONNECTED' ||
-      value === 'DELIVERED'
-    ) {
+    if (greenWord.includes(value)) {
       return (
         <StatusBadge
-          status={value}
-          variant={
-            value === 'Yes' || value === 'CONNECTED' || value === 'DELIVERED'
-              ? 'outline'
-              : 'destructive'
-          }
+          status={String(value)}
+          variant={value ? 'outline' : 'destructive'}
         />
       );
     }
-    return value && value.trim().length > 0 ? value : 'No Data';
+    if (yellowWord.includes(value)) {
+      return <StatusBadge status={value} variant={'outline'} />;
+    }
+    if (redWord.includes(value)) {
+      return <StatusBadge status={value} variant={'destructive'} />;
+    }
+    if (value.length > 100) {
+      return value.slice(0, 100) + '....';
+    }
+    return value && value.trim().length > 0 ? value : '--';
   }
   if (typeof value === 'boolean') {
     return (
@@ -47,6 +61,14 @@ export const getValue = (
       />
     );
   }
+  if (typeof value === 'number') {
+    return value;
+  }
+
+  if (Array.isArray(value)) {
+    return value.join(', ');
+  }
+
   return JSON.stringify(value);
 };
 
@@ -162,7 +184,7 @@ export default function CustomBeFiScCard({ title, data }: PageProps) {
         title={formatKey(title)}
         className="flex max-h-[450px] flex-col gap-y-2 py-10 pt-1"
       >
-        <div className="scrollbar-custom grid max-h-[350px] grid-rows-2 gap-6 overflow-auto pb-4">
+        <div className="scrollbar-custom grid max-h-[350px] grid-rows-2 gap-6 pb-4">
           <div className="flex flex-col">
             {Object.entries(data).map(([key, value]) => (
               <InfoText
@@ -238,7 +260,7 @@ export default function CustomBeFiScCard({ title, data }: PageProps) {
     );
   }
 
-  // return <div>{JSON.stringify(data)}</div>;
+  return <div>{JSON.stringify(data)}</div>;
 
   // return (
   //   // <DashboardCard

@@ -6,7 +6,7 @@ import {
 } from '@/types/BeFiSc';
 import React from 'react';
 import { Loader } from '@/components/ui/loader';
-import CustomBeFiScCard from './CustomBeFiScCard';
+import CustomBeFiScCard, { getValue } from './CustomBeFiScCard';
 import { Card } from '@/components/ui/card';
 
 export default function MobileToAccountNumber({
@@ -20,67 +20,44 @@ export default function MobileToAccountNumber({
 
   return (
     <div className="grid grid-cols-1 gap-2 space-y-4">
-      {/* digitalPaymentIdInfo */}
-      {/* <Card className="my-6 border border-gray-700 bg-[#0e1421] p-6 shadow-xl">
-        <h1 className="text-2xl font-bold text-emerald-500">Udyam Details</h1>
-        <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-5">
+      <Card className="my-6 border border-gray-700 bg-[#0e1421] p-6 shadow-xl">
+        <h1 className="text-2xl font-bold text-emerald-500">Account Advance</h1>
+        <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
           <div>
-            <p className="text-sm text-gray-400">Enterprise Name</p>
+            <p className="text-sm text-gray-400">Holder Name</p>
             <p className="text-base font-medium">
-              {getValue(verfiyUdyamData.result?.enterprise_name)}
+              {getValue(
+                MobileToAccountNumberData?.result?.vpa_details
+                  ?.account_holder_name,
+              )}
             </p>
           </div>
           <div>
-            <p className="text-sm text-gray-400">Organisation Type</p>
+            <p className="text-sm text-gray-400">VPA</p>
             <p className="text-base font-medium">
-              {getValue(verfiyUdyamData.result?.organisation_type)}
-            </p>
-          </div>
-
-          <div>
-            <p className="text-sm text-gray-400">Service Type</p>
-            <p className="text-base font-medium">
-              {getValue(verfiyUdyamData.result?.service_type)}
+              {getValue(MobileToAccountNumberData?.result?.vpa_details?.vpa)}
             </p>
           </div>
           <div>
-            <p className="text-sm text-gray-400">Gender</p>
+            <p className="text-sm text-gray-400">Account Number</p>
             <p className="text-base font-medium">
-              {getValue(verfiyUdyamData.result?.gender)}
+              {getValue(
+                MobileToAccountNumberData?.result?.account_details
+                  ?.account_number,
+              )}
             </p>
           </div>
           <div>
-            <p className="text-sm text-gray-400">Social Category</p>
+            <p className="text-sm text-gray-400">Account IFSC</p>
             <p className="text-base font-medium">
-              {getValue(verfiyUdyamData.result?.social_category)}
-            </p>
-          </div>
-          <div>
-            <p className="text-sm text-gray-400">Date Of Incorporation</p>
-            <p className="text-base font-medium">
-              {getValue(verfiyUdyamData.result?.date_of_incorporation)}
-            </p>
-          </div>
-          <div>
-            <p className="text-sm text-gray-400">Date Of Commencement</p>
-            <p className="text-base font-medium">
-              {getValue(verfiyUdyamData.result?.date_of_commencement)}
+              {getValue(
+                MobileToAccountNumberData?.result?.account_details
+                  ?.account_ifsc,
+              )}
             </p>
           </div>
         </div>
-      </Card> */}
-
-      {/* light */}
-      <div className="grid grid-cols-3 gap-4">
-        <CustomBeFiScCard
-          data={MobileToAccountNumberData?.result?.account_details}
-          title="Account Details"
-        />
-        <CustomBeFiScCard
-          data={MobileToAccountNumberData?.result?.vpa_details}
-          title="Vpa Details"
-        />
-      </div>
+      </Card>
     </div>
   );
 }

@@ -12,6 +12,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { DashboardCard } from '../dashboard/components/DashboardCard';
+import { formatKey } from './CustomBeFiScCard';
 
 export default function UpiDetails({ UpiData }: { UpiData: UPIType | null }) {
   if (!UpiData) {
@@ -26,7 +27,10 @@ export default function UpiDetails({ UpiData }: { UpiData: UPIType | null }) {
         }
 
         return (
-          <DashboardCard title={`${upiId}`} key={data.data.txn_id}>
+          <DashboardCard
+            title={`${upiId}-${'  '}${data.platform}`}
+            key={data.data.txn_id}
+          >
             <div>
               {Object.entries(data?.data?.result).map(([key, value], index) => {
                 if (key === 'center') {
@@ -36,7 +40,7 @@ export default function UpiDetails({ UpiData }: { UpiData: UPIType | null }) {
                   return (
                     <div className="flex justify-between" key={index}>
                       <span className="text-sm font-medium text-gray-200">
-                        {key}
+                        {formatKey(key)}
                       </span>
                       <span className="h-10 whitespace-pre-wrap pl-9 text-xs font-medium text-gray-400">
                         {value}
@@ -47,7 +51,7 @@ export default function UpiDetails({ UpiData }: { UpiData: UPIType | null }) {
                 return (
                   <div className="flex justify-between" key={index}>
                     <span className="text-sm font-medium text-gray-200">
-                      {key}
+                      {formatKey(key)}
                     </span>
                     <span className="text-sm font-medium text-gray-400">
                       {value}

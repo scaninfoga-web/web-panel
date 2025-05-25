@@ -1,58 +1,56 @@
 'use client';
+import CustomCheckBox from '@/components/checkbox';
 import DashboardTitle from '@/components/common/DashboardTitle';
 import { SearchBar2 } from '@/components/search/SearchBar2';
-import { useEffect, useRef, useState } from 'react';
-import axios, { Axios, AxiosError } from 'axios';
-import { toast } from 'sonner';
-import CustomCheckBox from '@/components/checkbox';
-import {
-  Mobile360Type,
-  VerifyUdyamType,
-  GstVerificationAdvanceType,
-  GstTurnoverType,
-  ProfileAdvanceType,
-  EsicDetailsType,
-  MobileToAccountNumberType,
-  EquifaxV3Type,
-  PanAllInOneType,
-  UPIType,
-} from '@/types/BeFiSc';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
 } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
+  EquifaxV3Type,
+  EsicDetailsType,
+  GstTurnoverType,
+  GstVerificationAdvanceType,
+  Mobile360Type,
+  MobileToAccountNumberType,
+  PanAllInOneType,
+  ProfileAdvanceType,
+  UPIType,
+  VerifyUdyamType,
+} from '@/types/BeFiSc';
+import axios, { AxiosError } from 'axios';
+import Image from 'next/image';
+import { useEffect, useRef, useState } from 'react';
+import { toast } from 'sonner';
 
-import Mobile360 from './Mobile360';
-import VerifyUdyam from './VerifyUdyam';
+import { cn } from '@/lib/utils';
+import { motion } from 'framer-motion';
+// @ts-ignore
+import {
+  cleanAndCapitalize,
+  formatSentence,
+  numberToIndianRuppe,
+} from './APIUtils';
 import BeFiScLoadingSkeleton from './BeFiScLoadingSkeleton';
+import CustomBadge from './CustomBadge';
+import EquifaxV3 from './EquiFaxV3';
+import Esics from './Esics';
 import GSTAdvance from './GSTAdvance';
 import GstTurnover from './GstTurnover';
-import ProfileAdvance from './ProfileAdvance';
-import Esics from './Esics';
 import MobileToAccountNumber from './MobileToAccount';
-import EquifaxV3 from './EquiFaxV3';
 import PanAllInOne from './PanAllInOne';
-import { motion } from 'framer-motion';
+import ProfileAdvance from './ProfileAdvance';
 import UpiDetails from './UpiDetails';
+import { GhuntData } from '@/types/ghunt';
+import GhuntComponent from './Ghunt';
+import Mobile360 from './Mobile360';
 
 function isValidIndianMobileNumber(input: string): boolean {
-  const mobileRegex = /^(?:\+91[\-\s]?)?[6-9]\d{9}$/;
+  const mobileRegex = /^(?:\+91[\-\s]?)?[5-9]\d{9}$/;
   return mobileRegex.test(input.trim());
 }
 
@@ -67,6 +65,7 @@ export default function BeFiSc() {
   const [mobile360Data, setMobile360Data] = useState<Mobile360Type | null>(
     null,
   );
+  const [ghuntData, setGhuntData] = useState<GhuntData | null>(null);
   const [verifyUdyamLoading, setVerifyUdyamLoading] = useState(false);
   const [verfiyUdyamData, setVerfiyUdyamData] =
     useState<VerifyUdyamType | null>(null);
@@ -154,6 +153,18 @@ export default function BeFiSc() {
             Number(ProfileAdvanceResponse.responseData?.status) === 2
           ) {
             setProfileAdvanceData(ProfileAdvanceResponse.responseData);
+            const emailAddress =
+              ProfileAdvanceResponse.responseData?.result?.email?.[0]?.value;
+            // calling ghunt api with emailaddess
+            try {
+              const { data } = await axios.post(
+                `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/ghunt/getEmailDetails`,
+                { email: emailAddress },
+              );
+              setGhuntData(data.responseData);
+            } catch (error) {
+              toast.error('Ghunt Data Not Found', { id: toastRef.current! });
+            }
           }
           setProfileAdvanceLoading(false);
           const panNumber =
@@ -228,10 +239,11 @@ export default function BeFiSc() {
           setEquifaxV3Loading(false);
           setProfileAdvanceLoading(false);
         }
+        setIsLoading(false);
 
         // epicsInfo
         const EsicsArray = mobile360Data.result?.key_highlights?.esic_number;
-        console.log('EsicsArray', EsicsArray);
+
         if (EsicsArray?.length > 0) {
           try {
             const { data: EsicsInfo } = await axios.post(
@@ -387,9 +399,13 @@ export default function BeFiSc() {
     if (query.length < 1) {
       return;
     }
+    query = query
+      .normalize('NFKD')
+      .replace(/[\u200B-\u200D\uFEFF\u202C\u202D\u202E]/g, '')
+      .trim();
     const validation = isValidIndianMobileNumber(query);
     if (!validation) {
-      toast.error('Invalid mobile number', { duration: 800 });
+      toast.error(`Invalid mobile ${query}`, { duration: 800 });
       return;
     }
     setMobileNo(query);
@@ -424,7 +440,6 @@ export default function BeFiSc() {
           mobile360R = null;
           return false;
         } catch (error) {
-          console.log(error);
           if (error instanceof AxiosError) {
             mobile360ResponseMessage =
               error.response?.data?.responseStatus?.message;
@@ -448,12 +463,14 @@ export default function BeFiSc() {
             const success = await tryFetch();
 
             if (success || Date.now() - startTime >= MAXDURATION) {
-              if (!success)
+              if (!success) {
                 toast.error('Server Timeout. Try again after some time', {
                   id: toastId,
                 });
-              setIsLoading(false);
-              resolve(); // Exit the loop
+                setIsLoading(false);
+                setAllOffLoading();
+              }
+              resolve();
             } else {
               toast.loading('API server is not responding', {
                 id: toastId,
@@ -466,13 +483,14 @@ export default function BeFiSc() {
       };
 
       await retryUntilSuccess();
+
       if (!mobile360R) {
         // toast.error('Server timeout. Please try again later.', { id: toastId });
         return;
       } else {
+        await new Promise((resolve) => setTimeout(resolve, 2000));
         toast.success(`${mobile360ResponseMessage}`, { id: toastId });
       }
-      setIsLoading(false);
     } catch (err) {
       if (err instanceof AxiosError) {
         toast.error(err.response?.data?.responseStatus?.message);
@@ -485,6 +503,109 @@ export default function BeFiSc() {
       setAllOffLoading();
     }
   };
+
+  const isAdult = () => {
+    const currentYear = new Date().getFullYear();
+    const age = Number(panAllInOneData?.result?.dob.split('-')[0]);
+    if (!age) {
+      return false;
+    }
+    const isAdult = currentYear - age >= 18;
+    return isAdult;
+  };
+
+  const getImageUrl = (): string => {
+    const gender = panAllInOneData?.result?.gender;
+
+    if (isAdult()) {
+      if (gender === 'M') {
+        return '/male.jpg';
+      }
+      return '/female.jpg';
+    }
+    if (gender === 'M') {
+      return '/boy.avif';
+    }
+    return 'female.jpg';
+  };
+
+  const firstAddress =
+    panAllInOneData?.result?.address.line_1 +
+    ' ' +
+    panAllInOneData?.result?.address.line_2 +
+    ' ' +
+    panAllInOneData?.result?.address.city +
+    ' ' +
+    panAllInOneData?.result?.address.state +
+    ' ' +
+    panAllInOneData?.result?.address.zip +
+    ' ' +
+    panAllInOneData?.result?.address.country;
+
+  const secondAddesss =
+    profileAdvanceData?.result?.address?.[0]?.detailed_address;
+  const OverviewData = [
+    {
+      title: 'Father Name',
+      value: formatSentence(panAllInOneData?.result?.fname),
+      titleClassname: '',
+      valueClassname: '',
+    },
+    {
+      title: 'Gender',
+      value: panAllInOneData?.result?.gender === 'M' ? 'Male' : 'Female',
+      titleClassname: '',
+      valueClassname: '',
+    },
+    {
+      title: 'Date of Birth',
+      value: panAllInOneData?.result?.dob,
+      titleClassname: '',
+      valueClassname: '',
+    },
+    {
+      title: 'Age',
+      value: profileAdvanceData?.result?.personal_information?.age,
+      titleClassname: '',
+      valueClassname: '',
+    },
+
+    {
+      title: 'Alternate Number',
+      value:
+        profileAdvanceData?.result?.alternate_phone?.[0].value ||
+        panAllInOneData?.result?.phone_number,
+      titleClassname: '',
+      valueClassname: '',
+    },
+
+    {
+      title: 'Income',
+      value: numberToIndianRuppe(
+        Number(profileAdvanceData?.result?.personal_information?.income),
+      ),
+      titleClassname: '',
+      valueClassname: '',
+    },
+    {
+      title: 'PAN Number',
+      value: panAllInOneData?.result?.pan_number,
+      titleClassname: '',
+      valueClassname: 'text-blue-400',
+    },
+    {
+      title: 'Aadhaar Number',
+      value: panAllInOneData?.result?.masked_aadhaar,
+      titleClassname: '',
+      valueClassname: 'text-yellow-500',
+    },
+    {
+      title: 'Email Address',
+      value: profileAdvanceData?.result?.email?.[0]?.value.toLowerCase(),
+      titleClassname: '',
+      valueClassname: '',
+    },
+  ];
 
   const searchFilterOptions = [{ label: 'Mobile No', value: 'mobileNumber' }];
 
@@ -532,10 +653,10 @@ export default function BeFiSc() {
                   Overview
                 </TabsTrigger>
                 <TabsTrigger
-                  value="simTrace"
+                  value="profile"
                   className="rounded-md data-[state=active]:bg-slate-800 data-[state=active]:text-emerald-500"
                 >
-                  Profile Advance
+                  Profile
                 </TabsTrigger>
                 <TabsTrigger
                   value="personal"
@@ -570,10 +691,75 @@ export default function BeFiSc() {
               </TabsList>
 
               <TabsContent value="overview" className="mt-6">
-                {mobile360Data && <Mobile360 data={mobile360Data} />}
+                <div className="grid min-h-[450px] grid-cols-1 gap-6">
+                  <Card className="col-span-full border-slate-800 bg-slate-900 text-white lg:col-span-2">
+                    <CardHeader>
+                      <CardDescription>
+                        <div className="flex items-center gap-x-2">
+                          <Image
+                            src={getImageUrl()}
+                            alt="user"
+                            width={35}
+                            height={35}
+                            className="rounded-full border"
+                          />
+                          <p className="text-2xl font-semibold">
+                            {formatSentence(panAllInOneData?.result?.full_name)}
+                          </p>
+                        </div>
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="grid grid-cols-1">
+                      <div className="w-full space-y-4">
+                        <div className="grid w-full grid-cols-4 gap-4">
+                          {OverviewData.map((item, index) => {
+                            return (
+                              <div key={index} className="flex flex-col gap-2">
+                                <p
+                                  className={cn(
+                                    'text-xs text-slate-400',
+                                    item.titleClassname,
+                                  )}
+                                >
+                                  {item.title}
+                                </p>
+                                <p
+                                  className={cn(
+                                    'font-medium',
+                                    item.valueClassname,
+                                  )}
+                                >
+                                  {item.value}
+                                </p>
+                              </div>
+                            );
+                          })}
+                        </div>
+                        <Separator className="bg-slate-800" />
+                        {/* addess live here */}
+                        <div className="w-full text-sm font-semibold">
+                          {firstAddress.length > 10
+                            ? formatSentence(firstAddress)
+                            : formatSentence(secondAddesss)}
+                        </div>
+                        <Separator className="bg-slate-800" />
+                        <CustomBadge
+                          isFormat={false}
+                          value={
+                            panAllInOneData?.result.email
+                              ? `Email Linked with ${panAllInOneData?.result?.pan_number?.toUpperCase()}`
+                              : `Email Not Linked with ${cleanAndCapitalize(panAllInOneData?.result?.pan_number.toUpperCase())}`
+                          }
+                        />
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
               </TabsContent>
 
-              <TabsContent value="simTrace" className="mt-6">
+              <TabsContent value="profile" className="mt-6 space-y-4">
+                <GhuntComponent accountData={ghuntData} />
+                {mobile360Data && <Mobile360 data={mobile360Data} />}
                 {profileAdvanceLoading ? (
                   <BeFiScLoadingSkeleton />
                 ) : (
@@ -593,11 +779,6 @@ export default function BeFiSc() {
                 )}
               </TabsContent>
               <TabsContent value="financial" className="mt-6">
-                {verifyUdyamLoading ? (
-                  <BeFiScLoadingSkeleton />
-                ) : (
-                  <VerifyUdyam verfiyUdyamData={verfiyUdyamData} />
-                )}
                 {mobileToAccountLoading ? (
                   <BeFiScLoadingSkeleton />
                 ) : (
@@ -605,17 +786,17 @@ export default function BeFiSc() {
                     MobileToAccountNumberData={mobileToAccountData}
                   />
                 )}
-              </TabsContent>
-              <TabsContent value="business" className="mt-6">
-                {gstAdvanceLoading ? (
-                  <BeFiScLoadingSkeleton />
-                ) : (
-                  <GSTAdvance GstAdvanceData={gstAdvanceData} />
-                )}
                 {EquifaxV3Loading ? (
                   <BeFiScLoadingSkeleton />
                 ) : (
                   <EquifaxV3 EquifaxV3Data={EquifaxV3Data} />
+                )}
+              </TabsContent>
+              <TabsContent value="business" className="mt-6 space-y-4">
+                {gstAdvanceLoading ? (
+                  <BeFiScLoadingSkeleton />
+                ) : (
+                  <GSTAdvance GstAdvanceData={gstAdvanceData} />
                 )}
                 {gstTurnoverLoading ? (
                   <BeFiScLoadingSkeleton />

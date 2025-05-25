@@ -14,52 +14,12 @@ import {
   InfoText,
   StatusBadge,
 } from '../dashboard/components/DashboardCard';
-
-interface GoogleAccountData {
-  //   responseStatus: {
-  //     status: boolean;
-  //     message: string;
-  //   };
-  //   responseData: {
-  success: boolean;
-  email: string;
-  profile: {
-    gaiaId: string;
-    hasCustomProfilePicture: boolean;
-    hasCustomCover: boolean;
-    lastEdited: string;
-    userTypes: string[];
-  };
-  googleChat: {
-    entityType: string;
-    customerId: null;
-  };
-  googlePlus: {
-    isEnterpriseUser: boolean;
-  };
-  playGames: {
-    hasProfile: boolean;
-    username: null;
-    playerId: null;
-    avatarUrl: null;
-  };
-  maps: {
-    profileUrl: string;
-    hasReviews: boolean;
-  };
-  calendar: {
-    isPublic: boolean;
-    hasEvents: boolean;
-  };
-  //   };
-}
+import { GhuntData } from '@/types/ghunt';
 
 export default function Ghunt() {
   const [isLoading, setIsLoading] = useState(false);
   const [searchType, setSearchType] = useState<string>('');
-  const [accountData, setAccountData] = useState<GoogleAccountData | null>(
-    null,
-  );
+  const [accountData, setAccountData] = useState<GhuntData | null>(null);
 
   const handleSearch = async (query: string, searchFilter: string) => {
     setIsLoading(true);
@@ -75,49 +35,6 @@ export default function Ghunt() {
       toast.error('Something went wrong');
     }
 
-    // Simulate API response
-    const dummyData: GoogleAccountData = {
-      // responseStatus: {
-      //   status: true,
-      //   message: "Email information retrieved successfully"
-      // },
-      // responseData: {
-      success: true,
-      email: 'abhinavsrivastav699@gmail.com',
-      profile: {
-        gaiaId: '108505126673801701156',
-        hasCustomProfilePicture: false,
-        hasCustomCover: false,
-        lastEdited: '2025/05/14 10:32:32 (UTC)',
-        userTypes: ['GOOGLE_USER'],
-      },
-      googleChat: {
-        entityType: 'PERSON',
-        customerId: null,
-      },
-      googlePlus: {
-        isEnterpriseUser: false,
-      },
-      playGames: {
-        hasProfile: false,
-        username: null,
-        playerId: null,
-        avatarUrl: null,
-      },
-      maps: {
-        profileUrl:
-          'https://www.google.com/maps/contrib/108505126673801701156/reviews',
-        hasReviews: false,
-      },
-      calendar: {
-        isPublic: true,
-        hasEvents: false,
-      },
-      // }
-    };
-
-    // await new Promise((resolve) => setTimeout(resolve, 2000));
-    // setAccountData(dummyData);
     setIsLoading(false);
   };
 

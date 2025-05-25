@@ -561,8 +561,13 @@ export interface EquifaxV3Type {
               AccountStatus: string;
               AccountType: string;
               Balance: string;
+              InterestRate: string;
               DateOpened: string;
               DateReported: string;
+              CreditLimit: string;
+              LastPayment: string;
+              WriteOffAmount: string;
+              HighCredit: string;
               History48Months: {
                 AssetClassificationStatus: string;
                 PaymentStatus: string;
@@ -577,6 +582,9 @@ export interface EquifaxV3Type {
               SanctionAmount: string;
               TermFrequency: string;
               seq: string;
+              RepaymentTenure: string;
+              InstallmentAmount: string;
+              AssetClassification: string;
               source: string;
             }[];
             RetailAccountsSummary: {

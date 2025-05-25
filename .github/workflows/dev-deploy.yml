@@ -1,0 +1,57 @@
+name: Deploy to AWS EC2
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  deploy:
+    name: Deploy on EC2
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Node and PNPM
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22'
+
+    - name: Install PNPM
+      run: npm install -g pnpm
+
+    - name: Create .env file
+      run: |
+        echo "NEXT_PUBLIC_GOOGLE_CLIENT_ID=${{ secrets.NEXT_PUBLIC_GOOGLE_CLIENT_ID }}" >> .env
+        echo "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}" >> .env
+        echo "NEXT_PUBLIC_BACKEND_URL=${{ secrets.NEXT_PUBLIC_BACKEND_URL }}" >> .env
+        echo "NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}" >> .env
+
+    - name: Install dependencies
+      run: pnpm install
+
+    - name: Build Next.js app
+      run: pnpm run build
+
+    - name: Set up SSH
+      uses: webfactory/ssh-agent@v0.9.0
+      with:
+        ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
+
+    - name: Copy build to EC2
+      run: |
+        rsync -avz --delete \
+          .next/ public/ package.json pnpm-lock.yaml \
+          ec2-user@${{ secrets.EC2_HOST }}:/home/ec2-user/app/
+
+    - name: Run app with PM2 on EC2
+      run: |
+        ssh ec2-user@${{ secrets.EC2_HOST }} << 'EOF'
+          cd /home/ec2-user/app
+          pnpm install --prod
+          pm2 delete all || true
+          pm2 start "pnpm run start" --name nextjs-app
+          pm2 save
+        EOF
