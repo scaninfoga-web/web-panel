@@ -22,6 +22,13 @@ jobs:
     - name: Install PNPM
       run: npm install -g pnpm
 
+    - name: Create .env file
+      run: |
+        echo "NEXT_PUBLIC_GOOGLE_CLIENT_ID=${{ secrets.NEXT_PUBLIC_GOOGLE_CLIENT_ID }}" >> .env
+        echo "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}" >> .env
+        echo "NEXT_PUBLIC_BACKEND_URL=${{ secrets.NEXT_PUBLIC_BACKEND_URL }}" >> .env
+        echo "NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}" >> .env
+
     - name: Install dependencies
       run: pnpm install
 
