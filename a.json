@@ -1,0 +1,67 @@
+{
+  "responseStatus": {
+    "status": true,
+    "message": "Data fetched from database"
+  },
+  "responseData": {
+    "result": {
+      "email": [
+        {
+          "value": "HARKIRAT96@GMAIL.COM",
+          "serial_number": "1"
+        }
+      ],
+      "address": [
+        {
+          "type": "Rents,Primary",
+          "state": "PB",
+          "pincode": "160062",
+          "detailed_address": "2265 JAL VAYU VIHAR SECTIR 67 MOHALI MOHALI",
+          "date_of_reporting": "2025-05-15"
+        },
+        {
+          "type": "Rents,Primary",
+          "state": "PB",
+          "pincode": "160062",
+          "detailed_address": "2265 JAL VAYU VIHAR SECTIR 67 MOHALI MOHALI",
+          "date_of_reporting": "2024-12-22"
+        },
+        {
+          "type": "",
+          "state": "KA",
+          "pincode": "560103",
+          "detailed_address": "WING A WING B GROUND FLR  TO 6TH FLR  OF WING C HELIOS BUSINESS PARK  150 OUTER RING RD  KADUBEESANA",
+          "date_of_reporting": "2019-07-31"
+        }
+      ],
+      "document_data": {
+        "pan": [
+          {
+            "value": "GRNPS7008L",
+            "serial_number": "1"
+          }
+        ]
+      },
+      "alternate_phone": [
+        {
+          "value": "7060334774",
+          "serial_number": "1"
+        }
+      ],
+      "personal_information": {
+        "age": "29",
+        "gender": "Male",
+        "income": "",
+        "full_name": "HARKIRAT SINGH",
+        "date_of_birth": "1996-02-01"
+      }
+    },
+    "status": 1,
+    "txn_id": "db16a2ae-cebb-4749-8028-3db7b8619370",
+    "message": "Record Found Successfully",
+    "api_name": "Profile Advance",
+    "billable": true,
+    "datetime": "2025-05-22 11:58:03.690553",
+    "api_category": "Mobile Number Lookup"
+  }
+}

@@ -174,6 +174,9 @@ export function Register({ type: initialType }: RegisterProps) {
             ? 'register-corporate'
             : 'register-developer';
 
+      toast.error('Registering is OFF');
+      return;
+
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/${endpoint}`,
         data,

@@ -1,11 +1,8 @@
 import { GstVerificationAdvanceType, VerifyUdyamType } from '@/types/BeFiSc';
 import React from 'react';
 import { Loader } from '@/components/ui/loader';
-import CustomBeFiScCard from './CustomBeFiScCard';
+import CustomBeFiScCard, { getValue } from './CustomBeFiScCard';
 import { Card } from '@/components/ui/card';
-
-const getValue = (value: string | undefined | null) =>
-  value && value.trim().length > 0 ? value : 'No Data';
 
 export default function GSTAdvance({
   GstAdvanceData,
@@ -16,84 +13,104 @@ export default function GSTAdvance({
     return <></>;
   }
 
-  const remainData = {
-    aggregate_turn_over: GstAdvanceData?.result?.aggregate_turn_over,
-    business_constitution: GstAdvanceData?.result?.business_constitution,
-    can_flag: GstAdvanceData?.result?.can_flag,
-    central_jurisdiction: GstAdvanceData?.result?.central_jurisdiction,
-    compliance_rating: GstAdvanceData?.result?.compliance_rating,
-    current_registration_status:
-      GstAdvanceData?.result?.current_registration_status,
-
-    gstin: GstAdvanceData?.result?.gstin,
-    is_field_visit_conducted: GstAdvanceData?.result?.is_field_visit_conducted,
-    legal_name: GstAdvanceData?.result?.legal_name,
-    mandate_e_invoice: GstAdvanceData?.result?.mandate_e_invoice,
-  };
-
   return (
     <div className="grid grid-cols-1 gap-2 space-y-4">
-      {/* digitalPaymentIdInfo */}
-      {/* <Card className="my-6 border border-gray-700 bg-[#0e1421] p-6 shadow-xl">
-        <h1 className="text-2xl font-bold text-emerald-500">Udyam Details</h1>
-        <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-5">
+      <Card className="my-6 border border-gray-700 bg-[#0e1421] p-6 shadow-xl">
+        <h1 className="text-2xl font-bold text-emerald-500">GST Information</h1>
+        <div className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-4">
           <div>
-            <p className="text-sm text-gray-400">Enterprise Name</p>
+            <p className="text-sm text-gray-400">GST Number</p>
             <p className="text-base font-medium">
-              {getValue(verfiyUdyamData.result?.enterprise_name)}
+              {getValue(GstAdvanceData?.result?.gstin)}
             </p>
           </div>
           <div>
-            <p className="text-sm text-gray-400">Organisation Type</p>
+            <p className="text-sm text-gray-400">Legel Name</p>
             <p className="text-base font-medium">
-              {getValue(verfiyUdyamData.result?.organisation_type)}
+              {getValue(GstAdvanceData?.result?.legal_name)}
             </p>
           </div>
 
           <div>
-            <p className="text-sm text-gray-400">Service Type</p>
+            <p className="text-sm text-gray-400">Trade Name</p>
             <p className="text-base font-medium">
-              {getValue(verfiyUdyamData.result?.service_type)}
+              {getValue(GstAdvanceData?.result?.trade_name)}
             </p>
           </div>
           <div>
-            <p className="text-sm text-gray-400">Gender</p>
+            <p className="text-sm text-gray-400">Register Date</p>
             <p className="text-base font-medium">
-              {getValue(verfiyUdyamData.result?.gender)}
+              {getValue(GstAdvanceData?.result?.register_date)}
             </p>
           </div>
           <div>
-            <p className="text-sm text-gray-400">Social Category</p>
-            <p className="text-base font-medium">
-              {getValue(verfiyUdyamData.result?.social_category)}
+            <p className="text-sm text-gray-400">Business Mobile</p>
+            <p className="text-base font-medium text-blue-500">
+              {getValue(GstAdvanceData?.result?.business_mobile)}
             </p>
           </div>
           <div>
-            <p className="text-sm text-gray-400">Date Of Incorporation</p>
-            <p className="text-base font-medium">
-              {getValue(verfiyUdyamData.result?.date_of_incorporation)}
+            <p className="text-sm text-gray-400">Business Email</p>
+            <p className="text-base font-medium text-blue-500">
+              {getValue(GstAdvanceData?.result?.business_email)}
             </p>
           </div>
           <div>
-            <p className="text-sm text-gray-400">Date Of Commencement</p>
+            <p className="text-sm text-gray-400">Tax Payer Type</p>
+            <p className="text-base font-medium text-yellow-500">
+              {getValue(GstAdvanceData?.result?.tax_payer_type)}
+            </p>
+          </div>
+
+          <div>
+            <p className="text-sm text-gray-400">Business Nature</p>
+            <p className="text-base font-medium text-yellow-500">
+              {getValue(GstAdvanceData?.result?.business_nature)}
+            </p>
+          </div>
+
+          <div>
+            <p className="text-sm text-gray-400">Compliance Rating</p>
             <p className="text-base font-medium">
-              {getValue(verfiyUdyamData.result?.date_of_commencement)}
+              {getValue(GstAdvanceData?.result?.compliance_rating)}
+            </p>
+          </div>
+          <div>
+            <p className="text-sm text-gray-400">Mandate EInvoice</p>
+            <p className="text-base font-medium">
+              {getValue(GstAdvanceData?.result?.mandate_e_invoice)}
+            </p>
+          </div>
+          <div>
+            <p className="text-sm text-gray-400">Gross Total Income</p>
+            <p className="text-base font-medium text-yellow-500">
+              {getValue(GstAdvanceData?.result?.gross_total_income)}
+            </p>
+          </div>
+          <div>
+            <p className="text-sm text-gray-400">Aggregate Turnover</p>
+            <p className="text-base font-medium text-yellow-500">
+              {getValue(GstAdvanceData?.result?.aggregate_turn_over)}
+            </p>
+          </div>
+
+          <div>
+            <p className="text-sm text-gray-400">State Jurisdiction</p>
+            <p className="min-w-72 text-base font-medium">
+              {getValue(GstAdvanceData?.result?.authorized_signatory)}
+            </p>
+          </div>
+          <div>
+            <p className="text-sm text-gray-400">State Jurisdiction</p>
+            <p className="min-w-72 text-base font-medium">
+              {getValue(GstAdvanceData?.result?.state_jurisdiction)}
             </p>
           </div>
         </div>
-      </Card> */}
+      </Card>
 
       {/* light */}
       <div className="grid grid-cols-3 gap-4">
-        <CustomBeFiScCard data={remainData} title="GST Advance" />
-        <CustomBeFiScCard
-          data={GstAdvanceData?.result?.authorized_signatory}
-          title="Authorized Signatory"
-        />
-        <CustomBeFiScCard
-          data={GstAdvanceData?.result?.business_nature}
-          title="Business Nature"
-        />
         <CustomBeFiScCard
           data={GstAdvanceData?.result?.business_details}
           title="Business Details"

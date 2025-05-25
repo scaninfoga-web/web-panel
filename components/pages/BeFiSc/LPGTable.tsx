@@ -43,7 +43,7 @@ export function LPGInfoTable({ lpgInfo }: LPGInfoTableProps) {
   }
 
   return (
-    <div className="w-full overflow-x-auto rounded-xl">
+    <div className="w-full overflow-auto rounded-xl">
       <div className="scrollbar-custom min-w-full">
         <Table>
           <TableHeader>
