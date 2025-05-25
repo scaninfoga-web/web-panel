@@ -42,14 +42,17 @@ jobs:
         echo "${{ secrets.EC2_PRIVATE_KEY }}" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
         ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+        
+        # Test SSH connection
+        ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_HOST }} "echo 'SSH connection successful'"
 
     - name: Create app directory on EC2
       run: |
-        ssh -i ~/.ssh/id_rsa ubuntu@${{ secrets.EC2_HOST }} "mkdir -p /home/ubuntu/app"
+        ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_HOST }} "mkdir -p /home/ubuntu/app"
 
     - name: Copy build to EC2
       run: |
-        rsync -avz --delete -e "ssh -i ~/.ssh/id_rsa" \
+        rsync -avz --delete -e "ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no" \
           .next/ public/ package.json pnpm-lock.yaml .env node_modules/ \
           ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/app/
 
@@ -57,6 +60,12 @@ jobs:
       run: |
         ssh -i ~/.ssh/id_rsa ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
           cd /home/ubuntu/app
+          
+          # Install pnpm if not already installed
+          command -v pnpm >/dev/null 2>&1 || npm install -g pnpm
+          
+          # Install PM2 if not already installed
+          command -v pm2 >/dev/null 2>&1 || npm install -g pm2
           
           # Stop and delete existing PM2 processes
           pm2 delete nextjs-app || true
@@ -70,4 +79,4 @@ jobs:
     - name: Verify deployment
       run: |
         echo "Deployment completed successfully"
-        ssh -i ~/.ssh/id_rsa ubuntu@${{ secrets.EC2_HOST }} "pm2 status"
+        ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_HOST }} "pm2 status"
