@@ -28,6 +28,7 @@ jobs:
         echo "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}" >> .env
         echo "NEXT_PUBLIC_BACKEND_URL=${{ secrets.NEXT_PUBLIC_BACKEND_URL }}" >> .env
         echo "NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}" >> .env
+        echo "NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}" >> .env
 
     - name: Install dependencies
       run: pnpm install
@@ -35,28 +36,38 @@ jobs:
     - name: Build Next.js app
       run: pnpm run build
 
-    - name: Set up SSH
-      uses: webfactory/ssh-agent@v0.9.0
-      with:
-        ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
-
-    - name: Add EC2 host to known_hosts
+    - name: Setup SSH
       run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.EC2_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
         ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
 
+    - name: Create app directory on EC2
+      run: |
+        ssh -i ~/.ssh/id_rsa ubuntu@${{ secrets.EC2_HOST }} "mkdir -p /home/ubuntu/app"
 
     - name: Copy build to EC2
       run: |
-        rsync -avz --delete \
-          .next/ public/ package.json pnpm-lock.yaml \
-          ec2-user@${{ secrets.EC2_HOST }}:/home/ec2-user/app/
+        rsync -avz --delete -e "ssh -i ~/.ssh/id_rsa" \
+          .next/ public/ package.json pnpm-lock.yaml .env node_modules/ \
+          ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/app/
 
     - name: Run app with PM2 on EC2
       run: |
-        ssh ec2-user@${{ secrets.EC2_HOST }} << 'EOF'
-          cd /home/ec2-user/app
-          pnpm install --prod
-          pm2 delete all || true
+        ssh -i ~/.ssh/id_rsa ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
+          cd /home/ubuntu/app
+          
+          # Stop and delete existing PM2 processes
+          pm2 delete nextjs-app || true
+          
+          # Start the application with PM2
           pm2 start "pnpm run start" --name nextjs-app
           pm2 save
+          pm2 startup
         EOF
+
+    - name: Verify deployment
+      run: |
+        echo "Deployment completed successfully"
+        ssh -i ~/.ssh/id_rsa ubuntu@${{ secrets.EC2_HOST }} "pm2 status"
