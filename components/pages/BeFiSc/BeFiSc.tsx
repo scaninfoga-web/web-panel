@@ -114,6 +114,7 @@ export default function BeFiSc() {
     setUpiDetailsLoading(true);
   };
   const clearOldData = () => {
+    setGhuntData(null);
     setMobile360Data(null);
     setVerfiyUdyamData(null);
     setGstAdvanceData(null);
