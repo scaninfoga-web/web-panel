@@ -2,7 +2,7 @@ import axios, { AxiosRequestConfig, Method } from 'axios';
 import { store } from '@/redux/store';
 
 // Base URL for your API
-const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3000';
+const BASE_URL = 'http://localhost:8000';
 
 // Create axios instance with default config
 const axiosInstance = axios.create({
@@ -87,7 +87,7 @@ export const apiCall = async <T = any>(
 export const get = <T = any>(endpoint: string, params = null, config = {}) =>
   apiCall<T>('get', endpoint, params, config);
 
-export const post = <T = any>(endpoint: string, data = null, config = {}) =>
+export const post = <T = any>(endpoint: string, data = {}, config = {}) =>
   apiCall<T>('post', endpoint, data, config);
 
 export const put = <T = any>(endpoint: string, data = null, config = {}) =>

@@ -16,6 +16,8 @@ interface SearchBar2Props {
   selectedFilter?: string; // Add this prop to receive the selected search filter from the parent component
   searchFilterOptions?: Array<{ label: string; value: string }>;
   showOptions?: boolean; // Add this prop to control the visibility of the search filter options
+  defaultFilter?: string;
+  defaultQuery?: string;
 }
 
 export function SearchBar2({
@@ -23,10 +25,12 @@ export function SearchBar2({
   selectedFilter,
   searchFilterOptions,
   showOptions,
+  defaultFilter,
+  defaultQuery,
 }: SearchBar2Props) {
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState(defaultQuery || '');
   const [searchFilter, setSearchFilter] = useState(
-    selectedFilter || 'username',
+    defaultFilter || selectedFilter || 'username',
   );
 
   const handleSearchTrigger = () => {
