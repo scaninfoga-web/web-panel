@@ -404,7 +404,7 @@ export default function BeFiSc() {
       };
       callOtherAPIs();
     }
-  }, [mobile360Data, mobileNo, isRealtime]);
+  }, [mobile360Data]);
 
   const handleSearch = async (query: string, searchFilter: string) => {
     clearOldData();
