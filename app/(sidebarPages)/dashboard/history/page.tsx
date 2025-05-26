@@ -1,9 +1,11 @@
-import React from 'react';
+import History from '@/components/pages/history/History';
+import { Loader } from '@/components/ui/loader';
+import React, { Suspense } from 'react';
 
 export default function Page() {
   return (
-    <div className="flex h-screen animate-pulse items-center justify-center text-2xl text-neutral-500">
-      history
-    </div>
+    <Suspense fallback={<Loader />}>
+      <History />
+    </Suspense>
   );
 }

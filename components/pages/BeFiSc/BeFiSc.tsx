@@ -27,6 +27,8 @@ import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
+import { useSearchParams } from 'next/navigation';
+
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 // @ts-ignore
@@ -48,6 +50,8 @@ import UpiDetails from './UpiDetails';
 import { GhuntData } from '@/types/ghunt';
 import GhuntComponent from './Ghunt';
 import Mobile360 from './Mobile360';
+import { get, post } from '@/lib/api';
+import Ghunt from '../ghunt/Ghunt';
 
 function isValidIndianMobileNumber(input: string): boolean {
   const mobileRegex = /^(?:\+91[\-\s]?)?[5-9]\d{9}$/;
@@ -55,6 +59,9 @@ function isValidIndianMobileNumber(input: string): boolean {
 }
 
 export default function BeFiSc() {
+  const searchParams = useSearchParams();
+  const mobileNumber = searchParams.get('mobile_number');
+
   const [searchType, setSearchType] = useState<string>('');
   const [activeTab, setActiveTab] = useState('overview');
 
@@ -66,6 +73,7 @@ export default function BeFiSc() {
     null,
   );
   const [ghuntData, setGhuntData] = useState<GhuntData | null>(null);
+  const [ghuntLoading, setGhuntLoading] = useState(false);
   const [verifyUdyamLoading, setVerifyUdyamLoading] = useState(false);
   const [verfiyUdyamData, setVerfiyUdyamData] =
     useState<VerifyUdyamType | null>(null);
@@ -103,6 +111,7 @@ export default function BeFiSc() {
 
   const setAllOnLoading = () => {
     setIsLoading(true);
+    setGhuntLoading(true);
     setVerifyUdyamLoading(true);
     setGstAdvanceLoading(true);
     setGstTurnoverLoading(true);
@@ -129,6 +138,7 @@ export default function BeFiSc() {
 
   const setAllOffLoading = () => {
     setIsLoading(false);
+    setGhuntLoading(false);
     setVerifyUdyamLoading(false);
     setGstAdvanceLoading(false);
     setGstTurnoverLoading(false);
@@ -163,6 +173,7 @@ export default function BeFiSc() {
                 { email: emailAddress },
               );
               setGhuntData(data.responseData);
+              setGhuntLoading(false);
             } catch (error) {
               toast.error('Ghunt Data Not Found', { id: toastRef.current! });
             }
@@ -215,7 +226,6 @@ export default function BeFiSc() {
                 panAllInOne.responseData?.status === 2
               ) {
                 setPanAllInOneData(panAllInOne.responseData);
-                console.log('panAllInOne', panAllInOne.responseData);
               }
             } catch (error) {
               if (error instanceof AxiosError) {
@@ -388,6 +398,7 @@ export default function BeFiSc() {
             );
           }
         }
+
         setAllOffLoading();
         setisRealtime(false);
       };
@@ -427,10 +438,18 @@ export default function BeFiSc() {
           id: toastId,
         });
         try {
-          const { data: Mobile360Data } = await axios.post(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/mobile/getMobile360Dtls`,
-            { mobile_number: query, realtimeData: isRealtime },
-          );
+          // const { data: Mobile360Data } = await axios.post(
+          //   `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/mobile/getMobile360Dtls`,
+          //   { mobile_number: query, realtimeData: isRealtime },
+          // );
+
+          // const data = await post(`/api/mobile/getMobile360Dtls`, {mobile_number: query, realtimeData: isRealtime});
+          const Mobile360Data = await post('/api/mobile/getMobile360Dtls', {
+            mobile_number: query,
+            realtimeData: isRealtime,
+          });
+
+          // const Mobile360Data = data;
 
           if (Number(Mobile360Data.responseData?.status) === 1) {
             setMobile360Data(Mobile360Data.responseData);
@@ -610,6 +629,12 @@ export default function BeFiSc() {
 
   const searchFilterOptions = [{ label: 'Mobile No', value: 'mobileNumber' }];
 
+  useEffect(() => {
+    if (mobileNumber) {
+      handleSearch(mobileNumber, 'mobileNumber');
+    }
+  }, []);
+
   return (
     <div className="space-y-4">
       <DashboardTitle
@@ -620,6 +645,8 @@ export default function BeFiSc() {
         searchFilterOptions={searchFilterOptions}
         selectedFilter="mobileNumber"
         onSearch={handleSearch}
+        defaultFilter="mobileNumber"
+        defaultQuery={mobileNumber || ''}
       />
       {/* checkbox */}
       <div className="flex w-full items-center justify-center">
@@ -646,7 +673,7 @@ export default function BeFiSc() {
               className="w-full"
               onValueChange={setActiveTab}
             >
-              <TabsList className="grid h-auto w-full grid-cols-7 rounded-lg border border-slate-800 bg-slate-900 p-1 text-white sm:w-auto sm:grid-cols-7">
+              <TabsList className="grid h-auto w-full grid-cols-2 rounded-lg border border-slate-800 bg-slate-900 p-1 text-white sm:w-auto sm:grid-cols-7 md:grid-cols-8">
                 <TabsTrigger
                   value="overview"
                   className="rounded-md data-[state=active]:bg-slate-800 data-[state=active]:text-emerald-500"
@@ -688,6 +715,12 @@ export default function BeFiSc() {
                   className="rounded-md data-[state=active]:bg-slate-800 data-[state=active]:text-emerald-500"
                 >
                   Breach Info
+                </TabsTrigger>
+                <TabsTrigger
+                  value="googleProfile"
+                  className="rounded-md data-[state=active]:bg-slate-800 data-[state=active]:text-emerald-500"
+                >
+                  Google Profile
                 </TabsTrigger>
               </TabsList>
 
@@ -813,6 +846,13 @@ export default function BeFiSc() {
                 )}
               </TabsContent>
               <TabsContent value="breachInfo" className="mt-6"></TabsContent>
+              <TabsContent value="googleProfile" className="mt-6">
+                {ghuntLoading ? (
+                  <BeFiScLoadingSkeleton />
+                ) : (
+                  <Ghunt accountData={ghuntData} />
+                )}
+              </TabsContent>
             </Tabs>
           </motion.div>
         </div>
