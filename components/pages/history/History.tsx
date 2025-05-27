@@ -80,7 +80,7 @@ const History: React.FC = () => {
       dataIndex: 'activity_time',
       key: 'activity_time',
       render: (text: string) => formatDate(text),
-      width: '240px',
+      width: '200px',
     },
     {
       title: 'Request Payload',
