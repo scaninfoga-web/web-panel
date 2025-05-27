@@ -449,8 +449,6 @@ export default function BeFiSc() {
             realtimeData: isRealtime,
           });
 
-          // const Mobile360Data = data;
-
           if (Number(Mobile360Data.responseData?.status) === 1) {
             setMobile360Data(Mobile360Data.responseData);
             mobile360R = Mobile360Data;
@@ -478,9 +476,12 @@ export default function BeFiSc() {
       };
 
       const retryUntilSuccess = async () => {
+        console.log('INSIDE RETRY UNTIL SYCCESS');
         return new Promise<void>((resolve) => {
           const attempt = async () => {
             const success = await tryFetch();
+
+            console.log('SUCCESS: ', success);
 
             if (success || Date.now() - startTime >= MAXDURATION) {
               if (!success) {
@@ -523,6 +524,113 @@ export default function BeFiSc() {
       setAllOffLoading();
     }
   };
+
+  //   const MAX_DURATION = 2 * 60 * 1000;
+  // const RETRY_INTERVAL = 5000;
+
+  // const normalizeQuery = (query: string) =>
+  //   query
+  //     .normalize('NFKD')
+  //     .replace(/[\u200B-\u200D\uFEFF\u202C\u202D\u202E]/g, '')
+  //     .trim();
+
+  // const handleSearch = async (query: string, searchFilter: string) => {
+  //   clearOldData();
+
+  //   if (query.length < 1) return;
+
+  //   const normalizedQuery = normalizeQuery(query);
+  //   if (!isValidIndianMobileNumber(normalizedQuery)) {
+  //     toast.error(`Invalid mobile ${normalizedQuery}`, { duration: 800 });
+  //     return;
+  //   }
+
+  //   setMobileNo(normalizedQuery);
+  //   setAllOnLoading();
+
+  //   let mobile360R: null | { responseData: Mobile360Type } = null;
+  //   let toastId: string | undefined;
+  //   const startTime = Date.now();
+
+  //   const fetchData = async () => {
+  //     const loadingToast = toast.loading('fetching data...');
+  //     try {
+
+  //       const data = await post('/api/mobile/getMobile360Dtls', {
+  //         mobile_number: normalizedQuery,
+  //         realtimeData: isRealtime,
+  //       });
+
+  //       if (Number(data.responseData?.status) === 1) {
+  //         setMobile360Data(data.responseData);
+  //         mobile360R = data;
+  //         return { success: true, message: data?.responseStatus?.message };
+  //       }
+
+  //       mobile360R = null;
+  //       return { success: false };
+  //     } catch (error) {
+  //       if (
+  //         error instanceof AxiosError &&
+  //         error.response?.data?.responseStatus?.message ===
+  //           'No data found in database for this mobile number'
+  //       ) {
+  //         toast.error('Mobile number not found in the database', { id: toastId });
+  //         return { success: true };
+  //       }
+  //       return { success: false };
+  //     }
+  //     finally{
+  //       toast.dismiss(loadingToast);
+  //     }
+  //   };
+
+  //   const retryUntilSuccess = async () => {
+  //     return new Promise<void>((resolve) => {
+  //       const attempt = async () => {
+  //         const result = await fetchData();
+
+  //         if (result.success || Date.now() - startTime >= MAX_DURATION) {
+  //           if (!result.success) {
+  //             toast.error('Server Timeout. Try again after some time', {
+  //               id: toastId,
+  //             });
+  //             setIsLoading(false);
+  //             setAllOffLoading();
+  //           } else if (result.message) {
+  //             await new Promise((res) => setTimeout(res, 2000));
+  //             toast.success(result.message, { id: toastId });
+  //           }
+  //           resolve();
+  //         } else {
+  //           toast.loading('API server is not responding', { id: toastId });
+  //           setTimeout(attempt, RETRY_INTERVAL);
+  //         }
+  //       };
+  //       attempt();
+  //     });
+  //   };
+
+  //   const loadingToast = toast.loading('fetching data...');
+  //   try {
+  //     // toastRef.current = toastId;
+
+  //     await retryUntilSuccess();
+  //   } catch (err) {
+  //     if (err instanceof AxiosError) {
+  //       toast.error(err.response?.data?.responseStatus?.message);
+  //     } else {
+  //       toast.error('Something went wrong');
+  //     }
+  //     setIsLoading(false);
+  //     setAllOffLoading();
+  //   }
+  //   finally {
+  //     setIsLoading(false);
+  //     setAllOffLoading();
+  //     toast.dismiss(loadingToast);
+  //   }
+  // };
 
   const isAdult = () => {
     const currentYear = new Date().getFullYear();
@@ -792,7 +900,7 @@ export default function BeFiSc() {
               </TabsContent>
 
               <TabsContent value="profile" className="mt-6 space-y-4">
-                <GhuntComponent accountData={ghuntData} />
+                {/* <GhuntComponent accountData={ghuntData} /> */}
                 {mobile360Data && <Mobile360 data={mobile360Data} />}
                 {profileAdvanceLoading ? (
                   <BeFiScLoadingSkeleton />

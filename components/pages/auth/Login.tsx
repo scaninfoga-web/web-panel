@@ -116,9 +116,10 @@ const Login = () => {
 
       const { responseData } = response.data;
 
-      if (responseData.qr_code) {
-        setQrCode(responseData.qr_code);
+      if (responseData.require_otp) {
+        setQrCode(responseData.require_otp);
       } else {
+        console.log('ELSE: ', responseData);
         const { user, accessToken } = responseData;
         setCookie('accessToken', accessToken, { maxAge: 60 * 60 * 24 * 10 });
         dispatch(
@@ -169,12 +170,12 @@ const Login = () => {
 
             {qrCode && (
               <>
-                <Image
+                {/* <Image
                   src={`data:image/png;base64,${qrCode}`}
                   alt="QR Code"
                   width={200}
                   height={200}
-                />
+                /> */}
                 <FormInput
                   form={form}
                   name="otp"
