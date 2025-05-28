@@ -22,7 +22,7 @@ export function DashboardCard({
         'relative overflow-hidden',
         'bg-[#0e1421]/30 backdrop-blur-xl',
         'border border-white/10',
-        'before:absolute before:inset-0 before:bg-gradient-to-b before:from-white/5 before:to-transparent',
+        // 'before:absolute before:inset-0 before:bg-gradient-to-b before:from-white/5 before:to-transparent',
         'shadow-lg transition-all duration-300 hover:shadow-xl',
         className,
       )}

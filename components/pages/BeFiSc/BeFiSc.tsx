@@ -52,6 +52,11 @@ import GhuntComponent from './Ghunt';
 import Mobile360 from './Mobile360';
 import { get, post } from '@/lib/api';
 import Ghunt from '../ghunt/Ghunt';
+import VerifyUdyam from './VerifyUdyam';
+import NotFound from '@/components/NotFound';
+import ProfileAdvanceMobileToAcc360 from './360ProfileAdvanceMobileToAcc';
+import BeFiScFinancial from './360ProfileAdvanceMobileToAcc';
+import BefiScPersonal from './2/BefiScPersonal';
 
 function isValidIndianMobileNumber(input: string): boolean {
   const mobileRegex = /^(?:\+91[\-\s]?)?[5-9]\d{9}$/;
@@ -74,6 +79,7 @@ export default function BeFiSc() {
   );
   const [ghuntData, setGhuntData] = useState<GhuntData | null>(null);
   const [ghuntLoading, setGhuntLoading] = useState(false);
+
   const [verifyUdyamLoading, setVerifyUdyamLoading] = useState(false);
   const [verfiyUdyamData, setVerfiyUdyamData] =
     useState<VerifyUdyamType | null>(null);
@@ -155,9 +161,16 @@ export default function BeFiSc() {
       const callOtherAPIs = async () => {
         // profile advance
         try {
-          const { data: ProfileAdvanceResponse } = await axios.post(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/mobile/profileadvance`,
-            { mobile_number: mobileNo, realtimeData: isRealtime },
+          // const { data: ProfileAdvanceResponse } = await axios.post(
+          //   `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/mobile/profileadvance`,
+          //   { mobile_number: mobileNo, realtimeData: isRealtime },
+          // );
+          const ProfileAdvanceResponse = await post(
+            '/api/mobile/profileadvance',
+            {
+              mobile_number: mobileNo,
+              realtimeData: isRealtime,
+            },
           );
           if (
             Number(ProfileAdvanceResponse.responseData?.status) === 1 ||
@@ -168,10 +181,13 @@ export default function BeFiSc() {
               ProfileAdvanceResponse.responseData?.result?.email?.[0]?.value;
             // calling ghunt api with emailaddess
             try {
-              const { data } = await axios.post(
-                `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/ghunt/getEmailDetails`,
-                { email: emailAddress },
-              );
+              // const { data } = await axios.post(
+              //   `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/ghunt/getEmailDetails`,
+              //   { email: emailAddress },
+              // );
+              const data = await post('/api/ghunt/getEmailDetails', {
+                email: emailAddress,
+              });
               setGhuntData(data.responseData);
               setGhuntLoading(false);
             } catch (error) {
@@ -186,16 +202,23 @@ export default function BeFiSc() {
             mobile360Data?.result?.digital_payment_id_info?.data?.name;
           if (panNumber && bankName) {
             try {
-              const { data: EquifaxData } = await axios.post(
-                `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/mobile/equifaxv3`,
-                {
-                  mobile: mobileNo,
-                  name: bankName,
-                  id_type: 'pan',
-                  id_number: panNumber,
-                  realtimeData: isRealtime,
-                },
-              );
+              // const { data: EquifaxData } = await axios.post(
+              //   `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/mobile/equifaxv3`,
+              //   {
+              //     mobile: mobileNo,
+              //     name: bankName,
+              //     id_type: 'pan',
+              //     id_number: panNumber,
+              //     realtimeData: isRealtime,
+              //   },
+              // );
+              const EquifaxData = await post('/api/mobile/equifaxv3', {
+                mobile: mobileNo,
+                name: bankName,
+                id_type: 'pan',
+                id_number: panNumber,
+                realtimeData: isRealtime,
+              });
               if (
                 EquifaxData.responseData?.status === 1 ||
                 EquifaxData.responseData?.status === 2
@@ -214,13 +237,17 @@ export default function BeFiSc() {
 
             // calling panAllInone
             try {
-              const { data: panAllInOne } = await axios.post(
-                `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/mobile/panallinone`,
-                {
-                  pan_number: panNumber,
-                  realtimeData: isRealtime,
-                },
-              );
+              // const { data: panAllInOne } = await axios.post(
+              //   `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/mobile/panallinone`,
+              //   {
+              //     pan_number: panNumber,
+              //     realtimeData: isRealtime,
+              //   },
+              // );
+              const panAllInOne = await post('/api/mobile/panallinone', {
+                pan_number: panNumber,
+                realtimeData: isRealtime,
+              });
               if (
                 panAllInOne.responseData?.status === 1 ||
                 panAllInOne.responseData?.status === 2
@@ -254,13 +281,18 @@ export default function BeFiSc() {
 
         // epicsInfo
         const EsicsArray = mobile360Data.result?.key_highlights?.esic_number;
+        console.log('Esics', EsicsArray);
 
         if (EsicsArray?.length > 0) {
           try {
-            const { data: EsicsInfo } = await axios.post(
-              `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/mobile/esicsearch`,
-              { esic_number: EsicsArray[0], realtimeData: isRealtime },
-            );
+            // const { data: EsicsInfo } = await axios.post(
+            //   `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/mobile/esicsearch`,
+            //   { esic_number: EsicsArray[0], realtimeData: isRealtime },
+            // );
+            const EsicsInfo = await post('/api/mobile/esicsearch', {
+              esic_number: EsicsArray[0],
+              realtimeData: isRealtime,
+            });
             if (
               Number(EsicsInfo.responseData?.status) === 1 ||
               Number(EsicsInfo.responseData?.status) === 2
@@ -286,13 +318,17 @@ export default function BeFiSc() {
             mobile360Data.result.key_highlights?.udyam_numbers;
 
           if (udyamNumberArray?.length > 0) {
-            const { data: UdyamData } = await axios.post(
-              `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/mobile/verifyudyam`,
-              {
-                registration_no: udyamNumberArray[0],
-                realtimeData: isRealtime,
-              },
-            );
+            // const { data: UdyamData } = await axios.post(
+            //   `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/mobile/verifyudyam`,
+            //   {
+            //     registration_no: udyamNumberArray[0],
+            //     realtimeData: isRealtime,
+            //   },
+            // );
+            const UdyamData = await post('/api/mobile/verifyudyam', {
+              registration_no: udyamNumberArray[0],
+              realtimeData: isRealtime,
+            });
             if (Number(UdyamData.responseData?.status) === 1) {
               setVerfiyUdyamData(UdyamData.responseData);
             }
@@ -315,24 +351,33 @@ export default function BeFiSc() {
             mobile360Data.result?.key_highlights?.gst_numbers;
 
           if (gstAdvanceNumberArray?.length > 0) {
-            const { data: GSTDATA } = await axios.post(
-              `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/mobile/gstadvance`,
-              { gst_no: gstAdvanceNumberArray[0], realtimeData: isRealtime },
-            );
+            // const { data: GSTDATA } = await axios.post(
+            //   `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/mobile/gstadvance`,
+            //   { gst_no: gstAdvanceNumberArray[0], realtimeData: isRealtime },
+            // );
+            const GSTDATA = await post('/api/mobile/gstadvance', {
+              gst_no: gstAdvanceNumberArray[0],
+              realtimeData: isRealtime,
+            });
             if (Number(GSTDATA.responseData?.status) === 1) {
               setGstAdvanceData(GSTDATA.responseData);
             }
             setGstAdvanceLoading(false);
 
             // calling gst turnover api
-            const { data: GstTurnover } = await axios.post(
-              `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/mobile/gstturnover`,
-              {
-                gst_no: gstAdvanceNumberArray[0],
-                realtimeData: isRealtime,
-                year: '2024-25',
-              },
-            );
+            // const { data: GstTurnover } = await axios.post(
+            //   `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/mobile/gstturnover`,
+            //   {
+            //     gst_no: gstAdvanceNumberArray[0],
+            //     realtimeData: isRealtime,
+            //     year: '2024-25',
+            //   },
+            // );
+            const GstTurnover = await post('/api/mobile/gstturnover', {
+              gst_no: gstAdvanceNumberArray[0],
+              realtimeData: isRealtime,
+              year: '2024-25',
+            });
 
             if (
               Number(GstTurnover.responseData?.status) === 1 ||
@@ -356,13 +401,17 @@ export default function BeFiSc() {
 
         // calling upi details
         try {
-          const { data: UpiDetails } = await axios.post(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/mobile/digitalpayment`,
-            {
-              mobile_number: mobileNo,
-              realtimeData: isRealtime,
-            },
-          );
+          // const { data: UpiDetails } = await axios.post(
+          //   `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/mobile/digitalpayment`,
+          //   {
+          //     mobile_number: mobileNo,
+          //     realtimeData: isRealtime,
+          //   },
+          // );
+          const UpiDetails = await post('/api/mobile/digitalpayment', {
+            mobile_number: mobileNo,
+            realtimeData: isRealtime,
+          });
           if (UpiDetails.responseStatus?.status === true) {
             setUpiDetailsData(UpiDetails);
           }
@@ -378,13 +427,17 @@ export default function BeFiSc() {
         setUpiDetailsLoading(false);
 
         try {
-          const { data: ActDetails } = await axios.post(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/mobile/getAcDtlsFromMobNo`,
-            {
-              mobile_number: mobileNo,
-              realtimeData: isRealtime,
-            },
-          );
+          // const { data: ActDetails } = await axios.post(
+          //   `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/mobile/getAcDtlsFromMobNo`,
+          //   {
+          //     mobile_number: mobileNo,
+          //     realtimeData: isRealtime,
+          //   },
+          // );
+          const ActDetails = await post('/api/mobile/getAcDtlsFromMobNo', {
+            mobile_number: mobileNo,
+            realtimeData: isRealtime,
+          });
           if (ActDetails.responseData?.status === 1) {
             setMobileToAccountData(ActDetails.responseData);
           }
@@ -525,113 +578,6 @@ export default function BeFiSc() {
     }
   };
 
-  //   const MAX_DURATION = 2 * 60 * 1000;
-  // const RETRY_INTERVAL = 5000;
-
-  // const normalizeQuery = (query: string) =>
-  //   query
-  //     .normalize('NFKD')
-  //     .replace(/[\u200B-\u200D\uFEFF\u202C\u202D\u202E]/g, '')
-  //     .trim();
-
-  // const handleSearch = async (query: string, searchFilter: string) => {
-  //   clearOldData();
-
-  //   if (query.length < 1) return;
-
-  //   const normalizedQuery = normalizeQuery(query);
-  //   if (!isValidIndianMobileNumber(normalizedQuery)) {
-  //     toast.error(`Invalid mobile ${normalizedQuery}`, { duration: 800 });
-  //     return;
-  //   }
-
-  //   setMobileNo(normalizedQuery);
-  //   setAllOnLoading();
-
-  //   let mobile360R: null | { responseData: Mobile360Type } = null;
-  //   let toastId: string | undefined;
-  //   const startTime = Date.now();
-
-  //   const fetchData = async () => {
-  //     const loadingToast = toast.loading('fetching data...');
-  //     try {
-
-  //       const data = await post('/api/mobile/getMobile360Dtls', {
-  //         mobile_number: normalizedQuery,
-  //         realtimeData: isRealtime,
-  //       });
-
-  //       if (Number(data.responseData?.status) === 1) {
-  //         setMobile360Data(data.responseData);
-  //         mobile360R = data;
-  //         return { success: true, message: data?.responseStatus?.message };
-  //       }
-
-  //       mobile360R = null;
-  //       return { success: false };
-  //     } catch (error) {
-  //       if (
-  //         error instanceof AxiosError &&
-  //         error.response?.data?.responseStatus?.message ===
-  //           'No data found in database for this mobile number'
-  //       ) {
-  //         toast.error('Mobile number not found in the database', { id: toastId });
-  //         return { success: true };
-  //       }
-  //       return { success: false };
-  //     }
-  //     finally{
-  //       toast.dismiss(loadingToast);
-  //     }
-  //   };
-
-  //   const retryUntilSuccess = async () => {
-  //     return new Promise<void>((resolve) => {
-  //       const attempt = async () => {
-  //         const result = await fetchData();
-
-  //         if (result.success || Date.now() - startTime >= MAX_DURATION) {
-  //           if (!result.success) {
-  //             toast.error('Server Timeout. Try again after some time', {
-  //               id: toastId,
-  //             });
-  //             setIsLoading(false);
-  //             setAllOffLoading();
-  //           } else if (result.message) {
-  //             await new Promise((res) => setTimeout(res, 2000));
-  //             toast.success(result.message, { id: toastId });
-  //           }
-  //           resolve();
-  //         } else {
-  //           toast.loading('API server is not responding', { id: toastId });
-  //           setTimeout(attempt, RETRY_INTERVAL);
-  //         }
-  //       };
-  //       attempt();
-  //     });
-  //   };
-
-  //   const loadingToast = toast.loading('fetching data...');
-  //   try {
-  //     // toastRef.current = toastId;
-
-  //     await retryUntilSuccess();
-  //   } catch (err) {
-  //     if (err instanceof AxiosError) {
-  //       toast.error(err.response?.data?.responseStatus?.message);
-  //     } else {
-  //       toast.error('Something went wrong');
-  //     }
-  //     setIsLoading(false);
-  //     setAllOffLoading();
-  //   }
-  //   finally {
-  //     setIsLoading(false);
-  //     setAllOffLoading();
-  //     toast.dismiss(loadingToast);
-  //   }
-  // };
-
   const isAdult = () => {
     const currentYear = new Date().getFullYear();
     const age = Number(panAllInOneData?.result?.dob.split('-')[0]);
@@ -713,7 +659,7 @@ export default function BeFiSc() {
         Number(profileAdvanceData?.result?.personal_information?.income),
       ),
       titleClassname: '',
-      valueClassname: '',
+      valueClassname: 'text-yellow-500',
     },
     {
       title: 'PAN Number',
@@ -832,7 +778,9 @@ export default function BeFiSc() {
                 </TabsTrigger>
               </TabsList>
 
-              <TabsContent value="overview" className="mt-6">
+              <TabsContent value="overview" className="mt-6"></TabsContent>
+
+              <TabsContent value="profile" className="mt-6 space-y-4">
                 <div className="grid min-h-[450px] grid-cols-1 gap-6">
                   <Card className="col-span-full border-slate-800 bg-slate-900 text-white lg:col-span-2">
                     <CardHeader>
@@ -885,43 +833,60 @@ export default function BeFiSc() {
                             : formatSentence(secondAddesss)}
                         </div>
                         <Separator className="bg-slate-800" />
-                        <CustomBadge
-                          isFormat={false}
-                          value={
-                            panAllInOneData?.result.email
-                              ? `Email Linked with ${panAllInOneData?.result?.pan_number?.toUpperCase()}`
-                              : `Email Not Linked with ${cleanAndCapitalize(panAllInOneData?.result?.pan_number.toUpperCase())}`
-                          }
-                        />
+                        <div className="flex space-x-2">
+                          <CustomBadge
+                            variantToUse={
+                              panAllInOneData?.result?.email
+                                ? 'default'
+                                : 'danger'
+                            }
+                            isFormat={false}
+                            value={
+                              panAllInOneData?.result.email
+                                ? `Email Linked with ${panAllInOneData?.result?.pan_number?.toUpperCase()}`
+                                : `Email Not Linked with ${cleanAndCapitalize(panAllInOneData?.result?.pan_number.toUpperCase())}`
+                            }
+                          />
+                          <CustomBadge
+                            isFormat={false}
+                            value={
+                              panAllInOneData?.result.aadhaar_linked
+                                ? `Aadhaar Linked with ${panAllInOneData?.result?.pan_number?.toUpperCase()}`
+                                : `Aadhaar Not Linked with ${cleanAndCapitalize(panAllInOneData?.result?.pan_number.toUpperCase())}`
+                            }
+                          />
+                        </div>
                       </div>
                     </CardContent>
                   </Card>
                 </div>
               </TabsContent>
-
-              <TabsContent value="profile" className="mt-6 space-y-4">
-                {/* <GhuntComponent accountData={ghuntData} /> */}
+              <TabsContent value="personal" className="mt-6 space-y-4">
+                {/* {panAllInOneLoading ? (
+                  <BeFiScLoadingSkeleton />
+                ) : (
+                  <PanAllInOne PanAllInOneData={panAllInOneData} />
+                )}
                 {mobile360Data && <Mobile360 data={mobile360Data} />}
                 {profileAdvanceLoading ? (
                   <BeFiScLoadingSkeleton />
                 ) : (
                   <ProfileAdvance ProfileAdvanceData={profileAdvanceData} />
                 )}
-              </TabsContent>
-              <TabsContent value="personal" className="mt-6">
-                {panAllInOneLoading ? (
-                  <BeFiScLoadingSkeleton />
-                ) : (
-                  <PanAllInOne PanAllInOneData={panAllInOneData} />
-                )}
                 {esicsLoading ? (
                   <BeFiScLoadingSkeleton />
                 ) : (
                   <Esics EsicsData={esicsData} />
-                )}
+                )} */}
+                <BefiScPersonal
+                  Mobile360Data={mobile360Data}
+                  ProfileAdvanceData={profileAdvanceData}
+                  EsicsData={esicsData}
+                  PanAllInOneData={panAllInOneData}
+                />
               </TabsContent>
               <TabsContent value="financial" className="mt-6">
-                {mobileToAccountLoading ? (
+                {/* {mobileToAccountLoading ? (
                   <BeFiScLoadingSkeleton />
                 ) : (
                   <MobileToAccountNumber
@@ -932,7 +897,15 @@ export default function BeFiSc() {
                   <BeFiScLoadingSkeleton />
                 ) : (
                   <EquifaxV3 EquifaxV3Data={EquifaxV3Data} />
-                )}
+                )} */}
+                {
+                  <BeFiScFinancial
+                    Mobile360Data={mobile360Data}
+                    ProfileAdvance={profileAdvanceData}
+                    MobileToAccountData={mobileToAccountData}
+                    EquifaxV3Data={EquifaxV3Data}
+                  />
+                }
               </TabsContent>
               <TabsContent value="business" className="mt-6 space-y-4">
                 {gstAdvanceLoading ? (
@@ -944,6 +917,11 @@ export default function BeFiSc() {
                   <BeFiScLoadingSkeleton />
                 ) : (
                   <GstTurnover GstTurnoverData={gstTurnoverData} />
+                )}
+                {verifyUdyamLoading ? (
+                  <BeFiScLoadingSkeleton />
+                ) : (
+                  <VerifyUdyam verfiyUdyamData={verfiyUdyamData} />
                 )}
               </TabsContent>
               <TabsContent value="digitalInfo" className="mt-6">
@@ -957,8 +935,10 @@ export default function BeFiSc() {
               <TabsContent value="googleProfile" className="mt-6">
                 {ghuntLoading ? (
                   <BeFiScLoadingSkeleton />
-                ) : (
+                ) : ghuntData ? (
                   <Ghunt accountData={ghuntData} />
+                ) : (
+                  <NotFound value="No Email Found" />
                 )}
               </TabsContent>
             </Tabs>

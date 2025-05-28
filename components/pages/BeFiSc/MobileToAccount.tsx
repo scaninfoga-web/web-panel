@@ -21,7 +21,7 @@ export default function MobileToAccountNumber({
   return (
     <div className="grid grid-cols-1 gap-2 space-y-4">
       <Card className="my-6 border border-gray-700 bg-[#0e1421] p-6 shadow-xl">
-        <h1 className="text-2xl font-bold text-emerald-500">Account Advance</h1>
+        <h1 className="text-2xl font-bold text-emerald-500">Primary Account</h1>
         <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
           <div>
             <p className="text-sm text-gray-400">Holder Name</p>
@@ -58,6 +58,7 @@ export default function MobileToAccountNumber({
           </div>
         </div>
       </Card>
+      {/* No asdasd */}
     </div>
   );
 }

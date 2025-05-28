@@ -207,7 +207,7 @@ export default function CustomBeFiScCard({ title, data }: PageProps) {
     return (
       <DashboardCard
         title={title}
-        className="scrollbar-custom flex max-h-[350px] flex-col gap-y-2 overflow-auto pt-1"
+        className="scrollbar-custom flex max-h-[350px] flex-col gap-y-2 overflow-auto pb-2 pt-1"
       >
         {data.length > 0 ? (
           <div className="flex gap-2">
@@ -240,7 +240,7 @@ export default function CustomBeFiScCard({ title, data }: PageProps) {
     return (
       <DashboardCard
         title={title}
-        className="scrollbar-custom flex flex-col gap-y-2 overflow-auto pt-1"
+        className="scrollbar-custom flex flex-col gap-y-2 overflow-auto pb-2 pt-1"
       >
         {data.length > 0 ? (
           <div className="flex gap-2">

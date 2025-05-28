@@ -158,7 +158,7 @@ export default function EquifaxV3({
               </div>
 
               {/* score details */}
-              {item?.CIRReportData?.ScoreDetails?.map((value, index3) => (
+              {/* {item?.CIRReportData?.ScoreDetails?.map((value, index3) => (
                 <DashboardCard key={index3} title="Scoring Elements">
                   {value?.ScoringElements?.map((val, index4) => (
                     <div
@@ -186,7 +186,7 @@ export default function EquifaxV3({
                     </div>
                   ))}
                 </DashboardCard>
-              ))}
+              ))} */}
 
               {/* InquiryRequestInfo */}
               <div className="grid grid-cols-2 gap-4">
@@ -411,7 +411,7 @@ export default function EquifaxV3({
                   title="Retail Account Summary"
                 />
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              {/* <div className="grid grid-cols-2 gap-4">
                 <CustomBeFiScCard
                   key={'OtherKeyInd' + index}
                   data={item?.CIRReportData?.OtherKeyInd}
@@ -422,7 +422,7 @@ export default function EquifaxV3({
                   data={item?.CIRReportData?.EnquirySummary}
                   title="Enquiry Summary"
                 />
-              </div>
+              </div> */}
             </div>
           ),
         )}
