@@ -604,20 +604,15 @@ export default function BeFiSc() {
   };
 
   const firstAddress =
-    panAllInOneData?.result?.address.line_1 +
-    ' ' +
-    panAllInOneData?.result?.address.line_2 +
-    ' ' +
-    panAllInOneData?.result?.address.city +
-    ' ' +
-    panAllInOneData?.result?.address.state +
-    ' ' +
-    panAllInOneData?.result?.address.zip +
-    ' ' +
-    panAllInOneData?.result?.address.country;
+    panAllInOneData?.result?.address.line_1 ||
+    '' + ' ' + panAllInOneData?.result?.address.line_2 ||
+    '' + ' ' + panAllInOneData?.result?.address.city ||
+    '' + ' ' + panAllInOneData?.result?.address.state ||
+    '' + ' ' + panAllInOneData?.result?.address.zip ||
+    '' + ' ' + panAllInOneData?.result?.address.country;
 
   const secondAddesss =
-    profileAdvanceData?.result?.address?.[0]?.detailed_address;
+    profileAdvanceData?.result?.address?.[0]?.detailed_address || '';
   const OverviewData = [
     {
       title: 'Father Name',
@@ -633,13 +628,13 @@ export default function BeFiSc() {
     },
     {
       title: 'Date of Birth',
-      value: panAllInOneData?.result?.dob,
+      value: panAllInOneData?.result?.dob || '----',
       titleClassname: '',
       valueClassname: '',
     },
     {
       title: 'Age',
-      value: profileAdvanceData?.result?.personal_information?.age,
+      value: profileAdvanceData?.result?.personal_information?.age || '----',
       titleClassname: '',
       valueClassname: '',
     },
@@ -648,7 +643,8 @@ export default function BeFiSc() {
       title: 'Alternate Number',
       value:
         profileAdvanceData?.result?.alternate_phone?.[0].value ||
-        panAllInOneData?.result?.phone_number,
+        panAllInOneData?.result?.phone_number ||
+        '----',
       titleClassname: '',
       valueClassname: '',
     },
@@ -656,26 +652,27 @@ export default function BeFiSc() {
     {
       title: 'Income',
       value: numberToIndianRuppe(
-        Number(profileAdvanceData?.result?.personal_information?.income),
+        Number(profileAdvanceData?.result?.personal_information?.income || '0'),
       ),
       titleClassname: '',
       valueClassname: 'text-yellow-500',
     },
     {
       title: 'PAN Number',
-      value: panAllInOneData?.result?.pan_number,
+      value: panAllInOneData?.result?.pan_number || '----',
       titleClassname: '',
       valueClassname: 'text-blue-400',
     },
     {
       title: 'Aadhaar Number',
-      value: panAllInOneData?.result?.masked_aadhaar,
+      value: panAllInOneData?.result?.masked_aadhaar || '----',
       titleClassname: '',
       valueClassname: 'text-yellow-500',
     },
     {
       title: 'Email Address',
-      value: profileAdvanceData?.result?.email?.[0]?.value.toLowerCase(),
+      value:
+        profileAdvanceData?.result?.email?.[0]?.value.toLowerCase() || '----',
       titleClassname: '',
       valueClassname: '',
     },
