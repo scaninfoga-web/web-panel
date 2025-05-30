@@ -22,7 +22,7 @@ import {
   UPIType,
   VerifyUdyamType,
 } from '@/types/BeFiSc';
-import axios, { AxiosError } from 'axios';
+import { AxiosError } from 'axios';
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
@@ -32,6 +32,13 @@ import { useSearchParams } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 // @ts-ignore
+import NotFound from '@/components/NotFound';
+import { post } from '@/lib/api';
+import { GhuntData } from '@/types/ghunt';
+import Ghunt from '../ghunt/Ghunt';
+import BeFiScBusiness from './2/BeFiScBusiness';
+import BeFiScFinancial from './2/BeFiScFinancial';
+import BefiScPersonal from './2/BefiScPersonal';
 import {
   cleanAndCapitalize,
   formatSentence,
@@ -39,24 +46,7 @@ import {
 } from './APIUtils';
 import BeFiScLoadingSkeleton from './BeFiScLoadingSkeleton';
 import CustomBadge from './CustomBadge';
-import EquifaxV3 from './EquiFaxV3';
-import Esics from './Esics';
-import GSTAdvance from './GSTAdvance';
-import GstTurnover from './GstTurnover';
-import MobileToAccountNumber from './MobileToAccount';
-import PanAllInOne from './PanAllInOne';
-import ProfileAdvance from './ProfileAdvance';
 import UpiDetails from './UpiDetails';
-import { GhuntData } from '@/types/ghunt';
-import GhuntComponent from './Ghunt';
-import Mobile360 from './Mobile360';
-import { get, post } from '@/lib/api';
-import Ghunt from '../ghunt/Ghunt';
-import VerifyUdyam from './VerifyUdyam';
-import NotFound from '@/components/NotFound';
-import ProfileAdvanceMobileToAcc360 from './360ProfileAdvanceMobileToAcc';
-import BeFiScFinancial from './360ProfileAdvanceMobileToAcc';
-import BefiScPersonal from './2/BefiScPersonal';
 
 function isValidIndianMobileNumber(input: string): boolean {
   const mobileRegex = /^(?:\+91[\-\s]?)?[5-9]\d{9}$/;
@@ -66,10 +56,7 @@ function isValidIndianMobileNumber(input: string): boolean {
 export default function BeFiSc() {
   const searchParams = useSearchParams();
   const mobileNumber = searchParams.get('mobile_number');
-
-  const [searchType, setSearchType] = useState<string>('');
   const [activeTab, setActiveTab] = useState('overview');
-
   const [mobileNo, setMobileNo] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
   const toastRef = useRef<string | null | number>(null);
@@ -181,15 +168,15 @@ export default function BeFiSc() {
               ProfileAdvanceResponse.responseData?.result?.email?.[0]?.value;
             // calling ghunt api with emailaddess
             try {
-              // const { data } = await axios.post(
-              //   `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/ghunt/getEmailDetails`,
-              //   { email: emailAddress },
-              // );
-              const data = await post('/api/ghunt/getEmailDetails', {
-                email: emailAddress,
-              });
-              setGhuntData(data.responseData);
-              setGhuntLoading(false);
+              if (emailAddress) {
+                const data = await post('/api/ghunt/getEmailDetails', {
+                  email: emailAddress,
+                });
+                setGhuntData(data.responseData);
+                setGhuntLoading(false);
+              } else {
+                toast.error('Ghunt Data Not Found', { id: toastRef.current! });
+              }
             } catch (error) {
               toast.error('Ghunt Data Not Found', { id: toastRef.current! });
             }
@@ -197,7 +184,7 @@ export default function BeFiSc() {
           setProfileAdvanceLoading(false);
           const panNumber =
             ProfileAdvanceResponse.responseData.result?.document_data?.pan[0]
-              .value;
+              .value || mobile360Data?.result?.din_info?.data[0]?.pan;
           const bankName =
             mobile360Data?.result?.digital_payment_id_info?.data?.name;
           if (panNumber && bankName) {
@@ -228,7 +215,7 @@ export default function BeFiSc() {
             } catch (error) {
               if (error instanceof AxiosError) {
                 toast.error(
-                  'Equifax Data Not Found' +
+                  'Equifax Data ' +
                     error.response?.data?.responseStatus?.message,
                   { id: toastRef.current! },
                 );
@@ -257,8 +244,7 @@ export default function BeFiSc() {
             } catch (error) {
               if (error instanceof AxiosError) {
                 toast.error(
-                  'Pan All In One Data Not Found' +
-                    error.response?.data?.responseStatus?.message,
+                  'PanData' + error.response?.data?.responseStatus?.message,
                   { id: toastRef.current! },
                 );
               }
@@ -269,7 +255,7 @@ export default function BeFiSc() {
         } catch (error) {
           if (error instanceof AxiosError) {
             toast.error(
-              'Profile advance Data Not Found ' +
+              'Profile Advance ' +
                 error.response?.data?.responseStatus?.message,
               { id: toastRef.current! },
             );
@@ -303,8 +289,7 @@ export default function BeFiSc() {
           } catch (error) {
             if (error instanceof AxiosError) {
               toast.error(
-                'Esics Data Not Found ' +
-                  error.response?.data?.responseStatus?.message,
+                'ESICS ' + error.response?.data?.responseStatus?.message,
                 { id: toastRef.current! },
               );
             }
@@ -336,11 +321,9 @@ export default function BeFiSc() {
           }
         } catch (error) {
           if (error instanceof AxiosError) {
-            toast.error(
-              'Udyam Number Not Found ' +
-                error.response?.data?.responseStatus?.message,
-              { id: toastRef.current! },
-            );
+            toast.error('' + error.response?.data?.responseStatus?.message, {
+              id: toastRef.current!,
+            });
           }
           setVerifyUdyamLoading(false);
         }
@@ -364,15 +347,6 @@ export default function BeFiSc() {
             }
             setGstAdvanceLoading(false);
 
-            // calling gst turnover api
-            // const { data: GstTurnover } = await axios.post(
-            //   `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/mobile/gstturnover`,
-            //   {
-            //     gst_no: gstAdvanceNumberArray[0],
-            //     realtimeData: isRealtime,
-            //     year: '2024-25',
-            //   },
-            // );
             const GstTurnover = await post('/api/mobile/gstturnover', {
               gst_no: gstAdvanceNumberArray[0],
               realtimeData: isRealtime,
@@ -389,11 +363,9 @@ export default function BeFiSc() {
           }
         } catch (error) {
           if (error instanceof AxiosError) {
-            toast.error(
-              'GST Turnover Not Found' +
-                error.response?.data?.responseStatus?.message,
-              { id: toastRef.current! },
-            );
+            toast.error('' + error.response?.data?.responseStatus?.message, {
+              id: toastRef.current!,
+            });
           }
           setGstAdvanceLoading(false);
           setGstTurnoverLoading(false);
@@ -418,8 +390,7 @@ export default function BeFiSc() {
         } catch (error) {
           if (error instanceof AxiosError) {
             toast.error(
-              'Mobile To Account ' +
-                error.response?.data?.responseStatus?.message,
+              'M2A ' + error.response?.data?.responseStatus?.message,
               { id: toastRef.current! },
             );
           }
@@ -473,6 +444,7 @@ export default function BeFiSc() {
       toast.error(`Invalid mobile ${query}`, { duration: 800 });
       return;
     }
+    query = query.replace(/^(\+91)/, '');
     setMobileNo(query);
     setAllOnLoading();
     let mobile360R: null | {
@@ -533,9 +505,6 @@ export default function BeFiSc() {
         return new Promise<void>((resolve) => {
           const attempt = async () => {
             const success = await tryFetch();
-
-            console.log('SUCCESS: ', success);
-
             if (success || Date.now() - startTime >= MAXDURATION) {
               if (!success) {
                 toast.error('Server Timeout. Try again after some time', {
@@ -895,17 +864,25 @@ export default function BeFiSc() {
                 ) : (
                   <EquifaxV3 EquifaxV3Data={EquifaxV3Data} />
                 )} */}
-                {
-                  <BeFiScFinancial
-                    Mobile360Data={mobile360Data}
-                    ProfileAdvance={profileAdvanceData}
-                    MobileToAccountData={mobileToAccountData}
-                    EquifaxV3Data={EquifaxV3Data}
-                  />
-                }
+                <BeFiScFinancial
+                  Mobile360Data={mobile360Data}
+                  ProfileAdvance={profileAdvanceData}
+                  MobileToAccountData={mobileToAccountData}
+                  EquifaxV3Data={EquifaxV3Data}
+                />
               </TabsContent>
               <TabsContent value="business" className="mt-6 space-y-4">
-                {gstAdvanceLoading ? (
+                {gstAdvanceData ? (
+                  <BeFiScBusiness
+                    GstAdvanceData={gstAdvanceData}
+                    GstTurnoverData={gstTurnoverData}
+                    verfiyUdyamData={verfiyUdyamData}
+                  />
+                ) : (
+                  <NotFound value="No business found" />
+                )}
+
+                {/* {gstAdvanceLoading ? (
                   <BeFiScLoadingSkeleton />
                 ) : (
                   <GSTAdvance GstAdvanceData={gstAdvanceData} />
@@ -914,12 +891,12 @@ export default function BeFiSc() {
                   <BeFiScLoadingSkeleton />
                 ) : (
                   <GstTurnover GstTurnoverData={gstTurnoverData} />
-                )}
-                {verifyUdyamLoading ? (
+                )} */}
+                {/* {verifyUdyamLoading ? (
                   <BeFiScLoadingSkeleton />
                 ) : (
                   <VerifyUdyam verfiyUdyamData={verfiyUdyamData} />
-                )}
+                )} */}
               </TabsContent>
               <TabsContent value="digitalInfo" className="mt-6">
                 {upiDetailsLoading ? (

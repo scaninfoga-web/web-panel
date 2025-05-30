@@ -233,9 +233,15 @@ export interface GstVerificationAdvanceType {
     authorized_signatory: string[];
     business_constitution: string;
     business_details: {
-      saccd: string;
-      sdes: string;
-    }[];
+      bzsdtls: {
+        gdes: string;
+        hsncd: string;
+      }[];
+      bzgddtls: {
+        gdes: string;
+        hsncd: string;
+      }[];
+    };
     business_nature: string[];
     can_flag: string;
     central_jurisdiction: string;
@@ -731,80 +737,6 @@ export interface PanAllInOneType {
     };
   };
 }
-
-export const dummyUdyamResponse: VerifyUdyamType = {
-  api_category: 'Know Your Business (KYB)',
-  api_name: 'Udyam',
-  billable: true,
-  txn_id: '123e4567-e89b-12d3-a456-426614174000',
-  message: 'Record Found Successfully',
-  status: 1,
-  datetime: '2025-05-19 10:30:00.123456',
-  result: {
-    enterprise_name: 'ABC FOODS',
-    organisation_type: 'Proprietary',
-    service_type: 'Manufacturing',
-    gender: 'Male',
-    social_category: 'General',
-    date_of_incorporation: '01/01/2015',
-    date_of_commencement: '01/01/2015',
-    address: {
-      flat_no: 'A-101',
-      building: 'Sunshine Residency',
-      village: 'Sector 45',
-      block: 'Main Block',
-      street: 'Park Street',
-      district: 'Gurgaon',
-      city: 'Gurgaon',
-      state: 'Haryana',
-      pin: '122003',
-    },
-    mobile: '98*****321',
-    email: 'abcfoods@example.com',
-    plant_details: [
-      {
-        unit_name: 'ABC FOODS UNIT 1',
-        flat: 'B-201',
-        building: 'Industrial Plaza',
-        village: 'Manesar',
-        block: '',
-        road: 'NH-8',
-        district: 'Gurgaon',
-        city: 'Gurgaon',
-        state: 'Haryana',
-        pin: '122051',
-      },
-    ],
-    enterprise_type: [
-      {
-        classification_year: '2023-24',
-        enterprise_type: 'Micro',
-        classification_date: '01/04/2023',
-      },
-    ],
-    nic_code: [
-      {
-        nic_2_digit: '10 - Manufacture of food products',
-        nic_4_digit: '1071 - Manufacture of bakery products',
-        nic_5_digit: '10711 - Manufacture of bread',
-        activity: 'Manufacturing',
-        date: '01/04/2023',
-      },
-      {
-        nic_2_digit:
-          '47 - Retail trade, except of motor vehicles and motorcycles',
-        nic_4_digit: '4721 - Retail sale of food in specialized stores',
-        nic_5_digit:
-          '47214 - Retail sale of bakery products, dairy products and eggs',
-        activity: 'Trading',
-        date: '01/04/2023',
-      },
-    ],
-    dic: 'GURGAON',
-    'msme-dfo': 'DELHI',
-    date_of_udyam_registeration: '01/04/2023',
-  },
-};
 
 export interface UanHistoryType {
   txnId: string;

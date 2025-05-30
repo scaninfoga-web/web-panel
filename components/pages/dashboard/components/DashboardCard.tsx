@@ -8,6 +8,7 @@ interface DashboardCardProps {
   children: React.ReactNode;
   icon?: React.ReactNode;
   className?: string;
+  titleBig?: boolean;
 }
 
 export function DashboardCard({
@@ -15,10 +16,12 @@ export function DashboardCard({
   children,
   icon,
   className,
+  titleBig = true,
 }: DashboardCardProps) {
   return (
     <Card
       className={cn(
+        'p-2',
         'relative overflow-hidden',
         'bg-[#0e1421]/30 backdrop-blur-xl',
         'border border-white/10',
@@ -30,7 +33,14 @@ export function DashboardCard({
       <CardContent className="relative space-y-2 p-4">
         <div className="flex items-center gap-2">
           {icon}
-          <h2 className="text-lg font-semibold text-emerald-500">{title}</h2>
+          <h2
+            className={cn(
+              'mb-2 font-semibold text-emerald-500',
+              titleBig ? 'text-2xl' : 'text-lg',
+            )}
+          >
+            {title}
+          </h2>
         </div>
         {children}
       </CardContent>

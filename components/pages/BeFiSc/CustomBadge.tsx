@@ -89,12 +89,3 @@ export default function CustomBadge({
 
   return <span>{value}</span>;
 }
-// return (
-//   <Badge className="mt-1 gap-x-0.5" variant={'outline'}>
-//     No Data
-//   </Badge>
-// );
-
-//   return (
-//     <div>CustomBadge</div>
-//   )
