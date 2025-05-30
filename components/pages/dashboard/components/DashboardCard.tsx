@@ -33,14 +33,16 @@ export function DashboardCard({
       <CardContent className="relative space-y-2 p-4">
         <div className="flex items-center gap-2">
           {icon}
-          <h2
-            className={cn(
-              'mb-2 font-semibold text-emerald-500',
-              titleBig ? 'text-2xl' : 'text-lg',
-            )}
-          >
-            {title}
-          </h2>
+          {title.length > 0 && (
+            <h2
+              className={cn(
+                'mb-2 font-semibold text-emerald-500',
+                titleBig ? 'text-2xl' : 'text-xl',
+              )}
+            >
+              {title}
+            </h2>
+          )}
         </div>
         {children}
       </CardContent>

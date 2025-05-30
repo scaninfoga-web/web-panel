@@ -28,6 +28,7 @@ export default function UpiDetails({ UpiData }: { UpiData: UPIType | null }) {
 
         return (
           <DashboardCard
+            titleBig={false}
             title={`${upiId}-${'  '}${data.platform}`}
             key={data.data.txn_id}
           >

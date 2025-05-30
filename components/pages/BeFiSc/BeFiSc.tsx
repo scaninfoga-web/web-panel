@@ -47,6 +47,7 @@ import {
 import BeFiScLoadingSkeleton from './BeFiScLoadingSkeleton';
 import CustomBadge from './CustomBadge';
 import UpiDetails from './UpiDetails';
+import { DashboardCard } from '../dashboard/components/DashboardCard';
 
 function isValidIndianMobileNumber(input: string): boolean {
   const mobileRegex = /^(?:\+91[\-\s]?)?[5-9]\d{9}$/;
@@ -564,12 +565,18 @@ export default function BeFiSc() {
       if (gender === 'M') {
         return '/male.jpg';
       }
-      return '/female.jpg';
+      if (gender === 'F') {
+        return '/female.jpg';
+      }
+      return '/null.png';
     }
     if (gender === 'M') {
       return '/boy.avif';
     }
-    return 'female.jpg';
+    if (gender === 'F') {
+      return 'female.jpg';
+    }
+    return '/null.png';
   };
 
   const firstAddress =
@@ -591,7 +598,12 @@ export default function BeFiSc() {
     },
     {
       title: 'Gender',
-      value: panAllInOneData?.result?.gender === 'M' ? 'Male' : 'Female',
+      value:
+        panAllInOneData?.result?.gender === 'M'
+          ? 'Male'
+          : panAllInOneData?.result?.gender === 'F'
+            ? 'Female'
+            : '----',
       titleClassname: '',
       valueClassname: '',
     },
@@ -747,85 +759,79 @@ export default function BeFiSc() {
               <TabsContent value="overview" className="mt-6"></TabsContent>
 
               <TabsContent value="profile" className="mt-6 space-y-4">
-                <div className="grid min-h-[450px] grid-cols-1 gap-6">
-                  <Card className="col-span-full border-slate-800 bg-slate-900 text-white lg:col-span-2">
-                    <CardHeader>
-                      <CardDescription>
-                        <div className="flex items-center gap-x-2">
-                          <Image
-                            src={getImageUrl()}
-                            alt="user"
-                            width={35}
-                            height={35}
-                            className="rounded-full border"
-                          />
-                          <p className="text-2xl font-semibold">
-                            {formatSentence(panAllInOneData?.result?.full_name)}
-                          </p>
-                        </div>
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="grid grid-cols-1">
-                      <div className="w-full space-y-4">
-                        <div className="grid w-full grid-cols-4 gap-4">
-                          {OverviewData.map((item, index) => {
-                            return (
-                              <div key={index} className="flex flex-col gap-2">
-                                <p
-                                  className={cn(
-                                    'text-xs text-slate-400',
-                                    item.titleClassname,
-                                  )}
-                                >
-                                  {item.title}
-                                </p>
-                                <p
-                                  className={cn(
-                                    'font-medium',
-                                    item.valueClassname,
-                                  )}
-                                >
-                                  {item.value}
-                                </p>
-                              </div>
-                            );
-                          })}
-                        </div>
-                        <Separator className="bg-slate-800" />
-                        {/* addess live here */}
-                        <div className="w-full text-sm font-semibold">
-                          {firstAddress.length > 10
-                            ? formatSentence(firstAddress)
-                            : formatSentence(secondAddesss)}
-                        </div>
-                        <Separator className="bg-slate-800" />
-                        <div className="flex space-x-2">
-                          <CustomBadge
-                            variantToUse={
-                              panAllInOneData?.result?.email
-                                ? 'default'
-                                : 'danger'
-                            }
-                            isFormat={false}
-                            value={
-                              panAllInOneData?.result.email
-                                ? `Email Linked with ${panAllInOneData?.result?.pan_number?.toUpperCase()}`
-                                : `Email Not Linked with ${cleanAndCapitalize(panAllInOneData?.result?.pan_number.toUpperCase())}`
-                            }
-                          />
-                          <CustomBadge
-                            isFormat={false}
-                            value={
-                              panAllInOneData?.result.aadhaar_linked
-                                ? `Aadhaar Linked with ${panAllInOneData?.result?.pan_number?.toUpperCase()}`
-                                : `Aadhaar Not Linked with ${cleanAndCapitalize(panAllInOneData?.result?.pan_number.toUpperCase())}`
-                            }
-                          />
-                        </div>
+                <DashboardCard title="" className="col-span-full lg:col-span-2">
+                  <div className="flex items-center gap-x-2">
+                    <Image
+                      src={getImageUrl()}
+                      alt="user"
+                      width={35}
+                      height={35}
+                      className="rounded-full border"
+                    />
+                    <p className="text-2xl font-semibold">
+                      {formatSentence(panAllInOneData?.result?.full_name)}
+                    </p>
+                  </div>
+                  <div className="grid grid-cols-1">
+                    <div className="w-full space-y-4">
+                      <div className="grid w-full grid-cols-4 gap-4">
+                        {OverviewData.map((item, index) => {
+                          return (
+                            <div key={index} className="flex flex-col gap-2">
+                              <p
+                                className={cn(
+                                  'text-xs text-slate-400',
+                                  item.titleClassname,
+                                )}
+                              >
+                                {item.title}
+                              </p>
+                              <p
+                                className={cn(
+                                  'font-medium',
+                                  item.valueClassname,
+                                )}
+                              >
+                                {item.value}
+                              </p>
+                            </div>
+                          );
+                        })}
                       </div>
-                    </CardContent>
-                  </Card>
-                </div>
+                      <Separator className="bg-slate-800" />
+                      {/* addess live here */}
+                      <div className="w-full text-sm font-semibold">
+                        {firstAddress.length > 10
+                          ? formatSentence(firstAddress)
+                          : formatSentence(secondAddesss)}
+                      </div>
+                      <Separator className="bg-slate-800" />
+                      <div className="flex space-x-2">
+                        <CustomBadge
+                          variantToUse={
+                            panAllInOneData?.result?.email
+                              ? 'default'
+                              : 'danger'
+                          }
+                          isFormat={false}
+                          value={
+                            panAllInOneData?.result.email
+                              ? `Email Linked with ${panAllInOneData?.result?.pan_number?.toUpperCase()}`
+                              : `Email Not Linked with ${cleanAndCapitalize(panAllInOneData?.result?.pan_number.toUpperCase())}`
+                          }
+                        />
+                        <CustomBadge
+                          isFormat={false}
+                          value={
+                            panAllInOneData?.result.aadhaar_linked
+                              ? `Aadhaar Linked with ${panAllInOneData?.result?.pan_number?.toUpperCase()}`
+                              : `Aadhaar Not Linked with ${cleanAndCapitalize(panAllInOneData?.result?.pan_number.toUpperCase())}`
+                          }
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </DashboardCard>
               </TabsContent>
               <TabsContent value="personal" className="mt-6 space-y-4">
                 {/* {panAllInOneLoading ? (
