@@ -264,5 +264,5 @@ export default function CustomBeFiScCard({ title, data }: PageProps) {
     );
   }
 
-  // return <div>{JSON.stringify(data)}</div>;
+  return <div>{JSON.stringify(data)}</div>;
 }

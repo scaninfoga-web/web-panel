@@ -598,12 +598,7 @@ export default function BeFiSc() {
     },
     {
       title: 'Gender',
-      value:
-        panAllInOneData?.result?.gender === 'M'
-          ? 'Male'
-          : panAllInOneData?.result?.gender === 'F'
-            ? 'Female'
-            : '----',
+      value: panAllInOneData?.result?.gender || '----',
       titleClassname: '',
       valueClassname: '',
     },
