@@ -1,10 +1,10 @@
 import React from 'react';
 import ArrayCard from './ArrayCard';
-import CustomBadge from './CustomBadge';
 import { Mobile360Type } from '@/types/BeFiSc';
 import { Badge } from '@/components/ui/badge';
 import { IconBrandWhatsapp, IconLocation } from '@tabler/icons-react';
-import { formatSentence } from './getValue';
+import CustomBadge from '../CustomBadge';
+import { formatSentence } from '../APIUtils';
 
 export default function NumberDetails({
   mobile360Data,
@@ -14,7 +14,6 @@ export default function NumberDetails({
   return (
     <ArrayCard
       title="Number Details"
-      description=""
       Component={
         <div>
           <div className="flex justify-between">

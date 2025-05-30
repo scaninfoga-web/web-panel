@@ -19,6 +19,8 @@ import CustomBadge from '../CustomBadge';
 import { formatSentence } from '../APIUtils';
 import { getValue } from '../CustomBeFiScCard';
 import { DashboardCard } from '../../dashboard/components/DashboardCard';
+import { LPGInfoTable } from '../LPGTable';
+import NumberDetails from './NumberDetails';
 
 interface Props {
   Mobile360Data: Mobile360Type | null;
@@ -104,6 +106,7 @@ export default function BefiScPersonal({
           </div>
         </DashboardCard>
       </div>
+      <NumberDetails mobile360Data={Mobile360Data} />
 
       {Mobile360Data?.result?.esic_info?.data &&
         Mobile360Data.result.esic_info.data.length > 0 && (
@@ -156,6 +159,12 @@ export default function BefiScPersonal({
                 ))}
               </TableBody>
             </Table>
+          </DashboardCard>
+        )}
+      {Mobile360Data?.result?.lpg_info?.data &&
+        Mobile360Data.result.lpg_info.data.length > 0 && (
+          <DashboardCard title="LPG Details">
+            <LPGInfoTable lpgInfo={Mobile360Data?.result?.lpg_info} />
           </DashboardCard>
         )}
     </div>
