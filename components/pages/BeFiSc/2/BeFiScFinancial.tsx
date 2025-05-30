@@ -1,4 +1,3 @@
-import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   EquifaxV3Type,
@@ -203,7 +202,7 @@ export default function BeFiScFinancial({
             <></>
           )}
         </TabsContent>
-        <TabsContent value="loan" className="mt-6">
+        <TabsContent value="loan" className="">
           <div className="grid grid-cols-1 gap-2 space-y-2">
             <div className="flex flex-col pl-1 text-xl font-semibold uppercase">
               <span className="flex text-red-400">
@@ -215,10 +214,7 @@ export default function BeFiScFinancial({
                 <p className="pl-2 text-yellow-500">{creditCount}</p>
               </span>
             </div>
-            <DashboardCard
-              title="Details"
-              className="my-6 border border-gray-700 bg-[#0e1421] p-6 shadow-xl"
-            >
+            <DashboardCard title="Details">
               <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-5">
                 <div>
                   <p className="text-sm text-gray-400">Name</p>
@@ -282,7 +278,7 @@ export default function BeFiScFinancial({
                 <div>
                   <p className="text-sm text-gray-400">Occupation</p>
                   <p className="text-base font-medium">
-                    {getValue(
+                    {formatSentence(
                       EquifaxV3Data?.result?.credit_report?.CCRResponse
                         ?.CIRReportDataLst[0]?.CIRReportData?.IDAndContactInfo
                         ?.PersonalInfo?.Occupation || '----',
@@ -307,7 +303,7 @@ export default function BeFiScFinancial({
                 (item, index) => (
                   <div key={index} className="space-y-4">
                     {/* Account Loans Details */}
-                    <div>
+                    <div className="space-y-4">
                       {item?.CIRReportData?.RetailAccountDetails.map(
                         (val, index5) => (
                           <div key={index5} className="space-y-4">

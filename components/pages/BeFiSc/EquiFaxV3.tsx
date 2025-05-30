@@ -157,37 +157,6 @@ export default function EquifaxV3({
                 </div>
               </div>
 
-              {/* score details */}
-              {/* {item?.CIRReportData?.ScoreDetails?.map((value, index3) => (
-                <DashboardCard key={index3} title="Scoring Elements">
-                  {value?.ScoringElements?.map((val, index4) => (
-                    <div
-                      key={index4}
-                      className="mt-4 grid grid-cols-3 gap-3 border-b border-neutral-900 pb-2"
-                    >
-                      <div>
-                        <p className="text-sm text-gray-400">Type</p>
-                        <p className="text-base font-medium">
-                          {getValue(val?.type)}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-400">Code</p>
-                        <p className="text-base font-medium">
-                          {getValue(val?.code)}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-400">Description</p>
-                        <p className="text-base font-medium">
-                          {getValue(val?.Description)}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </DashboardCard>
-              ))} */}
-
               {/* InquiryRequestInfo */}
               <div className="grid grid-cols-2 gap-4">
                 <DashboardCard title="ID Details">
@@ -219,15 +188,11 @@ export default function EquifaxV3({
               </div>
 
               {/* Account Loans Details */}
-              <div>
+              <div className="space-y-4 border">
                 {item?.CIRReportData?.RetailAccountDetails.map(
                   (val, index5) => (
-                    <div key={index5} className="space-y-4">
-                      <Card className="my-6 border border-gray-700 bg-[#0e1421] p-6 shadow-xl">
-                        <h1 className="text-2xl font-bold text-emerald-500">
-                          {val?.AccountType}
-                        </h1>
-
+                    <div key={index5} className="my-4 space-y-4">
+                      <DashboardCard title={`${val?.AccountType}`}>
                         <div className="mt-4 grid grid-cols-1 gap-8 sm:grid-cols-6">
                           <div>
                             <p className="text-sm text-gray-400">Institution</p>
@@ -388,7 +353,7 @@ export default function EquifaxV3({
                             </p>
                           </div>
                         </div>
-                      </Card>
+                      </DashboardCard>
                       <CustomBeFiScCard
                         title={`History48 Months ${val?.AccountType}`}
                         data={val?.History48Months}

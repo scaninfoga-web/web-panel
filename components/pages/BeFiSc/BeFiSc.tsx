@@ -2,12 +2,6 @@
 import CustomCheckBox from '@/components/checkbox';
 import DashboardTitle from '@/components/common/DashboardTitle';
 import { SearchBar2 } from '@/components/search/SearchBar2';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-} from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
@@ -33,7 +27,7 @@ import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 // @ts-ignore
 import NotFound from '@/components/NotFound';
-import { post } from '@/lib/api';
+import { getClientInfo, post } from '@/lib/api';
 import { GhuntData } from '@/types/ghunt';
 import Ghunt from '../ghunt/Ghunt';
 import BeFiScBusiness from './2/BeFiScBusiness';
@@ -48,6 +42,7 @@ import BeFiScLoadingSkeleton from './BeFiScLoadingSkeleton';
 import CustomBadge from './CustomBadge';
 import UpiDetails from './UpiDetails';
 import { DashboardCard } from '../dashboard/components/DashboardCard';
+import { OlaGeoApiType } from '@/types/ola-geo-api';
 
 function isValidIndianMobileNumber(input: string): boolean {
   const mobileRegex = /^(?:\+91[\-\s]?)?[5-9]\d{9}$/;
@@ -103,6 +98,11 @@ export default function BeFiSc() {
   const [upiDetailsLoading, setUpiDetailsLoading] = useState(false);
   const [upiDetailsData, setUpiDetailsData] = useState<UPIType | null>(null);
 
+  const [olaGeoApiLoading, setOlaGeoApiLoading] = useState(false);
+  const [olaGeoApiData, setOlaGeoApiData] = useState<OlaGeoApiType | null>(
+    null,
+  );
+
   const setAllOnLoading = () => {
     setIsLoading(true);
     setGhuntLoading(true);
@@ -115,6 +115,7 @@ export default function BeFiSc() {
     setEquifaxV3Loading(true);
     setPanAllInOneLoading(true);
     setUpiDetailsLoading(true);
+    setOlaGeoApiLoading(true);
   };
   const clearOldData = () => {
     setGhuntData(null);
@@ -128,6 +129,7 @@ export default function BeFiSc() {
     setEquifaxV3Data(null);
     setPanAllInOneData(null);
     setUpiDetailsData(null);
+    setOlaGeoApiData(null);
   };
 
   const setAllOffLoading = () => {
@@ -143,6 +145,8 @@ export default function BeFiSc() {
     setPanAllInOneLoading(false);
     setUpiDetailsLoading(false);
   };
+
+  // location api
 
   useEffect(() => {
     if (mobile360Data) {
@@ -587,8 +591,49 @@ export default function BeFiSc() {
     '' + ' ' + panAllInOneData?.result?.address.zip ||
     '' + ' ' + panAllInOneData?.result?.address.country;
 
-  const secondAddesss =
+  const secondAddress =
     profileAdvanceData?.result?.address?.[0]?.detailed_address || '';
+
+  useEffect(() => {
+    const callGeoApi = async () => {
+      if (
+        panAllInOneData?.result?.address ||
+        profileAdvanceData?.result?.address
+      ) {
+        const clientInfo = getClientInfo();
+        try {
+          if (firstAddress.length > 5) {
+            const imageData = await post('/api/auth/getmap', {
+              userLng: clientInfo?.longitude,
+              userLat: clientInfo?.latitude,
+              address: firstAddress,
+            });
+            setOlaGeoApiData(imageData);
+          }
+          if (secondAddress.length > 5) {
+            const imageData = await post('/api/auth/getmap', {
+              userLng: clientInfo?.longitude,
+              userLat: clientInfo?.latitude,
+              address: secondAddress,
+            });
+            setOlaGeoApiData(imageData);
+          }
+        } catch (error) {
+          if (error instanceof AxiosError) {
+            toast.error(
+              'Map!! ' + error.response?.data?.responseStatus?.message,
+              { id: toastRef.current! },
+            );
+          }
+        } finally {
+          setOlaGeoApiLoading(false);
+        }
+      } else {
+        setOlaGeoApiLoading(false);
+      }
+    };
+    callGeoApi();
+  }, [panAllInOneData]);
   const OverviewData = [
     {
       title: 'Father Name',
@@ -653,6 +698,7 @@ export default function BeFiSc() {
       valueClassname: '',
     },
   ];
+  const base64Image = `data:${olaGeoApiData?.responseData?.content_type};base64,${olaGeoApiData?.responseData.image}`;
 
   const searchFilterOptions = [{ label: 'Mobile No', value: 'mobileNumber' }];
 
@@ -753,7 +799,10 @@ export default function BeFiSc() {
 
               <TabsContent value="overview" className="mt-6"></TabsContent>
 
-              <TabsContent value="profile" className="mt-6 space-y-4">
+              <TabsContent
+                value="profile"
+                className="mt-6 flex flex-col space-y-4"
+              >
                 <DashboardCard title="" className="col-span-full lg:col-span-2">
                   <div className="flex items-center gap-x-2">
                     <Image
@@ -798,7 +847,7 @@ export default function BeFiSc() {
                       <div className="w-full text-sm font-semibold">
                         {firstAddress.length > 10
                           ? formatSentence(firstAddress)
-                          : formatSentence(secondAddesss)}
+                          : formatSentence(secondAddress)}
                       </div>
                       <Separator className="bg-slate-800" />
                       <div className="flex space-x-2">
@@ -827,6 +876,52 @@ export default function BeFiSc() {
                     </div>
                   </div>
                 </DashboardCard>
+                {olaGeoApiLoading ? (
+                  <div>
+                    <BeFiScLoadingSkeleton />
+                  </div>
+                ) : (
+                  <div className="flex justify-between rounded-xl border border-slate-900 p-4">
+                    <div className="grid grid-cols-2 py-10">
+                      <div>
+                        <p className="text-lg text-slate-400">Total Duration</p>
+                        <p className="text-2xl font-medium text-emerald-500">
+                          {
+                            olaGeoApiData?.responseData?.duration
+                              ?.readable_duration
+                          }
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-lg text-slate-400">
+                          Distance Kilometers
+                        </p>
+                        <p className="text-2xl font-medium text-yellow-500">
+                          {
+                            olaGeoApiData?.responseData?.distance
+                              ?.distance_kilometers
+                          }
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-lg text-slate-400">Address</p>
+                        <p className="min-w-[550px] text-xl font-medium text-opacity-75">
+                          {firstAddress.length > 10
+                            ? formatSentence(firstAddress)
+                            : formatSentence(secondAddress)}{' '}
+                        </p>
+                      </div>
+                    </div>
+                    <Image
+                      src={base64Image || '/null.png'}
+                      alt="map"
+                      width={400}
+                      height={400}
+                      className="rounded-xl"
+                      unoptimized
+                    />
+                  </div>
+                )}
               </TabsContent>
               <TabsContent value="personal" className="mt-6 space-y-4">
                 {/* {panAllInOneLoading ? (

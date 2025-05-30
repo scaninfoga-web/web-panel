@@ -19,7 +19,7 @@ const getAuthToken = () => {
 };
 
 // Function to get client info from Redux store
-const getClientInfo = () => {
+export const getClientInfo = () => {
   const state = store.getState();
   const info = state.info || {};
 

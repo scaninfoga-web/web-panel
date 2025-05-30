@@ -186,7 +186,7 @@ export default function CustomBeFiScCard({ title, data }: PageProps) {
     return (
       <DashboardCard
         title={formatKey(title)}
-        className="flex max-h-[360px] flex-col gap-y-2 py-10 pt-1 hover:scale-[1.015]"
+        className="scrollbar-custom flex max-h-[350px] flex-col gap-y-2 overflow-auto pt-1 hover:scale-[1.015]"
       >
         <div className="scrollbar-custom mb-4 grid max-h-[350px] grid-rows-2 gap-6 pb-4">
           <div className="flex flex-col">
@@ -264,5 +264,5 @@ export default function CustomBeFiScCard({ title, data }: PageProps) {
     );
   }
 
-  return <div>{JSON.stringify(data)}</div>;
+  // return <div>{JSON.stringify(data)}</div>;
 }
