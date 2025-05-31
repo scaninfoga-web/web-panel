@@ -38,12 +38,9 @@ import {
 } from './APIUtils';
 import BeFiScLoadingSkeleton from './BeFiScLoadingSkeleton';
 import CustomBadge from './CustomBadge';
-import UpiDetails from './UpiDetails';
 import { DashboardCard } from '../dashboard/components/DashboardCard';
 import { OlaGeoApiType } from '@/types/ola-geo-api';
-import MapLoading from './2/MapLoading';
 import SentenceLoader from './2/SentenceLoader';
-import ProfileAdvance from './ProfileAdvance';
 
 function isValidIndianMobileNumber(input: string): boolean {
   const mobileRegex = /^(?:\+91[\-\s]?)?[5-9]\d{9}$/;
@@ -458,7 +455,6 @@ export default function BeFiSc() {
       };
 
       const retryUntilSuccess = async () => {
-        console.log('INSIDE RETRY UNTIL SYCCESS');
         return new Promise<void>((resolve) => {
           const attempt = async () => {
             const success = await tryFetch();
@@ -504,33 +500,17 @@ export default function BeFiSc() {
     }
   };
 
-  const isAdult = () => {
-    const currentYear = new Date().getFullYear();
-    const age = Number(panAllInOneData?.result?.dob.split('-')[0]);
-    if (!age) {
-      return false;
-    }
-    const isAdult = currentYear - age >= 18;
-    return isAdult;
-  };
-
   const getImageUrl = (): string => {
+    if (ghuntData?.profile?.profilePictureUrl) {
+      return ghuntData.profile.profilePictureUrl;
+    }
     const gender = panAllInOneData?.result?.gender;
 
-    if (isAdult()) {
-      if (gender === 'M') {
-        return '/male.jpg';
-      }
-      if (gender === 'F') {
-        return '/female.jpg';
-      }
-      return '/null.png';
-    }
     if (gender === 'M') {
-      return '/boy.avif';
+      return '/male.jpg';
     }
     if (gender === 'F') {
-      return 'female.jpg';
+      return '/female.jpg';
     }
     return '/null.png';
   };
@@ -546,9 +526,8 @@ export default function BeFiSc() {
     setOlaGeoApiLoading(true);
 
     const callGeoApi = async () => {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 500));
       if (firstAddress || secondAddress) {
-        console.log('INSIDE LOCATION API', firstAddress, secondAddress);
         const clientInfo = getClientInfo();
         try {
           if (firstAddress && firstAddress.length > 5) {
@@ -663,7 +642,7 @@ export default function BeFiSc() {
     },
     {
       title: 'City',
-      value: panAllInOneData?.result?.address?.city || '----',
+      value: formatSentence(panAllInOneData?.result?.address?.city) || '----',
       titleClassname: '',
       valueClassname: '',
     },
@@ -687,7 +666,8 @@ export default function BeFiSc() {
     },
     {
       title: 'Country',
-      value: panAllInOneData?.result?.address?.country || '----',
+      value:
+        formatSentence(panAllInOneData?.result?.address?.country) || '----',
       titleClassname: '',
       valueClassname: '',
     },
@@ -801,8 +781,8 @@ export default function BeFiSc() {
                     <Image
                       src={getImageUrl()}
                       alt="user"
-                      width={35}
-                      height={35}
+                      width={65}
+                      height={65}
                       className="rounded-full border"
                     />
                     <p className="text-2xl font-semibold">
@@ -837,7 +817,7 @@ export default function BeFiSc() {
                       </div>
                       <Separator className="bg-slate-800" />
                       {/* addess live here */}
-                      <div className="flex w-full gap-4 text-lg font-semibold">
+                      <div className="flex w-full justify-between gap-4 text-lg font-semibold">
                         <div className="flex flex-col space-y-6">
                           <div>
                             <p className={'text-xs text-slate-400'}>
@@ -883,7 +863,7 @@ export default function BeFiSc() {
                             </div>
                           </div>
                         </div>
-                        <div>
+                        <div className="">
                           {olaGeoApiLoading ? (
                             <SentenceLoader className="min-h-[280px] w-[420px]" />
                           ) : (

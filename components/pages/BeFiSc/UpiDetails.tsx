@@ -7,7 +7,6 @@ import Image from 'next/image';
 const upiIcons = new Map<string, string>([
   ['PhonePe', '/upi/phonepe.png'],
   ['FinoPay', '/upi/FinoPay.png'],
-  ['gpay', '/upi/googlepay.png'],
   ['Amazon Pay', '/upi/amazonpay.png'],
   ['Paytm', '/upi/paytm.png'],
   ['BHIM', '/upi/BHIM.svg'],
@@ -25,7 +24,9 @@ const upiIcons = new Map<string, string>([
   ['MyJio UPI', '/upi/MyJio UPI.svg'],
   ['Fampay', '/upi/Fampay.jpeg'],
   ['Bajaj Finserv', '/upi/BajajFinserv.jpeg'],
-  ['PayZapp', '/upi/PayZapp.png'],
+  ['PayZapp', '/upi/PayZap.png'],
+  ['Zomato', '/upi/zomato.png'],
+  ['Jupiter', '/upi/jupiter.svg'],
 ]);
 
 export default function UpiDetails({ UpiData }: { UpiData: UPIType | null }) {

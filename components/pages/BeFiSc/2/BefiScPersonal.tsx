@@ -17,8 +17,11 @@ import {
 } from '@/components/ui/table';
 import CustomBadge from '../CustomBadge';
 import { formatSentence } from '../APIUtils';
-import { getValue } from '../CustomBeFiScCard';
-import { DashboardCard } from '../../dashboard/components/DashboardCard';
+import CustomBeFiScCard, { getValue } from '../CustomBeFiScCard';
+import {
+  DashboardCard,
+  InfoText,
+} from '../../dashboard/components/DashboardCard';
 import { LPGInfoTable } from '../LPGTable';
 import NumberDetails from './NumberDetails';
 
@@ -166,12 +169,80 @@ export default function BefiScPersonal({
             </Table>
           </DashboardCard>
         )}
-      {Mobile360Data?.result?.lpg_info?.data &&
-        Mobile360Data.result.lpg_info.data.length > 0 && (
-          <DashboardCard title="LPG Details">
-            <LPGInfoTable lpgInfo={Mobile360Data?.result?.lpg_info} />
-          </DashboardCard>
-        )}
+
+      <div className="grid grid-cols-2 gap-4">
+        {/* din */}
+        <DashboardCard
+          title="Din Info"
+          className="scrollbar-custom max-h-[400px] overflow-auto"
+        >
+          {Mobile360Data?.result?.din_info?.data.map((val, index) => (
+            <InfoText
+              label={`${val?.data?.name}`}
+              value={getValue(val.pan)}
+              key={index}
+            />
+          ))}
+        </DashboardCard>
+        <DashboardCard
+          title="Udyam Numbers"
+          className="scrollbar-custom max-h-[400px] overflow-auto"
+        >
+          {Mobile360Data?.result?.msme_info?.data.map((val, index) => (
+            <InfoText
+              label={`${val?.udyam_number}`}
+              value={
+                val?.enterprise_name?.length > 34
+                  ? val?.enterprise_name?.slice(0, 34) + '...'
+                  : val?.enterprise_name
+              }
+              key={index}
+            />
+          ))}
+        </DashboardCard>
+      </div>
+      <div className="grid grid-cols-5 gap-2">
+        <DashboardCard
+          title="GST List"
+          className="scrollbar-custom grid max-h-[400px] grid-cols-3 overflow-auto"
+        >
+          {Mobile360Data?.result?.gst_list?.data.map((val, index) => (
+            <div key={index}>{val}</div>
+          ))}
+        </DashboardCard>
+        <DashboardCard
+          title="IEC List"
+          className="scrollbar-custom grid max-h-[400px] grid-cols-3 overflow-auto"
+        >
+          {Mobile360Data?.result?.iec_list?.data.map((val, index) => (
+            <div key={index}>{val}</div>
+          ))}
+        </DashboardCard>
+        <DashboardCard
+          title="EPFO Info"
+          className="scrollbar-custom grid max-h-[400px] grid-cols-3 overflow-auto"
+        >
+          {Mobile360Data?.result?.epfo_info?.data.map((val, index) => (
+            <div key={index}>{val}</div>
+          ))}
+        </DashboardCard>
+        <DashboardCard
+          title="ESIC Info"
+          className="scrollbar-custom grid max-h-[400px] grid-cols-3 overflow-auto"
+        >
+          {Mobile360Data?.result?.epfo_info?.data.map((val, index) => (
+            <div key={index}>{val}</div>
+          ))}
+        </DashboardCard>
+        <DashboardCard
+          title="Director Pan Info"
+          className="scrollbar-custom grid max-h-[400px] grid-cols-3 overflow-auto"
+        >
+          {Mobile360Data?.result?.director_pan_info?.data.map((val, index) => (
+            <div key={index}>{val}</div>
+          ))}
+        </DashboardCard>
+      </div>
     </div>
   );
 }
