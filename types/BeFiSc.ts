@@ -429,6 +429,12 @@ export interface ProfileAdvanceType {
           serial_number: string;
         },
       ];
+      driving_license: [
+        {
+          value: string;
+          serial_number: string;
+        },
+      ];
     };
   };
 }

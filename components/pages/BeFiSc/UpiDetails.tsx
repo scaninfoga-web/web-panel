@@ -1,18 +1,32 @@
 import { UPIType } from '@/types/BeFiSc';
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { DashboardCard } from '../dashboard/components/DashboardCard';
+import { DashboardCard, InfoText } from '../dashboard/components/DashboardCard';
 import { formatKey } from './CustomBeFiScCard';
+import { formatSentence } from './APIUtils';
+import Image from 'next/image';
+const upiIcons = new Map<string, string>([
+  ['PhonePe', '/upi/phonepe.png'],
+  ['FinoPay', '/upi/FinoPay.png'],
+  ['gpay', '/upi/googlepay.png'],
+  ['Amazon Pay', '/upi/amazonpay.png'],
+  ['Paytm', '/upi/paytm.png'],
+  ['BHIM', '/upi/BHIM.svg'],
+  ['Axis Bank', '/upi/AxisBank.png'],
+  ['Groww', '/upi/Groww.svg'],
+  ['Mobikwik', '/upi/Mobikwik.svg'],
+  ['State Bank of India', '/upi/StateBankofIndia.png'],
+  ['Airtel Payments Bank', '/upi/airtelpayments.png'],
+  ['HDFC Bank', '/upi/HDFCBank.png'],
+  ['IDFC FIRST Bank', '/upi/IDFCFIRSTBank.jpeg'],
+  ['super.money', '/upi/super-money.jpeg'],
+  ['QuikWallet', '/upi/QuikWallet.png'],
+  ['Cheq', '/upi/Cheq.png'],
+  ['Jana Bank', '/upi/JanaBank.png'],
+  ['MyJio UPI', '/upi/MyJio UPI.svg'],
+  ['Fampay', '/upi/Fampay.jpeg'],
+  ['Bajaj Finserv', '/upi/BajajFinserv.jpeg'],
+  ['PayZapp', '/upi/PayZapp.png'],
+]);
 
 export default function UpiDetails({ UpiData }: { UpiData: UPIType | null }) {
   if (!UpiData) {
@@ -28,6 +42,15 @@ export default function UpiDetails({ UpiData }: { UpiData: UPIType | null }) {
 
         return (
           <DashboardCard
+            icon={
+              <Image
+                src={upiIcons.get(data.platform) || '/null.png'}
+                width={50}
+                height={50}
+                alt="icon"
+                className="relative -left-2 rounded-full bg-white p-0.5"
+              />
+            }
             titleBig={false}
             title={`${upiId}-${'  '}${data.platform}`}
             key={data.data.txn_id}
@@ -39,30 +62,19 @@ export default function UpiDetails({ UpiData }: { UpiData: UPIType | null }) {
                 }
                 if (key === 'address') {
                   return (
-                    <div className="flex justify-between" key={index}>
-                      <span className="text-sm font-medium text-gray-200">
-                        {formatKey(key)}
-                      </span>
-                      <span className="h-10 whitespace-pre-wrap pl-9 text-xs font-medium text-gray-400">
-                        {value}
-                      </span>
-                    </div>
+                    <InfoText
+                      label={formatKey(key)}
+                      value={formatSentence(value.slice(0, 30))}
+                    />
                   );
                 }
                 return (
-                  <div className="flex justify-between" key={index}>
-                    <span className="text-sm font-medium text-gray-200">
-                      {formatKey(key)}
-                    </span>
-                    <span className="text-sm font-medium text-gray-400">
-                      {value}
-                    </span>
-                  </div>
+                  <InfoText
+                    label={formatKey(key)}
+                    value={formatSentence(value)}
+                  />
                 );
               })}
-              {/* <Badge variant="secondary" className="bg-green-600 text-white">
-                {data?.platform}
-              </Badge> */}
             </div>
           </DashboardCard>
         );

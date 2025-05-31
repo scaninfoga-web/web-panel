@@ -42,6 +42,7 @@ import UpiDetails from './UpiDetails';
 import { DashboardCard } from '../dashboard/components/DashboardCard';
 import { OlaGeoApiType } from '@/types/ola-geo-api';
 import MapLoading from './2/MapLoading';
+import SentenceLoader from './2/SentenceLoader';
 
 function isValidIndianMobileNumber(input: string): boolean {
   const mobileRegex = /^(?:\+91[\-\s]?)?[5-9]\d{9}$/;
@@ -186,7 +187,8 @@ export default function BeFiSc() {
             ProfileAdvanceResponse.responseData.result?.document_data?.pan[0]
               .value || mobile360Data?.result?.din_info?.data[0]?.pan;
           const bankName =
-            mobile360Data?.result?.digital_payment_id_info?.data?.name;
+            mobile360Data?.result?.digital_payment_id_info?.data?.name ||
+            'Bank';
           if (panNumber && bankName) {
             try {
               const EquifaxData = await post('/api/mobile/equifaxv3', {
@@ -544,10 +546,8 @@ export default function BeFiSc() {
 
     const callGeoApi = async () => {
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      if (
-        panAllInOneData?.result?.address ||
-        profileAdvanceData?.result?.address
-      ) {
+      if (firstAddress || secondAddress) {
+        console.log('INSIDE LOCATION API', firstAddress, secondAddress);
         const clientInfo = getClientInfo();
         try {
           if (firstAddress && firstAddress.length > 5) {
@@ -581,7 +581,7 @@ export default function BeFiSc() {
       }
     };
     callGeoApi();
-  }, [panAllInOneData]);
+  }, [panAllInOneData, profileAdvanceData]);
   const OverviewData = [
     {
       title: 'Father Name',
@@ -687,7 +687,6 @@ export default function BeFiSc() {
       valueClassname: '',
     },
   ];
-  const base64Image = `data:${olaGeoApiData?.responseData?.content_type};base64,${olaGeoApiData?.responseData.image}`;
 
   const searchFilterOptions = [{ label: 'Mobile No', value: 'mobileNumber' }];
 
@@ -833,11 +832,69 @@ export default function BeFiSc() {
                       </div>
                       <Separator className="bg-slate-800" />
                       {/* addess live here */}
-                      <div className="w-full text-sm font-semibold">
-                        <p className={'text-xs text-slate-400'}>Full Address</p>
-                        {firstAddress && firstAddress?.length > 10
-                          ? formatSentence(firstAddress)
-                          : formatSentence(secondAddress)}
+                      <div className="flex w-full gap-4 text-lg font-semibold">
+                        <div className="flex flex-col space-y-6">
+                          <div>
+                            <p className={'text-xs text-slate-400'}>
+                              Full Address
+                            </p>
+                            <p className="max-w-[610px] bg-opacity-75 text-base">
+                              {firstAddress && firstAddress?.length > 10
+                                ? formatSentence(firstAddress)
+                                : formatSentence(secondAddress)}
+                            </p>
+                          </div>
+                          <div className="flex space-x-8">
+                            <div>
+                              <p className="text-base text-slate-400">
+                                Total Duration
+                              </p>
+
+                              {olaGeoApiLoading ? (
+                                <SentenceLoader />
+                              ) : (
+                                <p className="text-lg font-medium text-emerald-500">
+                                  {
+                                    olaGeoApiData?.responseData?.duration
+                                      ?.readable_duration
+                                  }
+                                </p>
+                              )}
+                            </div>
+                            <div>
+                              <p className="text-base text-slate-400">
+                                Distance Kilometers
+                              </p>
+                              {olaGeoApiLoading ? (
+                                <SentenceLoader />
+                              ) : (
+                                <p className="text-lg font-medium text-yellow-500">
+                                  {
+                                    olaGeoApiData?.responseData?.distance
+                                      ?.distance_kilometers
+                                  }
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                        <div>
+                          {olaGeoApiLoading ? (
+                            <SentenceLoader className="min-h-[280px] w-[420px]" />
+                          ) : (
+                            <Image
+                              src={
+                                `data:${olaGeoApiData?.responseData?.content_type};base64,${olaGeoApiData?.responseData.image}` ||
+                                '/null.png'
+                              }
+                              alt="map"
+                              width={450}
+                              height={450}
+                              className="max-h-72 rounded-xl"
+                              unoptimized={true}
+                            />
+                          )}
+                        </div>
                       </div>
                       <Separator className="bg-slate-800" />
                       <div className="flex space-x-2">
@@ -866,71 +923,8 @@ export default function BeFiSc() {
                     </div>
                   </div>
                 </DashboardCard>
-                {olaGeoApiLoading ? (
-                  <div>
-                    {/* <BeFiScLoadingSkeleton /> */}
-                    <MapLoading />
-                  </div>
-                ) : (
-                  <div className="flex justify-between border border-white/10 p-4">
-                    <div className="grid grid-cols-2 py-10">
-                      <div>
-                        <p className="text-lg text-slate-400">Total Duration</p>
-                        <p className="text-2xl font-medium text-emerald-500">
-                          {
-                            olaGeoApiData?.responseData?.duration
-                              ?.readable_duration
-                          }
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-lg text-slate-400">
-                          Distance Kilometers
-                        </p>
-                        <p className="text-2xl font-medium text-yellow-500">
-                          {
-                            olaGeoApiData?.responseData?.distance
-                              ?.distance_kilometers
-                          }
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-lg text-slate-400">Address</p>
-                        <p className="min-w-[550px] text-xl font-medium text-opacity-75">
-                          {firstAddress && firstAddress.length > 10
-                            ? formatSentence(firstAddress)
-                            : formatSentence(secondAddress)}{' '}
-                        </p>
-                      </div>
-                    </div>
-                    <Image
-                      src={base64Image || '/null.png'}
-                      alt="map"
-                      width={400}
-                      height={400}
-                      className="rounded-xl"
-                      unoptimized
-                    />
-                  </div>
-                )}
               </TabsContent>
               <TabsContent value="personal" className="mt-6 space-y-4">
-                {/* {panAllInOneLoading ? (
-                  <BeFiScLoadingSkeleton />
-                ) : (
-                  <PanAllInOne PanAllInOneData={panAllInOneData} />
-                )}
-                {mobile360Data && <Mobile360 data={mobile360Data} />}
-                {profileAdvanceLoading ? (
-                  <BeFiScLoadingSkeleton />
-                ) : (
-                  <ProfileAdvance ProfileAdvanceData={profileAdvanceData} />
-                )}
-                {esicsLoading ? (
-                  <BeFiScLoadingSkeleton />
-                ) : (
-                  <Esics EsicsData={esicsData} />
-                )} */}
                 <BefiScPersonal
                   Mobile360Data={mobile360Data}
                   ProfileAdvanceData={profileAdvanceData}
@@ -939,19 +933,9 @@ export default function BeFiSc() {
                 />
               </TabsContent>
               <TabsContent value="financial" className="mt-6">
-                {/* {mobileToAccountLoading ? (
-                  <BeFiScLoadingSkeleton />
-                ) : (
-                  <MobileToAccountNumber
-                    MobileToAccountNumberData={mobileToAccountData}
-                  />
-                )}
-                {EquifaxV3Loading ? (
-                  <BeFiScLoadingSkeleton />
-                ) : (
-                  <EquifaxV3 EquifaxV3Data={EquifaxV3Data} />
-                )} */}
                 <BeFiScFinancial
+                  upiDetailsLoading={upiDetailsLoading}
+                  upiDetailsData={upiDetailsData}
                   Mobile360Data={mobile360Data}
                   ProfileAdvance={profileAdvanceData}
                   MobileToAccountData={mobileToAccountData}
@@ -968,30 +952,8 @@ export default function BeFiSc() {
                 ) : (
                   <NotFound value="No business found" />
                 )}
-
-                {/* {gstAdvanceLoading ? (
-                  <BeFiScLoadingSkeleton />
-                ) : (
-                  <GSTAdvance GstAdvanceData={gstAdvanceData} />
-                )}
-                {gstTurnoverLoading ? (
-                  <BeFiScLoadingSkeleton />
-                ) : (
-                  <GstTurnover GstTurnoverData={gstTurnoverData} />
-                )} */}
-                {/* {verifyUdyamLoading ? (
-                  <BeFiScLoadingSkeleton />
-                ) : (
-                  <VerifyUdyam verfiyUdyamData={verfiyUdyamData} />
-                )} */}
               </TabsContent>
-              <TabsContent value="digitalInfo" className="mt-6">
-                {upiDetailsLoading ? (
-                  <BeFiScLoadingSkeleton />
-                ) : (
-                  <UpiDetails UpiData={upiDetailsData} />
-                )}
-              </TabsContent>
+              <TabsContent value="digitalInfo" className="mt-6"></TabsContent>
               <TabsContent value="breachInfo" className="mt-6"></TabsContent>
               <TabsContent value="googleProfile" className="mt-6">
                 {ghuntLoading ? (

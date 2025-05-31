@@ -62,8 +62,13 @@ export default function BefiScPersonal({
                 </p>
               </div>
               <div>
-                <p className="text-xs text-slate-400">Passport Number</p>
-                <p className="font-medium"></p>
+                <p className="text-xs text-slate-400">Driving License</p>
+                <p className="font-medium">
+                  {getValue(
+                    ProfileAdvanceData?.result?.document_data
+                      ?.driving_license?.[0]?.value,
+                  )}
+                </p>
               </div>
             </div>
             <Separator className="bg-slate-800" />

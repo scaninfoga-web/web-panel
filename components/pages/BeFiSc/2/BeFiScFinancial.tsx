@@ -4,18 +4,23 @@ import {
   Mobile360Type,
   MobileToAccountNumberType,
   ProfileAdvanceType,
+  UPIType,
 } from '@/types/BeFiSc';
 import React from 'react';
 import { formatSentence, numberToIndianRuppe } from '../APIUtils';
 import CustomBeFiScCard, { getValue } from '../CustomBeFiScCard';
 import CustomBadge from '../CustomBadge';
 import { DashboardCard } from '../../dashboard/components/DashboardCard';
+import UpiDetails from '../UpiDetails';
+import BeFiScLoadingSkeleton from '../BeFiScLoadingSkeleton';
 
 interface PageProps {
   Mobile360Data: Mobile360Type | null;
   ProfileAdvance: ProfileAdvanceType | null;
   MobileToAccountData: MobileToAccountNumberType | null;
   EquifaxV3Data: EquifaxV3Type | null;
+  upiDetailsLoading: boolean;
+  upiDetailsData: UPIType | null;
 }
 
 export default function BeFiScFinancial({
@@ -23,6 +28,8 @@ export default function BeFiScFinancial({
   ProfileAdvance,
   MobileToAccountData,
   EquifaxV3Data,
+  upiDetailsLoading,
+  upiDetailsData,
 }: PageProps) {
   const [activeTab, setActiveTab] = React.useState('bank');
   let creditCount = 0;
@@ -37,6 +44,7 @@ export default function BeFiScFinancial({
   const tabs = [
     { value: 'bank', label: 'Bank Details' },
     { value: 'loan', label: 'Loan Details' },
+    { value: 'digitalInfo', label: 'Digital Info' },
   ];
 
   const getGridCols = (tabCount: number) => {
@@ -519,6 +527,14 @@ export default function BeFiScFinancial({
               title="Address Info"
             />
           </div>
+        </TabsContent>
+
+        <TabsContent value="digitalInfo" className="">
+          {upiDetailsLoading ? (
+            <BeFiScLoadingSkeleton />
+          ) : (
+            <UpiDetails UpiData={upiDetailsData} />
+          )}
         </TabsContent>
       </Tabs>
     </div>
