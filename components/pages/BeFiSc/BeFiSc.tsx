@@ -20,9 +20,7 @@ import { AxiosError } from 'axios';
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
-
 import { useSearchParams } from 'next/navigation';
-
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 // @ts-ignore
@@ -43,6 +41,7 @@ import CustomBadge from './CustomBadge';
 import UpiDetails from './UpiDetails';
 import { DashboardCard } from '../dashboard/components/DashboardCard';
 import { OlaGeoApiType } from '@/types/ola-geo-api';
+import MapLoading from './2/MapLoading';
 
 function isValidIndianMobileNumber(input: string): boolean {
   const mobileRegex = /^(?:\+91[\-\s]?)?[5-9]\d{9}$/;
@@ -146,17 +145,11 @@ export default function BeFiSc() {
     setUpiDetailsLoading(false);
   };
 
-  // location api
-
   useEffect(() => {
     if (mobile360Data) {
       const callOtherAPIs = async () => {
         // profile advance
         try {
-          // const { data: ProfileAdvanceResponse } = await axios.post(
-          //   `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/mobile/profileadvance`,
-          //   { mobile_number: mobileNo, realtimeData: isRealtime },
-          // );
           const ProfileAdvanceResponse = await post(
             '/api/mobile/profileadvance',
             {
@@ -170,7 +163,9 @@ export default function BeFiSc() {
           ) {
             setProfileAdvanceData(ProfileAdvanceResponse.responseData);
             const emailAddress =
-              ProfileAdvanceResponse.responseData?.result?.email?.[0]?.value;
+              ProfileAdvanceResponse.responseData?.result?.email?.[0]?.value
+                .trim()
+                .toLowerCase();
             // calling ghunt api with emailaddess
             try {
               if (emailAddress) {
@@ -194,16 +189,6 @@ export default function BeFiSc() {
             mobile360Data?.result?.digital_payment_id_info?.data?.name;
           if (panNumber && bankName) {
             try {
-              // const { data: EquifaxData } = await axios.post(
-              //   `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/mobile/equifaxv3`,
-              //   {
-              //     mobile: mobileNo,
-              //     name: bankName,
-              //     id_type: 'pan',
-              //     id_number: panNumber,
-              //     realtimeData: isRealtime,
-              //   },
-              // );
               const EquifaxData = await post('/api/mobile/equifaxv3', {
                 mobile: mobileNo,
                 name: bankName,
@@ -229,13 +214,6 @@ export default function BeFiSc() {
 
             // calling panAllInone
             try {
-              // const { data: panAllInOne } = await axios.post(
-              //   `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/mobile/panallinone`,
-              //   {
-              //     pan_number: panNumber,
-              //     realtimeData: isRealtime,
-              //   },
-              // );
               const panAllInOne = await post('/api/mobile/panallinone', {
                 pan_number: panNumber,
                 realtimeData: isRealtime,
@@ -276,10 +254,6 @@ export default function BeFiSc() {
 
         if (EsicsArray?.length > 0) {
           try {
-            // const { data: EsicsInfo } = await axios.post(
-            //   `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/mobile/esicsearch`,
-            //   { esic_number: EsicsArray[0], realtimeData: isRealtime },
-            // );
             const EsicsInfo = await post('/api/mobile/esicsearch', {
               esic_number: EsicsArray[0],
               realtimeData: isRealtime,
@@ -308,13 +282,6 @@ export default function BeFiSc() {
             mobile360Data.result.key_highlights?.udyam_numbers;
 
           if (udyamNumberArray?.length > 0) {
-            // const { data: UdyamData } = await axios.post(
-            //   `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/mobile/verifyudyam`,
-            //   {
-            //     registration_no: udyamNumberArray[0],
-            //     realtimeData: isRealtime,
-            //   },
-            // );
             const UdyamData = await post('/api/mobile/verifyudyam', {
               registration_no: udyamNumberArray[0],
               realtimeData: isRealtime,
@@ -339,10 +306,6 @@ export default function BeFiSc() {
             mobile360Data.result?.key_highlights?.gst_numbers;
 
           if (gstAdvanceNumberArray?.length > 0) {
-            // const { data: GSTDATA } = await axios.post(
-            //   `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/mobile/gstadvance`,
-            //   { gst_no: gstAdvanceNumberArray[0], realtimeData: isRealtime },
-            // );
             const GSTDATA = await post('/api/mobile/gstadvance', {
               gst_no: gstAdvanceNumberArray[0],
               realtimeData: isRealtime,
@@ -378,13 +341,6 @@ export default function BeFiSc() {
 
         // calling upi details
         try {
-          // const { data: UpiDetails } = await axios.post(
-          //   `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/mobile/digitalpayment`,
-          //   {
-          //     mobile_number: mobileNo,
-          //     realtimeData: isRealtime,
-          //   },
-          // );
           const UpiDetails = await post('/api/mobile/digitalpayment', {
             mobile_number: mobileNo,
             realtimeData: isRealtime,
@@ -403,13 +359,6 @@ export default function BeFiSc() {
         setUpiDetailsLoading(false);
 
         try {
-          // const { data: ActDetails } = await axios.post(
-          //   `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/mobile/getAcDtlsFromMobNo`,
-          //   {
-          //     mobile_number: mobileNo,
-          //     realtimeData: isRealtime,
-          //   },
-          // );
           const ActDetails = await post('/api/mobile/getAcDtlsFromMobNo', {
             mobile_number: mobileNo,
             realtimeData: isRealtime,
@@ -583,26 +532,25 @@ export default function BeFiSc() {
     return '/null.png';
   };
 
-  const firstAddress =
-    panAllInOneData?.result?.address.line_1 ||
-    '' + ' ' + panAllInOneData?.result?.address.line_2 ||
-    '' + ' ' + panAllInOneData?.result?.address.city ||
-    '' + ' ' + panAllInOneData?.result?.address.state ||
-    '' + ' ' + panAllInOneData?.result?.address.zip ||
-    '' + ' ' + panAllInOneData?.result?.address.country;
+  const firstAddress = panAllInOneData?.result?.address?.full;
 
   const secondAddress =
     profileAdvanceData?.result?.address?.[0]?.detailed_address || '';
 
+  // location api
+
   useEffect(() => {
+    setOlaGeoApiLoading(true);
+
     const callGeoApi = async () => {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       if (
         panAllInOneData?.result?.address ||
         profileAdvanceData?.result?.address
       ) {
         const clientInfo = getClientInfo();
         try {
-          if (firstAddress.length > 5) {
+          if (firstAddress && firstAddress.length > 5) {
             const imageData = await post('/api/auth/getmap', {
               userLng: clientInfo?.longitude,
               userLat: clientInfo?.latitude,
@@ -693,7 +641,48 @@ export default function BeFiSc() {
     {
       title: 'Email Address',
       value:
-        profileAdvanceData?.result?.email?.[0]?.value.toLowerCase() || '----',
+        profileAdvanceData?.result?.email?.[0]?.value.toLowerCase() ||
+        panAllInOneData?.result?.email ||
+        '----',
+      titleClassname: '',
+      valueClassname: '',
+    },
+    {
+      title: 'Line1',
+      value:
+        panAllInOneData?.result?.address?.line_1?.toLowerCase() ||
+        panAllInOneData?.result?.address?.line_2?.toLowerCase() ||
+        '----',
+      titleClassname: '',
+      valueClassname: '',
+    },
+    {
+      title: 'City',
+      value: panAllInOneData?.result?.address?.city || '----',
+      titleClassname: '',
+      valueClassname: '',
+    },
+    {
+      title: 'Zip Code',
+      value:
+        panAllInOneData?.result?.address?.zip ||
+        profileAdvanceData?.result?.address?.[0]?.pincode ||
+        '----',
+      titleClassname: '',
+      valueClassname: '',
+    },
+    {
+      title: 'State',
+      value:
+        panAllInOneData?.result?.address?.state ||
+        profileAdvanceData?.result?.address?.[0]?.state ||
+        '----',
+      titleClassname: '',
+      valueClassname: '',
+    },
+    {
+      title: 'Country',
+      value: panAllInOneData?.result?.address?.country || '----',
       titleClassname: '',
       valueClassname: '',
     },
@@ -845,7 +834,8 @@ export default function BeFiSc() {
                       <Separator className="bg-slate-800" />
                       {/* addess live here */}
                       <div className="w-full text-sm font-semibold">
-                        {firstAddress.length > 10
+                        <p className={'text-xs text-slate-400'}>Full Address</p>
+                        {firstAddress && firstAddress?.length > 10
                           ? formatSentence(firstAddress)
                           : formatSentence(secondAddress)}
                       </div>
@@ -878,10 +868,11 @@ export default function BeFiSc() {
                 </DashboardCard>
                 {olaGeoApiLoading ? (
                   <div>
-                    <BeFiScLoadingSkeleton />
+                    {/* <BeFiScLoadingSkeleton /> */}
+                    <MapLoading />
                   </div>
                 ) : (
-                  <div className="flex justify-between rounded-xl border border-slate-900 p-4">
+                  <div className="flex justify-between border border-white/10 p-4">
                     <div className="grid grid-cols-2 py-10">
                       <div>
                         <p className="text-lg text-slate-400">Total Duration</p>
@@ -906,7 +897,7 @@ export default function BeFiSc() {
                       <div>
                         <p className="text-lg text-slate-400">Address</p>
                         <p className="min-w-[550px] text-xl font-medium text-opacity-75">
-                          {firstAddress.length > 10
+                          {firstAddress && firstAddress.length > 10
                             ? formatSentence(firstAddress)
                             : formatSentence(secondAddress)}{' '}
                         </p>

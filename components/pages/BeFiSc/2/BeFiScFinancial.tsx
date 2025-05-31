@@ -72,7 +72,7 @@ export default function BeFiScFinancial({
           ))}
         </TabsList>
 
-        <TabsContent value="bank" className="mt-6 grid grid-cols-1">
+        <TabsContent value="bank" className="mt-6 grid grid-cols-1 space-y-4">
           <DashboardCard title="Primary Account">
             <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-4">
               <div>
