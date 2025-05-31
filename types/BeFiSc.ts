@@ -419,10 +419,12 @@ export interface ProfileAdvanceType {
       date_of_reporting: string;
     }[];
     document_data: {
-      pan: {
-        serial_number: string;
-        value: string;
-      };
+      pan: [
+        {
+          serial_number: string;
+          value: string;
+        },
+      ];
       voter_id: [
         {
           value: string;

@@ -43,6 +43,7 @@ import { DashboardCard } from '../dashboard/components/DashboardCard';
 import { OlaGeoApiType } from '@/types/ola-geo-api';
 import MapLoading from './2/MapLoading';
 import SentenceLoader from './2/SentenceLoader';
+import ProfileAdvance from './ProfileAdvance';
 
 function isValidIndianMobileNumber(input: string): boolean {
   const mobileRegex = /^(?:\+91[\-\s]?)?[5-9]\d{9}$/;
@@ -628,7 +629,11 @@ export default function BeFiSc() {
     },
     {
       title: 'PAN Number',
-      value: panAllInOneData?.result?.pan_number || '----',
+      value:
+        panAllInOneData?.result?.pan_number ||
+        profileAdvanceData?.result?.document_data?.pan?.[0]?.value ||
+        mobile360Data?.result?.din_info?.data[0]?.pan ||
+        '----',
       titleClassname: '',
       valueClassname: 'text-blue-400',
     },
