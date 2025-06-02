@@ -144,6 +144,7 @@ export default function BeFiSc() {
     setPanAllInOneData(null);
     setUpiDetailsData(null);
     setOlaGeoApiData(null);
+    setOtherAdressOlaData([]);
   };
 
   const setAllOffLoading = () => {
@@ -597,13 +598,21 @@ export default function BeFiSc() {
             setOtherAddressOlaLoading(false);
           } catch (error) {
             setOtherAddressOlaLoading(false);
-            console.error('One or more API calls failed:', error);
           }
+        } else {
+          setOtherAddressOlaLoading(false);
         }
       }
     };
     callOtherAddressApis();
-  }, [profileAdvanceData, EquifaxV3Data, gstAdvanceData]);
+  }, [
+    profileAdvanceData,
+    EquifaxV3Data,
+    gstAdvanceData,
+    gstAdvanceLoading,
+    EquifaxV3Loading,
+    profileAdvanceLoading,
+  ]);
 
   const OverviewData = [
     {
@@ -671,6 +680,19 @@ export default function BeFiSc() {
       titleClassname: '',
       valueClassname: 'max-w-28',
     },
+    {
+      title: 'isSole Proprietor',
+      value: panAllInOneData?.result?.is_sole_proprietor?.found || '----',
+      titleClassname: '',
+      valueClassname: 'max-w-28 text-yellow-500',
+    },
+    {
+      title: 'isDirector',
+      value: panAllInOneData?.result?.is_director?.found || '----',
+      titleClassname: '',
+      valueClassname: 'max-w-28 text-yellow-500',
+    },
+
     {
       title: 'Line1',
       value:
@@ -967,81 +989,84 @@ export default function BeFiSc() {
                     <div className="mt-10 grid grid-cols-1 gap-4">
                       <MapLoading />
                       <MapLoading />
-                      <MapLoading />
                     </div>
                   ) : (
-                    <div className="mt-10 grid grid-cols-1 gap-4">
-                      {otherAdressOlaData.map((item, index) => (
-                        <div
-                          key={index}
-                          className="flex w-full justify-between border border-white/10 p-4"
-                        >
-                          <div className="grid grid-cols-1 items-center gap-y-1">
-                            <div className="grid grid-cols-2 gap-4">
-                              <div>
-                                <p className="text-sm text-slate-400">
-                                  Date of reporting
-                                </p>
-                                <p className="pt-1">
-                                  {item?.addressData?.date_of_reporting}
-                                </p>
-                              </div>
-                              <div>
-                                <p className="text-sm text-slate-400">
-                                  Address Type
-                                </p>
+                    otherAdressOlaData.length > 0 && (
+                      <div className="mt-10 grid grid-cols-1 gap-4">
+                        {otherAdressOlaData.map((item, index) => (
+                          <div
+                            key={index}
+                            className="flex w-full justify-between border border-white/10 p-4"
+                          >
+                            <div className="grid grid-cols-1 items-center gap-y-1">
+                              <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                  <p className="text-sm text-slate-400">
+                                    Date of reporting
+                                  </p>
+                                  <p className="pt-1">
+                                    {item?.addressData?.date_of_reporting}
+                                  </p>
+                                </div>
+                                <div>
+                                  <p className="text-sm text-slate-400">
+                                    Address Type
+                                  </p>
 
-                                <CustomBadge
-                                  variantToUse={'default'}
-                                  value={item?.addressData?.type}
-                                />
+                                  <CustomBadge
+                                    variantToUse={'default'}
+                                    value={item?.addressData?.type}
+                                  />
+                                </div>
+                                <div>
+                                  <p className="text-sm text-slate-400">
+                                    Total Duration
+                                  </p>
+                                  <p className="pt-1 text-emerald-500">
+                                    {
+                                      item?.olaData?.responseData?.duration
+                                        ?.readable_duration
+                                    }
+                                  </p>
+                                </div>
+                                <div>
+                                  <p className="text-sm text-slate-400">
+                                    Distance Kilometers
+                                  </p>
+                                  <p className="pt-1 text-yellow-500">
+                                    {
+                                      item?.olaData?.responseData?.distance
+                                        ?.distance_kilometers
+                                    }
+                                  </p>
+                                </div>
                               </div>
                               <div>
-                                <p className="text-sm text-slate-400">
-                                  Total Duration
+                                <p className="text-lg text-slate-400">
+                                  Address
                                 </p>
-                                <p className="pt-1 text-emerald-500">
-                                  {
-                                    item?.olaData?.responseData?.duration
-                                      ?.readable_duration
-                                  }
-                                </p>
-                              </div>
-                              <div>
-                                <p className="text-sm text-slate-400">
-                                  Distance Kilometers
-                                </p>
-                                <p className="pt-1 text-yellow-500">
-                                  {
-                                    item?.olaData?.responseData?.distance
-                                      ?.distance_kilometers
-                                  }
+                                <p className="min-w-[430px] max-w-[430px] opacity-75">
+                                  {formatSentence(
+                                    item?.addressData.detailed_address,
+                                  )}
                                 </p>
                               </div>
                             </div>
-                            <div>
-                              <p className="text-lg text-slate-400">Address</p>
-                              <p className="min-w-[430px] max-w-[430px] opacity-75">
-                                {formatSentence(
-                                  item?.addressData.detailed_address,
-                                )}
-                              </p>
-                            </div>
+                            <Image
+                              src={
+                                `data:${item?.olaData?.responseData?.content_type};base64,${item?.olaData?.responseData?.image}` ||
+                                '/null.png'
+                              }
+                              alt="map"
+                              width={500}
+                              height={500}
+                              className="h-[300px] min-w-[400px] rounded-xl"
+                              unoptimized={true}
+                            />
                           </div>
-                          <Image
-                            src={
-                              `data:${item?.olaData?.responseData?.content_type};base64,${item?.olaData?.responseData?.image}` ||
-                              '/null.png'
-                            }
-                            alt="map"
-                            width={500}
-                            height={500}
-                            className="h-[300px] min-w-[400px] rounded-xl"
-                            unoptimized={true}
-                          />
-                        </div>
-                      ))}
-                    </div>
+                        ))}
+                      </div>
+                    )
                   )}
                 </div>
               </TabsContent>
