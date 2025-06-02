@@ -895,7 +895,12 @@ export default function BeFiSc() {
                             <p className="max-w-[610px] bg-opacity-75 text-base">
                               {firstAddress && firstAddress?.length > 10
                                 ? formatSentence(firstAddress)
-                                : formatSentence(secondAddress)}
+                                : secondAddress.length > 10
+                                  ? formatSentence(secondAddress)
+                                  : formatSentence(
+                                      mobile360Data?.result?.lpg_info?.data?.[0]
+                                        ?.address,
+                                    )}
                             </p>
                           </div>
                           <div className="flex space-x-8">

@@ -115,7 +115,12 @@ export default function BefiScPersonal({
         </DashboardCard>
       </div>
       <NumberDetails mobile360Data={Mobile360Data} />
-
+      {Mobile360Data?.result?.lpg_info?.data &&
+        Mobile360Data?.result?.lpg_info?.data.length > 0 && (
+          <DashboardCard title="LPG Details">
+            <LPGInfoTable lpgInfo={Mobile360Data?.result?.lpg_info} />
+          </DashboardCard>
+        )}
       {Mobile360Data?.result?.esic_info?.data &&
         Mobile360Data.result.esic_info.data.length > 0 && (
           <DashboardCard
