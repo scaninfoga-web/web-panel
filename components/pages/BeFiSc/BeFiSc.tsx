@@ -20,7 +20,7 @@ import { AxiosError } from 'axios';
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 // @ts-ignore
@@ -41,14 +41,20 @@ import CustomBadge from './CustomBadge';
 import { DashboardCard } from '../dashboard/components/DashboardCard';
 import { OlaGeoApiType } from '@/types/ola-geo-api';
 import SentenceLoader from './2/SentenceLoader';
+import BeFiScDigitalFootprint, {
+  getAddressesWithDifferentPincode,
+  getOtherPhoneNumbers,
+} from './2/BeFiScDigitalFootprint';
+import MapLoading from './2/MapLoading';
 
-function isValidIndianMobileNumber(input: string): boolean {
+export function isValidIndianMobileNumber(input: string): boolean {
   const mobileRegex = /^(?:\+91[\-\s]?)?[5-9]\d{9}$/;
   return mobileRegex.test(input.trim());
 }
 
 export default function BeFiSc() {
   const searchParams = useSearchParams();
+  const apiMessage = useRef<string | null>(null);
   const mobileNumber = searchParams.get('mobile_number');
   const [activeTab, setActiveTab] = useState('overview');
   const [mobileNo, setMobileNo] = useState<string>('');
@@ -100,6 +106,17 @@ export default function BeFiSc() {
   const [olaGeoApiData, setOlaGeoApiData] = useState<OlaGeoApiType | null>(
     null,
   );
+  const [otherAddressOlaLoading, setOtherAddressOlaLoading] = useState(false);
+  const [otherAdressOlaData, setOtherAdressOlaData] = useState<
+    {
+      addressData: {
+        type: string;
+        date_of_reporting: string;
+        detailed_address: string;
+      };
+      olaData: OlaGeoApiType | null;
+    }[]
+  >([]);
 
   const setAllOnLoading = () => {
     setIsLoading(true);
@@ -113,7 +130,6 @@ export default function BeFiSc() {
     setEquifaxV3Loading(true);
     setPanAllInOneLoading(true);
     setUpiDetailsLoading(true);
-    setOlaGeoApiLoading(true);
   };
   const clearOldData = () => {
     setGhuntData(null);
@@ -246,11 +262,11 @@ export default function BeFiSc() {
           setEquifaxV3Loading(false);
           setProfileAdvanceLoading(false);
         }
+        toast.success(`${apiMessage.current!}`, { id: toastRef.current! });
         setIsLoading(false);
 
         // epicsInfo
         const EsicsArray = mobile360Data.result?.key_highlights?.esic_number;
-        console.log('Esics', EsicsArray);
 
         if (EsicsArray?.length > 0) {
           try {
@@ -417,12 +433,6 @@ export default function BeFiSc() {
           id: toastId,
         });
         try {
-          // const { data: Mobile360Data } = await axios.post(
-          //   `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/mobile/getMobile360Dtls`,
-          //   { mobile_number: query, realtimeData: isRealtime },
-          // );
-
-          // const data = await post(`/api/mobile/getMobile360Dtls`, {mobile_number: query, realtimeData: isRealtime});
           const Mobile360Data = await post('/api/mobile/getMobile360Dtls', {
             mobile_number: query,
             realtimeData: isRealtime,
@@ -432,24 +442,12 @@ export default function BeFiSc() {
             setMobile360Data(Mobile360Data.responseData);
             mobile360R = Mobile360Data;
             mobile360ResponseMessage = Mobile360Data?.responseStatus?.message;
+            apiMessage.current = mobile360ResponseMessage;
             return true;
           }
           mobile360R = null;
           return false;
         } catch (error) {
-          if (error instanceof AxiosError) {
-            mobile360ResponseMessage =
-              error.response?.data?.responseStatus?.message;
-            if (
-              mobile360ResponseMessage ===
-              'No data found in database for this mobile number'
-            ) {
-              toast.error('Mobile number not found in the database', {
-                id: toastId,
-              });
-              return true;
-            }
-          }
           return false;
         }
       };
@@ -481,11 +479,10 @@ export default function BeFiSc() {
       await retryUntilSuccess();
 
       if (!mobile360R) {
-        // toast.error('Server timeout. Please try again later.', { id: toastId });
         return;
       } else {
-        await new Promise((resolve) => setTimeout(resolve, 2000));
-        toast.success(`${mobile360ResponseMessage}`, { id: toastId });
+        // await new Promise((resolve) => setTimeout(resolve, 5000));
+        // toast.success(`${mobile360ResponseMessage}`, { id: toastId });
       }
     } catch (err) {
       if (err instanceof AxiosError) {
@@ -502,6 +499,7 @@ export default function BeFiSc() {
 
   const getImageUrl = (): string => {
     if (ghuntData?.profile?.profilePictureUrl) {
+      console.log('profile url', ghuntData.profile.profilePictureUrl);
       return ghuntData.profile.profilePictureUrl;
     }
     const gender = panAllInOneData?.result?.gender;
@@ -527,8 +525,12 @@ export default function BeFiSc() {
 
     const callGeoApi = async () => {
       await new Promise((resolve) => setTimeout(resolve, 500));
-      if (firstAddress || secondAddress) {
+      if (
+        (firstAddress && firstAddress?.length > 5) ||
+        secondAddress?.length > 5
+      ) {
         const clientInfo = getClientInfo();
+        setOlaGeoApiLoading(true);
         try {
           if (firstAddress && firstAddress.length > 5) {
             const imageData = await post('/api/auth/getmap', {
@@ -562,6 +564,47 @@ export default function BeFiSc() {
     };
     callGeoApi();
   }, [panAllInOneData, profileAdvanceData]);
+  useEffect(() => {
+    const callOtherAddressApis = async () => {
+      if (!profileAdvanceLoading && !EquifaxV3Loading && !gstAdvanceLoading) {
+        setOtherAddressOlaLoading(true);
+        const clientInfo = getClientInfo();
+        const otherAddressArray = getAddressesWithDifferentPincode(
+          gstAdvanceData,
+          profileAdvanceData,
+          EquifaxV3Data,
+          panAllInOneData?.result?.address?.zip ||
+            profileAdvanceData?.result?.address?.[0]?.pincode ||
+            '0',
+        );
+        if (otherAddressArray.length > 0) {
+          try {
+            const results = await Promise.all(
+              otherAddressArray.map((addressObj) =>
+                post('/api/auth/getmap', {
+                  userLng: clientInfo.longitude,
+                  userLat: clientInfo.latitude,
+                  address: addressObj.detailed_address,
+                }),
+              ),
+            );
+            const updatedData = results.map((result, index) => ({
+              olaData: result,
+              addressData: otherAddressArray[index],
+            }));
+
+            setOtherAdressOlaData(updatedData);
+            setOtherAddressOlaLoading(false);
+          } catch (error) {
+            setOtherAddressOlaLoading(false);
+            console.error('One or more API calls failed:', error);
+          }
+        }
+      }
+    };
+    callOtherAddressApis();
+  }, [profileAdvanceData, EquifaxV3Data, gstAdvanceData]);
+
   const OverviewData = [
     {
       title: 'Father Name',
@@ -587,17 +630,12 @@ export default function BeFiSc() {
       titleClassname: '',
       valueClassname: '',
     },
-
     {
       title: 'Alternate Number',
-      value:
-        profileAdvanceData?.result?.alternate_phone?.[0].value ||
-        panAllInOneData?.result?.phone_number ||
-        '----',
+      value: getOtherPhoneNumbers(profileAdvanceData, mobileNo)[0] || '----',
       titleClassname: '',
       valueClassname: '',
     },
-
     {
       title: 'Income',
       value: numberToIndianRuppe(
@@ -625,11 +663,13 @@ export default function BeFiSc() {
     {
       title: 'Email Address',
       value:
-        profileAdvanceData?.result?.email?.[0]?.value.toLowerCase() ||
-        panAllInOneData?.result?.email ||
+        profileAdvanceData?.result?.email?.[0]?.value
+          .toLowerCase()
+          .slice(0, 32) ||
+        panAllInOneData?.result?.email?.slice(0, 30) ||
         '----',
       titleClassname: '',
-      valueClassname: '',
+      valueClassname: 'max-w-28',
     },
     {
       title: 'Line1',
@@ -754,7 +794,7 @@ export default function BeFiSc() {
                   value="digitalInfo"
                   className="rounded-md data-[state=active]:bg-slate-800 data-[state=active]:text-emerald-500"
                 >
-                  Digital Info
+                  Digital Footprint
                 </TabsTrigger>
                 <TabsTrigger
                   value="breachInfo"
@@ -778,13 +818,27 @@ export default function BeFiSc() {
               >
                 <DashboardCard title="" className="col-span-full lg:col-span-2">
                   <div className="flex items-center gap-x-2">
-                    <Image
-                      src={getImageUrl()}
-                      alt="user"
-                      width={65}
-                      height={65}
-                      className="rounded-full border"
-                    />
+                    <div className="group relative h-[65px] w-[65px]">
+                      <Image
+                        src={getImageUrl()}
+                        alt="user"
+                        width={65}
+                        height={65}
+                        className="rounded-full border hover:cursor-pointer"
+                      />
+
+                      {/* enlarged image */}
+                      <div className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center bg-black/50 opacity-0 transition-opacity duration-300 ease-in-out group-hover:pointer-events-auto group-hover:opacity-100">
+                        <Image
+                          src={getImageUrl()}
+                          alt="user enlarged"
+                          width={460}
+                          height={460}
+                          className="scale-75 transform rounded-full border shadow-xl transition-transform duration-300 ease-in-out group-hover:scale-100"
+                        />
+                      </div>
+                    </div>
+
                     <p className="text-2xl font-semibold">
                       {formatSentence(panAllInOneData?.result?.full_name)}
                     </p>
@@ -869,7 +923,7 @@ export default function BeFiSc() {
                           ) : (
                             <Image
                               src={
-                                `data:${olaGeoApiData?.responseData?.content_type};base64,${olaGeoApiData?.responseData.image}` ||
+                                `data:${olaGeoApiData?.responseData?.content_type};base64,${olaGeoApiData?.responseData?.image}` ||
                                 '/null.png'
                               }
                               alt="map"
@@ -908,6 +962,88 @@ export default function BeFiSc() {
                     </div>
                   </div>
                 </DashboardCard>
+                <div>
+                  {otherAddressOlaLoading ? (
+                    <div className="mt-10 grid grid-cols-1 gap-4">
+                      <MapLoading />
+                      <MapLoading />
+                      <MapLoading />
+                    </div>
+                  ) : (
+                    <div className="mt-10 grid grid-cols-1 gap-4">
+                      {otherAdressOlaData.map((item, index) => (
+                        <div
+                          key={index}
+                          className="flex w-full justify-between border border-white/10 p-4"
+                        >
+                          <div className="grid grid-cols-1 items-center gap-y-1">
+                            <div className="grid grid-cols-2 gap-4">
+                              <div>
+                                <p className="text-sm text-slate-400">
+                                  Date of reporting
+                                </p>
+                                <p className="pt-1">
+                                  {item?.addressData?.date_of_reporting}
+                                </p>
+                              </div>
+                              <div>
+                                <p className="text-sm text-slate-400">
+                                  Address Type
+                                </p>
+
+                                <CustomBadge
+                                  variantToUse={'default'}
+                                  value={item?.addressData?.type}
+                                />
+                              </div>
+                              <div>
+                                <p className="text-sm text-slate-400">
+                                  Total Duration
+                                </p>
+                                <p className="pt-1 text-emerald-500">
+                                  {
+                                    item?.olaData?.responseData?.duration
+                                      ?.readable_duration
+                                  }
+                                </p>
+                              </div>
+                              <div>
+                                <p className="text-sm text-slate-400">
+                                  Distance Kilometers
+                                </p>
+                                <p className="pt-1 text-yellow-500">
+                                  {
+                                    item?.olaData?.responseData?.distance
+                                      ?.distance_kilometers
+                                  }
+                                </p>
+                              </div>
+                            </div>
+                            <div>
+                              <p className="text-lg text-slate-400">Address</p>
+                              <p className="min-w-[430px] max-w-[430px] opacity-75">
+                                {formatSentence(
+                                  item?.addressData.detailed_address,
+                                )}
+                              </p>
+                            </div>
+                          </div>
+                          <Image
+                            src={
+                              `data:${item?.olaData?.responseData?.content_type};base64,${item?.olaData?.responseData?.image}` ||
+                              '/null.png'
+                            }
+                            alt="map"
+                            width={500}
+                            height={500}
+                            className="h-[300px] min-w-[400px] rounded-xl"
+                            unoptimized={true}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </TabsContent>
               <TabsContent value="personal" className="mt-6 space-y-4">
                 <BefiScPersonal
@@ -938,7 +1074,20 @@ export default function BeFiSc() {
                   <NotFound value="No business found" />
                 )}
               </TabsContent>
-              <TabsContent value="digitalInfo" className="mt-6"></TabsContent>
+              <TabsContent value="digitalInfo" className="mt-6">
+                <BeFiScDigitalFootprint
+                  email={
+                    profileAdvanceData?.result?.email?.[0]?.value.toLowerCase() ||
+                    panAllInOneData?.result?.email ||
+                    ''
+                  }
+                  EquifaxData={EquifaxV3Data}
+                  PanAllInOneData={panAllInOneData}
+                  GstAdvanceData={gstAdvanceData}
+                  ProfileAdvanceData={profileAdvanceData}
+                  mobileNumber={mobileNo}
+                />
+              </TabsContent>
               <TabsContent value="breachInfo" className="mt-6"></TabsContent>
               <TabsContent value="googleProfile" className="mt-6">
                 {ghuntLoading ? (

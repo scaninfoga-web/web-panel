@@ -27,6 +27,7 @@ const upiIcons = new Map<string, string>([
   ['PayZapp', '/upi/PayZap.png'],
   ['Zomato', '/upi/zomato.png'],
   ['Jupiter', '/upi/jupiter.svg'],
+  ['Bank of Baroda', '/upi/BankofBaroda.png'],
 ]);
 
 export default function UpiDetails({ UpiData }: { UpiData: UPIType | null }) {

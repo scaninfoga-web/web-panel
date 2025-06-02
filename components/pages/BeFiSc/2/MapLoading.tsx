@@ -14,10 +14,10 @@ export default function MapLoading() {
         </div>
         <div>
           <p className="text-lg text-slate-400">Address</p>
-          <p className="h-20 min-w-[550px] animate-pulse rounded-xl bg-slate-900 opacity-50"></p>
+          <p className="h-20 min-w-[480px] animate-pulse rounded-xl bg-slate-900 opacity-50"></p>
         </div>
       </div>
-      <div className="h-[340px] w-[450px] animate-pulse rounded-xl bg-slate-900"></div>
+      <div className="h-[330px] w-[600px] animate-pulse rounded-xl bg-slate-900"></div>
     </div>
   );
 }
