@@ -605,14 +605,7 @@ export default function BeFiSc() {
       }
     };
     callOtherAddressApis();
-  }, [
-    profileAdvanceData,
-    EquifaxV3Data,
-    gstAdvanceData,
-    gstAdvanceLoading,
-    EquifaxV3Loading,
-    profileAdvanceLoading,
-  ]);
+  }, [gstAdvanceLoading, EquifaxV3Loading, profileAdvanceLoading]);
 
   const OverviewData = [
     {
