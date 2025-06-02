@@ -7,6 +7,8 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { DashboardCard } from '../dashboard/components/DashboardCard';
+import { getValue } from './CustomBeFiScCard';
+import { formatSentence } from './APIUtils';
 
 type LPGInfo = {
   code: 'SUC';
@@ -34,9 +36,6 @@ type LPGInfoTableProps = {
 };
 
 export function LPGInfoTable({ lpgInfo }: LPGInfoTableProps) {
-  const getValue = (value: string | undefined | null) =>
-    value && value.trim().length > 0 ? value : 'No Data';
-
   const length = lpgInfo?.data?.length || 0;
   if (!lpgInfo || length === 0) {
     return <></>;
@@ -73,7 +72,7 @@ export function LPGInfoTable({ lpgInfo }: LPGInfoTableProps) {
             {lpgInfo.data.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={11} className="text-center">
-                  No data found
+                  ----
                 </TableCell>
               </TableRow>
             ) : (
@@ -83,10 +82,10 @@ export function LPGInfoTable({ lpgInfo }: LPGInfoTableProps) {
                     {getValue(item?.gas_provider)}
                   </TableCell>
                   <TableCell className="whitespace-nowrap">
-                    {getValue(item?.name)}
+                    {formatSentence(item?.name)}
                   </TableCell>
                   <TableCell className="whitespace-nowrap">
-                    {getValue(item?.consumer_details.consumer_mobile)}
+                    {item?.consumer_details.consumer_mobile}
                   </TableCell>
                   <TableCell className="whitespace-nowrap">
                     {getValue(item?.consumer_details.consumer_id)}
@@ -98,13 +97,13 @@ export function LPGInfoTable({ lpgInfo }: LPGInfoTableProps) {
                     {getValue(item?.consumer_details.consumer_type)}
                   </TableCell>
                   <TableCell className="whitespace-nowrap">
-                    {getValue(item?.address)}
+                    {formatSentence(item?.address.slice(0, 50))}
                   </TableCell>
                   <TableCell className="whitespace-nowrap">
                     {getValue(item?.distributor_details.distributor_code)}
                   </TableCell>
                   <TableCell className="whitespace-nowrap">
-                    {getValue(item?.distributor_details.distributor_name)}
+                    {formatSentence(item?.distributor_details.distributor_name)}
                   </TableCell>
                   <TableCell className="whitespace-nowrap">
                     {getValue(item?.distributor_details.distributor_address)}

@@ -7,7 +7,7 @@ const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
 // Create axios instance with default config
 const axiosInstance = axios.create({
   baseURL: BASE_URL,
-  timeout: 10000,
+  timeout: 100000,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -19,7 +19,7 @@ const getAuthToken = () => {
 };
 
 // Function to get client info from Redux store
-const getClientInfo = () => {
+export const getClientInfo = () => {
   const state = store.getState();
   const info = state.info || {};
 

@@ -2,12 +2,6 @@
 import CustomCheckBox from '@/components/checkbox';
 import DashboardTitle from '@/components/common/DashboardTitle';
 import { SearchBar2 } from '@/components/search/SearchBar2';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-} from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
@@ -22,16 +16,21 @@ import {
   UPIType,
   VerifyUdyamType,
 } from '@/types/BeFiSc';
-import axios, { AxiosError } from 'axios';
+import { AxiosError } from 'axios';
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
-
-import { useSearchParams } from 'next/navigation';
-
+import { useRouter, useSearchParams } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 // @ts-ignore
+import NotFound from '@/components/NotFound';
+import { getClientInfo, post } from '@/lib/api';
+import { GhuntData } from '@/types/ghunt';
+import Ghunt from '../ghunt/Ghunt';
+import BeFiScBusiness from './2/BeFiScBusiness';
+import BeFiScFinancial from './2/BeFiScFinancial';
+import BefiScPersonal from './2/BefiScPersonal';
 import {
   cleanAndCapitalize,
   formatSentence,
@@ -39,32 +38,25 @@ import {
 } from './APIUtils';
 import BeFiScLoadingSkeleton from './BeFiScLoadingSkeleton';
 import CustomBadge from './CustomBadge';
-import EquifaxV3 from './EquiFaxV3';
-import Esics from './Esics';
-import GSTAdvance from './GSTAdvance';
-import GstTurnover from './GstTurnover';
-import MobileToAccountNumber from './MobileToAccount';
-import PanAllInOne from './PanAllInOne';
-import ProfileAdvance from './ProfileAdvance';
-import UpiDetails from './UpiDetails';
-import { GhuntData } from '@/types/ghunt';
-import GhuntComponent from './Ghunt';
-import Mobile360 from './Mobile360';
-import { get, post } from '@/lib/api';
-import Ghunt from '../ghunt/Ghunt';
+import { DashboardCard } from '../dashboard/components/DashboardCard';
+import { OlaGeoApiType } from '@/types/ola-geo-api';
+import SentenceLoader from './2/SentenceLoader';
+import BeFiScDigitalFootprint, {
+  getAddressesWithDifferentPincode,
+  getOtherPhoneNumbers,
+} from './2/BeFiScDigitalFootprint';
+import MapLoading from './2/MapLoading';
 
-function isValidIndianMobileNumber(input: string): boolean {
+export function isValidIndianMobileNumber(input: string): boolean {
   const mobileRegex = /^(?:\+91[\-\s]?)?[5-9]\d{9}$/;
   return mobileRegex.test(input.trim());
 }
 
 export default function BeFiSc() {
   const searchParams = useSearchParams();
+  const apiMessage = useRef<string | null>(null);
   const mobileNumber = searchParams.get('mobile_number');
-
-  const [searchType, setSearchType] = useState<string>('');
   const [activeTab, setActiveTab] = useState('overview');
-
   const [mobileNo, setMobileNo] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
   const toastRef = useRef<string | null | number>(null);
@@ -74,6 +66,7 @@ export default function BeFiSc() {
   );
   const [ghuntData, setGhuntData] = useState<GhuntData | null>(null);
   const [ghuntLoading, setGhuntLoading] = useState(false);
+
   const [verifyUdyamLoading, setVerifyUdyamLoading] = useState(false);
   const [verfiyUdyamData, setVerfiyUdyamData] =
     useState<VerifyUdyamType | null>(null);
@@ -109,6 +102,22 @@ export default function BeFiSc() {
   const [upiDetailsLoading, setUpiDetailsLoading] = useState(false);
   const [upiDetailsData, setUpiDetailsData] = useState<UPIType | null>(null);
 
+  const [olaGeoApiLoading, setOlaGeoApiLoading] = useState(false);
+  const [olaGeoApiData, setOlaGeoApiData] = useState<OlaGeoApiType | null>(
+    null,
+  );
+  const [otherAddressOlaLoading, setOtherAddressOlaLoading] = useState(false);
+  const [otherAdressOlaData, setOtherAdressOlaData] = useState<
+    {
+      addressData: {
+        type: string;
+        date_of_reporting: string;
+        detailed_address: string;
+      };
+      olaData: OlaGeoApiType | null;
+    }[]
+  >([]);
+
   const setAllOnLoading = () => {
     setIsLoading(true);
     setGhuntLoading(true);
@@ -134,6 +143,8 @@ export default function BeFiSc() {
     setEquifaxV3Data(null);
     setPanAllInOneData(null);
     setUpiDetailsData(null);
+    setOlaGeoApiData(null);
+    setOtherAdressOlaData([]);
   };
 
   const setAllOffLoading = () => {
@@ -155,9 +166,12 @@ export default function BeFiSc() {
       const callOtherAPIs = async () => {
         // profile advance
         try {
-          const { data: ProfileAdvanceResponse } = await axios.post(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/mobile/profileadvance`,
-            { mobile_number: mobileNo, realtimeData: isRealtime },
+          const ProfileAdvanceResponse = await post(
+            '/api/mobile/profileadvance',
+            {
+              mobile_number: mobileNo,
+              realtimeData: isRealtime,
+            },
           );
           if (
             Number(ProfileAdvanceResponse.responseData?.status) === 1 ||
@@ -165,15 +179,20 @@ export default function BeFiSc() {
           ) {
             setProfileAdvanceData(ProfileAdvanceResponse.responseData);
             const emailAddress =
-              ProfileAdvanceResponse.responseData?.result?.email?.[0]?.value;
+              ProfileAdvanceResponse.responseData?.result?.email?.[0]?.value
+                .trim()
+                .toLowerCase();
             // calling ghunt api with emailaddess
             try {
-              const { data } = await axios.post(
-                `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/ghunt/getEmailDetails`,
-                { email: emailAddress },
-              );
-              setGhuntData(data.responseData);
-              setGhuntLoading(false);
+              if (emailAddress) {
+                const data = await post('/api/ghunt/getEmailDetails', {
+                  email: emailAddress,
+                });
+                setGhuntData(data.responseData);
+                setGhuntLoading(false);
+              } else {
+                toast.error('Ghunt Data Not Found', { id: toastRef.current! });
+              }
             } catch (error) {
               toast.error('Ghunt Data Not Found', { id: toastRef.current! });
             }
@@ -181,21 +200,19 @@ export default function BeFiSc() {
           setProfileAdvanceLoading(false);
           const panNumber =
             ProfileAdvanceResponse.responseData.result?.document_data?.pan[0]
-              .value;
+              .value || mobile360Data?.result?.din_info?.data[0]?.pan;
           const bankName =
-            mobile360Data?.result?.digital_payment_id_info?.data?.name;
+            mobile360Data?.result?.digital_payment_id_info?.data?.name ||
+            'Bank';
           if (panNumber && bankName) {
             try {
-              const { data: EquifaxData } = await axios.post(
-                `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/mobile/equifaxv3`,
-                {
-                  mobile: mobileNo,
-                  name: bankName,
-                  id_type: 'pan',
-                  id_number: panNumber,
-                  realtimeData: isRealtime,
-                },
-              );
+              const EquifaxData = await post('/api/mobile/equifaxv3', {
+                mobile: mobileNo,
+                name: bankName,
+                id_type: 'pan',
+                id_number: panNumber,
+                realtimeData: isRealtime,
+              });
               if (
                 EquifaxData.responseData?.status === 1 ||
                 EquifaxData.responseData?.status === 2
@@ -205,7 +222,7 @@ export default function BeFiSc() {
             } catch (error) {
               if (error instanceof AxiosError) {
                 toast.error(
-                  'Equifax Data Not Found' +
+                  'Equifax Data ' +
                     error.response?.data?.responseStatus?.message,
                   { id: toastRef.current! },
                 );
@@ -214,13 +231,10 @@ export default function BeFiSc() {
 
             // calling panAllInone
             try {
-              const { data: panAllInOne } = await axios.post(
-                `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/mobile/panallinone`,
-                {
-                  pan_number: panNumber,
-                  realtimeData: isRealtime,
-                },
-              );
+              const panAllInOne = await post('/api/mobile/panallinone', {
+                pan_number: panNumber,
+                realtimeData: isRealtime,
+              });
               if (
                 panAllInOne.responseData?.status === 1 ||
                 panAllInOne.responseData?.status === 2
@@ -230,8 +244,7 @@ export default function BeFiSc() {
             } catch (error) {
               if (error instanceof AxiosError) {
                 toast.error(
-                  'Pan All In One Data Not Found' +
-                    error.response?.data?.responseStatus?.message,
+                  'PanData' + error.response?.data?.responseStatus?.message,
                   { id: toastRef.current! },
                 );
               }
@@ -242,7 +255,7 @@ export default function BeFiSc() {
         } catch (error) {
           if (error instanceof AxiosError) {
             toast.error(
-              'Profile advance Data Not Found ' +
+              'Profile Advance ' +
                 error.response?.data?.responseStatus?.message,
               { id: toastRef.current! },
             );
@@ -250,6 +263,7 @@ export default function BeFiSc() {
           setEquifaxV3Loading(false);
           setProfileAdvanceLoading(false);
         }
+        toast.success(`${apiMessage.current!}`, { id: toastRef.current! });
         setIsLoading(false);
 
         // epicsInfo
@@ -257,10 +271,10 @@ export default function BeFiSc() {
 
         if (EsicsArray?.length > 0) {
           try {
-            const { data: EsicsInfo } = await axios.post(
-              `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/mobile/esicsearch`,
-              { esic_number: EsicsArray[0], realtimeData: isRealtime },
-            );
+            const EsicsInfo = await post('/api/mobile/esicsearch', {
+              esic_number: EsicsArray[0],
+              realtimeData: isRealtime,
+            });
             if (
               Number(EsicsInfo.responseData?.status) === 1 ||
               Number(EsicsInfo.responseData?.status) === 2
@@ -271,8 +285,7 @@ export default function BeFiSc() {
           } catch (error) {
             if (error instanceof AxiosError) {
               toast.error(
-                'Esics Data Not Found ' +
-                  error.response?.data?.responseStatus?.message,
+                'ESICS ' + error.response?.data?.responseStatus?.message,
                 { id: toastRef.current! },
               );
             }
@@ -286,13 +299,10 @@ export default function BeFiSc() {
             mobile360Data.result.key_highlights?.udyam_numbers;
 
           if (udyamNumberArray?.length > 0) {
-            const { data: UdyamData } = await axios.post(
-              `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/mobile/verifyudyam`,
-              {
-                registration_no: udyamNumberArray[0],
-                realtimeData: isRealtime,
-              },
-            );
+            const UdyamData = await post('/api/mobile/verifyudyam', {
+              registration_no: udyamNumberArray[0],
+              realtimeData: isRealtime,
+            });
             if (Number(UdyamData.responseData?.status) === 1) {
               setVerfiyUdyamData(UdyamData.responseData);
             }
@@ -300,11 +310,9 @@ export default function BeFiSc() {
           }
         } catch (error) {
           if (error instanceof AxiosError) {
-            toast.error(
-              'Udyam Number Not Found ' +
-                error.response?.data?.responseStatus?.message,
-              { id: toastRef.current! },
-            );
+            toast.error('' + error.response?.data?.responseStatus?.message, {
+              id: toastRef.current!,
+            });
           }
           setVerifyUdyamLoading(false);
         }
@@ -315,24 +323,20 @@ export default function BeFiSc() {
             mobile360Data.result?.key_highlights?.gst_numbers;
 
           if (gstAdvanceNumberArray?.length > 0) {
-            const { data: GSTDATA } = await axios.post(
-              `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/mobile/gstadvance`,
-              { gst_no: gstAdvanceNumberArray[0], realtimeData: isRealtime },
-            );
+            const GSTDATA = await post('/api/mobile/gstadvance', {
+              gst_no: gstAdvanceNumberArray[0],
+              realtimeData: isRealtime,
+            });
             if (Number(GSTDATA.responseData?.status) === 1) {
               setGstAdvanceData(GSTDATA.responseData);
             }
             setGstAdvanceLoading(false);
 
-            // calling gst turnover api
-            const { data: GstTurnover } = await axios.post(
-              `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/mobile/gstturnover`,
-              {
-                gst_no: gstAdvanceNumberArray[0],
-                realtimeData: isRealtime,
-                year: '2024-25',
-              },
-            );
+            const GstTurnover = await post('/api/mobile/gstturnover', {
+              gst_no: gstAdvanceNumberArray[0],
+              realtimeData: isRealtime,
+              year: '2024-25',
+            });
 
             if (
               Number(GstTurnover.responseData?.status) === 1 ||
@@ -344,11 +348,9 @@ export default function BeFiSc() {
           }
         } catch (error) {
           if (error instanceof AxiosError) {
-            toast.error(
-              'GST Turnover Not Found' +
-                error.response?.data?.responseStatus?.message,
-              { id: toastRef.current! },
-            );
+            toast.error('' + error.response?.data?.responseStatus?.message, {
+              id: toastRef.current!,
+            });
           }
           setGstAdvanceLoading(false);
           setGstTurnoverLoading(false);
@@ -356,21 +358,17 @@ export default function BeFiSc() {
 
         // calling upi details
         try {
-          const { data: UpiDetails } = await axios.post(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/mobile/digitalpayment`,
-            {
-              mobile_number: mobileNo,
-              realtimeData: isRealtime,
-            },
-          );
+          const UpiDetails = await post('/api/mobile/digitalpayment', {
+            mobile_number: mobileNo,
+            realtimeData: isRealtime,
+          });
           if (UpiDetails.responseStatus?.status === true) {
             setUpiDetailsData(UpiDetails);
           }
         } catch (error) {
           if (error instanceof AxiosError) {
             toast.error(
-              'Mobile To Account ' +
-                error.response?.data?.responseStatus?.message,
+              'M2A ' + error.response?.data?.responseStatus?.message,
               { id: toastRef.current! },
             );
           }
@@ -378,13 +376,10 @@ export default function BeFiSc() {
         setUpiDetailsLoading(false);
 
         try {
-          const { data: ActDetails } = await axios.post(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/mobile/getAcDtlsFromMobNo`,
-            {
-              mobile_number: mobileNo,
-              realtimeData: isRealtime,
-            },
-          );
+          const ActDetails = await post('/api/mobile/getAcDtlsFromMobNo', {
+            mobile_number: mobileNo,
+            realtimeData: isRealtime,
+          });
           if (ActDetails.responseData?.status === 1) {
             setMobileToAccountData(ActDetails.responseData);
           }
@@ -404,7 +399,7 @@ export default function BeFiSc() {
       };
       callOtherAPIs();
     }
-  }, [mobile360Data, mobileNo, isRealtime]);
+  }, [mobile360Data]);
 
   const handleSearch = async (query: string, searchFilter: string) => {
     clearOldData();
@@ -420,6 +415,7 @@ export default function BeFiSc() {
       toast.error(`Invalid mobile ${query}`, { duration: 800 });
       return;
     }
+    query = query.replace(/^(\+91)/, '');
     setMobileNo(query);
     setAllOnLoading();
     let mobile360R: null | {
@@ -438,13 +434,6 @@ export default function BeFiSc() {
           id: toastId,
         });
         try {
-          // const { data: Mobile360Data } = await axios.post(
-          //   `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/mobile/getMobile360Dtls`,
-          //   { mobile_number: query, realtimeData: isRealtime },
-          // );
-
-          // const data = await post(`/api/mobile/getMobile360Dtls`, {mobile_number: query, realtimeData: isRealtime});
-
           const Mobile360Data = await post('/api/mobile/getMobile360Dtls', {
             mobile_number: query,
             realtimeData: isRealtime,
@@ -454,36 +443,20 @@ export default function BeFiSc() {
             setMobile360Data(Mobile360Data.responseData);
             mobile360R = Mobile360Data;
             mobile360ResponseMessage = Mobile360Data?.responseStatus?.message;
+            apiMessage.current = mobile360ResponseMessage;
             return true;
           }
           mobile360R = null;
           return false;
         } catch (error) {
-          if (error instanceof AxiosError) {
-            mobile360ResponseMessage =
-              error.response?.data?.responseStatus?.message;
-            if (
-              mobile360ResponseMessage ===
-              'No data found in database for this mobile number'
-            ) {
-              toast.error('Mobile number not found in the database', {
-                id: toastId,
-              });
-              return true;
-            }
-          }
           return false;
         }
       };
 
       const retryUntilSuccess = async () => {
-        console.log('INSIDE RETRY UNTIL SYCCESS');
         return new Promise<void>((resolve) => {
           const attempt = async () => {
             const success = await tryFetch();
-
-            console.log('SUCCESS: ', success);
-
             if (success || Date.now() - startTime >= MAXDURATION) {
               if (!success) {
                 toast.error('Server Timeout. Try again after some time', {
@@ -507,11 +480,10 @@ export default function BeFiSc() {
       await retryUntilSuccess();
 
       if (!mobile360R) {
-        // toast.error('Server timeout. Please try again later.', { id: toastId });
         return;
       } else {
-        await new Promise((resolve) => setTimeout(resolve, 2000));
-        toast.success(`${mobile360ResponseMessage}`, { id: toastId });
+        // await new Promise((resolve) => setTimeout(resolve, 5000));
+        // toast.success(`${mobile360ResponseMessage}`, { id: toastId });
       }
     } catch (err) {
       if (err instanceof AxiosError) {
@@ -526,153 +498,115 @@ export default function BeFiSc() {
     }
   };
 
-  //   const MAX_DURATION = 2 * 60 * 1000;
-  // const RETRY_INTERVAL = 5000;
-
-  // const normalizeQuery = (query: string) =>
-  //   query
-  //     .normalize('NFKD')
-  //     .replace(/[\u200B-\u200D\uFEFF\u202C\u202D\u202E]/g, '')
-  //     .trim();
-
-  // const handleSearch = async (query: string, searchFilter: string) => {
-  //   clearOldData();
-
-  //   if (query.length < 1) return;
-
-  //   const normalizedQuery = normalizeQuery(query);
-  //   if (!isValidIndianMobileNumber(normalizedQuery)) {
-  //     toast.error(`Invalid mobile ${normalizedQuery}`, { duration: 800 });
-  //     return;
-  //   }
-
-  //   setMobileNo(normalizedQuery);
-  //   setAllOnLoading();
-
-  //   let mobile360R: null | { responseData: Mobile360Type } = null;
-  //   let toastId: string | undefined;
-  //   const startTime = Date.now();
-
-  //   const fetchData = async () => {
-  //     const loadingToast = toast.loading('fetching data...');
-  //     try {
-
-  //       const data = await post('/api/mobile/getMobile360Dtls', {
-  //         mobile_number: normalizedQuery,
-  //         realtimeData: isRealtime,
-  //       });
-
-  //       if (Number(data.responseData?.status) === 1) {
-  //         setMobile360Data(data.responseData);
-  //         mobile360R = data;
-  //         return { success: true, message: data?.responseStatus?.message };
-  //       }
-
-  //       mobile360R = null;
-  //       return { success: false };
-  //     } catch (error) {
-  //       if (
-  //         error instanceof AxiosError &&
-  //         error.response?.data?.responseStatus?.message ===
-  //           'No data found in database for this mobile number'
-  //       ) {
-  //         toast.error('Mobile number not found in the database', { id: toastId });
-  //         return { success: true };
-  //       }
-  //       return { success: false };
-  //     }
-  //     finally{
-  //       toast.dismiss(loadingToast);
-  //     }
-  //   };
-
-  //   const retryUntilSuccess = async () => {
-  //     return new Promise<void>((resolve) => {
-  //       const attempt = async () => {
-  //         const result = await fetchData();
-
-  //         if (result.success || Date.now() - startTime >= MAX_DURATION) {
-  //           if (!result.success) {
-  //             toast.error('Server Timeout. Try again after some time', {
-  //               id: toastId,
-  //             });
-  //             setIsLoading(false);
-  //             setAllOffLoading();
-  //           } else if (result.message) {
-  //             await new Promise((res) => setTimeout(res, 2000));
-  //             toast.success(result.message, { id: toastId });
-  //           }
-  //           resolve();
-  //         } else {
-  //           toast.loading('API server is not responding', { id: toastId });
-  //           setTimeout(attempt, RETRY_INTERVAL);
-  //         }
-  //       };
-  //       attempt();
-  //     });
-  //   };
-
-  //   const loadingToast = toast.loading('fetching data...');
-  //   try {
-  //     // toastRef.current = toastId;
-
-  //     await retryUntilSuccess();
-  //   } catch (err) {
-  //     if (err instanceof AxiosError) {
-  //       toast.error(err.response?.data?.responseStatus?.message);
-  //     } else {
-  //       toast.error('Something went wrong');
-  //     }
-  //     setIsLoading(false);
-  //     setAllOffLoading();
-  //   }
-  //   finally {
-  //     setIsLoading(false);
-  //     setAllOffLoading();
-  //     toast.dismiss(loadingToast);
-  //   }
-  // };
-
-  const isAdult = () => {
-    const currentYear = new Date().getFullYear();
-    const age = Number(panAllInOneData?.result?.dob.split('-')[0]);
-    if (!age) {
-      return false;
-    }
-    const isAdult = currentYear - age >= 18;
-    return isAdult;
-  };
-
   const getImageUrl = (): string => {
+    if (ghuntData?.profile?.profilePictureUrl) {
+      console.log('profile url', ghuntData.profile.profilePictureUrl);
+      return ghuntData.profile.profilePictureUrl;
+    }
     const gender = panAllInOneData?.result?.gender;
 
-    if (isAdult()) {
-      if (gender === 'M') {
-        return '/male.jpg';
-      }
+    if (gender === 'M') {
+      return '/male.jpg';
+    }
+    if (gender === 'F') {
       return '/female.jpg';
     }
-    if (gender === 'M') {
-      return '/boy.avif';
-    }
-    return 'female.jpg';
+    return '/null.png';
   };
 
-  const firstAddress =
-    panAllInOneData?.result?.address.line_1 +
-    ' ' +
-    panAllInOneData?.result?.address.line_2 +
-    ' ' +
-    panAllInOneData?.result?.address.city +
-    ' ' +
-    panAllInOneData?.result?.address.state +
-    ' ' +
-    panAllInOneData?.result?.address.zip +
-    ' ' +
-    panAllInOneData?.result?.address.country;
+  const firstAddress = panAllInOneData?.result?.address?.full;
 
-  const secondAddesss =
-    profileAdvanceData?.result?.address?.[0]?.detailed_address;
+  const secondAddress =
+    profileAdvanceData?.result?.address?.[0]?.detailed_address || '';
+
+  // location api
+
+  useEffect(() => {
+    setOlaGeoApiLoading(true);
+
+    const callGeoApi = async () => {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      if (
+        (firstAddress && firstAddress?.length > 5) ||
+        secondAddress?.length > 5
+      ) {
+        const clientInfo = getClientInfo();
+        setOlaGeoApiLoading(true);
+        try {
+          if (firstAddress && firstAddress.length > 5) {
+            const imageData = await post('/api/auth/getmap', {
+              userLng: clientInfo?.longitude,
+              userLat: clientInfo?.latitude,
+              address: firstAddress,
+            });
+            setOlaGeoApiData(imageData);
+          }
+          if (secondAddress.length > 5) {
+            const imageData = await post('/api/auth/getmap', {
+              userLng: clientInfo?.longitude,
+              userLat: clientInfo?.latitude,
+              address: secondAddress,
+            });
+            setOlaGeoApiData(imageData);
+          }
+        } catch (error) {
+          if (error instanceof AxiosError) {
+            toast.error(
+              'Map!! ' + error.response?.data?.responseStatus?.message,
+              { id: toastRef.current! },
+            );
+          }
+        } finally {
+          setOlaGeoApiLoading(false);
+        }
+      } else {
+        setOlaGeoApiLoading(false);
+      }
+    };
+    callGeoApi();
+  }, [panAllInOneData, profileAdvanceData]);
+  useEffect(() => {
+    const callOtherAddressApis = async () => {
+      if (!profileAdvanceLoading && !EquifaxV3Loading && !gstAdvanceLoading) {
+        setOtherAddressOlaLoading(true);
+        const clientInfo = getClientInfo();
+        const otherAddressArray = getAddressesWithDifferentPincode(
+          gstAdvanceData,
+          profileAdvanceData,
+          EquifaxV3Data,
+          panAllInOneData?.result?.address?.zip ||
+            profileAdvanceData?.result?.address?.[0]?.pincode ||
+            '0',
+        );
+        if (otherAddressArray.length > 0) {
+          try {
+            const results = await Promise.all(
+              otherAddressArray.map((addressObj) =>
+                post('/api/auth/getmap', {
+                  userLng: clientInfo.longitude,
+                  userLat: clientInfo.latitude,
+                  address: addressObj.detailed_address,
+                }),
+              ),
+            );
+            const updatedData = results.map((result, index) => ({
+              olaData: result,
+              addressData: otherAddressArray[index],
+            }));
+
+            setOtherAdressOlaData(updatedData);
+            setOtherAddressOlaLoading(false);
+          } catch (error) {
+            setOtherAddressOlaLoading(false);
+          }
+        } else {
+          setOtherAddressOlaLoading(false);
+        }
+      }
+    };
+    callOtherAddressApis();
+  }, [gstAdvanceLoading, EquifaxV3Loading, profileAdvanceLoading]);
+
   const OverviewData = [
     {
       title: 'Father Name',
@@ -682,55 +616,113 @@ export default function BeFiSc() {
     },
     {
       title: 'Gender',
-      value: panAllInOneData?.result?.gender === 'M' ? 'Male' : 'Female',
+      value: panAllInOneData?.result?.gender || '----',
       titleClassname: '',
       valueClassname: '',
     },
     {
       title: 'Date of Birth',
-      value: panAllInOneData?.result?.dob,
+      value: panAllInOneData?.result?.dob || '----',
       titleClassname: '',
       valueClassname: '',
     },
     {
       title: 'Age',
-      value: profileAdvanceData?.result?.personal_information?.age,
+      value: profileAdvanceData?.result?.personal_information?.age || '----',
       titleClassname: '',
       valueClassname: '',
     },
-
     {
       title: 'Alternate Number',
-      value:
-        profileAdvanceData?.result?.alternate_phone?.[0].value ||
-        panAllInOneData?.result?.phone_number,
+      value: getOtherPhoneNumbers(profileAdvanceData, mobileNo)[0] || '----',
       titleClassname: '',
       valueClassname: '',
     },
-
     {
       title: 'Income',
       value: numberToIndianRuppe(
-        Number(profileAdvanceData?.result?.personal_information?.income),
+        Number(profileAdvanceData?.result?.personal_information?.income || '0'),
       ),
       titleClassname: '',
-      valueClassname: '',
+      valueClassname: 'text-yellow-500',
     },
     {
       title: 'PAN Number',
-      value: panAllInOneData?.result?.pan_number,
+      value:
+        panAllInOneData?.result?.pan_number ||
+        profileAdvanceData?.result?.document_data?.pan?.[0]?.value ||
+        mobile360Data?.result?.din_info?.data[0]?.pan ||
+        '----',
       titleClassname: '',
       valueClassname: 'text-blue-400',
     },
     {
       title: 'Aadhaar Number',
-      value: panAllInOneData?.result?.masked_aadhaar,
+      value: panAllInOneData?.result?.masked_aadhaar || '----',
       titleClassname: '',
       valueClassname: 'text-yellow-500',
     },
     {
       title: 'Email Address',
-      value: profileAdvanceData?.result?.email?.[0]?.value.toLowerCase(),
+      value:
+        profileAdvanceData?.result?.email?.[0]?.value
+          .toLowerCase()
+          .slice(0, 32) ||
+        panAllInOneData?.result?.email?.slice(0, 30) ||
+        '----',
+      titleClassname: '',
+      valueClassname: 'max-w-28',
+    },
+    {
+      title: 'isSole Proprietor',
+      value: panAllInOneData?.result?.is_sole_proprietor?.found || '----',
+      titleClassname: '',
+      valueClassname: 'max-w-28 text-yellow-500',
+    },
+    {
+      title: 'isDirector',
+      value: panAllInOneData?.result?.is_director?.found || '----',
+      titleClassname: '',
+      valueClassname: 'max-w-28 text-yellow-500',
+    },
+
+    {
+      title: 'Line1',
+      value:
+        panAllInOneData?.result?.address?.line_1?.toLowerCase() ||
+        panAllInOneData?.result?.address?.line_2?.toLowerCase() ||
+        '----',
+      titleClassname: '',
+      valueClassname: '',
+    },
+    {
+      title: 'City',
+      value: formatSentence(panAllInOneData?.result?.address?.city) || '----',
+      titleClassname: '',
+      valueClassname: '',
+    },
+    {
+      title: 'Zip Code',
+      value:
+        panAllInOneData?.result?.address?.zip ||
+        profileAdvanceData?.result?.address?.[0]?.pincode ||
+        '----',
+      titleClassname: '',
+      valueClassname: '',
+    },
+    {
+      title: 'State',
+      value:
+        panAllInOneData?.result?.address?.state ||
+        profileAdvanceData?.result?.address?.[0]?.state ||
+        '----',
+      titleClassname: '',
+      valueClassname: '',
+    },
+    {
+      title: 'Country',
+      value:
+        formatSentence(panAllInOneData?.result?.address?.country) || '----',
       titleClassname: '',
       valueClassname: '',
     },
@@ -817,7 +809,7 @@ export default function BeFiSc() {
                   value="digitalInfo"
                   className="rounded-md data-[state=active]:bg-slate-800 data-[state=active]:text-emerald-500"
                 >
-                  Digital Info
+                  Digital Footprint
                 </TabsTrigger>
                 <TabsTrigger
                   value="breachInfo"
@@ -833,60 +825,144 @@ export default function BeFiSc() {
                 </TabsTrigger>
               </TabsList>
 
-              <TabsContent value="overview" className="mt-6">
-                <div className="grid min-h-[450px] grid-cols-1 gap-6">
-                  <Card className="col-span-full border-slate-800 bg-slate-900 text-white lg:col-span-2">
-                    <CardHeader>
-                      <CardDescription>
-                        <div className="flex items-center gap-x-2">
-                          <Image
-                            src={getImageUrl()}
-                            alt="user"
-                            width={35}
-                            height={35}
-                            className="rounded-full border"
-                          />
-                          <p className="text-2xl font-semibold">
-                            {formatSentence(panAllInOneData?.result?.full_name)}
-                          </p>
-                        </div>
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="grid grid-cols-1">
-                      <div className="w-full space-y-4">
-                        <div className="grid w-full grid-cols-4 gap-4">
-                          {OverviewData.map((item, index) => {
-                            return (
-                              <div key={index} className="flex flex-col gap-2">
-                                <p
-                                  className={cn(
-                                    'text-xs text-slate-400',
-                                    item.titleClassname,
-                                  )}
-                                >
-                                  {item.title}
+              <TabsContent value="overview" className="mt-6"></TabsContent>
+
+              <TabsContent
+                value="profile"
+                className="mt-6 flex flex-col space-y-4"
+              >
+                <DashboardCard title="" className="col-span-full lg:col-span-2">
+                  <div className="flex items-center gap-x-2">
+                    <div className="group relative h-[65px] w-[65px]">
+                      <Image
+                        src={getImageUrl()}
+                        alt="user"
+                        width={65}
+                        height={65}
+                        className="rounded-full border hover:cursor-pointer"
+                      />
+
+                      {/* enlarged image */}
+                      <div className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center bg-black/50 opacity-0 transition-opacity duration-300 ease-in-out group-hover:pointer-events-auto group-hover:opacity-100">
+                        <Image
+                          src={getImageUrl()}
+                          alt="user enlarged"
+                          width={460}
+                          height={460}
+                          className="scale-75 transform rounded-full border shadow-xl transition-transform duration-300 ease-in-out group-hover:scale-100"
+                        />
+                      </div>
+                    </div>
+
+                    <p className="text-2xl font-semibold">
+                      {formatSentence(panAllInOneData?.result?.full_name)}
+                    </p>
+                  </div>
+                  <div className="grid grid-cols-1">
+                    <div className="w-full space-y-4">
+                      <div className="grid w-full grid-cols-4 gap-4">
+                        {OverviewData.map((item, index) => {
+                          return (
+                            <div key={index} className="flex flex-col gap-2">
+                              <p
+                                className={cn(
+                                  'text-xs text-slate-400',
+                                  item.titleClassname,
+                                )}
+                              >
+                                {item.title}
+                              </p>
+                              <p
+                                className={cn(
+                                  'font-medium',
+                                  item.valueClassname,
+                                )}
+                              >
+                                {item.value}
+                              </p>
+                            </div>
+                          );
+                        })}
+                      </div>
+                      <Separator className="bg-slate-800" />
+                      {/* addess live here */}
+                      <div className="flex w-full justify-between gap-4 text-lg font-semibold">
+                        <div className="flex flex-col space-y-6">
+                          <div>
+                            <p className={'text-xs text-slate-400'}>
+                              Full Address
+                            </p>
+                            <p className="max-w-[610px] bg-opacity-75 text-base">
+                              {firstAddress && firstAddress?.length > 10
+                                ? formatSentence(firstAddress)
+                                : secondAddress.length > 10
+                                  ? formatSentence(secondAddress)
+                                  : formatSentence(
+                                      mobile360Data?.result?.lpg_info?.data?.[0]
+                                        ?.address,
+                                    )}
+                            </p>
+                          </div>
+                          <div className="flex space-x-8">
+                            <div>
+                              <p className="text-base text-slate-400">
+                                Total Duration
+                              </p>
+
+                              {olaGeoApiLoading ? (
+                                <SentenceLoader />
+                              ) : (
+                                <p className="text-lg font-medium text-emerald-500">
+                                  {
+                                    olaGeoApiData?.responseData?.duration
+                                      ?.readable_duration
+                                  }
                                 </p>
-                                <p
-                                  className={cn(
-                                    'font-medium',
-                                    item.valueClassname,
-                                  )}
-                                >
-                                  {item.value}
+                              )}
+                            </div>
+                            <div>
+                              <p className="text-base text-slate-400">
+                                Distance Kilometers
+                              </p>
+                              {olaGeoApiLoading ? (
+                                <SentenceLoader />
+                              ) : (
+                                <p className="text-lg font-medium text-yellow-500">
+                                  {
+                                    olaGeoApiData?.responseData?.distance
+                                      ?.distance_kilometers
+                                  }
                                 </p>
-                              </div>
-                            );
-                          })}
+                              )}
+                            </div>
+                          </div>
                         </div>
-                        <Separator className="bg-slate-800" />
-                        {/* addess live here */}
-                        <div className="w-full text-sm font-semibold">
-                          {firstAddress.length > 10
-                            ? formatSentence(firstAddress)
-                            : formatSentence(secondAddesss)}
+                        <div className="">
+                          {olaGeoApiLoading ? (
+                            <SentenceLoader className="min-h-[280px] w-[420px]" />
+                          ) : (
+                            <Image
+                              src={
+                                `data:${olaGeoApiData?.responseData?.content_type};base64,${olaGeoApiData?.responseData?.image}` ||
+                                '/null.png'
+                              }
+                              alt="map"
+                              width={450}
+                              height={450}
+                              className="max-h-72 rounded-xl"
+                              unoptimized={true}
+                            />
+                          )}
                         </div>
-                        <Separator className="bg-slate-800" />
+                      </div>
+                      <Separator className="bg-slate-800" />
+                      <div className="flex space-x-2">
                         <CustomBadge
+                          variantToUse={
+                            panAllInOneData?.result?.email
+                              ? 'default'
+                              : 'danger'
+                          }
                           isFormat={false}
                           value={
                             panAllInOneData?.result.email
@@ -894,72 +970,155 @@ export default function BeFiSc() {
                               : `Email Not Linked with ${cleanAndCapitalize(panAllInOneData?.result?.pan_number.toUpperCase())}`
                           }
                         />
+                        <CustomBadge
+                          isFormat={false}
+                          value={
+                            panAllInOneData?.result.aadhaar_linked
+                              ? `Aadhaar Linked with ${panAllInOneData?.result?.pan_number?.toUpperCase()}`
+                              : `Aadhaar Not Linked with ${cleanAndCapitalize(panAllInOneData?.result?.pan_number.toUpperCase())}`
+                          }
+                        />
                       </div>
-                    </CardContent>
-                  </Card>
+                    </div>
+                  </div>
+                </DashboardCard>
+                <div>
+                  {otherAddressOlaLoading ? (
+                    <div className="mt-10 grid grid-cols-1 gap-4">
+                      <MapLoading />
+                      <MapLoading />
+                    </div>
+                  ) : (
+                    otherAdressOlaData.length > 0 && (
+                      <div className="mt-10 grid grid-cols-1 gap-4">
+                        {otherAdressOlaData.map((item, index) => (
+                          <div
+                            key={index}
+                            className="flex w-full justify-between border border-white/10 p-4"
+                          >
+                            <div className="grid grid-cols-1 items-center gap-y-1">
+                              <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                  <p className="text-sm text-slate-400">
+                                    Date of reporting
+                                  </p>
+                                  <p className="pt-1">
+                                    {item?.addressData?.date_of_reporting}
+                                  </p>
+                                </div>
+                                <div>
+                                  <p className="text-sm text-slate-400">
+                                    Address Type
+                                  </p>
+
+                                  <CustomBadge
+                                    variantToUse={'default'}
+                                    value={item?.addressData?.type}
+                                  />
+                                </div>
+                                <div>
+                                  <p className="text-sm text-slate-400">
+                                    Total Duration
+                                  </p>
+                                  <p className="pt-1 text-emerald-500">
+                                    {
+                                      item?.olaData?.responseData?.duration
+                                        ?.readable_duration
+                                    }
+                                  </p>
+                                </div>
+                                <div>
+                                  <p className="text-sm text-slate-400">
+                                    Distance Kilometers
+                                  </p>
+                                  <p className="pt-1 text-yellow-500">
+                                    {
+                                      item?.olaData?.responseData?.distance
+                                        ?.distance_kilometers
+                                    }
+                                  </p>
+                                </div>
+                              </div>
+                              <div>
+                                <p className="text-lg text-slate-400">
+                                  Address
+                                </p>
+                                <p className="min-w-[430px] max-w-[430px] opacity-75">
+                                  {formatSentence(
+                                    item?.addressData.detailed_address,
+                                  )}
+                                </p>
+                              </div>
+                            </div>
+                            <Image
+                              src={
+                                `data:${item?.olaData?.responseData?.content_type};base64,${item?.olaData?.responseData?.image}` ||
+                                '/null.png'
+                              }
+                              alt="map"
+                              width={500}
+                              height={500}
+                              className="h-[300px] min-w-[400px] rounded-xl"
+                              unoptimized={true}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    )
+                  )}
                 </div>
               </TabsContent>
-
-              <TabsContent value="profile" className="mt-6 space-y-4">
-                {/* <GhuntComponent accountData={ghuntData} /> */}
-                {mobile360Data && <Mobile360 data={mobile360Data} />}
-                {profileAdvanceLoading ? (
-                  <BeFiScLoadingSkeleton />
-                ) : (
-                  <ProfileAdvance ProfileAdvanceData={profileAdvanceData} />
-                )}
-              </TabsContent>
-              <TabsContent value="personal" className="mt-6">
-                {panAllInOneLoading ? (
-                  <BeFiScLoadingSkeleton />
-                ) : (
-                  <PanAllInOne PanAllInOneData={panAllInOneData} />
-                )}
-                {esicsLoading ? (
-                  <BeFiScLoadingSkeleton />
-                ) : (
-                  <Esics EsicsData={esicsData} />
-                )}
+              <TabsContent value="personal" className="mt-6 space-y-4">
+                <BefiScPersonal
+                  Mobile360Data={mobile360Data}
+                  ProfileAdvanceData={profileAdvanceData}
+                  EsicsData={esicsData}
+                  PanAllInOneData={panAllInOneData}
+                />
               </TabsContent>
               <TabsContent value="financial" className="mt-6">
-                {mobileToAccountLoading ? (
-                  <BeFiScLoadingSkeleton />
-                ) : (
-                  <MobileToAccountNumber
-                    MobileToAccountNumberData={mobileToAccountData}
-                  />
-                )}
-                {EquifaxV3Loading ? (
-                  <BeFiScLoadingSkeleton />
-                ) : (
-                  <EquifaxV3 EquifaxV3Data={EquifaxV3Data} />
-                )}
+                <BeFiScFinancial
+                  upiDetailsLoading={upiDetailsLoading}
+                  upiDetailsData={upiDetailsData}
+                  Mobile360Data={mobile360Data}
+                  ProfileAdvance={profileAdvanceData}
+                  MobileToAccountData={mobileToAccountData}
+                  EquifaxV3Data={EquifaxV3Data}
+                />
               </TabsContent>
               <TabsContent value="business" className="mt-6 space-y-4">
-                {gstAdvanceLoading ? (
-                  <BeFiScLoadingSkeleton />
+                {gstAdvanceData ? (
+                  <BeFiScBusiness
+                    GstAdvanceData={gstAdvanceData}
+                    GstTurnoverData={gstTurnoverData}
+                    verfiyUdyamData={verfiyUdyamData}
+                  />
                 ) : (
-                  <GSTAdvance GstAdvanceData={gstAdvanceData} />
-                )}
-                {gstTurnoverLoading ? (
-                  <BeFiScLoadingSkeleton />
-                ) : (
-                  <GstTurnover GstTurnoverData={gstTurnoverData} />
+                  <NotFound value="No business found" />
                 )}
               </TabsContent>
               <TabsContent value="digitalInfo" className="mt-6">
-                {upiDetailsLoading ? (
-                  <BeFiScLoadingSkeleton />
-                ) : (
-                  <UpiDetails UpiData={upiDetailsData} />
-                )}
+                <BeFiScDigitalFootprint
+                  email={
+                    profileAdvanceData?.result?.email?.[0]?.value.toLowerCase() ||
+                    panAllInOneData?.result?.email ||
+                    ''
+                  }
+                  EquifaxData={EquifaxV3Data}
+                  PanAllInOneData={panAllInOneData}
+                  GstAdvanceData={gstAdvanceData}
+                  ProfileAdvanceData={profileAdvanceData}
+                  mobileNumber={mobileNo}
+                />
               </TabsContent>
               <TabsContent value="breachInfo" className="mt-6"></TabsContent>
               <TabsContent value="googleProfile" className="mt-6">
                 {ghuntLoading ? (
                   <BeFiScLoadingSkeleton />
-                ) : (
+                ) : ghuntData ? (
                   <Ghunt accountData={ghuntData} />
+                ) : (
+                  <NotFound value="No Email Found" />
                 )}
               </TabsContent>
             </Tabs>

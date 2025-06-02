@@ -113,17 +113,6 @@ export default function Mobile360({ data }: PageProps) {
           ))}
         </DashboardCard>
       </div>
-      {/* <div className="grid grid-cols-2 gap-4"> */}
-      {/* telcoInfo */}
-      {/* <CustomBeFiScCard
-          data={[data.result?.telco_info?.data]}
-          title="Telco Info"
-        /> */}
-      {/* <CustomBeFiScCard
-          data={[data.result?.mobile_age_info?.data]}
-          title="Mobile Age Info"
-        /> */}
-      {/* </div> */}
 
       <div className="grid grid-cols-5 gap-2">
         <DashboardCard

@@ -11,19 +11,23 @@ const defaultBadge = [
   'prepaid',
   'postpaid',
   'Email Linked',
+  'Verified',
 ];
 const dangerBadge = [
   'No',
   'DISCONNECTED',
   'Account Not Found',
   'Email Not Linked',
+  'Not Verified',
 ];
 const warningBadge = ['CONNECTED', 'DISCONNECTED'];
 
 export default function CustomBadge({
+  variantToUse,
   value,
   isFormat = true,
 }: {
+  variantToUse?: 'default' | 'danger' | 'warning' | 'outline';
   value: string | boolean | number | null | undefined;
   isFormat?: boolean;
 }) {
@@ -64,13 +68,13 @@ export default function CustomBadge({
     }
     if (!isFormat) {
       return (
-        <Badge className="mt-1 gap-x-0.5" variant={'default'}>
+        <Badge className="mt-1 gap-x-0.5" variant={variantToUse || 'default'}>
           {value}
         </Badge>
       );
     }
     return (
-      <Badge className="mt-1 gap-x-0.5" variant={'default'}>
+      <Badge className="mt-1 gap-x-0.5" variant={variantToUse || 'default'}>
         {formatSentence(value)}
       </Badge>
     );
@@ -85,12 +89,3 @@ export default function CustomBadge({
 
   return <span>{value}</span>;
 }
-// return (
-//   <Badge className="mt-1 gap-x-0.5" variant={'outline'}>
-//     No Data
-//   </Badge>
-// );
-
-//   return (
-//     <div>CustomBadge</div>
-//   )

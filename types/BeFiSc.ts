@@ -148,15 +148,26 @@ export interface Mobile360Type {
       };
     };
     revoke_info: {
-      code: 'SUC';
       data: {
         revoke_date: string;
         revoke_status: string;
       };
     };
     esic_info: {
-      code: 'NRF';
-      data: [];
+      data: {
+        ifsc: string;
+        name: string;
+        mobile: string;
+        document: string;
+        bank_name: string;
+        uan_number: string;
+        branch_name: string;
+        esic_number: string;
+        employer_code: string;
+        employer_name: string;
+        account_number: string;
+        bank_account_status: string;
+      }[];
     };
     key_highlights: {
       digital_payment_id_name: string;
@@ -222,9 +233,15 @@ export interface GstVerificationAdvanceType {
     authorized_signatory: string[];
     business_constitution: string;
     business_details: {
-      saccd: string;
-      sdes: string;
-    }[];
+      bzsdtls: {
+        gdes: string;
+        hsncd: string;
+      }[];
+      bzgddtls: {
+        gdes: string;
+        hsncd: string;
+      }[];
+    };
     business_nature: string[];
     can_flag: string;
     central_jurisdiction: string;
@@ -402,10 +419,24 @@ export interface ProfileAdvanceType {
       date_of_reporting: string;
     }[];
     document_data: {
-      pan: {
-        serial_number: string;
-        value: string;
-      }[];
+      pan: [
+        {
+          serial_number: string;
+          value: string;
+        },
+      ];
+      voter_id: [
+        {
+          value: string;
+          serial_number: string;
+        },
+      ];
+      driving_license: [
+        {
+          value: string;
+          serial_number: string;
+        },
+      ];
     };
   };
 }
@@ -715,80 +746,6 @@ export interface PanAllInOneType {
   };
 }
 
-export const dummyUdyamResponse: VerifyUdyamType = {
-  api_category: 'Know Your Business (KYB)',
-  api_name: 'Udyam',
-  billable: true,
-  txn_id: '123e4567-e89b-12d3-a456-426614174000',
-  message: 'Record Found Successfully',
-  status: 1,
-  datetime: '2025-05-19 10:30:00.123456',
-  result: {
-    enterprise_name: 'ABC FOODS',
-    organisation_type: 'Proprietary',
-    service_type: 'Manufacturing',
-    gender: 'Male',
-    social_category: 'General',
-    date_of_incorporation: '01/01/2015',
-    date_of_commencement: '01/01/2015',
-    address: {
-      flat_no: 'A-101',
-      building: 'Sunshine Residency',
-      village: 'Sector 45',
-      block: 'Main Block',
-      street: 'Park Street',
-      district: 'Gurgaon',
-      city: 'Gurgaon',
-      state: 'Haryana',
-      pin: '122003',
-    },
-    mobile: '98*****321',
-    email: 'abcfoods@example.com',
-    plant_details: [
-      {
-        unit_name: 'ABC FOODS UNIT 1',
-        flat: 'B-201',
-        building: 'Industrial Plaza',
-        village: 'Manesar',
-        block: '',
-        road: 'NH-8',
-        district: 'Gurgaon',
-        city: 'Gurgaon',
-        state: 'Haryana',
-        pin: '122051',
-      },
-    ],
-    enterprise_type: [
-      {
-        classification_year: '2023-24',
-        enterprise_type: 'Micro',
-        classification_date: '01/04/2023',
-      },
-    ],
-    nic_code: [
-      {
-        nic_2_digit: '10 - Manufacture of food products',
-        nic_4_digit: '1071 - Manufacture of bakery products',
-        nic_5_digit: '10711 - Manufacture of bread',
-        activity: 'Manufacturing',
-        date: '01/04/2023',
-      },
-      {
-        nic_2_digit:
-          '47 - Retail trade, except of motor vehicles and motorcycles',
-        nic_4_digit: '4721 - Retail sale of food in specialized stores',
-        nic_5_digit:
-          '47214 - Retail sale of bakery products, dairy products and eggs',
-        activity: 'Trading',
-        date: '01/04/2023',
-      },
-    ],
-    dic: 'GURGAON',
-    'msme-dfo': 'DELHI',
-    date_of_udyam_registeration: '01/04/2023',
-  },
-};
-
 export interface UanHistoryType {
   txnId: string;
   apiCategory: string;
@@ -806,251 +763,3 @@ export interface UanHistoryType {
     }[];
   };
 }
-
-export const dummyData: UanHistoryType = {
-  txnId: '16ed1938-a85c-43a8-aa26-db68010b4e7e',
-  apiCategory: 'Employment history',
-  apiName: 'UAN',
-  billable: true,
-  message: 'Record found successfully',
-  status: 1,
-  datetime: '2023-11-17 04:07:25.614332',
-  result: {
-    name: 'RAMESH KUMAR',
-    dob: '01/01/1900',
-    employmentHistory: [
-      {
-        companyName: 'THOMSON DIGITAL',
-        companyAddress:
-          '129, NSEZ, NOIDA, GAUTAM BUDDHA NAGAR, NOIDA, UTTAR PRADESH, 201305',
-      },
-      {
-        companyName: 'CREDENC WEB TECHNOLOGIES PRIVATE LIMITED',
-        companyAddress:
-          '2ND FLOOR, DLF CENTRE, SANSAD MARG, CENTRAL, DELHI, DELHI, 110001',
-      },
-      {
-        companyName: 'GLOBAL CONTENT TRANSFORMATION (PVT) LTD.',
-        companyAddress:
-          '2310 DOON EXPRESS BUSINESS PARK, BUILDING 2000 SAHARANPUR ROAD, DEHRADUN, OPP. TRANSPORT NAGAR DEHRADUN, UTTARAKHAND, 248001',
-      },
-    ],
-  },
-};
-
-export const mobile_360_dummy_data: Mobile360Type = {
-  txn_id: '77d89227-0dbd-4778-8cfb-e224df2a80a6',
-  api_category: 'Fraud Check',
-  api_name: 'Mobile 360',
-  billable: true,
-  message: 'Success',
-  status: 1,
-  result: {
-    digital_payment_id_info: {
-      code: 'SUC',
-      data: {
-        name: 'Ramesh Kumar',
-        branch: 'Noida Branch',
-        address: 'B-121, Sector-5,Noida-201301',
-        state: 'UTTAR PRADESH',
-        contact: '+911133996699',
-        city: 'NOIDA',
-        centre: 'Gautam Buddh Nagar',
-        district: 'Gautam Buddh Nagar',
-        bank: 'Paytm Payments Bank',
-      },
-    },
-    lpg_info: {
-      code: 'SUC',
-      data: [
-        {
-          gas_provider: 'Indane Gas',
-          name: 'RAM KUMAR',
-          consumer_details: {
-            consumer_mobile: '6789999999',
-            consumer_id: '7500000001234567',
-            consumer_status: 'ACTIVE',
-            consumer_type: 'Single Bottle Connection',
-          },
-          address: '123 ABC Colony XYZ',
-          distributor_details: {
-            distributor_code: '000987654',
-            distributor_name: 'GAYATRI INDANE SERVICE',
-            distributor_contact: '1800987654',
-            distributor_address: '456 MNOP Marg XYZ',
-          },
-        },
-        {
-          gas_provider: 'Bharat Gas',
-          name: 'Sham Kumar',
-          consumer_details: {
-            consumer_mobile: '',
-            consumer_id: '1234567890',
-            consumer_status: '',
-            consumer_type: '',
-          },
-          address: '123 ABC Colony XYZ',
-          distributor_details: {
-            distributor_code: '1234567',
-            distributor_name: 'CHANDAN GAS SERVICE',
-            distributor_contact: '',
-            distributor_address: '456 MNOP Marg XYZ',
-          },
-        },
-        {
-          gas_provider: 'HP Gas',
-          name: 'Sham Kumar',
-          consumer_details: {
-            consumer_mobile: '',
-            consumer_id: '',
-            consumer_status: '',
-            consumer_type: '456 MNOP Marg XYZ',
-          },
-          address: '1XX ABC Colony GXXXX 123456',
-          distributor_details: {
-            distributor_code: '1234567',
-            distributor_name: 'CHITRA GAS SERVICE',
-            distributor_contact: '',
-            distributor_address: '',
-          },
-        },
-      ],
-    },
-    msme_info: {
-      code: 'SUC',
-      data: [
-        {
-          udyam_number: 'UDYAM-MH-11-12345678',
-          enterprise_name: 'M/S Ramesh Electronics',
-        },
-      ],
-    },
-    epfo_info: {
-      code: 'SUC',
-      data: ['100004314123'],
-    },
-    director_pan_info: {
-      code: 'SUC',
-      data: ['ABCPD1234E'],
-    },
-    din_info: {
-      code: 'SUC',
-      data: [
-        {
-          pan: 'ABCPD1234E',
-          data: {
-            name: 'Ramesh Kumar',
-            din: '09812345',
-          },
-        },
-      ],
-    },
-    telco_info: {
-      code: 'SUC',
-      data: {
-        is_valid: true,
-        subscriber_status: 'CONNECTED',
-        connection_status: {
-          status_code: 'DELIVERED',
-          error_code_id: '',
-        },
-        connection_type: 'prepaid',
-        msisdn: {
-          msisdn_country_code: 'IN',
-          msisdn: '+919582773885',
-          type: 'MOBILE',
-          mnc: '109',
-          imsi: '404109582773885',
-          mcc: '404',
-          mcc_mnc: '40410',
-        },
-        current_service_provider: {
-          network_prefix: '81302',
-          network_name: 'Airtel',
-          network_region: 'Delhi',
-          mcc: '404',
-          mnc: '109',
-          country_prefix: '+91',
-          country_code: 'IN',
-          country_name: 'India',
-        },
-        original_service_provider: {
-          network_prefix: '95827',
-          network_name: 'Vodafone',
-          network_region: 'Delhi',
-          mcc: '404',
-          mnc: '109',
-          country_prefix: '+91',
-          country_code: 'IN',
-          country_name: 'India',
-        },
-        is_roaming: false,
-        roaming_service_provider: {
-          network_prefix: '',
-          network_name: '',
-          network_region: '',
-          mcc: '',
-          mnc: '',
-          country_prefix: '',
-          country_code: '',
-          country_name: '',
-        },
-      },
-    },
-    mobile_age_info: {
-      code: 'SUC',
-      data: {
-        is_ported: 'Yes',
-        mobile_age: '15 to 16 Years',
-        number_active: 'Yes',
-        number_valid: 'Yes',
-        ported_region: 'Delhi',
-        ported_telecom: 'Airtel ',
-        region: ' Delhi',
-        roaming: 'No',
-        telecom: 'Vodafone ',
-      },
-    },
-    gst_list: {
-      code: 'SUC',
-      data: ['27ABCPD1234E1ZN'],
-    },
-    iec_list: {
-      code: 'NRF',
-      data: [],
-    },
-    whatsapp_info: {
-      code: 'SUC',
-      data: {
-        status: 'Account Found',
-        is_business: '0',
-      },
-    },
-    revoke_info: {
-      code: 'SUC',
-      data: {
-        revoke_date: '',
-        revoke_status: 'No',
-      },
-    },
-    esic_info: {
-      code: 'NRF',
-      data: [],
-    },
-    key_highlights: {
-      digital_payment_id_name: 'Ramesh Kumar',
-      gas_connection_found: 'Yes',
-      udyam_numbers: ['UDYAM-MH-11-12345678'],
-      gst_numbers: ['27ABCPD1234E1ZN', '27ABCPD1234E1ZN'],
-      din_numbers: ['09812345'],
-      esic_number: [],
-      ie_codes: [],
-      connection_type: 'prepaid',
-      whatsapp_business_account_status: 'Non-business',
-      age_of_mobile: '15 to 16 Years',
-      active_status: 'Yes',
-      revoke_date: '',
-    },
-  },
-  datetime: '2024-12-24 07:15:53.41087',
-};

@@ -8,7 +8,6 @@ import { Loader } from '@/components/ui/loader';
 import axios from 'axios';
 import { Mail, Users } from 'lucide-react';
 import React, { useState } from 'react';
-import { toast } from 'sonner';
 import {
   DashboardCard,
   InfoText,
@@ -19,54 +18,12 @@ import { GhuntData } from '@/types/ghunt';
 const Ghunt: React.FC<{ accountData: GhuntData | null }> = ({
   accountData,
 }) => {
-  // const [isLoading, setIsLoading] = useState(false);
-  // const [searchType, setSearchType] = useState<string>('');
-  // const [accountData, setAccountData] = useState<GhuntData | null>(null);
-
-  // const handleSearch = async (query: string, searchFilter: string) => {
-  //   setIsLoading(true);
-  //   setSearchType(searchFilter);
-
-  // try {
-  //   const { data } = await axios.post(
-  //     `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/ghunt/getEmailDetails`,
-  //     { email: query },
-  //   );
-  //   setAccountData(data.responseData);
-  // } catch (err) {
-  //   toast.error('Something went wrong');
-  // }
-
-  //   setIsLoading(false);
-  // };
-
-  // const searchFilterOptions = [{ label: 'Email', value: 'email' }];
-
-  // const handleSearch = (query: string, searchFilter: string) => {
-  //     console.log(query, searchFilter)
-  // }
-
   return (
     <div className="space-y-4">
-      {/* <DashboardTitle
-        title="GHunt"
-        subTitle="Get the info you are looking for"
-      />
-      <SearchBar2
-        searchFilterOptions={searchFilterOptions}
-        selectedFilter="email"
-        onSearch={handleSearch}
-      /> */}
-
-      {/* {isLoading ? (
-        <div className="mt-8">
-          <Loader />
-        </div>
-      ) : accountData ? ( */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         <DashboardCard
           title="Profile Info"
-          icon={<Activity className="h-5 w-5 text-emerald-500" />}
+          icon={<Activity className="mb-1 mr-2 h-5 w-5 text-emerald-500" />}
         >
           <InfoText label="Email" value={accountData?.email || ''} />
           <InfoText label="Gaia ID" value={accountData?.profile.gaiaId || ''} />
@@ -90,7 +47,7 @@ const Ghunt: React.FC<{ accountData: GhuntData | null }> = ({
         </DashboardCard>
         <DashboardCard
           title="Account Status"
-          icon={<Users className="h-5 w-5 text-emerald-500" />}
+          icon={<Users className="mb-1 mr-2 h-5 w-5 text-emerald-500" />}
         >
           {/* <InfoText label="Custom Profile Picture" value={accountData.responseData.profile.hasCustomProfilePicture? "Yes" : "No"} /> */}
           <InfoText
@@ -143,7 +100,7 @@ const Ghunt: React.FC<{ accountData: GhuntData | null }> = ({
         </DashboardCard>
         <DashboardCard
           title="Connected Services"
-          icon={<Mail className="h-5 w-5 text-emerald-500" />}
+          icon={<Mail className="mb-1 mr-2 h-5 w-5 text-emerald-500" />}
         >
           {/* <InfoText label="Calendar Public" value={accountData.responseData.calendar.isPublic? "Yes" : "No"} /> */}
           <InfoText

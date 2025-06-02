@@ -126,18 +126,22 @@ interface PageProps {
 }
 
 export default function CustomBeFiScCard({ title, data }: PageProps) {
+  if (Array.isArray(data) && data.length === 0) {
+    return <></>;
+  }
+
   if (isValidObjectInsideObjectArrayData(data)) {
     return (
       <DashboardCard
         title={title}
-        className="flex max-h-[450px] flex-col gap-y-2 pt-1"
+        className="flex max-h-[450px] flex-col gap-y-2 pt-1 hover:scale-[1.015]"
       >
         <div className="scrollbar-custom grid max-h-[400px] grid-cols-1 gap-y-2 overflow-auto pb-4">
           {data.length > 0
             ? data.map((obj, index) => (
                 <div
                   key={index}
-                  className={`flex flex-col ${data.length > 1 ? 'rounded-lg border border-white/10 p-3' : ''}`}
+                  className={`flex flex-col ${data.length > 1 ? 'rounded-lg border-b border-white/10 p-3' : ''}`}
                 >
                   {Object.entries(obj).map(([key, value]) => {
                     if (typeof value === 'object' && value !== null) {
@@ -182,9 +186,9 @@ export default function CustomBeFiScCard({ title, data }: PageProps) {
     return (
       <DashboardCard
         title={formatKey(title)}
-        className="flex max-h-[450px] flex-col gap-y-2 py-10 pt-1"
+        className="scrollbar-custom flex max-h-[350px] flex-col gap-y-2 overflow-auto pt-1 hover:scale-[1.015]"
       >
-        <div className="scrollbar-custom grid max-h-[350px] grid-rows-2 gap-6 pb-4">
+        <div className="scrollbar-custom mb-4 grid max-h-[350px] grid-rows-2 gap-6 pb-4">
           <div className="flex flex-col">
             {Object.entries(data).map(([key, value]) => (
               <InfoText
@@ -207,14 +211,14 @@ export default function CustomBeFiScCard({ title, data }: PageProps) {
     return (
       <DashboardCard
         title={title}
-        className="scrollbar-custom flex max-h-[350px] flex-col gap-y-2 overflow-auto pt-1"
+        className="scrollbar-custom flex max-h-[350px] flex-col gap-y-2 overflow-auto pb-2 pt-1 hover:scale-[1.015]"
       >
         {data.length > 0 ? (
           <div className="flex gap-2">
             {data.map((val, index) => (
               <div
                 key={index}
-                className="flex flex-col border border-slate-700 p-2"
+                className="flex flex-col border-b border-slate-700 p-2"
               >
                 {getValue(val)}
               </div>
@@ -240,14 +244,14 @@ export default function CustomBeFiScCard({ title, data }: PageProps) {
     return (
       <DashboardCard
         title={title}
-        className="scrollbar-custom flex flex-col gap-y-2 overflow-auto pt-1"
+        className="scrollbar-custom flex flex-col gap-y-2 overflow-auto pb-2 pt-1 hover:scale-[1.015]"
       >
         {data.length > 0 ? (
           <div className="flex gap-2">
             {data.map((val, index) => (
               <div
                 key={index}
-                className="flex flex-col border border-slate-700 p-2"
+                className="flex flex-col border-b border-slate-700 p-2"
               >
                 {getValue(val)}
               </div>
@@ -260,135 +264,5 @@ export default function CustomBeFiScCard({ title, data }: PageProps) {
     );
   }
 
-  return <div>{JSON.stringify(data)}</div>;
-
-  // return (
-  //   // <DashboardCard
-  //   //   title={formatKey(title)}
-  //   //   className="flex max-h-[450px] flex-col gap-y-2 py-10 pt-1"
-  //   // >
-  //   //   <div className="scrollbar-custom grid max-h-[350px] grid-rows-2 gap-6 overflow-auto pb-4">
-  //   //     <div className="flex flex-col font-semibold text-white/75">No Data</div>
-  //   //   </div>
-  //   // </DashboardCard>
-
-  // );
-
-  // if (objectData) {
-  // return (
-  //   <DashboardCard
-  //     title={formatKey(title)}
-  //     className="flex max-h-[450px] flex-col gap-y-2 py-10 pt-1"
-  //   >
-  //     <div className="scrollbar-custom grid max-h-[350px] grid-rows-2 gap-6 overflow-auto pb-4">
-  //       <div className="flex flex-col">
-  //         {Object.entries(objectData).map(([key, value]) => (
-  //           <InfoText
-  //             key={key}
-  //             label={formatKey(key) || ''}
-  //             value={getValue(value)}
-  //           />
-  //         ))}
-  //       </div>
-  //     </div>
-  //   </DashboardCard>
-  // );
-  // }
-
-  // if (stringArrayData) {
-  //   return (
-  //     <DashboardCard title={title} className="flex flex-col gap-y-2 pt-1">
-  //       {stringArrayData.length > 0 ? (
-  //         <div className="flex gap-2">
-  //           {stringArrayData.map((val, index) => (
-  //             <div
-  //               key={index}
-  //               className="flex flex-col border border-slate-700 p-2"
-  //             >
-  //               {getValue(val)}
-  //             </div>
-  //           ))}
-  //         </div>
-  //       ) : (
-  //         <div className="text-base text-white/75">No Data</div>
-  //       )}
-  //     </DashboardCard>
-  //   );
-  // }
-
-  // if (obectArrayData) {
-  //   return (
-  //     <DashboardCard title={title} className="flex flex-col gap-y-2 pt-1">
-  //       <div className="grid grid-rows-2 gap-6">
-  //         {obectArrayData.length > 0 ? (
-  //           obectArrayData.map((val, index) => (
-  //             <div key={index} className="flex flex-col">
-  //               {Object.entries(val).map(([key, value]) => (
-  //                 <InfoText
-  //                   key={key}
-  //                   label={formatKey(key) || ''}
-  //                   value={getValue(value)}
-  //                 />
-  //               ))}
-  //             </div>
-  //           ))
-  //         ) : (
-  //           <div className="text-base text-white/75">No Data</div>
-  //         )}
-  //       </div>
-  //     </DashboardCard>
-  //   );
-  // }
-
-  // if (objectInsideObjectArrayData) {
-  //   return (
-  //     <DashboardCard
-  //       title={title}
-  //       className="flex max-h-[450px] flex-col gap-y-2 pt-1"
-  //     >
-  //       <div className="scrollbar-custom grid max-h-[400px] grid-cols-1 gap-y-2 overflow-auto pb-4">
-  //         {objectInsideObjectArrayData.length > 0
-  //           ? objectInsideObjectArrayData.map((obj, index) => (
-  //               <div
-  //                 key={index}
-  //                 className={`flex flex-col ${objectInsideObjectArrayData.length > 1 ? 'rounded-lg border border-white/10 p-3' : ''}`}
-  //               >
-  //                 {Object.entries(obj).map(([key, value]) => {
-  //                   if (typeof value === 'object' && value !== null) {
-  //                     return (
-  //                       <div key={key} className="flex flex-col">
-  //                         {/* <span className="text-sm font-medium text-muted-foreground">
-  //                         {formatKey(key)}
-  //                       </span> */}
-  //                         <div className="">
-  //                           {Object.entries(value).map(
-  //                             ([innerKey, innerValue]) => (
-  //                               <InfoText
-  //                                 key={innerKey}
-  //                                 label={formatKey(innerKey)}
-  //                                 value={getValue(innerValue)}
-  //                               />
-  //                             ),
-  //                           )}
-  //                         </div>
-  //                       </div>
-  //                     );
-  //                   } else {
-  //                     // Simple string value
-  //                     return (
-  //                       <InfoText
-  //                         key={key}
-  //                         label={formatKey(key)}
-  //                         value={getValue(value)}
-  //                       />
-  //                     );
-  //                   }
-  //                 })}
-  //               </div>
-  //             ))
-  //           : 'No Data'}
-  //       </div>
-  //     </DashboardCard>
-  //   );
-  // }
+  // return <div>{JSON.stringify(data)}</div>;
 }

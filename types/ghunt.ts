@@ -1,9 +1,4 @@
 export interface GhuntData {
-  //   responseStatus: {
-  //     status: boolean;
-  //     message: string;
-  //   };
-  //   responseData: {
   success: boolean;
   email: string;
   profile: {
@@ -12,6 +7,7 @@ export interface GhuntData {
     hasCustomCover: boolean;
     lastEdited: string;
     userTypes: string[];
+    profilePictureUrl: string;
   };
   googleChat: {
     entityType: string;
@@ -34,5 +30,4 @@ export interface GhuntData {
     isPublic: boolean;
     hasEvents: boolean;
   };
-  //   };
 }
