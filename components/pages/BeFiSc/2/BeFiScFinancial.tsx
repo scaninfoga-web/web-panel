@@ -181,6 +181,12 @@ export default function BeFiScFinancial({
                     className="mt-4 grid grid-cols-1 gap-4"
                   >
                     <div>
+                      <p className="text-sm text-gray-400">Account Number</p>
+                      <p className="text-base font-medium">
+                        {formatSentence(item?.account_number)}
+                      </p>
+                    </div>
+                    <div>
                       <p className="text-sm text-gray-400">Bank Name</p>
                       <p className="text-base font-medium">
                         {formatSentence(item?.bank_name)}
@@ -195,12 +201,6 @@ export default function BeFiScFinancial({
                     <div>
                       <p className="text-sm text-gray-400">IFSC</p>
                       <p className="text-base font-medium">{item?.ifsc}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-400">Mobile</p>
-                      <p className="text-base font-medium">
-                        {formatSentence(item?.mobile)}
-                      </p>
                     </div>
                   </div>
                 ))}

@@ -153,7 +153,7 @@ export function getAddressesWithDifferentPincode(
   return addressArray;
 }
 
-function getOtherEmails(
+export function getOtherEmails(
   GstAdvanceData: GstVerificationAdvanceType | null,
   EquifaxData: EquifaxV3Type | null,
   ProfileAdvanceData: ProfileAdvanceType | null,

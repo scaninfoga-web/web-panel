@@ -72,6 +72,7 @@ export default function UpiDetails({ UpiData }: { UpiData: UPIType | null }) {
                 }
                 return (
                   <InfoText
+                    key={index}
                     label={formatKey(key)}
                     value={formatSentence(value)}
                   />

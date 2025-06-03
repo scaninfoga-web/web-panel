@@ -47,13 +47,10 @@ export async function middleware(request: NextRequest) {
   const isPublic =
     publicRoutes.includes(pathname) || pathname.startsWith('/services');
 
-  // Allow public route
-  if (isPublic) {
-    return NextResponse.next();
-  }
-
-  // If not logged in → redirect to login
-  if (!accessToken) {
+  if (!accessToken || accessToken.length < 15) {
+    if (isNonProtected) {
+      return NextResponse.next();
+    }
     return NextResponse.redirect(new URL('/auth', request.url));
   }
 
