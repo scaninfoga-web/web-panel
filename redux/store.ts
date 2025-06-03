@@ -2,11 +2,13 @@ import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import { persistStore } from 'redux-persist';
 import userReducer from './userSlice';
 import infoReducer from './infoSlice';
+import walletReducer from './walletSlice';
 import { getPersistedReducer } from './persistConfig';
 
 const rootReducer = combineReducers({
   user: userReducer,
   info: infoReducer,
+  wallet: walletReducer,
 });
 
 const persistedReducer = getPersistedReducer(rootReducer);

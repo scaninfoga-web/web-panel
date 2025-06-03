@@ -1,3 +1,4 @@
+import { clearCookies } from '@/actions/clearCookies';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface User {
@@ -39,6 +40,8 @@ export const userSlice = createSlice({
       state.token = null;
       state.refreshToken = null;
       state.user = null;
+
+      clearCookies();
     },
   },
 });

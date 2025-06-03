@@ -82,10 +82,19 @@ const Login = () => {
             user,
           }),
         );
+
+        console.log('USER: ', user);
+        console.log('TOKEN: ', tokens);
+
+        setCookie('accessToken', tokens.accessToken, {
+          maxAge: 60 * 60 * 24 * 10,
+        });
+        setCookie('userType', user.userType, { maxAge: 60 * 60 * 24 * 10 });
         toast.success('Logged in successfully!', { duration: 800 });
-        return router.push('/combinedDash');
+        // router.push('/combinedDash');
+        return;
       }
-      return await clearCookies();
+      // return await clearCookies();
 
       if (data.responseStatus?.status) {
         login(data.responseData.token);
@@ -122,6 +131,7 @@ const Login = () => {
         console.log('ELSE: ', responseData);
         const { user, accessToken } = responseData;
         setCookie('accessToken', accessToken, { maxAge: 60 * 60 * 24 * 10 });
+        setCookie('userType', user.userType, { maxAge: 60 * 60 * 24 * 10 });
         dispatch(
           setCredentials({
             token: accessToken,

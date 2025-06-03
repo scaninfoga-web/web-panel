@@ -73,9 +73,13 @@ export const apiCall = async <T = any>(
     if (payload !== null && method.toLowerCase() === 'get') {
       config.params = payload;
     }
-
-    const response = await axiosInstance(config);
-    return response.data;
+    try {
+      const response = await axiosInstance(config);
+      return response.data;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
   } catch (error) {
     // Handle errors appropriately
     console.error('API call failed:', error);
