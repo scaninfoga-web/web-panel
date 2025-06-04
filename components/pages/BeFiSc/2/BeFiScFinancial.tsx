@@ -13,6 +13,7 @@ import CustomBadge from '../CustomBadge';
 import { DashboardCard } from '../../dashboard/components/DashboardCard';
 import UpiDetails from '../UpiDetails';
 import BeFiScLoadingSkeleton from '../BeFiScLoadingSkeleton';
+import { cn } from '@/lib/utils';
 
 interface PageProps {
   Mobile360Data: Mobile360Type | null;
@@ -21,11 +22,13 @@ interface PageProps {
   EquifaxV3Data: EquifaxV3Type | null;
   upiDetailsLoading: boolean;
   upiDetailsData: UPIType | null;
+  isSuspicous: boolean;
 }
 
 export default function BeFiScFinancial({
   Mobile360Data,
   ProfileAdvance,
+  isSuspicous,
   MobileToAccountData,
   EquifaxV3Data,
   upiDetailsLoading,
@@ -181,26 +184,34 @@ export default function BeFiScFinancial({
                     className="mt-4 grid grid-cols-1 gap-4"
                   >
                     <div>
-                      <p className="text-sm text-gray-400">Account Number</p>
-                      <p className="text-base font-medium">
-                        {formatSentence(item?.account_number)}
-                      </p>
-                    </div>
-                    <div>
                       <p className="text-sm text-gray-400">Bank Name</p>
                       <p className="text-base font-medium">
                         {formatSentence(item?.bank_name)}
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-400">Bank Branch</p>
+                      <p className="text-sm text-gray-400">Account Number</p>
                       <p className="text-base font-medium">
-                        {formatSentence(item?.branch_name)}
+                        {formatSentence(item?.account_number)}
                       </p>
                     </div>
                     <div>
                       <p className="text-sm text-gray-400">IFSC</p>
-                      <p className="text-base font-medium">{item?.ifsc}</p>
+                      <p className="text-base font-medium">
+                        {formatSentence(item?.ifsc)}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-400">Mobile Number</p>
+                      <p className="text-base font-medium">
+                        {formatSentence(item?.mobile)}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-400">Branch Address</p>
+                      <p className="text-base font-medium">
+                        {formatSentence(item?.branch_name)}
+                      </p>
                     </div>
                   </div>
                 ))}
@@ -533,7 +544,12 @@ export default function BeFiScFinancial({
           {upiDetailsLoading ? (
             <BeFiScLoadingSkeleton />
           ) : (
-            <UpiDetails UpiData={upiDetailsData} />
+            <div className="flex flex-col space-y-4">
+              <h1 className="text-xl text-red-500">
+                {isSuspicous ? 'Found suspicious account name' : null}
+              </h1>
+              <UpiDetails UpiData={upiDetailsData} />
+            </div>
           )}
         </TabsContent>
       </Tabs>

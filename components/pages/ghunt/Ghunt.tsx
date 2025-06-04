@@ -8,7 +8,7 @@ import React, { useEffect } from 'react';
 import { GhuntData } from '@/types/ghunt';
 import Image from 'next/image';
 
-const Ghunt: React.FC<{ accountData: GhuntData | null }> = ({
+const Ghunt: React.FC<{ accountData: GhuntData | null | undefined }> = ({
   accountData,
 }) => {
   const getImageUrl = () => {
@@ -16,7 +16,6 @@ const Ghunt: React.FC<{ accountData: GhuntData | null }> = ({
       accountData?.profile?.profilePictureUrl &&
       accountData?.profile?.profilePictureUrl.length > 2
     ) {
-      console.log(accountData?.profile?.profilePictureUrl);
       return accountData?.profile?.profilePictureUrl;
     }
     return '/null.png';

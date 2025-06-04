@@ -122,6 +122,35 @@ export default function BeFiSc() {
     }[]
   >([]);
 
+  const name =
+    panAllInOneData?.result?.full_name
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, ' ') ||
+    profileAdvanceData?.result?.personal_information?.full_name
+      .trim()
+      .replace(/\s+/g, ' ')
+      .toLowerCase();
+
+  const realName =
+    name && name.length > 0
+      ? name
+      : (Object.values(upiDetailsData?.responseData ?? {})[0]
+          ?.data?.result?.name.trim()
+          .replace(/\s+/g, ' ')
+          .toLowerCase() ?? '');
+
+  const isSuspicious = Object.values(upiDetailsData?.responseData ?? {}).some(
+    (val) => {
+      if (val?.success) {
+        return (
+          val?.data?.result?.name.trim().replace(/\s+/g, ' ').toLowerCase() !==
+          realName
+        );
+      }
+    },
+  );
+
   const setAllOnLoading = () => {
     setIsLoading(true);
     // setGhuntLoading(true);
@@ -524,7 +553,6 @@ export default function BeFiSc() {
     profileAdvanceData?.result?.address?.[0]?.detailed_address || '';
 
   // location api
-
   useEffect(() => {
     setOlaGeoApiLoading(true);
 
@@ -894,7 +922,7 @@ export default function BeFiSc() {
                     </div>
 
                     <p className="text-2xl font-semibold">
-                      {formatSentence(panAllInOneData?.result?.full_name)}
+                      {formatSentence(name)}
                     </p>
                   </div>
                   <div className="grid grid-cols-1">
@@ -1117,6 +1145,7 @@ export default function BeFiSc() {
               </TabsContent>
               <TabsContent value="financial" className="mt-6">
                 <BeFiScFinancial
+                  isSuspicous={isSuspicious}
                   upiDetailsLoading={upiDetailsLoading}
                   upiDetailsData={upiDetailsData}
                   Mobile360Data={mobile360Data}
