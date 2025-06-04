@@ -4,7 +4,7 @@ import {
   InfoText,
   StatusBadge,
 } from '../dashboard/components/DashboardCard';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { GhuntData } from '@/types/ghunt';
 import Image from 'next/image';
 
@@ -21,6 +21,10 @@ const Ghunt: React.FC<{ accountData: GhuntData | null }> = ({
     }
     return '/null.png';
   };
+
+  useEffect(() => {
+    console.log('called');
+  }, []);
   return (
     <div className="space-y-4">
       <DashboardCard

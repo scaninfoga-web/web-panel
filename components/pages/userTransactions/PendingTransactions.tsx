@@ -16,14 +16,18 @@ const PendingTransactions = () => {
   const [txnStatus, setTxnStatus] = useState<txnStatus>('approved');
   const [txnId, setTxnId] = useState<string>('');
   const [amount, setAmount] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const populateTableData = async () => {
     try {
+      setLoading(true);
       const data = await get('/api/payments/getPendingTxns');
       setTableData(data?.responseData.transactions || []);
     } catch (e) {
       console.log('ERROR: ', e);
       toast.error('Error fetching completed transactions');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -63,13 +67,18 @@ const PendingTransactions = () => {
   return (
     <div>
       <h1>Completed Transactions</h1>
-      <CustomTable columns={updatedColumns} dataSource={tableData} />
+      <CustomTable
+        columns={updatedColumns}
+        dataSource={tableData}
+        loading={loading}
+      />
       <TxnModal
         isOpen={isOpen}
         setIsOpen={setIsOpen}
         txn_id={txnId}
         status={txnStatus}
         amount={amount}
+        populateTableData={populateTableData}
       />
     </div>
   );

@@ -119,7 +119,7 @@ const sidebarLinks = [
     title: 'Dashboard',
     icon: LayoutDashboard,
     href: '/dashboard',
-    roles: ['USER'],
+    roles: ['USER', 'ADMIN'],
   },
   {
     title: 'Combined Dash',
@@ -137,7 +137,7 @@ const sidebarLinks = [
     title: 'Scaninfoga Intelligence',
     icon: Telescope,
     href: '/scaninfogaIntelligence',
-    roles: ['USER'],
+    roles: ['USER', 'ADMIN'],
   },
   {
     title: 'Bookmarks',
@@ -167,7 +167,7 @@ const sidebarLinks = [
     title: 'Transaction History',
     icon: Monitor,
     href: '/transactionHistory',
-    roles: ['USER', 'ADMIN'],
+    roles: ['USER'],
   },
 ];
 

@@ -19,15 +19,15 @@ export const txnColumns = [
   {
     title: 'Created At',
     dataIndex: 'created_at',
-    key: 'createdAt',
+    key: 'created_at',
     render: (text: string) => formatDate(text),
   },
-  {
-    title: 'Updated At',
-    dataIndex: 'updated_at',
-    key: 'createdAt',
-    render: (text: string) => formatDate(text),
-  },
+  // {
+  //   title: 'Updated At',
+  //   dataIndex: 'updated_at',
+  //   key: 'updated_at',
+  //   render: (text: string) => formatDate(text),
+  // },
 ];
 
 export interface TxnTableProps {

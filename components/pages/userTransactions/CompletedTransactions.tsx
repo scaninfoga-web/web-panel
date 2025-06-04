@@ -8,15 +8,19 @@ import { toast } from 'sonner';
 
 const CompletedTransactions = () => {
   const [tableData, setTableData] = useState<TxnTableProps[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const populateTableData = async () => {
     try {
+      setLoading(true);
       const data = await get('/api/payments/getCompletedTxns');
       console.log('DATA: ', data);
       setTableData(data?.responseData.transactions || []);
     } catch (e) {
       console.log('ERROR: ', e);
       toast.error('Error fetching completed transactions');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -27,7 +31,11 @@ const CompletedTransactions = () => {
   return (
     <div>
       <h1>Completed Transactions</h1>
-      <CustomTable columns={txnColumns} dataSource={tableData} />
+      <CustomTable
+        columns={txnColumns}
+        dataSource={tableData}
+        loading={loading}
+      />
     </div>
   );
 };

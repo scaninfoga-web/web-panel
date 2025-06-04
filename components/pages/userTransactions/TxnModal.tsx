@@ -14,6 +14,7 @@ interface TxnTableProps {
   status: string;
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  populateTableData: () => void;
 }
 
 export const TxnModal: React.FC<TxnTableProps> = ({
@@ -22,16 +23,20 @@ export const TxnModal: React.FC<TxnTableProps> = ({
   amount,
   status,
   setIsOpen,
+  populateTableData,
 }) => {
   const handleFormSubmit = async (data: TxnFormValues) => {
     try {
       if (status === 'rejected') {
         await post('/api/payments/updateTxnToFailed', data);
         toast.success('Transaction updated to failed');
+        populateTableData();
         return;
       }
       await post('/api/payments/updateTxnToSuccess', data);
       toast.success('Transaction updated to success');
+      populateTableData();
+      setIsOpen(false);
     } catch (err) {
       toast.error('Something went wrong');
     }

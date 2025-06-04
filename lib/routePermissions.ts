@@ -10,9 +10,9 @@ export const publicRoutes: string[] = [
 ];
 
 export const routeAccess: Record<string, string[]> = {
-  '/dashboard': ['USER'],
+  '/dashboard': ['USER', 'ADMIN'],
   '/combinedDash': ['USER'],
-  '/scaninfogaIntelligence': ['USER'],
+  '/scaninfogaIntelligence': ['USER', 'ADMIN'],
   '/dashboard/bookmarks': ['USER'],
   '/dashboard/history': ['USER', 'ADMIN'],
   '/reports': ['ADMIN'],
