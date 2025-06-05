@@ -6,12 +6,14 @@ import { Menu, X, Shield, User, ShoppingCart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn, getClientInfo } from '@/lib/utils';
 import { usePathname, useRouter } from 'next/navigation';
-import { useDispatch } from 'react-redux';
-import { clearCookies } from '@/actions/clearCookies';
+import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '@/redux/userSlice';
 import { getCookie } from 'cookies-next';
 import { setInfo } from '@/redux/infoSlice';
-import { AppDispatch } from '@/redux/store';
+import { AppDispatch, RootState } from '@/redux/store';
+import { fetchWalletBalance } from '@/redux/walletSlice';
+import { WalletWidget } from './common/WalletWidget';
+import { clearCookies } from '@/actions/clearCookies';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -20,6 +22,9 @@ export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const accessToken = getCookie('accessToken');
+
+  const walletBalance = useSelector((state: RootState) => state.wallet.balance);
+  const token = useSelector((state: RootState) => state.user.token);
 
   const paths = [
     '/',
@@ -46,7 +51,6 @@ export default function Navbar() {
         console.error('Error fetching client info:', e);
       }
     };
-
     fetchInfo();
   }, [dispatch]);
 
@@ -57,6 +61,13 @@ export default function Navbar() {
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    if (token && token.length > 10) {
+      console.log('Token present');
+      dispatch(fetchWalletBalance());
+    }
   }, []);
 
   if (!hasMounted) return null;
@@ -161,14 +172,20 @@ export default function Navbar() {
                 <span className="sr-only">Cart</span>
               </Button>
             </Link>
+
+            {token && (
+              // <Button variant='outline' className='flex gap-x-2'><CircleDollarSign className='text-yellow-500'/> {walletBalance}</Button>
+              <WalletWidget credits={walletBalance} onTopUp={() => {}} />
+            )}
             <Button
               variant="outline"
               className="border-emerald-500 text-emerald-500 hover:bg-emerald-500 hover:text-black"
               onClick={async () => {
                 if (accessToken) {
-                  dispatch(logout());
+                  // dispatch(logout());
                   await clearCookies();
-                  return router.refresh();
+                  router.push('/');
+                  return;
                 }
                 router.push('/auth');
               }}

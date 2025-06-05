@@ -3,6 +3,7 @@ import {
   EquifaxV3Type,
   Mobile360Type,
   MobileToAccountNumberType,
+  PanAllInOneType,
   ProfileAdvanceType,
   UPIType,
 } from '@/types/BeFiSc';
@@ -16,20 +17,22 @@ import BeFiScLoadingSkeleton from '../BeFiScLoadingSkeleton';
 
 interface PageProps {
   Mobile360Data: Mobile360Type | null;
-  ProfileAdvance: ProfileAdvanceType | null;
+  profileAdvanceData: ProfileAdvanceType | null;
   MobileToAccountData: MobileToAccountNumberType | null;
   EquifaxV3Data: EquifaxV3Type | null;
   upiDetailsLoading: boolean;
   upiDetailsData: UPIType | null;
+  panAllInOneData: PanAllInOneType | null;
 }
 
 export default function BeFiScFinancial({
   Mobile360Data,
-  ProfileAdvance,
+  profileAdvanceData,
   MobileToAccountData,
   EquifaxV3Data,
   upiDetailsLoading,
   upiDetailsData,
+  panAllInOneData,
 }: PageProps) {
   const [activeTab, setActiveTab] = React.useState('bank');
   let creditCount = 0;
@@ -62,6 +65,24 @@ export default function BeFiScFinancial({
   };
 
   const gridColsClass = getGridCols(tabs.length);
+
+  const name =
+    panAllInOneData?.result?.full_name
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, ' ') ||
+    profileAdvanceData?.result?.personal_information?.full_name
+      .trim()
+      .replace(/\s+/g, ' ')
+      .toLowerCase();
+
+  const realName =
+    name && name.length > 0
+      ? name
+      : (Object.values(upiDetailsData?.responseData ?? {})[0]
+          ?.data?.result?.name.trim()
+          .replace(/\s+/g, ' ')
+          .toLowerCase() ?? '');
 
   return (
     <div className="grid grid-cols-1 gap-2 space-y-4">
@@ -187,19 +208,27 @@ export default function BeFiScFinancial({
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-400">Bank Branch</p>
+                      <p className="text-sm text-gray-400">Account Number</p>
                       <p className="text-base font-medium">
-                        {formatSentence(item?.branch_name)}
+                        {formatSentence(item?.account_number)}
                       </p>
                     </div>
                     <div>
                       <p className="text-sm text-gray-400">IFSC</p>
-                      <p className="text-base font-medium">{item?.ifsc}</p>
+                      <p className="text-base font-medium">
+                        {formatSentence(item?.ifsc)}
+                      </p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-400">Mobile</p>
+                      <p className="text-sm text-gray-400">Mobile Number</p>
                       <p className="text-base font-medium">
                         {formatSentence(item?.mobile)}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-400">Branch Address</p>
+                      <p className="text-base font-medium">
+                        {formatSentence(item?.branch_name)}
                       </p>
                     </div>
                   </div>
@@ -533,7 +562,9 @@ export default function BeFiScFinancial({
           {upiDetailsLoading ? (
             <BeFiScLoadingSkeleton />
           ) : (
-            <UpiDetails UpiData={upiDetailsData} />
+            <div className="flex flex-col space-y-4">
+              <UpiDetails realName={realName} UpiData={upiDetailsData} />
+            </div>
           )}
         </TabsContent>
       </Tabs>

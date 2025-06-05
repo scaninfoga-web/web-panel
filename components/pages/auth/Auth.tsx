@@ -183,30 +183,7 @@ export default function AuthPage() {
                   <div className="mb-10 mt-2 w-full text-center text-lg text-white/80">
                     access the Scaninfoga Intelligence of Investigation portal
                   </div>
-                  {/* <form className="space-y-4" onSubmit={handleLoginSubmit(onLogin)}>
-                    <input
-                      type="email"
-                      placeholder="Email"
-                      {...loginRegister("email")}
-                      className="w-full p-3 rounded-xl border border-emerald-500 bg-[#0A0D14] text-white placeholder-gray-400"
-                    />
-                    {loginErrors.email && <p className="text-red-500 text-sm">{loginErrors.email.message}</p>}
 
-                    <input
-                      type="password"
-                      placeholder="Password"
-                      {...loginRegister("password")}
-                      className="w-full p-3 rounded-xl border border-emerald-500 bg-[#0A0D14] text-white placeholder-gray-400"
-                    />
-                    {loginErrors.password && <p className="text-red-500 text-sm">{loginErrors.password.message}</p>}
-
-                    <button
-                      type="submit"
-                      className="w-full bg-emerald-500 text-black py-3 rounded-xl hover:bg-emerald-400 transition"
-                    >
-                      Login
-                    </button>
-                  </form> */}
                   <Login />
 
                   <div className="mt-6 text-center">

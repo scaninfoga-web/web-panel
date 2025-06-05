@@ -12,13 +12,11 @@ interface User {
 
 interface UserState {
   token: string | null;
-  refreshToken: string | null;
   user: User | null;
 }
 
 const initialState: UserState = {
   token: null,
-  refreshToken: null,
   user: null,
 };
 
@@ -37,7 +35,6 @@ export const userSlice = createSlice({
     },
     logout: (state) => {
       state.token = null;
-      state.refreshToken = null;
       state.user = null;
     },
   },

@@ -5,6 +5,8 @@ import { Column } from '@/types/table';
 import { get } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
+import { RootState } from '@/redux/store';
+import { useSelector } from 'react-redux';
 
 interface UserActivity {
   id: number;
@@ -40,9 +42,17 @@ const History: React.FC = () => {
     }).format(date);
   };
 
+  const userType = useSelector((state: RootState) => state.user.user.userType);
+
+  console.log('YSERTYPEL ', userType);
+
   const fetchActivities = async () => {
     try {
-      const data = await get('/api/user-activities/get-user-activity');
+      const url =
+        userType === 'ADMIN'
+          ? '/api/user-activities/get-all-user-activity'
+          : '/api/user-activities/get-user-activity';
+      const data = await get(url);
       if (data.responseStatus.status) {
         setActivities(data.responseData);
       }

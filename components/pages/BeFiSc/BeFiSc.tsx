@@ -43,6 +43,7 @@ import { OlaGeoApiType } from '@/types/ola-geo-api';
 import SentenceLoader from './2/SentenceLoader';
 import BeFiScDigitalFootprint, {
   getAddressesWithDifferentPincode,
+  getOtherEmails,
   getOtherPhoneNumbers,
 } from './2/BeFiScDigitalFootprint';
 import MapLoading from './2/MapLoading';
@@ -64,8 +65,11 @@ export default function BeFiSc() {
   const [mobile360Data, setMobile360Data] = useState<Mobile360Type | null>(
     null,
   );
-  const [ghuntData, setGhuntData] = useState<GhuntData | null>(null);
-  const [ghuntLoading, setGhuntLoading] = useState(false);
+  // const [ghuntData, setGhuntData] = useState<GhuntData | null>(null);
+  // const [ghuntLoading, setGhuntLoading] = useState(false);
+
+  const [ghuntMultipleData, setGhuntMultipleData] = useState<GhuntData[]>([]);
+  const [ghuntMultipleLoading, setGhuntMultipleLoading] = useState(false);
 
   const [verifyUdyamLoading, setVerifyUdyamLoading] = useState(false);
   const [verfiyUdyamData, setVerfiyUdyamData] =
@@ -118,9 +122,20 @@ export default function BeFiSc() {
     }[]
   >([]);
 
+  // const isSuspicious = Object.values(upiDetailsData?.responseData ?? {}).some(
+  //   (val) => {
+  //     if (val?.success) {
+  //       return (
+  //         val?.data?.result?.name.trim().replace(/\s+/g, ' ').toLowerCase() !==
+  //         realName
+  //       );
+  //     }
+  //   },
+  // );
+
   const setAllOnLoading = () => {
     setIsLoading(true);
-    setGhuntLoading(true);
+    // setGhuntLoading(true);
     setVerifyUdyamLoading(true);
     setGstAdvanceLoading(true);
     setGstTurnoverLoading(true);
@@ -132,7 +147,7 @@ export default function BeFiSc() {
     setUpiDetailsLoading(true);
   };
   const clearOldData = () => {
-    setGhuntData(null);
+    // setGhuntData(null);
     setMobile360Data(null);
     setVerfiyUdyamData(null);
     setGstAdvanceData(null);
@@ -145,11 +160,12 @@ export default function BeFiSc() {
     setUpiDetailsData(null);
     setOlaGeoApiData(null);
     setOtherAdressOlaData([]);
+    setGhuntMultipleData([]);
   };
 
   const setAllOffLoading = () => {
     setIsLoading(false);
-    setGhuntLoading(false);
+    // setGhuntLoading(false);
     setVerifyUdyamLoading(false);
     setGstAdvanceLoading(false);
     setGstTurnoverLoading(false);
@@ -178,24 +194,24 @@ export default function BeFiSc() {
             Number(ProfileAdvanceResponse.responseData?.status) === 2
           ) {
             setProfileAdvanceData(ProfileAdvanceResponse.responseData);
-            const emailAddress =
-              ProfileAdvanceResponse.responseData?.result?.email?.[0]?.value
-                .trim()
-                .toLowerCase();
+            // const emailAddress =
+            //   ProfileAdvanceResponse.responseData?.result?.email?.[0]?.value
+            //     .trim()
+            //     .toLowerCase();
             // calling ghunt api with emailaddess
-            try {
-              if (emailAddress) {
-                const data = await post('/api/ghunt/getEmailDetails', {
-                  email: emailAddress,
-                });
-                setGhuntData(data.responseData);
-                setGhuntLoading(false);
-              } else {
-                toast.error('Ghunt Data Not Found', { id: toastRef.current! });
-              }
-            } catch (error) {
-              toast.error('Ghunt Data Not Found', { id: toastRef.current! });
-            }
+            // try {
+            //   if (emailAddress) {
+            //     const data = await post('/api/ghunt/getEmailDetails', {
+            //       email: emailAddress,
+            //     });
+            //     setGhuntData(data.responseData);
+            //     setGhuntLoading(false);
+            //   } else {
+            //     toast.error('Ghunt Data Not Found', { id: toastRef.current! });
+            //   }
+            // } catch (error) {
+            //   toast.error('Ghunt Data Not Found', { id: toastRef.current! });
+            // }
           }
           setProfileAdvanceLoading(false);
           const panNumber =
@@ -499,9 +515,8 @@ export default function BeFiSc() {
   };
 
   const getImageUrl = (): string => {
-    if (ghuntData?.profile?.profilePictureUrl) {
-      console.log('profile url', ghuntData.profile.profilePictureUrl);
-      return ghuntData.profile.profilePictureUrl;
+    if (ghuntMultipleData[0]?.profile?.profilePictureUrl) {
+      return ghuntMultipleData[0]?.profile.profilePictureUrl;
     }
     const gender = panAllInOneData?.result?.gender;
 
@@ -520,7 +535,6 @@ export default function BeFiSc() {
     profileAdvanceData?.result?.address?.[0]?.detailed_address || '';
 
   // location api
-
   useEffect(() => {
     setOlaGeoApiLoading(true);
 
@@ -607,6 +621,40 @@ export default function BeFiSc() {
     callOtherAddressApis();
   }, [gstAdvanceLoading, EquifaxV3Loading, profileAdvanceLoading]);
 
+  // here ghunt call
+  useEffect(() => {
+    const callGhuntApis = async () => {
+      if (!profileAdvanceLoading && !EquifaxV3Loading && !gstAdvanceLoading) {
+        setGhuntMultipleLoading(true);
+        const otherEmails = getOtherEmails(
+          gstAdvanceData,
+          EquifaxV3Data,
+          profileAdvanceData,
+          '',
+        );
+        if (otherEmails.length > 0) {
+          try {
+            const results = await Promise.all(
+              otherEmails.map((email) =>
+                post('/api/ghunt/getEmailDetails', {
+                  email: email,
+                }),
+              ),
+            );
+            const data = results.map((result) => result.responseData);
+            setGhuntMultipleData(data);
+            setGhuntMultipleLoading(false);
+          } catch (error) {
+            setGhuntMultipleLoading(false);
+          }
+        } else {
+          setGhuntMultipleLoading(false);
+        }
+      }
+    };
+    callGhuntApis();
+  }, [gstAdvanceLoading, EquifaxV3Loading, profileAdvanceLoading]);
+
   const OverviewData = [
     {
       title: 'Father Name',
@@ -665,13 +713,14 @@ export default function BeFiSc() {
     {
       title: 'Email Address',
       value:
-        profileAdvanceData?.result?.email?.[0]?.value
-          .toLowerCase()
-          .slice(0, 32) ||
-        panAllInOneData?.result?.email?.slice(0, 30) ||
-        '----',
+        getOtherEmails(
+          gstAdvanceData,
+          EquifaxV3Data,
+          profileAdvanceData,
+          '',
+        )[0] || '----',
       titleClassname: '',
-      valueClassname: 'max-w-28',
+      valueClassname: 'max-w-24',
     },
     {
       title: 'isSole Proprietor',
@@ -855,7 +904,11 @@ export default function BeFiSc() {
                     </div>
 
                     <p className="text-2xl font-semibold">
-                      {formatSentence(panAllInOneData?.result?.full_name)}
+                      {formatSentence(
+                        panAllInOneData?.result?.full_name ||
+                          profileAdvanceData?.result?.personal_information
+                            ?.full_name,
+                      )}
                     </p>
                   </div>
                   <div className="grid grid-cols-1">
@@ -1078,10 +1131,11 @@ export default function BeFiSc() {
               </TabsContent>
               <TabsContent value="financial" className="mt-6">
                 <BeFiScFinancial
+                  panAllInOneData={panAllInOneData}
                   upiDetailsLoading={upiDetailsLoading}
                   upiDetailsData={upiDetailsData}
                   Mobile360Data={mobile360Data}
-                  ProfileAdvance={profileAdvanceData}
+                  profileAdvanceData={profileAdvanceData}
                   MobileToAccountData={mobileToAccountData}
                   EquifaxV3Data={EquifaxV3Data}
                 />
@@ -1113,10 +1167,14 @@ export default function BeFiSc() {
               </TabsContent>
               <TabsContent value="breachInfo" className="mt-6"></TabsContent>
               <TabsContent value="googleProfile" className="mt-6">
-                {ghuntLoading ? (
+                {ghuntMultipleLoading ? (
                   <BeFiScLoadingSkeleton />
-                ) : ghuntData ? (
-                  <Ghunt accountData={ghuntData} />
+                ) : ghuntMultipleData?.length > 0 ? (
+                  <div className="grid grid-cols-2 gap-4">
+                    {ghuntMultipleData.map((item, index) => (
+                      <Ghunt key={index} accountData={item} />
+                    ))}
+                  </div>
                 ) : (
                   <NotFound value="No Email Found" />
                 )}
