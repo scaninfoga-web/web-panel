@@ -540,10 +540,7 @@ export default function BeFiSc() {
 
     const callGeoApi = async () => {
       await new Promise((resolve) => setTimeout(resolve, 500));
-      if (
-        (firstAddress && firstAddress?.length > 5) ||
-        secondAddress?.length > 5
-      ) {
+      if (!panAllInOneLoading && !profileAdvanceLoading) {
         const clientInfo = getClientInfo();
         setOlaGeoApiLoading(true);
         try {
@@ -554,8 +551,7 @@ export default function BeFiSc() {
               address: firstAddress,
             });
             setOlaGeoApiData(imageData);
-          }
-          if (secondAddress.length > 5) {
+          } else if (secondAddress.length > 5) {
             const imageData = await post('/api/auth/getmap', {
               userLng: clientInfo?.longitude,
               userLat: clientInfo?.latitude,
@@ -578,7 +574,8 @@ export default function BeFiSc() {
       }
     };
     callGeoApi();
-  }, [panAllInOneData, profileAdvanceData]);
+  }, [panAllInOneLoading, profileAdvanceLoading]);
+
   useEffect(() => {
     const callOtherAddressApis = async () => {
       if (!profileAdvanceLoading && !EquifaxV3Loading && !gstAdvanceLoading) {
