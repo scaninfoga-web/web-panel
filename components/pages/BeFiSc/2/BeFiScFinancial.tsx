@@ -3,6 +3,7 @@ import {
   EquifaxV3Type,
   Mobile360Type,
   MobileToAccountNumberType,
+  PanAllInOneType,
   ProfileAdvanceType,
   UPIType,
 } from '@/types/BeFiSc';
@@ -13,26 +14,25 @@ import CustomBadge from '../CustomBadge';
 import { DashboardCard } from '../../dashboard/components/DashboardCard';
 import UpiDetails from '../UpiDetails';
 import BeFiScLoadingSkeleton from '../BeFiScLoadingSkeleton';
-import { cn } from '@/lib/utils';
 
 interface PageProps {
   Mobile360Data: Mobile360Type | null;
-  ProfileAdvance: ProfileAdvanceType | null;
+  profileAdvanceData: ProfileAdvanceType | null;
   MobileToAccountData: MobileToAccountNumberType | null;
   EquifaxV3Data: EquifaxV3Type | null;
   upiDetailsLoading: boolean;
   upiDetailsData: UPIType | null;
-  isSuspicous: boolean;
+  panAllInOneData: PanAllInOneType | null;
 }
 
 export default function BeFiScFinancial({
   Mobile360Data,
-  ProfileAdvance,
-  isSuspicous,
+  profileAdvanceData,
   MobileToAccountData,
   EquifaxV3Data,
   upiDetailsLoading,
   upiDetailsData,
+  panAllInOneData,
 }: PageProps) {
   const [activeTab, setActiveTab] = React.useState('bank');
   let creditCount = 0;
@@ -65,6 +65,24 @@ export default function BeFiScFinancial({
   };
 
   const gridColsClass = getGridCols(tabs.length);
+
+  const name =
+    panAllInOneData?.result?.full_name
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, ' ') ||
+    profileAdvanceData?.result?.personal_information?.full_name
+      .trim()
+      .replace(/\s+/g, ' ')
+      .toLowerCase();
+
+  const realName =
+    name && name.length > 0
+      ? name
+      : (Object.values(upiDetailsData?.responseData ?? {})[0]
+          ?.data?.result?.name.trim()
+          .replace(/\s+/g, ' ')
+          .toLowerCase() ?? '');
 
   return (
     <div className="grid grid-cols-1 gap-2 space-y-4">
@@ -545,10 +563,7 @@ export default function BeFiScFinancial({
             <BeFiScLoadingSkeleton />
           ) : (
             <div className="flex flex-col space-y-4">
-              <h1 className="text-xl text-red-500">
-                {isSuspicous ? 'Found suspicious account name' : null}
-              </h1>
-              <UpiDetails UpiData={upiDetailsData} />
+              <UpiDetails realName={realName} UpiData={upiDetailsData} />
             </div>
           )}
         </TabsContent>

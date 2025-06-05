@@ -122,34 +122,16 @@ export default function BeFiSc() {
     }[]
   >([]);
 
-  const name =
-    panAllInOneData?.result?.full_name
-      .trim()
-      .toLowerCase()
-      .replace(/\s+/g, ' ') ||
-    profileAdvanceData?.result?.personal_information?.full_name
-      .trim()
-      .replace(/\s+/g, ' ')
-      .toLowerCase();
-
-  const realName =
-    name && name.length > 0
-      ? name
-      : (Object.values(upiDetailsData?.responseData ?? {})[0]
-          ?.data?.result?.name.trim()
-          .replace(/\s+/g, ' ')
-          .toLowerCase() ?? '');
-
-  const isSuspicious = Object.values(upiDetailsData?.responseData ?? {}).some(
-    (val) => {
-      if (val?.success) {
-        return (
-          val?.data?.result?.name.trim().replace(/\s+/g, ' ').toLowerCase() !==
-          realName
-        );
-      }
-    },
-  );
+  // const isSuspicious = Object.values(upiDetailsData?.responseData ?? {}).some(
+  //   (val) => {
+  //     if (val?.success) {
+  //       return (
+  //         val?.data?.result?.name.trim().replace(/\s+/g, ' ').toLowerCase() !==
+  //         realName
+  //       );
+  //     }
+  //   },
+  // );
 
   const setAllOnLoading = () => {
     setIsLoading(true);
@@ -922,7 +904,11 @@ export default function BeFiSc() {
                     </div>
 
                     <p className="text-2xl font-semibold">
-                      {formatSentence(name)}
+                      {formatSentence(
+                        panAllInOneData?.result?.full_name ||
+                          profileAdvanceData?.result?.personal_information
+                            ?.full_name,
+                      )}
                     </p>
                   </div>
                   <div className="grid grid-cols-1">
@@ -1145,11 +1131,11 @@ export default function BeFiSc() {
               </TabsContent>
               <TabsContent value="financial" className="mt-6">
                 <BeFiScFinancial
-                  isSuspicous={isSuspicious}
+                  panAllInOneData={panAllInOneData}
                   upiDetailsLoading={upiDetailsLoading}
                   upiDetailsData={upiDetailsData}
                   Mobile360Data={mobile360Data}
-                  ProfileAdvance={profileAdvanceData}
+                  profileAdvanceData={profileAdvanceData}
                   MobileToAccountData={mobileToAccountData}
                   EquifaxV3Data={EquifaxV3Data}
                 />

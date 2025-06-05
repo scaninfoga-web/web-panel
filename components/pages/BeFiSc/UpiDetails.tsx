@@ -30,7 +30,13 @@ const upiIcons = new Map<string, string>([
   ['Bank of Baroda', '/upi/BankofBaroda.png'],
 ]);
 
-export default function UpiDetails({ UpiData }: { UpiData: UPIType | null }) {
+export default function UpiDetails({
+  UpiData,
+  realName,
+}: {
+  UpiData: UPIType | null;
+  realName: string;
+}) {
   if (!UpiData) {
     return <></>;
   }
@@ -44,6 +50,14 @@ export default function UpiDetails({ UpiData }: { UpiData: UPIType | null }) {
 
         return (
           <DashboardCard
+            notifytitle={
+              data?.data?.result?.name
+                .trim()
+                .replace(/\s+/g, ' ')
+                .toLowerCase() === realName
+                ? null
+                : 'view details?'
+            }
             icon={
               <Image
                 src={upiIcons.get(data.platform) || '/null.png'}

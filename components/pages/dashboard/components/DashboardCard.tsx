@@ -2,8 +2,12 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
+import { AlertCircleIcon } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface DashboardCardProps {
+  notifytitle?: string | null;
+  notifyStyle?: string;
   title: string;
   children: React.ReactNode;
   icon?: React.ReactNode;
@@ -12,6 +16,8 @@ interface DashboardCardProps {
 }
 
 export function DashboardCard({
+  notifytitle,
+  notifyStyle,
   title,
   children,
   icon,
@@ -33,11 +39,16 @@ export function DashboardCard({
       <CardContent className="relative space-y-2 p-4">
         {title.length > 0 && (
           <div className="flex items-center">
+            {notifytitle && (
+              <span className="absolute -top-1 right-0 animate-pulse rounded-2xl border border-red-400 px-3 py-0.5 text-sm text-red-400 transition-opacity hover:opacity-75">
+                suspicous
+              </span>
+            )}
             {icon}
             {title.length > 0 && (
               <h2
                 className={cn(
-                  'mb-2 font-semibold text-emerald-500',
+                  'mb-2 mt-2 font-semibold text-emerald-500',
                   titleBig ? 'text-2xl' : 'text-xl',
                 )}
               >
@@ -46,7 +57,14 @@ export function DashboardCard({
             )}
           </div>
         )}
-        {children}
+        <div className="flex flex-col">
+          {children}
+          {notifytitle && (
+            <Button className="mt-4 px-4 py-1" variant={'default'}>
+              {notifytitle}
+            </Button>
+          )}
+        </div>
       </CardContent>
     </Card>
   );
