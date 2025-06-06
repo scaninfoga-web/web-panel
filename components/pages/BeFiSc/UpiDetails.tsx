@@ -79,6 +79,7 @@ export default function UpiDetails({
                 if (key === 'address') {
                   return (
                     <InfoText
+                      key={index}
                       label={formatKey(key)}
                       value={formatSentence(value.slice(0, 30))}
                     />

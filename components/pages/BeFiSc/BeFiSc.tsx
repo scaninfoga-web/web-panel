@@ -369,26 +369,6 @@ export default function BeFiSc() {
           setGstAdvanceLoading(false);
           setGstTurnoverLoading(false);
         }
-
-        // calling upi details
-        try {
-          const UpiDetails = await post('/api/mobile/digitalpayment', {
-            mobile_number: mobileNo,
-            realtimeData: isRealtime,
-          });
-          if (UpiDetails.responseStatus?.status === true) {
-            setUpiDetailsData(UpiDetails);
-          }
-        } catch (error) {
-          if (error instanceof AxiosError) {
-            toast.error(
-              'M2A ' + error.response?.data?.responseStatus?.message,
-              { id: toastRef.current! },
-            );
-          }
-        }
-        setUpiDetailsLoading(false);
-
         try {
           const ActDetails = await post('/api/mobile/getAcDtlsFromMobNo', {
             mobile_number: mobileNo,
@@ -407,8 +387,26 @@ export default function BeFiSc() {
             );
           }
         }
-        toast.success(`${apiMessage.current!}`, { id: toastRef.current! });
         setIsLoading(false);
+        toast.success(`${apiMessage.current!}`, { id: toastRef.current! });
+
+        // calling upi details
+        try {
+          const UpiDetails = await post('/api/mobile/digitalpayment', {
+            mobile_number: mobileNo,
+            realtimeData: isRealtime,
+          });
+          if (UpiDetails.responseStatus?.status === true) {
+            setUpiDetailsData(UpiDetails);
+          }
+        } catch (error) {
+          if (error instanceof AxiosError) {
+            toast.error(
+              'M2A ' + error.response?.data?.responseStatus?.message,
+              { id: toastRef.current! },
+            );
+          }
+        }
         setAllOffLoading();
         setisRealtime(false);
       };
