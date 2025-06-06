@@ -172,10 +172,11 @@ export default function Navbar() {
               </Button>
             </Link>
 
-            {token && (
+            {token &&
               // <Button variant='outline' className='flex gap-x-2'><CircleDollarSign className='text-yellow-500'/> {walletBalance}</Button>
-              <WalletWidget credits={walletBalance} onTopUp={() => {}} />
-            )}
+              !paths.includes(pathname) && (
+                <WalletWidget credits={walletBalance} onTopUp={() => {}} />
+              )}
             <Button
               variant="outline"
               className="border-emerald-500 text-emerald-500 hover:bg-emerald-500 hover:text-black"
