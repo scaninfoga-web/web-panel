@@ -1,12 +1,12 @@
-import Hero from '@/components/hero';
-import Services from '@/components/services';
-import Education from '@/components/education';
-import Features from '@/components/features';
-import Testimonials from '@/components/testimonials';
-import CTA from '@/components/cta';
-import Footer from '@/components/footer';
-import SecurityAnimation from '@/components/security-animation';
-import FAQ from '@/components/faq';
+import CTA from '@/components/sub/cta';
+import Education from '@/components/sub/education';
+import FAQ from '@/components/sub/faq';
+import Features from '@/components/sub/features';
+import Footer from '@/components/sub/footer';
+import Hero from '@/components/sub/hero';
+import SecurityAnimation from '@/components/sub/security-animation';
+import Services from '@/components/sub/services';
+import Testimonials from '@/components/sub/testimonials';
 
 export default async function Home() {
   // const token = useSelector((state: RootState) => state.user.token);

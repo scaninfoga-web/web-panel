@@ -173,9 +173,7 @@ const sidebarLinks = [
 
 export function DashboardSidebar() {
   const pathname = usePathname();
-  const userType = useSelector((state: any) => state.user.user.userType);
-
-  console.log('USERTYOE: ', userType);
+  const userType = useSelector((state: any) => state?.user?.user?.userType);
 
   const filteredLinks = sidebarLinks.filter((link) =>
     link.roles.includes(userType),

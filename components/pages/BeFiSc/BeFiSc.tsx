@@ -1,9 +1,10 @@
 'use client';
-import CustomCheckBox from '@/components/checkbox';
 import DashboardTitle from '@/components/common/DashboardTitle';
 import { SearchBar2 } from '@/components/search/SearchBar2';
+import CustomCheckBox from '@/components/sub/checkbox';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { cn } from '@/lib/utils';
 import {
   EquifaxV3Type,
   EsicDetailsType,
@@ -17,20 +18,28 @@ import {
   VerifyUdyamType,
 } from '@/types/BeFiSc';
 import { AxiosError } from 'axios';
+import { motion } from 'framer-motion';
 import Image from 'next/image';
+import { useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { cn } from '@/lib/utils';
-import { motion } from 'framer-motion';
 // @ts-ignore
-import NotFound from '@/components/NotFound';
+import NotFound from '@/components/sub/NotFound';
 import { getClientInfo, post } from '@/lib/api';
 import { GhuntData } from '@/types/ghunt';
+import { OlaGeoApiType } from '@/types/ola-geo-api';
+import { DashboardCard } from '../dashboard/components/DashboardCard';
 import Ghunt from '../ghunt/Ghunt';
 import BeFiScBusiness from './2/BeFiScBusiness';
+import BeFiScDigitalFootprint, {
+  getAddressesWithDifferentPincode,
+  getOtherEmails,
+  getOtherPhoneNumbers,
+} from './2/BeFiScDigitalFootprint';
 import BeFiScFinancial from './2/BeFiScFinancial';
 import BefiScPersonal from './2/BefiScPersonal';
+import MapLoading from './2/MapLoading';
+import SentenceLoader from './2/SentenceLoader';
 import {
   cleanAndCapitalize,
   formatSentence,
@@ -38,15 +47,6 @@ import {
 } from './APIUtils';
 import BeFiScLoadingSkeleton from './BeFiScLoadingSkeleton';
 import CustomBadge from './CustomBadge';
-import { DashboardCard } from '../dashboard/components/DashboardCard';
-import { OlaGeoApiType } from '@/types/ola-geo-api';
-import SentenceLoader from './2/SentenceLoader';
-import BeFiScDigitalFootprint, {
-  getAddressesWithDifferentPincode,
-  getOtherEmails,
-  getOtherPhoneNumbers,
-} from './2/BeFiScDigitalFootprint';
-import MapLoading from './2/MapLoading';
 
 export function isValidIndianMobileNumber(input: string): boolean {
   const mobileRegex = /^(?:\+91[\-\s]?)?[5-9]\d{9}$/;
@@ -279,8 +279,6 @@ export default function BeFiSc() {
           setEquifaxV3Loading(false);
           setProfileAdvanceLoading(false);
         }
-        toast.success(`${apiMessage.current!}`, { id: toastRef.current! });
-        setIsLoading(false);
 
         // epicsInfo
         const EsicsArray = mobile360Data.result?.key_highlights?.esic_number;
@@ -409,7 +407,8 @@ export default function BeFiSc() {
             );
           }
         }
-
+        toast.success(`${apiMessage.current!}`, { id: toastRef.current! });
+        setIsLoading(false);
         setAllOffLoading();
         setisRealtime(false);
       };
@@ -504,7 +503,6 @@ export default function BeFiSc() {
     } catch (err) {
       if (err instanceof AxiosError) {
         toast.error(err.response?.data?.responseStatus?.message);
-        setIsLoading(false);
         setAllOffLoading();
         return;
       }

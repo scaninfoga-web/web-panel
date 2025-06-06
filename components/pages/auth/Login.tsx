@@ -82,30 +82,22 @@ const Login = () => {
             user,
           }),
         );
-
-        console.log('USER: ', user);
-        console.log('TOKEN: ', tokens);
-
         setCookie('accessToken', tokens.accessToken, {
           maxAge: 60 * 60 * 24 * 10,
         });
         setCookie('userType', user.userType, { maxAge: 60 * 60 * 24 * 10 });
         toast.success('Logged in successfully!', { duration: 800 });
-        // router.push('/combinedDash');
         return;
       }
-      // return await clearCookies();
 
       if (data.responseStatus?.status) {
         login(data.responseData.token);
         toast.success('Logged in successfully!');
         router.push('/combinedDash');
       } else {
-        console.error('Authentication failed:', data.responseStatus?.message);
         toast.error('Login failed. Check your credentials and try again.');
       }
     } catch (error) {
-      console.error('Authentication error:', error);
       toast.error('Login failed. Check your credentials and try again.');
     }
   };

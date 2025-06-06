@@ -1,8 +1,8 @@
-import Footer from '@/components/footer';
-import Navbar from '@/components/navbar';
 import { SpiderWebBackground } from '@/components/pages/auth/Auth';
 import ServiceHeroSection from '@/components/services/ServiceHeroSection';
 import ServicesSection from '@/components/services/ServiceSection';
+import Footer from '@/components/sub/footer';
+import Navbar from '@/components/sub/navbar';
 import { Loader } from '@/components/ui/loader';
 import { Suspense } from 'react';
 

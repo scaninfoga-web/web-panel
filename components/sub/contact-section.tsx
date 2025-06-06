@@ -1,6 +1,5 @@
 'use client';
-import React from 'react';
-import CTA from '@/components/cta';
+import CTA from '@/components/sub/cta';
 import { motion } from 'framer-motion';
 export default function ContactSection() {
   return (

@@ -1,6 +1,5 @@
-import ContactSection from '@/components/contact-section';
-import Footer from '@/components/footer';
-import Navbar from '@/components/navbar';
+import ContactSection from '@/components/sub/contact-section';
+import Footer from '@/components/sub/footer';
 import { Loader } from '@/components/ui/loader';
 import { Suspense } from 'react';
 

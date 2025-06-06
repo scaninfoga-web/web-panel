@@ -1,19 +1,19 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { Menu, X, Shield, User, ShoppingCart } from 'lucide-react';
+import { clearCookies } from '@/actions/clearCookies';
 import { Button } from '@/components/ui/button';
 import { cn, getClientInfo } from '@/lib/utils';
-import { usePathname, useRouter } from 'next/navigation';
-import { useDispatch, useSelector } from 'react-redux';
-import { logout } from '@/redux/userSlice';
-import { getCookie } from 'cookies-next';
 import { setInfo } from '@/redux/infoSlice';
 import { AppDispatch, RootState } from '@/redux/store';
+import { logout } from '@/redux/userSlice';
 import { fetchWalletBalance } from '@/redux/walletSlice';
-import { WalletWidget } from './common/WalletWidget';
-import { clearCookies } from '@/actions/clearCookies';
+import { getCookie } from 'cookies-next';
+import { Menu, Shield, ShoppingCart, User, X } from 'lucide-react';
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { WalletWidget } from '../common/WalletWidget';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -48,7 +48,7 @@ export default function Navbar() {
         const info = await getClientInfo();
         dispatch(setInfo(info));
       } catch (e) {
-        console.error('Error fetching client info:', e);
+        console.log('client fetch error', e);
       }
     };
     fetchInfo();
@@ -64,8 +64,7 @@ export default function Navbar() {
   }, []);
 
   useEffect(() => {
-    if (token && token.length > 10) {
-      console.log('Token present');
+    if (accessToken) {
       dispatch(fetchWalletBalance());
     }
   }, []);
@@ -182,7 +181,7 @@ export default function Navbar() {
               className="border-emerald-500 text-emerald-500 hover:bg-emerald-500 hover:text-black"
               onClick={async () => {
                 if (accessToken) {
-                  // dispatch(logout());
+                  dispatch(logout());
                   await clearCookies();
                   router.push('/');
                   return;

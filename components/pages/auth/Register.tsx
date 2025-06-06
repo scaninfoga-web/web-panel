@@ -114,56 +114,39 @@ export function Register({ type: initialType }: RegisterProps) {
     });
   }, [type, form]);
 
-  const handleGoogleSuccess = async (credentialResponse: any) => {
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/google/`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-          },
-          body: JSON.stringify({
-            idToken: credentialResponse.credential,
-            backend: 'google-oauth2',
-            grant_type: 'convert_token',
-          }),
-        },
-      );
+  // const handleGoogleSuccess = async (credentialResponse: any) => {
+  //   try {
+  //     const response = await fetch(
+  //       `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/google/`,
+  //       {
+  //         method: 'POST',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //           Accept: 'application/json',
+  //         },
+  //         body: JSON.stringify({
+  //           idToken: credentialResponse.credential,
+  //           backend: 'google-oauth2',
+  //           grant_type: 'convert_token',
+  //         }),
+  //       },
+  //     );
 
-      const data = await response.json();
+  //     const data = await response.json();
 
-      const res = await axios.get(`/api/get/tokens`, {
-        withCredentials: true,
-      });
-      const tokens = res.data;
-      // if (tokens && tokens.accessToken && tokens.refreshToken) {
-      //   dispatch(
-      //     setCredentials({
-      //       token: tokens.accessToken,
-      //       refreshToken: tokens.refreshToken,
-      //       user,
-      //     }),
-      //   );
-      //   toast.success('Logged in successfully!');
-      //   return router.push('/combinedDash');
-      // }
-      // return await clearCookies();
-
-      if (data.responseStatus?.status) {
-        login(data.responseData.token);
-        toast.success('Logged in successfully!');
-        router.push('/combinedDash');
-      } else {
-        console.error('Authentication failed:', data.responseStatus?.message);
-        toast.error('Login failed. Check your credentials and try again.');
-      }
-    } catch (error) {
-      console.error('Authentication error:', error);
-      toast.error('Login failed. Check your credentials and try again.');
-    }
-  };
+  //     if (data.responseStatus?.status) {
+  //       login(data.responseData.token);
+  //       toast.success('Logged in successfully!');
+  //       router.push('/combinedDash');
+  //     } else {
+  //       console.error('Authentication failed:', data.responseStatus?.message);
+  //       toast.error('Login failed. Check your credentials and try again.');
+  //     }
+  //   } catch (error) {
+  //     console.error('Authentication error:', error);
+  //     toast.error('Login failed. Check your credentials and try again.');
+  //   }
+  // };
 
   const onSubmit = async (data: any) => {
     try {

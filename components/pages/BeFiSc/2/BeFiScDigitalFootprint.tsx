@@ -1,15 +1,4 @@
-import {
-  EquifaxV3Type,
-  GstVerificationAdvanceType,
-  Mobile360Type,
-  PanAllInOneType,
-  ProfileAdvanceType,
-} from '@/types/BeFiSc';
-import React from 'react';
-import { DashboardCard } from '../../dashboard/components/DashboardCard';
-import NotFound from '@/components/NotFound';
-import { isValidIndianMobileNumber } from '../BeFiSc';
-import { formatSentence } from '../APIUtils';
+import NotFound from '@/components/sub/NotFound';
 import {
   Table,
   TableBody,
@@ -18,6 +7,15 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import {
+  EquifaxV3Type,
+  GstVerificationAdvanceType,
+  PanAllInOneType,
+  ProfileAdvanceType,
+} from '@/types/BeFiSc';
+import { DashboardCard } from '../../dashboard/components/DashboardCard';
+import { formatSentence } from '../APIUtils';
+import { isValidIndianMobileNumber } from '../BeFiSc';
 import CustomBadge from '../CustomBadge';
 
 export function getOtherPhoneNumbers(

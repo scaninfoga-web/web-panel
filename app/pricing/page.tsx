@@ -1,8 +1,7 @@
-import Navbar from '@/components/navbar';
-import PricingPlans from '../../components/pricing-plans';
-import Footer from '@/components/footer';
+import Footer from '@/components/sub/footer';
 import { Loader } from '@/components/ui/loader';
 import { Suspense } from 'react';
+import PricingPlans from '../../components/sub/pricing-plans';
 
 export default function PricingPage() {
   return (

@@ -1,6 +1,6 @@
-import AboutUsSection from '@/components/about-us';
-import Footer from '@/components/footer';
-import Navbar from '@/components/navbar';
+import AboutUsSection from '@/components/sub/about-us';
+import Footer from '@/components/sub/footer';
+import Navbar from '@/components/sub/navbar';
 import { Loader } from '@/components/ui/loader';
 import { Suspense } from 'react';
 
