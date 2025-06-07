@@ -620,6 +620,7 @@ export default function BeFiSc() {
       if (!profileAdvanceLoading && !EquifaxV3Loading && !gstAdvanceLoading) {
         setGhuntMultipleLoading(true);
         const otherEmails = getOtherEmails(
+          esicsData,
           gstAdvanceData,
           EquifaxV3Data,
           profileAdvanceData,
@@ -707,6 +708,7 @@ export default function BeFiSc() {
       title: 'Email Address',
       value:
         getOtherEmails(
+          esicsData,
           gstAdvanceData,
           EquifaxV3Data,
           profileAdvanceData,
@@ -945,7 +947,10 @@ export default function BeFiSc() {
                                   ? formatSentence(secondAddress)
                                   : formatSentence(
                                       mobile360Data?.result?.lpg_info?.data?.[0]
-                                        ?.address,
+                                        ?.address.length > 10
+                                        ? mobile360Data?.result?.lpg_info
+                                            ?.data?.[0]?.address
+                                        : '----',
                                     )}
                             </p>
                           </div>
@@ -1146,6 +1151,7 @@ export default function BeFiSc() {
               </TabsContent>
               <TabsContent value="digitalInfo" className="mt-6">
                 <BeFiScDigitalFootprint
+                  EcicsData={esicsData}
                   email={
                     profileAdvanceData?.result?.email?.[0]?.value.toLowerCase() ||
                     panAllInOneData?.result?.email ||

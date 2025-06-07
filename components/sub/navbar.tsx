@@ -151,7 +151,7 @@ export default function Navbar() {
           </nav>
 
           <div className="hidden items-center space-x-4 md:flex">
-            <Link href="/account">
+            {/* <Link href="/account">
               <Button
                 variant="ghost"
                 size="icon"
@@ -170,28 +170,31 @@ export default function Navbar() {
                 <ShoppingCart className="h-5 w-5" />
                 <span className="sr-only">Cart</span>
               </Button>
-            </Link>
+            </Link> */}
 
             {token &&
               // <Button variant='outline' className='flex gap-x-2'><CircleDollarSign className='text-yellow-500'/> {walletBalance}</Button>
               !paths.includes(pathname) && (
                 <WalletWidget credits={walletBalance} onTopUp={() => {}} />
               )}
-            <Button
-              variant="outline"
-              className="border-emerald-500 text-emerald-500 hover:bg-emerald-500 hover:text-black"
-              onClick={async () => {
-                if (accessToken) {
-                  dispatch(logout());
-                  await clearCookies();
-                  router.push('/');
-                  return;
-                }
-                router.push('/auth');
-              }}
-            >
-              {accessToken ? 'Sign out' : 'Sign in'}
-            </Button>
+            {!paths.includes(pathname) && (
+              <Button
+                variant="outline"
+                className="border-emerald-500 text-emerald-500 hover:bg-emerald-500 hover:text-black"
+                onClick={async () => {
+                  if (accessToken) {
+                    dispatch(logout());
+                    await clearCookies();
+                    router.push('/');
+                    return;
+                  }
+                  router.push('/auth');
+                }}
+              >
+                {accessToken ? 'Sign out' : 'Sign in'}
+              </Button>
+            )}
+
             {accessToken ? (
               paths.includes(pathname) && (
                 <Button

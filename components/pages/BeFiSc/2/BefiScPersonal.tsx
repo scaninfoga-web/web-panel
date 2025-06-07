@@ -33,6 +33,7 @@ interface Props {
 }
 
 export default function BefiScPersonal({
+  EsicsData,
   Mobile360Data,
   PanAllInOneData,
   ProfileAdvanceData,
@@ -114,6 +115,139 @@ export default function BefiScPersonal({
           </div>
         </DashboardCard>
       </div>
+
+      {EsicsData?.result?.esic_details &&
+        EsicsData?.result?.esic_details.length > 0 && (
+          <div className="grid grid-cols-1">
+            {EsicsData?.result?.esic_details?.map((item, index) => (
+              <DashboardCard key={index} title="Esic Details" className="">
+                <div className="space-y-4">
+                  <div className="grid grid-cols-3 gap-4">
+                    <div>
+                      <p className="text-xs text-slate-400">ESIC Number</p>
+                      <p className="font-medium text-blue-500">
+                        {getValue(item?.esic_number)}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-slate-400">Name</p>
+                      <p className="font-medium text-yellow-500">
+                        {formatSentence(item?.name)}
+                      </p>
+                    </div>
+
+                    <div>
+                      <p className="text-xs text-slate-400">DOB</p>
+                      <p className="font-medium text-yellow-500">
+                        {item?.date_of_birth || '----'}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-slate-400">Age</p>
+                      <p className="font-medium">{item?.age}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-slate-400">Mobile</p>
+                      <p className="font-medium">
+                        {getValue(
+                          item?.mobile || item?.employer_details.mobile,
+                        )}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-slate-400">Email</p>
+                      <p className="font-medium text-yellow-500">
+                        {getValue(item?.employer_details?.email)}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-slate-400">Bank Name</p>
+                      <p className="font-medium">
+                        {formatSentence(item?.bank_name)}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-slate-400">Branch Name</p>
+                      <p className="font-medium">
+                        {formatSentence(item?.branch_name)}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-slate-400">
+                        Registration Date
+                      </p>
+                      <p className="font-medium text-yellow-500">
+                        {getValue(item?.registration_date)}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-slate-400">
+                        First Date Of Appointment
+                      </p>
+                      <p className="font-medium text-yellow-500">
+                        {getValue(item?.first_date_of_appointment)}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-slate-400">UAN Number</p>
+                      <p className="font-medium text-blue-500">
+                        {getValue(item?.uan_number)}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-slate-400">UHID Number</p>
+                      <p className="font-medium">
+                        {getValue(item?.uhid_number)}
+                      </p>
+                    </div>
+
+                    <div>
+                      <p className="text-xs text-slate-400">Company Name</p>
+                      <p className="font-medium">
+                        {getValue(item?.employer_name)}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-slate-400">Employer Code</p>
+                      <p className="font-medium">
+                        {getValue(item?.employer_code)}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-slate-400">Disability Type</p>
+                      <p className="font-medium">
+                        {getValue(item?.disability_type)}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-slate-400">Dispensary Name</p>
+                      <p className="font-medium">
+                        {getValue(item?.dispensary_name)}
+                      </p>
+                    </div>
+                  </div>
+                  <Separator className="bg-slate-800" />
+                  <div className="flex space-x-4">
+                    <div>
+                      <p className="text-xs text-slate-400">
+                        Bank Account Status
+                      </p>
+                      <Badge className="mt-1 bg-emerald-500/20 text-emerald-500">
+                        {item?.bank_account_status}
+                      </Badge>
+                    </div>
+                    <div>
+                      <p className="text-xs text-slate-400">ESIC Status</p>
+                      <Badge className="mt-1 bg-emerald-500/20 text-emerald-500">
+                        {item?.esic_status}
+                      </Badge>
+                    </div>
+                  </div>
+                </div>
+              </DashboardCard>
+            ))}
+          </div>
+        )}
       <NumberDetails mobile360Data={Mobile360Data} />
       {Mobile360Data?.result?.lpg_info?.data &&
         Mobile360Data?.result?.lpg_info?.data.length > 0 && (

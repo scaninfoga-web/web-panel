@@ -202,6 +202,12 @@ export default function BeFiScFinancial({
                     className="mt-4 grid grid-cols-1 gap-4"
                   >
                     <div>
+                      <p className="text-sm text-gray-400">Name</p>
+                      <p className="text-base font-medium">
+                        {formatSentence(item?.name)}
+                      </p>
+                    </div>
+                    <div>
                       <p className="text-sm text-gray-400">Bank Name</p>
                       <p className="text-base font-medium">
                         {formatSentence(item?.bank_name)}

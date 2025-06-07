@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/table';
 import {
   EquifaxV3Type,
+  EsicDetailsType,
   GstVerificationAdvanceType,
   PanAllInOneType,
   ProfileAdvanceType,
@@ -152,6 +153,7 @@ export function getAddressesWithDifferentPincode(
 }
 
 export function getOtherEmails(
+  EcicsData: EsicDetailsType | null,
   GstAdvanceData: GstVerificationAdvanceType | null,
   EquifaxData: EquifaxV3Type | null,
   ProfileAdvanceData: ProfileAdvanceType | null,
@@ -198,6 +200,21 @@ export function getOtherEmails(
       emailArray.push(GstAdvanceData?.result?.business_email?.toLowerCase());
     }
   }
+  if (
+    EcicsData?.result?.esic_details &&
+    EcicsData?.result?.esic_details.length > 0
+  ) {
+    EcicsData?.result?.esic_details.forEach((item) => {
+      if (
+        item?.employer_details?.email &&
+        item?.employer_details?.email.toLowerCase() !== email.toLowerCase() &&
+        !seen.has(item?.employer_details?.email.toLowerCase())
+      ) {
+        seen.add(item?.employer_details?.email.toLowerCase());
+        emailArray.push(item?.employer_details?.email.toLowerCase());
+      }
+    });
+  }
 
   return emailArray;
 }
@@ -205,6 +222,7 @@ export function getOtherEmails(
 interface PageProps {
   email: string;
   mobileNumber: string;
+  EcicsData: EsicDetailsType | null;
   PanAllInOneData: PanAllInOneType | null;
   GstAdvanceData: GstVerificationAdvanceType | null;
   ProfileAdvanceData: ProfileAdvanceType | null;
@@ -212,6 +230,7 @@ interface PageProps {
 }
 
 export default function BeFiScDigitalFootprint({
+  EcicsData,
   email,
   mobileNumber,
   GstAdvanceData,
@@ -234,6 +253,7 @@ export default function BeFiScDigitalFootprint({
       '0',
   );
   const otherEmails = getOtherEmails(
+    EcicsData,
     GstAdvanceData,
     EquifaxData,
     ProfileAdvanceData,
