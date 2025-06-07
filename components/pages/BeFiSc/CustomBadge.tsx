@@ -1,6 +1,7 @@
 import { Badge } from '@/components/ui/badge';
 import React from 'react';
 import { formatSentence } from './APIUtils';
+import { cn } from '@/lib/utils';
 
 const defaultBadge = [
   'Yes',
@@ -26,10 +27,12 @@ export default function CustomBadge({
   variantToUse,
   value,
   isFormat = true,
+  blink = false,
 }: {
   variantToUse?: 'default' | 'danger' | 'warning' | 'outline';
   value: string | boolean | number | null | undefined;
   isFormat?: boolean;
+  blink?: boolean;
 }) {
   if (
     typeof value === 'undefined' ||
@@ -37,7 +40,10 @@ export default function CustomBadge({
   ) {
     return (
       <Badge
-        className="mt-1 gap-x-0.5 border-neutral-500 bg-neutral-800/40 text-neutral-400 hover:bg-neutral-800/10"
+        className={cn(
+          'mt-1 gap-x-0.5 border-neutral-500 bg-neutral-800/40 text-neutral-400 hover:bg-neutral-800/10',
+          blink && 'animate-pulse',
+        )}
         variant={'outline'}
       >
         No Data
@@ -47,41 +53,71 @@ export default function CustomBadge({
   if (typeof value === 'string') {
     if (defaultBadge.includes(value)) {
       return (
-        <Badge className="mt-1 gap-x-0.5" variant={'default'}>
+        <Badge
+          className={cn(
+            'mt-1 gap-x-0.5',
+            blink && 'animate-pulse duration-1000',
+          )}
+          variant={'default'}
+        >
           {formatSentence(value)}
         </Badge>
       );
     }
     if (dangerBadge.includes(value)) {
       return (
-        <Badge className="mt-1 gap-x-0.5" variant={'danger'}>
+        <Badge
+          className={cn(
+            'mt-1 gap-x-0.5',
+            blink && 'animate-pulse duration-1000',
+          )}
+          variant={'danger'}
+        >
           {formatSentence(value)}
         </Badge>
       );
     }
     if (warningBadge.includes(value)) {
       return (
-        <Badge className="mt-1 gap-x-0.5" variant={'warning'}>
+        <Badge
+          className={cn(
+            'mt-1 gap-x-0.5',
+            blink && 'animate-pulse duration-1000',
+          )}
+          variant={'warning'}
+        >
           {formatSentence(value)}
         </Badge>
       );
     }
     if (!isFormat) {
       return (
-        <Badge className="mt-1 gap-x-0.5" variant={variantToUse || 'default'}>
+        <Badge
+          className={cn(
+            'mt-1 gap-x-0.5',
+            blink && 'animate-pulse duration-1000',
+          )}
+          variant={variantToUse || 'default'}
+        >
           {value}
         </Badge>
       );
     }
     return (
-      <Badge className="mt-1 gap-x-0.5" variant={variantToUse || 'default'}>
+      <Badge
+        className={cn('mt-1 gap-x-0.5', blink && 'animate-pulse duration-1000')}
+        variant={variantToUse || 'default'}
+      >
         {formatSentence(value)}
       </Badge>
     );
   }
   if (typeof value === 'boolean') {
     return (
-      <Badge className="mt-1 gap-x-0.5" variant={value ? 'default' : 'danger'}>
+      <Badge
+        className={cn('mt-1 gap-x-0.5', blink && 'animate-pulse duration-1000')}
+        variant={value ? 'default' : 'danger'}
+      >
         {value ? 'Yes' : 'No'}
       </Badge>
     );

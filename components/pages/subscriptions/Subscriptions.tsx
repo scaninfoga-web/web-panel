@@ -367,7 +367,7 @@ const plans = [
     name: 'Silver',
     basePrice: 50000,
     gst: 0.18,
-    credits: 50000,
+    credits: 55000,
     icon: <Shield size={48} className="text-slate-300" />,
     description: 'Perfect for startups and small teams ready to scale',
     features: [
@@ -388,7 +388,7 @@ const plans = [
     name: 'Gold',
     basePrice: 100000,
     gst: 0.18,
-    credits: 1200,
+    credits: 115000,
     icon: <Award size={48} className="text-yellow-400" />,
     description: 'Ideal for growing teams that demand excellence',
     features: [
@@ -410,7 +410,7 @@ const plans = [
     name: 'Platinum',
     basePrice: 200000,
     gst: 0.18,
-    credits: 2500,
+    credits: 240000,
     icon: <Diamond size={48} className="text-blue-400" />,
     description: 'Enterprise-grade solution for industry leaders',
     features: [
@@ -470,7 +470,7 @@ const comparisonFeatures = [
       },
       {
         name: 'Threat Intelligence',
-        silver: false,
+        silver: true,
         gold: true,
         platinum: true,
         info: 'Advanced threat detection and analysis',
@@ -524,32 +524,32 @@ const comparisonFeatures = [
       },
     ],
   },
-  {
-    category: 'Support & Training',
-    features: [
-      {
-        name: 'Support Channel',
-        silver: 'Email',
-        gold: 'Priority Email',
-        platinum: '24/7 Dedicated',
-        info: 'How you can reach our support team',
-      },
-      {
-        name: 'Response Time',
-        silver: '48 hours',
-        gold: '12 hours',
-        platinum: '1 hour',
-        info: 'Guaranteed response time for support requests',
-      },
-      {
-        name: 'Training & Onboarding',
-        silver: 'Self-service',
-        gold: 'Guided setup',
-        platinum: 'White-glove',
-        info: 'Level of assistance during implementation',
-      },
-    ],
-  },
+  // {
+  //   category: 'Support & Training',
+  //   features: [
+  //     {
+  //       name: 'Support Channel',
+  //       silver: 'Email',
+  //       gold: 'Priority Email',
+  //       platinum: '24/7 Dedicated',
+  //       info: 'How you can reach our support team',
+  //     },
+  //     {
+  //       name: 'Response Time',
+  //       silver: '48 hours',
+  //       gold: '12 hours',
+  //       platinum: '1 hour',
+  //       info: 'Guaranteed response time for support requests',
+  //     },
+  //     {
+  //       name: 'Training & Onboarding',
+  //       silver: 'Self-service',
+  //       gold: 'Guided setup',
+  //       platinum: 'White-glove',
+  //       info: 'Level of assistance during implementation',
+  //     },
+  //   ],
+  // },
 ];
 
 const faqItems = [

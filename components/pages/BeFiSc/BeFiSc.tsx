@@ -606,7 +606,7 @@ export default function BeFiSc() {
             const results = await Promise.all(
               otherEmails.map((email) =>
                 post('/api/ghunt/getEmailDetails', {
-                  email: email,
+                  email: email.email,
                 }),
               ),
             );
@@ -667,7 +667,7 @@ export default function BeFiSc() {
         EquifaxV3Data,
         profileAdvanceData,
         mobileNo,
-      )[0],
+      )[0]?.number,
       titleClassname: '',
       valueClassname: '',
     },
@@ -704,7 +704,7 @@ export default function BeFiSc() {
           EquifaxV3Data,
           profileAdvanceData,
           '',
-        )[0] || '----',
+        )[0]?.email || '----',
       titleClassname: '',
       valueClassname: 'max-w-24',
     },

@@ -14,7 +14,10 @@ import {
   PanAllInOneType,
   ProfileAdvanceType,
 } from '@/types/BeFiSc';
-import { DashboardCard } from '../../dashboard/components/DashboardCard';
+import {
+  DashboardCard,
+  InfoText,
+} from '../../dashboard/components/DashboardCard';
 import { formatSentence } from '../APIUtils';
 import { isValidIndianMobileNumber } from '../BeFiSc';
 import CustomBadge from '../CustomBadge';
@@ -25,8 +28,14 @@ export function getOtherPhoneNumbers(
   EquifaxData: EquifaxV3Type | null,
   profileAdvanceData: ProfileAdvanceType | null,
   mobileNumber: string,
-): string[] {
-  const filteredNumber: string[] = [];
+): {
+  number: string;
+  type: string;
+}[] {
+  const filteredNumber: {
+    number: string;
+    type: string;
+  }[] = [];
   const seen = new Set<string>();
   const filtered = profileAdvanceData?.result.alternate_phone.filter(
     (phone) =>
@@ -35,7 +44,10 @@ export function getOtherPhoneNumbers(
   filtered?.forEach((phone) => {
     if (phone?.value && !seen.has(phone?.value)) {
       seen.add(phone?.value);
-      filteredNumber.push(phone?.value);
+      filteredNumber.push({
+        number: phone?.value,
+        type: 'Obtained this number from profile',
+      });
     }
   });
 
@@ -48,7 +60,10 @@ export function getOtherPhoneNumbers(
           !seen.has(phone?.Number)
         ) {
           seen.add(phone?.Number);
-          filteredNumber.push(phone?.Number);
+          filteredNumber.push({
+            number: phone?.Number,
+            type: 'This number is related from the Loans',
+          });
         }
       });
     },
@@ -59,7 +74,10 @@ export function getOtherPhoneNumbers(
       !seen.has(GstAdvanceData?.result?.business_mobile)
     ) {
       seen.add(GstAdvanceData?.result?.business_mobile);
-      filteredNumber.push(GstAdvanceData?.result?.business_mobile);
+      filteredNumber.push({
+        number: GstAdvanceData?.result?.business_mobile,
+        type: 'Number is obtained from the gst details',
+      });
     }
   }
 
@@ -74,7 +92,10 @@ export function getOtherPhoneNumbers(
         !seen.has(item?.employer_details?.mobile)
       ) {
         seen.add(item?.employer_details?.mobile);
-        filteredNumber.push(item?.employer_details?.mobile);
+        filteredNumber.push({
+          number: item?.employer_details?.mobile,
+          type: 'Mobile obtained from person working place',
+        });
       }
     });
   }
@@ -175,9 +196,15 @@ export function getOtherEmails(
   EquifaxData: EquifaxV3Type | null,
   ProfileAdvanceData: ProfileAdvanceType | null,
   email: string,
-): string[] {
+): {
+  type: string;
+  email: string;
+}[] {
   const seen = new Set<string>();
-  const emailArray: string[] = [];
+  const emailArray: {
+    type: string;
+    email: string;
+  }[] = [];
 
   if (ProfileAdvanceData?.result?.email) {
     for (const item of ProfileAdvanceData?.result?.email) {
@@ -187,7 +214,10 @@ export function getOtherEmails(
         !seen.has(item.value.toLowerCase())
       ) {
         seen.add(item.value.toLowerCase());
-        emailArray.push(item.value.toLowerCase());
+        emailArray.push({
+          type: 'Obtained this email from profile',
+          email: item.value.toLowerCase(),
+        });
       }
     }
   }
@@ -201,7 +231,10 @@ export function getOtherEmails(
             !seen.has(emailData?.EmailAddress.toLowerCase())
           ) {
             seen.add(emailData?.EmailAddress.toLowerCase());
-            emailArray.push(emailData?.EmailAddress.toLowerCase());
+            emailArray.push({
+              type: 'This email is related from the Loans',
+              email: emailData?.EmailAddress.toLowerCase(),
+            });
           }
         },
       );
@@ -214,7 +247,10 @@ export function getOtherEmails(
       !seen.has(GstAdvanceData?.result?.business_email.toLowerCase())
     ) {
       seen.add(GstAdvanceData?.result?.business_email.toLowerCase());
-      emailArray.push(GstAdvanceData?.result?.business_email?.toLowerCase());
+      emailArray.push({
+        type: 'This email is related to business',
+        email: GstAdvanceData?.result?.business_email.toLowerCase(),
+      });
     }
   }
   if (
@@ -228,7 +264,10 @@ export function getOtherEmails(
         !seen.has(item?.employer_details?.email.toLowerCase())
       ) {
         seen.add(item?.employer_details?.email.toLowerCase());
-        emailArray.push(item?.employer_details?.email.toLowerCase());
+        emailArray.push({
+          type: 'This email is related from the person working place',
+          email: item?.employer_details?.email.toLowerCase(),
+        });
       }
     });
   }
@@ -279,30 +318,54 @@ export default function BeFiScDigitalFootprint({
   );
   return (
     <div className="grid grid-cols-1 gap-4">
-      <div className="grid grid-cols-2 gap-4">
+      <div className="flex gap-4">
         {alternatePhoneNumbers.length > 0 ? (
-          <DashboardCard title="Alternate Number">
-            {alternatePhoneNumbers.map((mobileNumber, index) => (
-              <div key={index}>{mobileNumber}</div>
+          <DashboardCard title="Alternate Number" className="max-w-[490px]">
+            {alternatePhoneNumbers.map((item, index) => (
+              <div
+                className="flex items-center justify-between space-x-2 border-b border-slate-800 pb-2"
+                key={index}
+              >
+                <span>{item?.number}</span>
+                <CustomBadge
+                  blink={true}
+                  variantToUse="warning"
+                  isFormat={false}
+                  value={item?.type}
+                />
+              </div>
             ))}
           </DashboardCard>
         ) : (
-          <DashboardCard title="Alternate Number">
-            <NotFound className="max-h-32" value="No other numbers found" />
-          </DashboardCard>
+          // <DashboardCard title="Alternate Number">
+          //   <NotFound className="max-h-32" value="No other numbers found" />
+          // </DashboardCard>
+          <></>
         )}
         {otherEmails.length > 0 ? (
-          <DashboardCard title="Alternate Emails">
-            {otherEmails.map((email, index) => (
-              <div key={index}>{email}</div>
+          <DashboardCard title="Alternate Emails" className="flex-1">
+            {otherEmails.map((item, index) => (
+              <div
+                className="flex items-center justify-between border-b border-slate-800 pb-2"
+                key={index}
+              >
+                <span>{item?.email}</span>
+                <CustomBadge
+                  blink={true}
+                  variantToUse="warning"
+                  isFormat={false}
+                  value={item?.type}
+                />
+              </div>
             ))}
           </DashboardCard>
         ) : (
-          <DashboardCard title="Alternate Emails">
-            <span>
-              <NotFound className="max-h-32" value="No other emails found" />
-            </span>
-          </DashboardCard>
+          // <DashboardCard title="Alternate Emails">
+          //   <span>
+          //     <NotFound className="max-h-32" value="No other emails found" />
+          //   </span>
+          // </DashboardCard>
+          <></>
         )}
       </div>
 
@@ -335,9 +398,7 @@ export default function BeFiScDigitalFootprint({
             </Table>
           </DashboardCard>
         ) : (
-          <DashboardCard title="Alternate Addresses">
-            <NotFound className="max-h-32" value="No other addresses found" />
-          </DashboardCard>
+          <></>
         )}
       </div>
     </div>
