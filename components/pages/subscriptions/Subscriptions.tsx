@@ -628,7 +628,7 @@ const AnimatedCounter = ({
 
 export default function SubscriptionsPage() {
   return (
-    <div className="">
+    <div className="pb-10">
       {/* Header Section */}
       <div className="mx-auto max-w-7xl">
         <motion.div

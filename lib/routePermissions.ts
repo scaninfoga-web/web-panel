@@ -1,5 +1,6 @@
 export const publicRoutes: string[] = [
   '/',
+  '/subscriptions',
   '/auth',
   '/aboutUs',
   '/pricing',
