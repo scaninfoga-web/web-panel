@@ -65,8 +65,6 @@ export default function BeFiSc() {
   const [mobile360Data, setMobile360Data] = useState<Mobile360Type | null>(
     null,
   );
-  // const [ghuntData, setGhuntData] = useState<GhuntData | null>(null);
-  // const [ghuntLoading, setGhuntLoading] = useState(false);
 
   const [ghuntMultipleData, setGhuntMultipleData] = useState<GhuntData[]>([]);
   const [ghuntMultipleLoading, setGhuntMultipleLoading] = useState(false);
@@ -122,20 +120,8 @@ export default function BeFiSc() {
     }[]
   >([]);
 
-  // const isSuspicious = Object.values(upiDetailsData?.responseData ?? {}).some(
-  //   (val) => {
-  //     if (val?.success) {
-  //       return (
-  //         val?.data?.result?.name.trim().replace(/\s+/g, ' ').toLowerCase() !==
-  //         realName
-  //       );
-  //     }
-  //   },
-  // );
-
   const setAllOnLoading = () => {
     setIsLoading(true);
-    // setGhuntLoading(true);
     setVerifyUdyamLoading(true);
     setGstAdvanceLoading(true);
     setGstTurnoverLoading(true);
@@ -194,24 +180,6 @@ export default function BeFiSc() {
             Number(ProfileAdvanceResponse.responseData?.status) === 2
           ) {
             setProfileAdvanceData(ProfileAdvanceResponse.responseData);
-            // const emailAddress =
-            //   ProfileAdvanceResponse.responseData?.result?.email?.[0]?.value
-            //     .trim()
-            //     .toLowerCase();
-            // calling ghunt api with emailaddess
-            // try {
-            //   if (emailAddress) {
-            //     const data = await post('/api/ghunt/getEmailDetails', {
-            //       email: emailAddress,
-            //     });
-            //     setGhuntData(data.responseData);
-            //     setGhuntLoading(false);
-            //   } else {
-            //     toast.error('Ghunt Data Not Found', { id: toastRef.current! });
-            //   }
-            // } catch (error) {
-            //   toast.error('Ghunt Data Not Found', { id: toastRef.current! });
-            // }
           }
           setProfileAdvanceLoading(false);
           const panNumber =
@@ -524,11 +492,17 @@ export default function BeFiSc() {
     }
     return '/null.png';
   };
-
   const firstAddress = panAllInOneData?.result?.address?.full;
 
+  const eciscAddress =
+    esicsData?.result?.esic_details[0]?.employer_details?.address?.split(
+      ', employer',
+    )[0] || '';
   const secondAddress =
-    profileAdvanceData?.result?.address?.[0]?.detailed_address || '';
+    profileAdvanceData?.result?.address?.[0]?.detailed_address &&
+    profileAdvanceData?.result?.address?.[0]?.detailed_address?.length > 10
+      ? profileAdvanceData?.result?.address?.[0]?.detailed_address
+      : eciscAddress;
 
   // location api
   useEffect(() => {
@@ -578,6 +552,7 @@ export default function BeFiSc() {
         setOtherAddressOlaLoading(true);
         const clientInfo = getClientInfo();
         const otherAddressArray = getAddressesWithDifferentPincode(
+          esicsData,
           gstAdvanceData,
           profileAdvanceData,
           EquifaxV3Data,
@@ -658,25 +633,41 @@ export default function BeFiSc() {
     },
     {
       title: 'Gender',
-      value: panAllInOneData?.result?.gender || '----',
+      value:
+        panAllInOneData?.result?.gender ||
+        profileAdvanceData?.result?.personal_information?.gender ||
+        esicsData?.result?.esic_details[0]?.gender ||
+        '----',
       titleClassname: '',
       valueClassname: '',
     },
     {
       title: 'Date of Birth',
-      value: panAllInOneData?.result?.dob || '----',
+      value:
+        panAllInOneData?.result?.dob ||
+        esicsData?.result?.esic_details[0]?.date_of_birth ||
+        '----',
       titleClassname: '',
       valueClassname: '',
     },
     {
       title: 'Age',
-      value: profileAdvanceData?.result?.personal_information?.age || '----',
+      value:
+        profileAdvanceData?.result?.personal_information?.age ||
+        esicsData?.result?.esic_details[0]?.age ||
+        '----',
       titleClassname: '',
       valueClassname: '',
     },
     {
       title: 'Alternate Number',
-      value: getOtherPhoneNumbers(profileAdvanceData, mobileNo)[0] || '----',
+      value: getOtherPhoneNumbers(
+        esicsData,
+        gstAdvanceData,
+        EquifaxV3Data,
+        profileAdvanceData,
+        mobileNo,
+      )[0],
       titleClassname: '',
       valueClassname: '',
     },
@@ -732,10 +723,11 @@ export default function BeFiSc() {
 
     {
       title: 'Line1',
-      value:
+      value: formatSentence(
         panAllInOneData?.result?.address?.line_1?.toLowerCase() ||
-        panAllInOneData?.result?.address?.line_2?.toLowerCase() ||
-        '----',
+          panAllInOneData?.result?.address?.line_2?.toLowerCase() ||
+          '----',
+      ),
       titleClassname: '',
       valueClassname: '',
     },
@@ -750,16 +742,19 @@ export default function BeFiSc() {
       value:
         panAllInOneData?.result?.address?.zip ||
         profileAdvanceData?.result?.address?.[0]?.pincode ||
+        esicsData?.result?.esic_details[0]?.employer_details?.pincode ||
         '----',
       titleClassname: '',
       valueClassname: '',
     },
     {
       title: 'State',
-      value:
+      value: formatSentence(
         panAllInOneData?.result?.address?.state ||
-        profileAdvanceData?.result?.address?.[0]?.state ||
-        '----',
+          profileAdvanceData?.result?.address?.[0]?.state ||
+          esicsData?.result?.esic_details[0]?.employer_details?.state ||
+          '----',
+      ),
       titleClassname: '',
       valueClassname: '',
     },
@@ -876,7 +871,7 @@ export default function BeFiSc() {
                 className="mt-6 flex flex-col space-y-4"
               >
                 <DashboardCard title="" className="col-span-full lg:col-span-2">
-                  <div className="flex items-center gap-x-2">
+                  <div className="mb-2 flex items-center gap-x-2">
                     <div className="group relative h-[65px] w-[65px]">
                       <Image
                         src={getImageUrl()}
@@ -902,7 +897,8 @@ export default function BeFiSc() {
                       {formatSentence(
                         panAllInOneData?.result?.full_name ||
                           profileAdvanceData?.result?.personal_information
-                            ?.full_name,
+                            ?.full_name ||
+                          esicsData?.result?.esic_details[0]?.name,
                       )}
                     </p>
                   </div>

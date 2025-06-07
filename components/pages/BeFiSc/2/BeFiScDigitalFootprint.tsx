@@ -20,39 +20,19 @@ import { isValidIndianMobileNumber } from '../BeFiSc';
 import CustomBadge from '../CustomBadge';
 
 export function getOtherPhoneNumbers(
-  profileAdvanceData: ProfileAdvanceType | null,
-  mobileNumber: string,
-): string[] {
-  if (!profileAdvanceData?.result?.alternate_phone?.length) return [];
-  const filteredNumber: string[] = [];
-  const seen = new Set<string>();
-  const filtered = profileAdvanceData.result.alternate_phone.filter(
-    (phone) =>
-      phone?.value !== mobileNumber && isValidIndianMobileNumber(phone?.value),
-  );
-  filtered.forEach((phone) => {
-    if (phone?.value && !seen.has(phone?.value)) {
-      seen.add(phone?.value);
-      filteredNumber.push(phone?.value);
-    }
-  });
-  return filteredNumber;
-}
-
-function getOtherPhoneNumbers2(
+  EcicsData: EsicDetailsType | null,
   GstAdvanceData: GstVerificationAdvanceType | null,
   EquifaxData: EquifaxV3Type | null,
   profileAdvanceData: ProfileAdvanceType | null,
   mobileNumber: string,
 ): string[] {
-  if (!profileAdvanceData?.result?.alternate_phone?.length) return [];
   const filteredNumber: string[] = [];
   const seen = new Set<string>();
-  const filtered = profileAdvanceData.result.alternate_phone.filter(
+  const filtered = profileAdvanceData?.result.alternate_phone.filter(
     (phone) =>
       phone?.value !== mobileNumber && isValidIndianMobileNumber(phone?.value),
   );
-  filtered.forEach((phone) => {
+  filtered?.forEach((phone) => {
     if (phone?.value && !seen.has(phone?.value)) {
       seen.add(phone?.value);
       filteredNumber.push(phone?.value);
@@ -82,10 +62,27 @@ function getOtherPhoneNumbers2(
       filteredNumber.push(GstAdvanceData?.result?.business_mobile);
     }
   }
+
+  if (
+    EcicsData?.result?.esic_details &&
+    EcicsData?.result?.esic_details.length > 0
+  ) {
+    EcicsData?.result?.esic_details.forEach((item) => {
+      if (
+        item?.employer_details?.mobile &&
+        item?.employer_details?.mobile !== mobileNumber &&
+        !seen.has(item?.employer_details?.mobile)
+      ) {
+        seen.add(item?.employer_details?.mobile);
+        filteredNumber.push(item?.employer_details?.mobile);
+      }
+    });
+  }
   return filteredNumber;
 }
 
 export function getAddressesWithDifferentPincode(
+  EcicsData: EsicDetailsType | null,
   GstAdvanceData: GstVerificationAdvanceType | null,
   ProfileAdvanceData: ProfileAdvanceType | null,
   EquifaxData: EquifaxV3Type | null,
@@ -149,6 +146,26 @@ export function getAddressesWithDifferentPincode(
     });
   }
 
+  if (
+    EcicsData?.result?.esic_details &&
+    EcicsData?.result?.esic_details.length > 0
+  ) {
+    EcicsData?.result?.esic_details.forEach((item) => {
+      if (
+        item?.employer_details?.address &&
+        item?.employer_details?.pincode !== pincode &&
+        !seen.has(item?.employer_details?.pincode)
+      ) {
+        seen.add(item?.employer_details?.pincode);
+        addressArray.push({
+          type: 'current address',
+          date_of_reporting: item?.registration_date || '----',
+          detailed_address: item?.employer_details?.address || '----',
+        });
+      }
+    });
+  }
+
   return addressArray;
 }
 
@@ -159,19 +176,19 @@ export function getOtherEmails(
   ProfileAdvanceData: ProfileAdvanceType | null,
   email: string,
 ): string[] {
-  if (!ProfileAdvanceData?.result?.email?.length) return [];
-
   const seen = new Set<string>();
   const emailArray: string[] = [];
 
-  for (const item of ProfileAdvanceData?.result?.email) {
-    if (
-      item?.value &&
-      item.value.toLowerCase() !== email.toLowerCase() &&
-      !seen.has(item.value.toLowerCase())
-    ) {
-      seen.add(item.value.toLowerCase());
-      emailArray.push(item.value.toLowerCase());
+  if (ProfileAdvanceData?.result?.email) {
+    for (const item of ProfileAdvanceData?.result?.email) {
+      if (
+        item?.value &&
+        item.value.toLowerCase() !== email.toLowerCase() &&
+        !seen.has(item.value.toLowerCase())
+      ) {
+        seen.add(item.value.toLowerCase());
+        emailArray.push(item.value.toLowerCase());
+      }
     }
   }
   EquifaxData?.result?.credit_report?.CCRResponse?.CIRReportDataLst?.forEach(
@@ -215,7 +232,6 @@ export function getOtherEmails(
       }
     });
   }
-
   return emailArray;
 }
 
@@ -238,13 +254,15 @@ export default function BeFiScDigitalFootprint({
   PanAllInOneData,
   EquifaxData,
 }: PageProps) {
-  const alternatePhoneNumbers = getOtherPhoneNumbers2(
+  const alternatePhoneNumbers = getOtherPhoneNumbers(
+    EcicsData,
     GstAdvanceData,
     EquifaxData,
     ProfileAdvanceData,
     mobileNumber,
   );
   const addressesWithDifferentPincode = getAddressesWithDifferentPincode(
+    EcicsData,
     GstAdvanceData,
     ProfileAdvanceData,
     EquifaxData,

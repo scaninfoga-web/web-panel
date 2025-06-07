@@ -374,6 +374,7 @@ export interface EsicDetailsType {
   result: {
     esic_number: string;
     esic_details: {
+      gender: string;
       esic_status: string;
       age: string;
       esic_number: string;

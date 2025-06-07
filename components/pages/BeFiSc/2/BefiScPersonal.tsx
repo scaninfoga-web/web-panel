@@ -204,7 +204,7 @@ export default function BefiScPersonal({
                     <div>
                       <p className="text-xs text-slate-400">Company Name</p>
                       <p className="font-medium">
-                        {getValue(item?.employer_name)}
+                        {formatSentence(item?.employer_name)}
                       </p>
                     </div>
                     <div>
