@@ -778,7 +778,7 @@ export default function BeFiSc() {
           mobileNo,
         )[0]?.number || '----',
       titleClassname: '',
-      valueClassname: '',
+      valueClassname: 'text-yellow-500',
     },
     {
       title: 'Income',

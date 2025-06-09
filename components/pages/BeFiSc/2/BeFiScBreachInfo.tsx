@@ -16,9 +16,28 @@ interface PageProps {
     data: BreachInfoType;
   }[];
 }
-const dangerKeyWords = ['Password', 'Password(SHA-256)'];
-const hiddenLongsSentence = ['Url', 'Password(SHA-256)', 'Site'];
-const clickAble = ['Url', 'Site'];
+const dangerKeyWords = [
+  'Password',
+  'Password(SHA-256)',
+  'IP',
+  'Phone',
+  'Password(SHA1)',
+  'Device',
+  'Password(bcrypt)',
+  'Amount',
+];
+const yellowKeyWords = [
+  'FullName',
+  'NickName',
+  'State',
+  'LeakSite',
+  'Latitude',
+  'Longitude',
+  'LastLogin',
+  'Company',
+  'Credits',
+];
+const clickAble = ['Url', 'Site', 'Avatar', 'Password(SHA-256)'];
 
 export default function BeFiScBreachInfo({ data }: PageProps) {
   return (
@@ -87,22 +106,29 @@ export default function BeFiScBreachInfo({ data }: PageProps) {
                                           <span
                                             className={cn(
                                               'text-base',
-                                              key === 'Email' &&
-                                                'text-blue-500',
-                                              key === 'Password' &&
+                                              dangerKeyWords.includes(key) &&
                                                 'text-red-500',
+                                              yellowKeyWords.includes(key) &&
+                                                'text-yellow-500',
                                               clickAble.includes(key) &&
                                                 'text-blue-400 underline transition-all duration-300 ease-in-out hover:cursor-pointer',
                                             )}
                                             onClick={() => {
-                                              if (key === 'Url') {
+                                              if (
+                                                clickAble.includes(key) &&
+                                                value.includes('https://')
+                                              ) {
                                                 window.open(value, '_blank');
                                               }
                                             }}
                                           >
-                                            {hiddenLongsSentence.includes(key)
-                                              ? value.slice(0, 30) + '....'
-                                              : value}
+                                            {clickAble.includes(key)
+                                              ? value.length > 30
+                                                ? value.slice(0, 30) + '....'
+                                                : value
+                                              : value.length > 30
+                                                ? value.slice(0, 30)
+                                                : value}
                                           </span>
                                         </div>
                                       ),

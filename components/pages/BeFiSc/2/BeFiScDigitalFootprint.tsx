@@ -88,7 +88,7 @@ export function getOtherPhoneNumbers(
       formattedNumber.result &&
       formattedNumber.fixedNumber !== mobileNumber
     ) {
-      seen.add(GstAdvanceData?.result?.business_mobile);
+      seen.add(formattedNumber.fixedNumber);
       filteredNumber.push({
         number: formattedNumber.fixedNumber,
         type: 'Number is obtained from the gst details',

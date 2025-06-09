@@ -209,20 +209,21 @@ export default function BeFiScFinancial({
                     </div>
                     <div>
                       <p className="text-sm text-gray-400">Bank Name</p>
-                      <p className="text-base font-medium">
+                      <p className="text-base font-medium text-yellow-500">
                         {formatSentence(item?.bank_name)}
+                      </p>
+                    </div>
+
+                    <div>
+                      <p className="text-sm text-gray-400">IFSC</p>
+                      <p className="text-base font-medium">
+                        {item?.ifsc?.toUpperCase()}
                       </p>
                     </div>
                     <div>
                       <p className="text-sm text-gray-400">Account Number</p>
-                      <p className="text-base font-medium">
+                      <p className="text-base font-medium text-yellow-500">
                         {formatSentence(item?.account_number)}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-400">IFSC</p>
-                      <p className="text-base font-medium">
-                        {formatSentence(item?.ifsc)}
                       </p>
                     </div>
                     <div>
