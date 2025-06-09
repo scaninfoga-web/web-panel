@@ -86,35 +86,27 @@ export default function BeFiSc() {
   const [ghuntMultipleData, setGhuntMultipleData] = useState<GhuntData[]>([]);
   const [ghuntMultipleLoading, setGhuntMultipleLoading] = useState(false);
 
-  const [verifyUdyamLoading, setVerifyUdyamLoading] = useState(false);
   const [verfiyUdyamData, setVerfiyUdyamData] =
     useState<VerifyUdyamType | null>(null);
 
-  const [gstAdvanceLoading, setGstAdvanceLoading] = useState(false);
   const [gstAdvanceData, setGstAdvanceData] =
     useState<GstVerificationAdvanceType | null>(null);
 
-  const [gstTurnoverLoading, setGstTurnoverLoading] = useState(false);
   const [gstTurnoverData, setGstTurnoverData] =
     useState<GstTurnoverType | null>(null);
 
-  const [profileAdvanceLoading, setProfileAdvanceLoading] = useState(false);
   const [profileAdvanceData, setProfileAdvanceData] =
     useState<ProfileAdvanceType | null>(null);
 
-  const [esicsLoading, setEsicsLoading] = useState(false);
   const [esicsData, setEsicsData] = useState<EsicDetailsType | null>(null);
 
-  const [mobileToAccountLoading, setMobileToAccountLoading] = useState(false);
   const [mobileToAccountData, setMobileToAccountData] =
     useState<MobileToAccountNumberType | null>(null);
 
-  const [EquifaxV3Loading, setEquifaxV3Loading] = useState(false);
   const [EquifaxV3Data, setEquifaxV3Data] = useState<EquifaxV3Type | null>(
     null,
   );
 
-  const [panAllInOneLoading, setPanAllInOneLoading] = useState(false);
   const [panAllInOneData, setPanAllInOneData] =
     useState<PanAllInOneType | null>(null);
 
@@ -148,19 +140,9 @@ export default function BeFiSc() {
 
   const setAllOnLoading = () => {
     setIsLoading(true);
-    setVerifyUdyamLoading(true);
-    setGstAdvanceLoading(true);
-    setGstTurnoverLoading(true);
-    setProfileAdvanceLoading(true);
-    setEsicsLoading(true);
-    setMobileToAccountLoading(true);
-    setEquifaxV3Loading(true);
-    setPanAllInOneLoading(true);
     setUpiDetailsLoading(true);
-    setBreachInfoLoading(true);
   };
   const clearOldData = () => {
-    // setGhuntData(null);
     setMobile360Data(null);
     setVerfiyUdyamData(null);
     setGstAdvanceData(null);
@@ -175,19 +157,6 @@ export default function BeFiSc() {
     setOtherAdressOlaData([]);
     setGhuntMultipleData([]);
     setBreachInfo([]);
-  };
-
-  const setAllOffLoading = () => {
-    setIsLoading(false);
-    setVerifyUdyamLoading(false);
-    setGstAdvanceLoading(false);
-    setGstTurnoverLoading(false);
-    setProfileAdvanceLoading(false);
-    setEsicsLoading(false);
-    setMobileToAccountLoading(false);
-    setEquifaxV3Loading(false);
-    setPanAllInOneLoading(false);
-    setUpiDetailsLoading(false);
   };
 
   useEffect(() => {
@@ -208,7 +177,6 @@ export default function BeFiSc() {
           ) {
             setProfileAdvanceData(ProfileAdvanceResponse.responseData);
           }
-          setProfileAdvanceLoading(false);
           const panNumber =
             ProfileAdvanceResponse.responseData.result?.document_data?.pan[0]
               .value || mobile360Data?.result?.din_info?.data[0]?.pan;
@@ -260,9 +228,7 @@ export default function BeFiSc() {
                 );
               }
             }
-            setPanAllInOneLoading(false);
           }
-          setEquifaxV3Loading(false);
         } catch (error) {
           if (error instanceof AxiosError) {
             toast.error(
@@ -271,8 +237,6 @@ export default function BeFiSc() {
               { id: toastRef.current! },
             );
           }
-          setEquifaxV3Loading(false);
-          setProfileAdvanceLoading(false);
         }
 
         // epicsInfo
@@ -290,7 +254,6 @@ export default function BeFiSc() {
             ) {
               setEsicsData(EsicsInfo.responseData);
             }
-            setEsicsLoading(false);
           } catch (error) {
             if (error instanceof AxiosError) {
               toast.error(
@@ -298,7 +261,6 @@ export default function BeFiSc() {
                 { id: toastRef.current! },
               );
             }
-            setEsicsLoading(false);
           }
         }
 
@@ -315,7 +277,6 @@ export default function BeFiSc() {
             if (Number(UdyamData.responseData?.status) === 1) {
               setVerfiyUdyamData(UdyamData.responseData);
             }
-            setVerifyUdyamLoading(false);
           }
         } catch (error) {
           if (error instanceof AxiosError) {
@@ -323,7 +284,6 @@ export default function BeFiSc() {
               id: toastRef.current!,
             });
           }
-          setVerifyUdyamLoading(false);
         }
 
         // get gst advance data
@@ -339,7 +299,6 @@ export default function BeFiSc() {
             if (Number(GSTDATA.responseData?.status) === 1) {
               setGstAdvanceData(GSTDATA.responseData);
             }
-            setGstAdvanceLoading(false);
 
             const GstTurnover = await post('/api/mobile/gstturnover', {
               gst_no: gstAdvanceNumberArray[0],
@@ -353,7 +312,6 @@ export default function BeFiSc() {
             ) {
               setGstTurnoverData(GstTurnover.responseData);
             }
-            setGstTurnoverLoading(false);
           }
         } catch (error) {
           if (error instanceof AxiosError) {
@@ -361,8 +319,6 @@ export default function BeFiSc() {
               id: toastRef.current!,
             });
           }
-          setGstAdvanceLoading(false);
-          setGstTurnoverLoading(false);
         }
         try {
           const ActDetails = await post('/api/mobile/getAcDtlsFromMobNo', {
@@ -372,7 +328,6 @@ export default function BeFiSc() {
           if (ActDetails.responseData?.status === 1) {
             setMobileToAccountData(ActDetails.responseData);
           }
-          setMobileToAccountLoading(false);
         } catch (error) {
           if (error instanceof AxiosError) {
             toast.error(
@@ -384,7 +339,6 @@ export default function BeFiSc() {
         }
         setIsLoading(false);
         toast.success(`${apiMessage.current!}`, { id: toastRef.current! });
-
         // calling upi details
         try {
           const UpiDetails = await post('/api/mobile/digitalpayment', {
@@ -402,7 +356,7 @@ export default function BeFiSc() {
             );
           }
         }
-        setAllOffLoading();
+        setUpiDetailsLoading(false);
         setisRealtime(false);
       };
       callOtherAPIs();
@@ -469,8 +423,6 @@ export default function BeFiSc() {
                 toast.error('Server Timeout. Try again after some time', {
                   id: toastId,
                 });
-                setIsLoading(false);
-                setAllOffLoading();
               }
               resolve();
             } else {
@@ -483,24 +435,18 @@ export default function BeFiSc() {
           attempt();
         });
       };
-
       await retryUntilSuccess();
-
       if (!mobile360R) {
+        setIsLoading(false);
         return;
-      } else {
-        // await new Promise((resolve) => setTimeout(resolve, 5000));
-        // toast.success(`${mobile360ResponseMessage}`, { id: toastId });
       }
     } catch (err) {
       if (err instanceof AxiosError) {
         toast.error(err.response?.data?.responseStatus?.message);
-        setAllOffLoading();
         return;
       }
       toast.error('Something went wrong');
       setIsLoading(false);
-      setAllOffLoading();
     }
   };
 
@@ -532,10 +478,15 @@ export default function BeFiSc() {
 
   // location api
   useEffect(() => {
-    setOlaGeoApiLoading(true);
     const callGeoApi = async () => {
+      setOlaGeoApiLoading(true);
       await new Promise((resolve) => setTimeout(resolve, 500));
-      if (!panAllInOneLoading && !profileAdvanceLoading) {
+      if (
+        !isLoading &&
+        mobile360Data &&
+        profileAdvanceData &&
+        panAllInOneData
+      ) {
         const clientInfo = getClientInfo();
         setOlaGeoApiLoading(true);
         try {
@@ -564,17 +515,14 @@ export default function BeFiSc() {
         } finally {
           setOlaGeoApiLoading(false);
         }
-      } else {
-        setOlaGeoApiLoading(false);
       }
     };
     callGeoApi();
-  }, [panAllInOneLoading, profileAdvanceLoading]);
+  }, [isLoading]);
 
   useEffect(() => {
     const callOtherAddressApis = async () => {
-      if (isLoading && mobile360Data) {
-        setOtherAddressOlaLoading(true);
+      if (!isLoading && mobile360Data) {
         const clientInfo = getClientInfo();
         const otherAddressArray = getAddressesWithDifferentPincode(
           esicsData,
@@ -583,9 +531,11 @@ export default function BeFiSc() {
           EquifaxV3Data,
           panAllInOneData?.result?.address?.zip ||
             profileAdvanceData?.result?.address?.[0]?.pincode ||
-            '0',
+            '',
         );
+        console.log('OHTer address', otherAddressArray);
         if (otherAddressArray.length > 0) {
+          setOtherAddressOlaLoading(true);
           try {
             const results = await Promise.all(
               otherAddressArray.map((addressObj) =>
@@ -605,8 +555,6 @@ export default function BeFiSc() {
           } catch (error) {
             setOtherAddressOlaLoading(false);
           }
-        } else {
-          setOtherAddressOlaLoading(false);
         }
       }
     };
@@ -665,7 +613,9 @@ export default function BeFiSc() {
                 }),
               );
             } catch (error) {
-              // setOtherAddressOlaLoading(false);
+              toast.error('Breach info fetching error', {
+                id: toastRef.current!,
+              });
             }
           }
           if (otherNumber.length > 0) {
@@ -815,7 +765,7 @@ export default function BeFiSc() {
           '',
         )[0]?.email || '----',
       titleClassname: '',
-      valueClassname: 'max-w-24',
+      valueClassname: 'max-w-24 text-yellow-500',
     },
     {
       title: 'isSole Proprietor',
@@ -1266,7 +1216,11 @@ export default function BeFiSc() {
                 />
               </TabsContent>
               <TabsContent value="breachInfo" className="mt-6">
-                <BeFiScBreachInfo data={breachInfo} />
+                {breachInfoLoading ? (
+                  <BeFiScLoadingSkeleton />
+                ) : (
+                  <BeFiScBreachInfo data={breachInfo} />
+                )}
               </TabsContent>
               <TabsContent value="googleProfile" className="mt-6">
                 {ghuntMultipleLoading ? (
