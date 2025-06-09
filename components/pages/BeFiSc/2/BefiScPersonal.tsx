@@ -264,17 +264,33 @@ export default function BefiScPersonal({
             <Table className="">
               <TableHeader>
                 <TableRow className="border-slate-800">
-                  <TableHead className="text-slate-400">IFSC</TableHead>
-                  <TableHead className="text-slate-400">Name</TableHead>
-                  <TableHead className="text-slate-400">Mobile</TableHead>
-                  <TableHead className="text-slate-400">
+                  <TableHead className="min-w-40 text-slate-400">
+                    IFSC
+                  </TableHead>
+                  <TableHead className="min-w-52 text-slate-400">
+                    Name
+                  </TableHead>
+                  <TableHead className="min-w-40 text-slate-400">
+                    Mobile
+                  </TableHead>
+                  <TableHead className="min-w-40 text-slate-400">
                     Account Number
                   </TableHead>
-                  <TableHead className="text-slate-400">Bank Name</TableHead>
-                  <TableHead className="text-slate-400">Branch Name</TableHead>
-                  <TableHead className="text-slate-400">UAN Number</TableHead>
-                  <TableHead className="text-slate-400">ESIC Number</TableHead>
-                  <TableHead className="text-slate-400">Status</TableHead>
+                  <TableHead className="min-w-40 text-slate-400">
+                    Bank Name
+                  </TableHead>
+                  <TableHead className="min-w-60 text-slate-400">
+                    Branch Name
+                  </TableHead>
+                  <TableHead className="min-w-40 text-slate-400">
+                    UAN Number
+                  </TableHead>
+                  <TableHead className="min-w-40 text-slate-400">
+                    ESIC Number
+                  </TableHead>
+                  <TableHead className="min-w-40 text-slate-400">
+                    Status
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody className="">

@@ -47,6 +47,8 @@ import {
 } from './APIUtils';
 import BeFiScLoadingSkeleton from './BeFiScLoadingSkeleton';
 import CustomBadge from './CustomBadge';
+import { BreachInfoType } from '@/types/BreachInfo';
+import BeFiScBreachInfo from './2/BeFiScBreachInfo';
 
 export function isValidIndianMobileNumber(input: string): boolean {
   const mobileRegex = /^(?:\+91[\-\s]?)?[5-9]\d{9}$/;
@@ -120,6 +122,15 @@ export default function BeFiSc() {
     }[]
   >([]);
 
+  const [breachInfoLoading, setBreachInfoLoading] = useState(false);
+  const [breachInfo, setBreachInfo] = useState<
+    {
+      value: string;
+      type: string;
+      data: BreachInfoType;
+    }[]
+  >([]);
+
   const setAllOnLoading = () => {
     setIsLoading(true);
     setVerifyUdyamLoading(true);
@@ -131,6 +142,7 @@ export default function BeFiSc() {
     setEquifaxV3Loading(true);
     setPanAllInOneLoading(true);
     setUpiDetailsLoading(true);
+    setBreachInfoLoading(true);
   };
   const clearOldData = () => {
     // setGhuntData(null);
@@ -147,11 +159,11 @@ export default function BeFiSc() {
     setOlaGeoApiData(null);
     setOtherAdressOlaData([]);
     setGhuntMultipleData([]);
+    setBreachInfo([]);
   };
 
   const setAllOffLoading = () => {
     setIsLoading(false);
-    // setGhuntLoading(false);
     setVerifyUdyamLoading(false);
     setGstAdvanceLoading(false);
     setGstTurnoverLoading(false);
@@ -507,7 +519,6 @@ export default function BeFiSc() {
   // location api
   useEffect(() => {
     setOlaGeoApiLoading(true);
-
     const callGeoApi = async () => {
       await new Promise((resolve) => setTimeout(resolve, 500));
       if (!panAllInOneLoading && !profileAdvanceLoading) {
@@ -548,7 +559,7 @@ export default function BeFiSc() {
 
   useEffect(() => {
     const callOtherAddressApis = async () => {
-      if (!profileAdvanceLoading && !EquifaxV3Loading && !gstAdvanceLoading) {
+      if (isLoading && mobile360Data) {
         setOtherAddressOlaLoading(true);
         const clientInfo = getClientInfo();
         const otherAddressArray = getAddressesWithDifferentPincode(
@@ -587,12 +598,91 @@ export default function BeFiSc() {
       }
     };
     callOtherAddressApis();
-  }, [gstAdvanceLoading, EquifaxV3Loading, profileAdvanceLoading]);
+  }, [isLoading]);
+
+  //caling breachInfo Api after
+  useEffect(() => {
+    const callBreachInfoApi = async () => {
+      if (!isLoading && mobile360Data) {
+        const otherEmails = getOtherEmails(
+          esicsData,
+          gstAdvanceData,
+          EquifaxV3Data,
+          profileAdvanceData,
+          '',
+        );
+
+        const otherNumber = getOtherPhoneNumbers(
+          esicsData,
+          gstAdvanceData,
+          EquifaxV3Data,
+          profileAdvanceData,
+          '',
+        );
+
+        console.log('other emails', otherEmails);
+        console.log('other numbers', otherNumber);
+        if (otherNumber.length > 0 || otherEmails.length > 0) {
+          setBreachInfoLoading(true);
+          let finalArray: {
+            value: string;
+            type: string;
+            data: BreachInfoType;
+          }[] = [];
+          if (otherEmails.length > 0) {
+            try {
+              const results = await Promise.all(
+                otherEmails.map((email) =>
+                  post('/api/mobile/breachinfo', {
+                    request_body: email.email,
+                    realtimeData: isRealtime,
+                  }),
+                ),
+              );
+              results.map((result, index) =>
+                finalArray.push({
+                  value: otherEmails[index]?.email,
+                  type: otherEmails[index]?.type,
+                  data: result,
+                }),
+              );
+            } catch (error) {
+              // setOtherAddressOlaLoading(false);
+            }
+          }
+          if (otherNumber.length > 0) {
+            try {
+              const results = await Promise.all(
+                otherNumber.map((number) =>
+                  post('/api/mobile/breachinfo', {
+                    request_body: number.number,
+                    realtimeData: isRealtime,
+                  }),
+                ),
+              );
+              results.map((result, index) =>
+                finalArray.push({
+                  value: otherNumber[index]?.number,
+                  type: otherNumber[index]?.type,
+                  data: result,
+                }),
+              );
+            } catch (error) {
+              // setOtherAddressOlaLoading(false);
+            }
+          }
+          setBreachInfo(finalArray);
+          setBreachInfoLoading(false);
+        }
+      }
+    };
+    callBreachInfoApi();
+  }, [isLoading]);
 
   // here ghunt call
   useEffect(() => {
     const callGhuntApis = async () => {
-      if (!profileAdvanceLoading && !EquifaxV3Loading && !gstAdvanceLoading) {
+      if (!isLoading && mobile360Data) {
         setGhuntMultipleLoading(true);
         const otherEmails = getOtherEmails(
           esicsData,
@@ -622,7 +712,7 @@ export default function BeFiSc() {
       }
     };
     callGhuntApis();
-  }, [gstAdvanceLoading, EquifaxV3Loading, profileAdvanceLoading]);
+  }, [isLoading]);
 
   const OverviewData = [
     {
@@ -661,13 +751,14 @@ export default function BeFiSc() {
     },
     {
       title: 'Alternate Number',
-      value: getOtherPhoneNumbers(
-        esicsData,
-        gstAdvanceData,
-        EquifaxV3Data,
-        profileAdvanceData,
-        mobileNo,
-      )[0]?.number,
+      value:
+        getOtherPhoneNumbers(
+          esicsData,
+          gstAdvanceData,
+          EquifaxV3Data,
+          profileAdvanceData,
+          mobileNo,
+        )[0]?.number || '----',
       titleClassname: '',
       valueClassname: '',
     },
@@ -960,10 +1051,8 @@ export default function BeFiSc() {
                                 <SentenceLoader />
                               ) : (
                                 <p className="text-lg font-medium text-emerald-500">
-                                  {
-                                    olaGeoApiData?.responseData?.duration
-                                      ?.readable_duration
-                                  }
+                                  {olaGeoApiData?.responseData?.duration
+                                    ?.readable_duration || '----'}
                                 </p>
                               )}
                             </div>
@@ -975,10 +1064,8 @@ export default function BeFiSc() {
                                 <SentenceLoader />
                               ) : (
                                 <p className="text-lg font-medium text-yellow-500">
-                                  {
-                                    olaGeoApiData?.responseData?.distance
-                                      ?.distance_kilometers
-                                  }
+                                  {olaGeoApiData?.responseData?.distance
+                                    ?.distance_kilometers || '----'}
                                 </p>
                               )}
                             </div>
@@ -1160,7 +1247,9 @@ export default function BeFiSc() {
                   mobileNumber={mobileNo}
                 />
               </TabsContent>
-              <TabsContent value="breachInfo" className="mt-6"></TabsContent>
+              <TabsContent value="breachInfo" className="mt-6">
+                <BeFiScBreachInfo data={breachInfo} />
+              </TabsContent>
               <TabsContent value="googleProfile" className="mt-6">
                 {ghuntMultipleLoading ? (
                   <BeFiScLoadingSkeleton />

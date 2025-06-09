@@ -37,7 +37,7 @@ export function getOtherPhoneNumbers(
     type: string;
   }[] = [];
   const seen = new Set<string>();
-  const filtered = profileAdvanceData?.result.alternate_phone.filter(
+  const filtered = profileAdvanceData?.result?.alternate_phone?.filter(
     (phone) =>
       phone?.value !== mobileNumber && isValidIndianMobileNumber(phone?.value),
   );
@@ -57,7 +57,8 @@ export function getOtherPhoneNumbers(
         if (
           phone?.Number &&
           phone?.Number !== mobileNumber &&
-          !seen.has(phone?.Number)
+          !seen.has(phone?.Number) &&
+          isValidIndianMobileNumber(phone?.Number)
         ) {
           seen.add(phone?.Number);
           filteredNumber.push({
@@ -71,7 +72,8 @@ export function getOtherPhoneNumbers(
   if (GstAdvanceData?.result?.business_mobile) {
     if (
       GstAdvanceData?.result?.business_mobile !== mobileNumber &&
-      !seen.has(GstAdvanceData?.result?.business_mobile)
+      !seen.has(GstAdvanceData?.result?.business_mobile) &&
+      isValidIndianMobileNumber(GstAdvanceData?.result?.business_mobile)
     ) {
       seen.add(GstAdvanceData?.result?.business_mobile);
       filteredNumber.push({
@@ -89,7 +91,8 @@ export function getOtherPhoneNumbers(
       if (
         item?.employer_details?.mobile &&
         item?.employer_details?.mobile !== mobileNumber &&
-        !seen.has(item?.employer_details?.mobile)
+        !seen.has(item?.employer_details?.mobile) &&
+        isValidIndianMobileNumber(item?.employer_details?.mobile)
       ) {
         seen.add(item?.employer_details?.mobile);
         filteredNumber.push({

@@ -136,14 +136,6 @@ const Ghunt: React.FC<{ accountData: GhuntData | null | undefined }> = ({
             />
           }
         />
-        <InfoText
-          label="Avatar URL"
-          value={
-            accountData?.playGames.avatarUrl || (
-              <StatusBadge variant="destructive" status="Not Set" />
-            )
-          }
-        />
       </DashboardCard>
     </div>
   );
