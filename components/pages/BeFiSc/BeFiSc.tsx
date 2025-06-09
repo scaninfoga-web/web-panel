@@ -50,9 +50,24 @@ import CustomBadge from './CustomBadge';
 import { BreachInfoType } from '@/types/BreachInfo';
 import BeFiScBreachInfo from './2/BeFiScBreachInfo';
 
-export function isValidIndianMobileNumber(input: string): boolean {
+export function isValidIndianMobileNumber(input: string): {
+  result: boolean;
+  fixedNumber: string;
+} {
   const mobileRegex = /^(?:\+91[\-\s]?)?[5-9]\d{9}$/;
-  return mobileRegex.test(input.trim());
+  input = input.replace(/\s/g, '');
+  if (input.length === 12) {
+    input = input.slice(2, 13);
+  }
+  if (input.length === 13) {
+    input = input.slice(3, 14);
+  }
+  const isValid = mobileRegex.test(input.trim());
+
+  return {
+    result: isValid,
+    fixedNumber: input,
+  };
 }
 
 export default function BeFiSc() {
@@ -403,13 +418,12 @@ export default function BeFiSc() {
       .normalize('NFKD')
       .replace(/[\u200B-\u200D\uFEFF\u202C\u202D\u202E]/g, '')
       .trim();
-    const validation = isValidIndianMobileNumber(query);
-    if (!validation) {
-      toast.error(`Invalid mobile ${query}`, { duration: 800 });
+    const isValid = isValidIndianMobileNumber(query);
+    if (!isValid.result) {
+      toast.error(`Invalid mobile ${query.slice(0, 15)}`, { duration: 800 });
       return;
     }
-    query = query.replace(/^(\+91)/, '');
-    setMobileNo(query);
+    setMobileNo(isValid.fixedNumber);
     setAllOnLoading();
     let mobile360R: null | {
       responseData: Mobile360Type;
@@ -428,7 +442,7 @@ export default function BeFiSc() {
         });
         try {
           const Mobile360Data = await post('/api/mobile/getMobile360Dtls', {
-            mobile_number: query,
+            mobile_number: isValid.fixedNumber,
             realtimeData: isRealtime,
           });
 

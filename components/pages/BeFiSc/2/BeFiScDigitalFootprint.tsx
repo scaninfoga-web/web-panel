@@ -45,15 +45,17 @@ export function getOtherPhoneNumbers(
     });
     seen.add(mobileNumber);
   }
-  const filtered = profileAdvanceData?.result?.alternate_phone?.filter(
-    (phone) =>
-      phone?.value !== mobileNumber && isValidIndianMobileNumber(phone?.value),
-  );
-  filtered?.forEach((phone) => {
-    if (phone?.value && !seen.has(phone?.value)) {
-      seen.add(phone?.value);
+
+  profileAdvanceData?.result?.alternate_phone?.forEach((phone) => {
+    const formattedNumber = isValidIndianMobileNumber(phone?.value || '');
+    if (
+      formattedNumber.result &&
+      !seen.has(formattedNumber.fixedNumber) &&
+      formattedNumber.fixedNumber !== mobileNumber
+    ) {
+      seen.add(formattedNumber.fixedNumber);
       filteredNumber.push({
-        number: phone?.value,
+        number: formattedNumber.fixedNumber,
         type: 'Obtained this number from profile',
       });
     }
@@ -62,15 +64,15 @@ export function getOtherPhoneNumbers(
   EquifaxData?.result?.credit_report?.CCRResponse?.CIRReportDataLst?.forEach(
     (item) => {
       item?.CIRReportData?.IDAndContactInfo?.PhoneInfo?.map((phone) => {
+        const formattedNumber = isValidIndianMobileNumber(phone?.Number || '');
         if (
-          phone?.Number &&
-          phone?.Number !== mobileNumber &&
-          !seen.has(phone?.Number) &&
-          isValidIndianMobileNumber(phone?.Number)
+          formattedNumber.result &&
+          !seen.has(formattedNumber?.fixedNumber) &&
+          formattedNumber.fixedNumber !== mobileNumber
         ) {
-          seen.add(phone?.Number);
+          seen.add(formattedNumber?.fixedNumber);
           filteredNumber.push({
-            number: phone?.Number,
+            number: formattedNumber?.fixedNumber,
             type: 'This number is related from the Loans',
           });
         }
@@ -78,14 +80,17 @@ export function getOtherPhoneNumbers(
     },
   );
   if (GstAdvanceData?.result?.business_mobile) {
+    const formattedNumber = isValidIndianMobileNumber(
+      GstAdvanceData?.result?.business_mobile || '',
+    );
     if (
-      GstAdvanceData?.result?.business_mobile !== mobileNumber &&
-      !seen.has(GstAdvanceData?.result?.business_mobile) &&
-      isValidIndianMobileNumber(GstAdvanceData?.result?.business_mobile)
+      !seen.has(formattedNumber.fixedNumber) &&
+      formattedNumber.result &&
+      formattedNumber.fixedNumber !== mobileNumber
     ) {
       seen.add(GstAdvanceData?.result?.business_mobile);
       filteredNumber.push({
-        number: GstAdvanceData?.result?.business_mobile,
+        number: formattedNumber.fixedNumber,
         type: 'Number is obtained from the gst details',
       });
     }
@@ -96,15 +101,17 @@ export function getOtherPhoneNumbers(
     EcicsData?.result?.esic_details.length > 0
   ) {
     EcicsData?.result?.esic_details.forEach((item) => {
+      const formattedNumber = isValidIndianMobileNumber(
+        item?.employer_details?.mobile || '',
+      );
       if (
-        item?.employer_details?.mobile &&
-        item?.employer_details?.mobile !== mobileNumber &&
-        !seen.has(item?.employer_details?.mobile) &&
-        isValidIndianMobileNumber(item?.employer_details?.mobile)
+        formattedNumber.fixedNumber !== mobileNumber &&
+        !seen.has(formattedNumber.fixedNumber) &&
+        formattedNumber.result
       ) {
-        seen.add(item?.employer_details?.mobile);
+        seen.add(formattedNumber.fixedNumber);
         filteredNumber.push({
-          number: item?.employer_details?.mobile,
+          number: formattedNumber.fixedNumber,
           type: 'Mobile obtained from person working place',
         });
       }
