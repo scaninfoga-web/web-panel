@@ -28,6 +28,7 @@ export function getOtherPhoneNumbers(
   EquifaxData: EquifaxV3Type | null,
   profileAdvanceData: ProfileAdvanceType | null,
   mobileNumber: string,
+  isIncluded: boolean = false,
 ): {
   number: string;
   type: string;
@@ -37,6 +38,13 @@ export function getOtherPhoneNumbers(
     type: string;
   }[] = [];
   const seen = new Set<string>();
+  if (isIncluded) {
+    filteredNumber.push({
+      number: mobileNumber,
+      type: 'This is the number you have entered',
+    });
+    seen.add(mobileNumber);
+  }
   const filtered = profileAdvanceData?.result?.alternate_phone?.filter(
     (phone) =>
       phone?.value !== mobileNumber && isValidIndianMobileNumber(phone?.value),

@@ -586,7 +586,6 @@ export default function BeFiSc() {
               olaData: result,
               addressData: otherAddressArray[index],
             }));
-
             setOtherAdressOlaData(updatedData);
             setOtherAddressOlaLoading(false);
           } catch (error) {
@@ -617,11 +616,16 @@ export default function BeFiSc() {
           gstAdvanceData,
           EquifaxV3Data,
           profileAdvanceData,
-          '',
+          mobileNo,
+          true,
         );
 
-        console.log('other emails', otherEmails);
-        console.log('other numbers', otherNumber);
+        otherNumber?.map((number) => {
+          if (number?.number?.length === 10) {
+            number.number = '+91' + number.number;
+          }
+        });
+
         if (otherNumber.length > 0 || otherEmails.length > 0) {
           setBreachInfoLoading(true);
           let finalArray: {

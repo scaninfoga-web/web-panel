@@ -16,6 +16,9 @@ interface PageProps {
     data: BreachInfoType;
   }[];
 }
+const dangerKeyWords = ['Password', 'Password(SHA-256)'];
+const hiddenLongsSentence = ['Url', 'Password(SHA-256)', 'Site'];
+const clickAble = ['Url', 'Site'];
 
 export default function BeFiScBreachInfo({ data }: PageProps) {
   return (
@@ -88,7 +91,7 @@ export default function BeFiScBreachInfo({ data }: PageProps) {
                                                 'text-blue-500',
                                               key === 'Password' &&
                                                 'text-red-500',
-                                              key === 'Url' &&
+                                              clickAble.includes(key) &&
                                                 'text-blue-400 underline transition-all duration-300 ease-in-out hover:cursor-pointer',
                                             )}
                                             onClick={() => {
@@ -97,8 +100,8 @@ export default function BeFiScBreachInfo({ data }: PageProps) {
                                               }
                                             }}
                                           >
-                                            {key === 'Url'
-                                              ? value.slice(0, 30)
+                                            {hiddenLongsSentence.includes(key)
+                                              ? value.slice(0, 30) + '....'
                                               : value}
                                           </span>
                                         </div>
