@@ -8,12 +8,12 @@ import {
   UPIType,
 } from '@/types/BeFiSc';
 import React from 'react';
-import { formatSentence, numberToIndianRuppe } from '../APIUtils';
-import CustomBeFiScCard, { getValue } from '../CustomBeFiScCard';
-import CustomBadge from '../CustomBadge';
-import { DashboardCard } from '../../dashboard/components/DashboardCard';
-import UpiDetails from '../UpiDetails';
-import BeFiScLoadingSkeleton from '../BeFiScLoadingSkeleton';
+import { formatSentence, numberToIndianRuppe } from './sub/APIUtils';
+import { DashboardCard } from '../dashboard/components/DashboardCard';
+import CustomBeFiScCard, { getValue } from './sub/CustomBeFiScCard';
+import CustomBadge from './sub/CustomBadge';
+import BeFiScLoadingSkeleton from './sub/BeFiScLoadingSkeleton';
+import UpiDetails from './sub/UpiDetails';
 
 interface PageProps {
   Mobile360Data: Mobile360Type | null;

@@ -1,16 +1,13 @@
+import { Separator } from '@/components/ui/separator';
 import {
   GstTurnoverType,
   GstVerificationAdvanceType,
   VerifyUdyamType,
 } from '@/types/BeFiSc';
-import React from 'react';
-import { Loader } from '@/components/ui/loader';
-import { Card } from '@/components/ui/card';
-import CustomBeFiScCard, { getValue } from '../CustomBeFiScCard';
-import { formatSentence } from '../APIUtils';
-import { Separator } from '@/components/ui/separator';
-import CustomBadge from '../CustomBadge';
-import { DashboardCard } from '../../dashboard/components/DashboardCard';
+import { DashboardCard } from '../dashboard/components/DashboardCard';
+import CustomBeFiScCard, { getValue } from './sub/CustomBeFiScCard';
+import { formatSentence } from './sub/APIUtils';
+import CustomBadge from './sub/CustomBadge';
 
 interface Props {
   GstAdvanceData: GstVerificationAdvanceType | null;

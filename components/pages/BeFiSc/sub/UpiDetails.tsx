@@ -1,9 +1,11 @@
 import { UPIType } from '@/types/BeFiSc';
-import React from 'react';
-import { DashboardCard, InfoText } from '../dashboard/components/DashboardCard';
-import { formatKey } from './CustomBeFiScCard';
-import { formatSentence } from './APIUtils';
 import Image from 'next/image';
+import {
+  DashboardCard,
+  InfoText,
+} from '../../dashboard/components/DashboardCard';
+import { formatSentence } from './APIUtils';
+import { formatKey } from './CustomBeFiScCard';
 const upiIcons = new Map<string, string>([
   ['PhonePe', '/upi/phonepe.png'],
   ['FinoPay', '/upi/FinoPay.png'],

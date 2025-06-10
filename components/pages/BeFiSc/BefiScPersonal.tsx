@@ -1,10 +1,3 @@
-import {
-  EsicDetailsType,
-  Mobile360Type,
-  PanAllInOneType,
-  ProfileAdvanceType,
-} from '@/types/BeFiSc';
-import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import {
@@ -15,16 +8,18 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import CustomBadge from '../CustomBadge';
-import { formatSentence } from '../APIUtils';
-import CustomBeFiScCard, { getValue } from '../CustomBeFiScCard';
 import {
-  DashboardCard,
-  InfoText,
-} from '../../dashboard/components/DashboardCard';
-import { LPGInfoTable } from '../LPGTable';
-import NumberDetails from './NumberDetails';
-
+  EsicDetailsType,
+  Mobile360Type,
+  PanAllInOneType,
+  ProfileAdvanceType,
+} from '@/types/BeFiSc';
+import { DashboardCard, InfoText } from '../dashboard/components/DashboardCard';
+import CustomBadge from './sub/CustomBadge';
+import { getValue } from './sub/CustomBeFiScCard';
+import { LPGInfoTable } from './sub/LPGTable';
+import { formatSentence } from './sub/APIUtils';
+import NumberDetails from './sub/NumberDetails';
 interface Props {
   Mobile360Data: Mobile360Type | null;
   PanAllInOneData: PanAllInOneType | null;

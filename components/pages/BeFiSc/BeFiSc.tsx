@@ -1,9 +1,12 @@
 'use client';
+// @ts-ignore
 import DashboardTitle from '@/components/common/DashboardTitle';
 import { SearchBar2 } from '@/components/search/SearchBar2';
 import CustomCheckBox from '@/components/sub/checkbox';
+import NotFound from '@/components/sub/NotFound';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { getClientInfo, post } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import {
   EquifaxV3Type,
@@ -17,38 +20,35 @@ import {
   UPIType,
   VerifyUdyamType,
 } from '@/types/BeFiSc';
+import { BreachInfoType } from '@/types/BreachInfo';
+import { GhuntData } from '@/types/ghunt';
+import { OlaGeoApiType } from '@/types/ola-geo-api';
 import { AxiosError } from 'axios';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
-// @ts-ignore
-import NotFound from '@/components/sub/NotFound';
-import { getClientInfo, post } from '@/lib/api';
-import { GhuntData } from '@/types/ghunt';
-import { OlaGeoApiType } from '@/types/ola-geo-api';
 import { DashboardCard } from '../dashboard/components/DashboardCard';
-import Ghunt from '../ghunt/Ghunt';
-import BeFiScBusiness from './2/BeFiScBusiness';
+import BeFiScBreachInfo from './BeFiScBreachInfo';
+import BeFiScBusiness from './BeFiScBusiness';
 import BeFiScDigitalFootprint, {
   getAddressesWithDifferentPincode,
   getOtherEmails,
   getOtherPhoneNumbers,
-} from './2/BeFiScDigitalFootprint';
-import BeFiScFinancial from './2/BeFiScFinancial';
-import BefiScPersonal from './2/BefiScPersonal';
-import MapLoading from './2/MapLoading';
-import SentenceLoader from './2/SentenceLoader';
+} from './BeFiScDigitalFootprint';
+import BeFiScFinancial from './BeFiScFinancial';
+import BefiScPersonal from './BefiScPersonal';
 import {
   cleanAndCapitalize,
   formatSentence,
   numberToIndianRuppe,
-} from './APIUtils';
-import BeFiScLoadingSkeleton from './BeFiScLoadingSkeleton';
-import CustomBadge from './CustomBadge';
-import { BreachInfoType } from '@/types/BreachInfo';
-import BeFiScBreachInfo from './2/BeFiScBreachInfo';
+} from './sub/APIUtils';
+import BeFiScLoadingSkeleton from './sub/BeFiScLoadingSkeleton';
+import CustomBadge from './sub/CustomBadge';
+import Ghunt from './sub/Ghunt';
+import MapLoading from './sub/MapLoading';
+import SentenceLoader from './sub/SentenceLoader';
 
 export function isValidIndianMobileNumber(input: string): {
   result: boolean;
@@ -464,8 +464,8 @@ export default function BeFiSc() {
     }
     return '/null.png';
   };
-  const firstAddress = panAllInOneData?.result?.address?.full;
 
+  const firstAddress = panAllInOneData?.result?.address?.full;
   const eciscAddress =
     esicsData?.result?.esic_details[0]?.employer_details?.address?.split(
       ', employer',
@@ -584,7 +584,10 @@ export default function BeFiSc() {
 
         otherNumber?.map((number) => {
           if (number?.number?.length === 10) {
-            number.number = '+91' + number.number;
+            otherNumber.push({
+              number: '+91' + number.number,
+              type: number.type,
+            });
           }
         });
 
@@ -635,9 +638,7 @@ export default function BeFiSc() {
                   data: result,
                 }),
               );
-            } catch (error) {
-              // setOtherAddressOlaLoading(false);
-            }
+            } catch (error) {}
           }
           setBreachInfo(finalArray);
           setBreachInfoLoading(false);

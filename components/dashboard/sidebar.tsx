@@ -103,6 +103,7 @@ import {
   LayoutDashboard,
   Telescope,
   Monitor,
+  Search,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -128,9 +129,9 @@ const sidebarLinks = [
     roles: ['USER'],
   },
   {
-    title: 'Ghunt',
-    icon: Telescope,
-    href: '/ghunt',
+    title: 'Digital Intelligence',
+    icon: Search,
+    href: '/digitalIntelligence',
     roles: ['USER', 'ADMIN'],
   },
   {

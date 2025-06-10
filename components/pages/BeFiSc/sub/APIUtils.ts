@@ -20,7 +20,6 @@ export function cleanAndCapitalize(input: string | undefined): string {
     .normalize('NFKD')
     .replace(/[\u200B-\u200D\uFEFF\u202C\u202D\u202E]/g, '')
     .trim();
-
   return cleaned.toUpperCase();
 }
 

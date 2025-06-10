@@ -1,7 +1,7 @@
 import { VerifyUdyamType } from '@/types/BeFiSc';
 import React from 'react';
-import { Loader } from '@/components/ui/loader';
-import CustomBeFiScCard, { getValue } from './CustomBeFiScCard';
+import CustomBeFiScCard from './sub/CustomBeFiScCard';
+import { getValue } from './sub/CustomBeFiScCard';
 import { Card } from '@/components/ui/card';
 
 export default function VerifyUdyam({

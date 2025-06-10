@@ -3,7 +3,7 @@ import {
   DashboardCard,
   InfoText,
   StatusBadge,
-} from '../dashboard/components/DashboardCard';
+} from '../../dashboard/components/DashboardCard';
 
 export function formatKey(key: string): string {
   key = key.replaceAll('_', ' ');

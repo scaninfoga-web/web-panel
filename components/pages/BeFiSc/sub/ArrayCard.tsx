@@ -4,13 +4,20 @@ import { DashboardCard } from '../../dashboard/components/DashboardCard';
 
 interface PageProps {
   title: string;
+  description: string;
   Component: React.ReactNode;
 }
 
-export default function ArrayCard({ title, Component }: PageProps) {
+export default function ArrayCard({
+  title,
+  description,
+  Component,
+}: PageProps) {
   return (
-    <DashboardCard title={`${title}`}>
-      <ScrollArea className="h-[300px]">{Component}</ScrollArea>
+    <DashboardCard title={`${title}`} className="p-0">
+      <div>
+        <ScrollArea className="h-[300px]">{Component}</ScrollArea>
+      </div>
     </DashboardCard>
   );
 }

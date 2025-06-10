@@ -1,7 +1,6 @@
 import { Badge } from '@/components/ui/badge';
-import React from 'react';
-import { formatSentence } from './APIUtils';
 import { cn } from '@/lib/utils';
+import { formatSentence } from './APIUtils';
 
 const defaultBadge = [
   'Yes',

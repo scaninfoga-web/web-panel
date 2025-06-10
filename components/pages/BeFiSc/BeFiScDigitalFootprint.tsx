@@ -1,4 +1,3 @@
-import NotFound from '@/components/sub/NotFound';
 import {
   Table,
   TableBody,
@@ -14,13 +13,10 @@ import {
   PanAllInOneType,
   ProfileAdvanceType,
 } from '@/types/BeFiSc';
-import {
-  DashboardCard,
-  InfoText,
-} from '../../dashboard/components/DashboardCard';
-import { formatSentence } from '../APIUtils';
-import { isValidIndianMobileNumber } from '../BeFiSc';
-import CustomBadge from '../CustomBadge';
+import { isValidIndianMobileNumber } from './BeFiSc';
+import { DashboardCard } from '../dashboard/components/DashboardCard';
+import CustomBadge from './sub/CustomBadge';
+import { formatSentence } from './sub/APIUtils';
 
 export function getOtherPhoneNumbers(
   EcicsData: EsicDetailsType | null,
@@ -355,9 +351,6 @@ export default function BeFiScDigitalFootprint({
             ))}
           </DashboardCard>
         ) : (
-          // <DashboardCard title="Alternate Number">
-          //   <NotFound className="max-h-32" value="No other numbers found" />
-          // </DashboardCard>
           <></>
         )}
         {otherEmails.length > 0 ? (
@@ -378,11 +371,6 @@ export default function BeFiScDigitalFootprint({
             ))}
           </DashboardCard>
         ) : (
-          // <DashboardCard title="Alternate Emails">
-          //   <span>
-          //     <NotFound className="max-h-32" value="No other emails found" />
-          //   </span>
-          // </DashboardCard>
           <></>
         )}
       </div>

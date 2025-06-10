@@ -1,12 +1,12 @@
 'use client';
+import { GhuntData } from '@/types/ghunt';
+import Image from 'next/image';
+import React from 'react';
 import {
   DashboardCard,
   InfoText,
   StatusBadge,
-} from '../dashboard/components/DashboardCard';
-import React, { useEffect } from 'react';
-import { GhuntData } from '@/types/ghunt';
-import Image from 'next/image';
+} from '../../dashboard/components/DashboardCard';
 
 const Ghunt: React.FC<{ accountData: GhuntData | null | undefined }> = ({
   accountData,
