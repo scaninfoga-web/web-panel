@@ -19,40 +19,40 @@ import {
 
 const services = [
   {
-    icon: Shield,
-    title: 'Vulnerability Assessment',
-    description:
-      'Comprehensive scanning and assessment to identify security vulnerabilities in your systems.',
-  },
-  {
-    icon: Search,
-    title: 'Penetration Testing',
-    description:
-      'Simulated cyber attacks to evaluate the security of your IT infrastructure.',
-  },
-  {
     icon: FileCode,
-    title: 'Secure Code Review',
+    title: 'OSINT',
     description:
-      'Expert analysis of application source code to identify security flaws and vulnerabilities.',
+      'Gain deep digital insights using cutting-edge OSINT methodologies. We identify hidden digital footprints, analyze online behaviors, and uncover truth from public and dark web sources to assist in criminal profiling, identity tracing, and cyber surveillance',
   },
   {
-    icon: Server,
-    title: 'Network Security',
+    icon: Shield,
+    title: 'VAPT & Penetration Testing',
     description:
-      'Protection for your network infrastructure against unauthorized access and attacks.',
-  },
-  {
-    icon: Lock,
-    title: 'Data Protection',
-    description:
-      'Solutions to safeguard sensitive data and ensure compliance with regulations.',
+      'Our certified experts conduct thorough vulnerability assessments and simulate real-world attacks to expose system weaknesses before hackers do. We help organizations fortify digital infrastructure and remain compliant with global cyber regulations.',
   },
   {
     icon: AlertTriangle,
     title: 'Incident Response',
     description:
-      'Rapid response to security breaches to minimize damage and restore operations.',
+      'Swift and strategic action to identify, contain, and mitigate cyber threats. Our expert team ensures rapid recovery, forensic analysis, and future threat prevention to protect your digital assets.',
+  },
+  {
+    icon: Search,
+    title: 'Digital Crime & Cyber Investigation',
+    description:
+      'From email fraud to financial scams, identity theft, corporate espionage, and cyberstalking — we investigate complex digital crimes using our proprietary tools and investigative expertise. We deliver court-admissible reports and help resolve digital cases with precision',
+  },
+  {
+    icon: Server,
+    title: 'Private Detective & Corporate Intelligence Services',
+    description:
+      'Operating at the crossroads of cyber forensics and private investigation, Scaninfoga conducts confidential digital background checks, surveillance, fraud investigation, and corporate espionage detection for individuals and businesses alike.',
+  },
+  {
+    icon: Lock,
+    title: 'Law Enforcement Collaboration',
+    description:
+      'Scaninfoga works hand-in-hand with national and international law enforcement agencies, assisting in cybercrime investigation, digital profiling of suspects, threat monitoring, and intelligence sharing to support real-world arrests and prosecution.',
   },
 ];
 
@@ -135,7 +135,17 @@ export default function Services() {
                     <service.icon className="h-6 w-6 text-emerald-500 group-hover:text-emerald-400" />
                   </div>
                   <CardTitle className="text-xl font-bold text-white transition-colors duration-300 group-hover:text-emerald-400">
-                    {service.title}
+                    {service.title === 'OSINT' ? (
+                      <>
+                        {service.title}
+                        <sup className="relative -top-2 pl-1 text-sm font-bold">
+                          v5.1
+                        </sup>
+                        <span className="pl-1">Intelligence</span>
+                      </>
+                    ) : (
+                      <>{service.title}</>
+                    )}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>

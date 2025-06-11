@@ -582,42 +582,6 @@ const faqItems = [
   },
 ];
 
-const services = [
-  {
-    title: 'Realtime SIM Card Monitoring',
-    imageSrc: '/subscriptions/33.png',
-  },
-  {
-    title: 'Realtime Bank Data  Monitoring',
-    imageSrc: '/subscriptions/22.png',
-  },
-  {
-    title: 'Realtime Address Tracking',
-    imageSrc: '/subscriptions/33.png',
-  },
-  {
-    title: 'Realtime Work Monitoring',
-    imageSrc: '/subscriptions/22.png',
-  },
-  {
-    title: 'Realtime Email or Gmail  Monitoring',
-    imageSrc: '/subscriptions/33.png',
-  },
-  {
-    title: 'Alternate Mobile Number Find & Monitoring',
-    imageSrc: '/subscriptions/22.png',
-  },
-  {
-    title: 'Realtime Cybercrime  Monitoring',
-    imageSrc: '/subscriptions/33.png',
-  },
-  {
-    title: 'PDF Reports',
-    imageSrc: '/subscriptions/22.png',
-  },
-];
-
-// Animated counter component
 const AnimatedCounter = ({
   end,
   duration = 2000,
@@ -668,84 +632,75 @@ export default function SubscriptionsPage() {
     <div className="overflow-hidden rounded-3xl pb-10">
       {/* Header Section */}
       <div className="mx-auto max-w-7xl">
-        <Vortex
-          backgroundColor="black"
-          rangeRadius={1}
-          rangeY={900}
-          particleCount={1000}
-          baseHue={100}
-          className="flex h-full w-full flex-col items-center justify-center pt-10"
+        <motion.div
+          className="mb-16 text-center"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
         >
+          {/* Arc Reactor Badge */}
           <motion.div
-            className="mb-16 text-center"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+            className="relative mb-6 inline-flex items-center gap-2 rounded-full border border-teal-500/30 bg-gradient-to-r from-teal-600/20 to-blue-600/20 px-6 py-2 backdrop-blur-sm"
+            animate={{
+              boxShadow: [
+                '0 0 20px rgba(20, 184, 166, 0.3)',
+                '0 0 40px rgba(59, 130, 246, 0.5)',
+                '0 0 20px rgba(20, 184, 166, 0.3)',
+              ],
+            }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              ease: 'easeInOut',
+            }}
           >
-            {/* Arc Reactor Badge */}
+            {/* Arc reactor inner glow */}
             <motion.div
-              className="relative mb-6 inline-flex items-center gap-2 rounded-full border border-teal-500/30 bg-gradient-to-r from-teal-600/20 to-blue-600/20 px-6 py-2 backdrop-blur-sm"
+              className="absolute inset-0 rounded-full bg-gradient-to-r from-teal-400/20 to-blue-400/20"
               animate={{
-                boxShadow: [
-                  '0 0 20px rgba(20, 184, 166, 0.3)',
-                  '0 0 40px rgba(59, 130, 246, 0.5)',
-                  '0 0 20px rgba(20, 184, 166, 0.3)',
-                ],
+                scale: [1, 1.1, 1],
+                opacity: [0.3, 0.6, 0.3],
               }}
               transition={{
                 duration: 2,
                 repeat: Infinity,
                 ease: 'easeInOut',
               }}
+            />
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{
+                duration: 4,
+                repeat: Infinity,
+                ease: 'linear',
+              }}
             >
-              {/* Arc reactor inner glow */}
-              <motion.div
-                className="absolute inset-0 rounded-full bg-gradient-to-r from-teal-400/20 to-blue-400/20"
-                animate={{
-                  scale: [1, 1.1, 1],
-                  opacity: [0.3, 0.6, 0.3],
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  ease: 'easeInOut',
-                }}
-              />
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{
-                  duration: 4,
-                  repeat: Infinity,
-                  ease: 'linear',
-                }}
-              >
-                <Zap size={20} className="relative z-10 text-teal-400" />
-              </motion.div>
-              <span className="relative z-10 font-medium text-teal-300">
-                Choose Your Power Level
-              </span>
+              <Zap size={20} className="relative z-10 text-teal-400" />
             </motion.div>
-
-            <motion.h1
-              className="mb-6 bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-5xl font-bold text-transparent md:text-6xl"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-            >
-              Subscription Plans
-            </motion.h1>
-            <motion.p
-              className="mx-auto max-w-2xl text-xl leading-relaxed text-slate-400"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-            >
-              Unlock the full potential of ScanInfoga with our comprehensive
-              security intelligence platform. Choose the plan that scales with
-              your ambitions.
-            </motion.p>
+            <span className="relative z-10 font-medium text-teal-300">
+              Choose Your Power Level
+            </span>
           </motion.div>
-        </Vortex>
+
+          <motion.h1
+            className="mb-6 bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-5xl font-bold text-transparent md:text-6xl"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+          >
+            Subscription Plans
+          </motion.h1>
+          <motion.p
+            className="mx-auto max-w-2xl text-xl leading-relaxed text-slate-400"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+          >
+            Unlock the full potential of ScanInfoga with our comprehensive
+            security intelligence platform. Choose the plan that scales with
+            your ambitions.
+          </motion.p>
+        </motion.div>
 
         {/* Plans Grid */}
         <div className="mx-auto mb-20 grid max-w-6xl grid-cols-1 gap-8 md:grid-cols-3">
@@ -1010,37 +965,6 @@ export default function SubscriptionsPage() {
               </div>
             ))}
           </div>
-        </motion.div>
-
-        <h1 className="mb-6 pl-1 text-3xl font-semibold">Services</h1>
-        <motion.div
-          className="mb-10 grid grid-cols-3 gap-4 py-6"
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 1.5 }}
-        >
-          {services.map((service, index) => (
-            <TiltedCard
-              key={index}
-              imageSrc={service.imageSrc}
-              altText={service.title}
-              captionText={service.title}
-              containerHeight="300px"
-              containerWidth="300px"
-              imageHeight="300px"
-              imageWidth="300px"
-              rotateAmplitude={12}
-              scaleOnHover={1.05}
-              showMobileWarning={false}
-              showTooltip={true}
-              displayOverlayContent={true}
-              overlayContent={
-                <p className="rounded-3xl bg-black/70 px-3 py-1 text-center font-semibold">
-                  {service.title}
-                </p>
-              }
-            />
-          ))}
         </motion.div>
         {/* FAQ Section */}
         <motion.div

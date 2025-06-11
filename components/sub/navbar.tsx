@@ -15,6 +15,15 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { WalletWidget } from '../common/WalletWidget';
 
+const navItems = [
+  { label: 'Home', href: '/' },
+  { label: 'Tools', href: '/tools' },
+  { label: 'Services', href: '/services' },
+  { label: 'Pricing', href: '/pricing' },
+  { label: 'Contact', href: '/contact' },
+  { label: 'About us', href: '/aboutUs' },
+];
+
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -89,14 +98,27 @@ export default function Navbar() {
             </span>
           </Link>
 
-          <nav className="hidden items-center space-x-8 md:flex">
-            {paths.includes(pathname) ? (
+          {paths.includes(pathname) ? (
+            <nav className="hidden items-center space-x-8 rounded-full border border-slate-500 bg-[#060b17] px-6 py-2.5 shadow-[inset_0px_1px_2px_0px_rgba(255,255,255,0.1),inset_0px_-1px_2px_0px_rgba(255,255,255,0.1)] transition-all md:flex">
               <>
+                {/* {navItems.map((item, index) => {
+                  <Link
+                    key={index}
+                    href={item.href}
+                    className={cn(
+                      `text-base font-medium text-white/90 hover:text-emerald-400`,
+                      pathname === item.href && 'text-black bg-emerald-500 py-1 rounded-3xl px-3',
+                    )}
+                  >
+                    {item.label}
+                  </Link>
+                })} */}
                 <Link
                   href="/"
                   className={cn(
                     `text-base font-medium text-white/90 hover:text-emerald-400`,
-                    pathname === '/' && 'text-emerald-500',
+                    pathname === '/' &&
+                      'rounded-3xl bg-emerald-500 px-3 py-1 text-black hover:text-black',
                   )}
                 >
                   Home
@@ -105,7 +127,8 @@ export default function Navbar() {
                   href="/tools"
                   className={cn(
                     `text-base font-medium text-white/90 hover:text-emerald-400`,
-                    pathname === '/tools' && 'text-emerald-500',
+                    pathname === '/tools' &&
+                      'rounded-3xl bg-emerald-500 px-3 py-1 text-black hover:text-black',
                   )}
                 >
                   Tools
@@ -114,7 +137,8 @@ export default function Navbar() {
                   href="/services"
                   className={cn(
                     `text-base font-medium text-white/90 hover:text-emerald-400`,
-                    pathname === '/services' && 'text-emerald-500',
+                    pathname === '/services' &&
+                      'rounded-3xl bg-emerald-500 px-3 py-1 text-black hover:text-black',
                   )}
                 >
                   Services
@@ -123,7 +147,8 @@ export default function Navbar() {
                   href="/pricing"
                   className={cn(
                     `text-base font-medium text-white/90 hover:text-emerald-400`,
-                    pathname === '/pricing' && 'text-emerald-500',
+                    pathname === '/pricing' &&
+                      'rounded-3xl bg-emerald-500 px-3 py-1 text-black hover:text-black',
                   )}
                 >
                   Pricing
@@ -132,7 +157,8 @@ export default function Navbar() {
                   href="/contact"
                   className={cn(
                     `text-base font-medium text-white/90 hover:text-emerald-400`,
-                    pathname === '/contact' && 'text-emerald-500',
+                    pathname === '/contact' &&
+                      'rounded-3xl bg-emerald-500 px-3 py-1 text-black hover:text-black',
                   )}
                 >
                   Contact
@@ -141,14 +167,15 @@ export default function Navbar() {
                   href="/aboutUs"
                   className={cn(
                     `text-base font-medium text-white/90 hover:text-emerald-400`,
-                    pathname === '/aboutUs' && 'text-emerald-500',
+                    pathname === '/aboutUs' &&
+                      'rounded-3xl bg-emerald-500 px-3 py-1 text-black hover:text-black',
                   )}
                 >
                   About us
                 </Link>
               </>
-            ) : null}
-          </nav>
+            </nav>
+          ) : null}
 
           <div className="hidden items-center space-x-4 md:flex">
             {/* <Link href="/account">
