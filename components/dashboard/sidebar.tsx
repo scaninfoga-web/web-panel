@@ -111,6 +111,12 @@ import { useSelector } from 'react-redux';
 
 const sidebarLinks = [
   {
+    title: 'User Profile',
+    icon: LayoutDashboard,
+    href: '/profile',
+    roles: ['ADMIN', 'USER'],
+  },
+  {
     title: 'User Transactions',
     icon: LayoutDashboard,
     href: '/userTransactions',

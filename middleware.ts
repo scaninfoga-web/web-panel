@@ -41,7 +41,13 @@ import { publicRoutes, routeAccess } from './lib/routePermissions';
 
 export async function middleware(request: NextRequest) {
   const accessToken = request.cookies.get('accessToken')?.value;
-  const userType = request.cookies.get('userType')?.value; // ← get role
+  // const user = request.cookies.get('user')?.value; // ← get role
+
+  // const userType = user?.userType || null;
+
+  const userCookie = request.cookies.get('user')?.value;
+  const user = userCookie ? JSON.parse(userCookie) : null;
+  const userType = user?.userType || null;
   const { pathname } = request.nextUrl;
 
   const isPublic =

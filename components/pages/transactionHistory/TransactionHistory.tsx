@@ -45,7 +45,7 @@ const TransactionHistory = () => {
 
   return (
     <>
-      <DashboardTitle title="Transactions" />
+      {/* <DashboardTitle title="Transactions" /> */}
       <div className="grid gap-x-2 md:grid-cols-2">
         {/* <div className="py-8 px-4 border border-gray-500">
         <TxnSubmissionForm />

@@ -18,6 +18,8 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
 import { setCookie, getCookie, deleteCookie } from 'cookies-next';
+import { post } from '@/lib/api';
+import { fetchWalletBalance } from '@/redux/walletSlice';
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -35,8 +37,9 @@ const userTypeOptions = [
 ];
 
 const Login = () => {
+  const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
-  const { login } = useAuth();
+  // const { login } = useAuth();
   const dispatch = useDispatch();
   const [qrCode, setQrCode] = useState<string | null>(null);
   const form = useForm<LoginFormValues>({
@@ -47,64 +50,65 @@ const Login = () => {
       userType: 'user',
     },
   });
-  const userType = form.watch('userType');
-  const currentType = form.getValues().userType;
+  // const userType = form.watch('userType');
+  // const currentType = form.getValues().userType;
 
-  const handleGoogleSuccess = async (credentialResponse: any) => {
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/google/`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-          },
-          body: JSON.stringify({
-            idToken: credentialResponse.credential,
-            backend: 'google-oauth2',
-            grant_type: 'convert_token',
-          }),
-        },
-      );
+  // const handleGoogleSuccess = async (credentialResponse: any) => {
+  //   try {
+  //     const response = await fetch(
+  //       `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/google/`,
+  //       {
+  //         method: 'POST',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //           Accept: 'application/json',
+  //         },
+  //         body: JSON.stringify({
+  //           idToken: credentialResponse.credential,
+  //           backend: 'google-oauth2',
+  //           grant_type: 'convert_token',
+  //         }),
+  //       },
+  //     );
 
-      const data = await response.json();
-      const { user } = data.responseData;
+  //     const data = await response.json();
+  //     const { user } = data.responseData;
 
-      const res = await axios.get(`/api/get/tokens`, {
-        withCredentials: true,
-      });
-      const tokens = res.data;
-      if (tokens && tokens.accessToken && tokens.refreshToken) {
-        dispatch(
-          setCredentials({
-            token: tokens.accessToken,
-            user,
-          }),
-        );
-        setCookie('accessToken', tokens.accessToken, {
-          maxAge: 60 * 60 * 24 * 10,
-        });
-        setCookie('userType', user.userType, { maxAge: 60 * 60 * 24 * 10 });
-        toast.success('Logged in successfully!', { duration: 800 });
-        return;
-      }
+  //     const res = await axios.get(`/api/get/tokens`, {
+  //       withCredentials: true,
+  //     });
+  //     const tokens = res.data;
+  //     if (tokens && tokens.accessToken && tokens.refreshToken) {
+  //       dispatch(
+  //         setCredentials({
+  //           token: tokens.accessToken,
+  //           user,
+  //         }),
+  //       );
+  //       // setCookie('accessToken', tokens.accessToken, {
+  //       //   maxAge: 60 * 60 * 24 * 10,
+  //       // });
+  //       // setCookie('userType', user.userType, { maxAge: 60 * 60 * 24 * 10 });
+  //       toast.success('Logged in successfully!', { duration: 800 });
+  //       return;
+  //     }
 
-      if (data.responseStatus?.status) {
-        login(data.responseData.token);
-        toast.success('Logged in successfully!');
-        router.push('/combinedDash');
-      } else {
-        toast.error('Login failed. Check your credentials and try again.');
-      }
-    } catch (error) {
-      toast.error('Login failed. Check your credentials and try again.');
-    }
-  };
+  //     if (data.responseStatus?.status) {
+  //       login(data.responseData.token);
+  //       toast.success('Logged in successfully!');
+  //       router.push('/combinedDash');
+  //     } else {
+  //       toast.error('Login failed. Check your credentials and try again.');
+  //     }
+  //   } catch (error) {
+  //     toast.error('Login failed. Check your credentials and try again.');
+  //   }
+  // };
 
   const onLogin = async (data: LoginFormValues) => {
     try {
-      const response = await axios.post(
+      setLoading(true);
+      const response = await post(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/login`,
         {
           ...data,
@@ -115,15 +119,12 @@ const Login = () => {
         },
       );
 
-      const { responseData } = response.data;
+      const { responseData } = response;
 
       if (responseData.require_otp) {
         setQrCode(responseData.require_otp);
       } else {
-        console.log('ELSE: ', responseData);
         const { user, accessToken } = responseData;
-        setCookie('accessToken', accessToken, { maxAge: 60 * 60 * 24 * 10 });
-        setCookie('userType', user.userType, { maxAge: 60 * 60 * 24 * 10 });
         dispatch(
           setCredentials({
             token: accessToken,
@@ -137,6 +138,8 @@ const Login = () => {
     } catch (error) {
       await clearCookies();
       toast.error('Login failed. Check your credentials and try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -172,12 +175,6 @@ const Login = () => {
 
             {qrCode && (
               <>
-                {/* <Image
-                  src={`data:image/png;base64,${qrCode}`}
-                  alt="QR Code"
-                  width={200}
-                  height={200}
-                /> */}
                 <FormInput
                   form={form}
                   name="otp"
@@ -191,6 +188,7 @@ const Login = () => {
             <Button
               type="submit"
               className="w-full bg-emerald-500 text-black hover:bg-emerald-400"
+              loading={loading}
             >
               Login
             </Button>
