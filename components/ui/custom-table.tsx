@@ -77,6 +77,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { cn } from '@/lib/utils';
+import { Loader } from './loader';
 
 interface Column<T> {
   title: string;
@@ -102,58 +104,59 @@ export function CustomTable<T extends object>({
   scroll,
 }: CustomTableProps<T>) {
   return (
-    <div className="rounded-md border">
-      <div className={`overflow-auto ${scroll?.x ? 'overflow-x-auto' : ''}}`}>
-        <Table>
-          <TableHeader>
+    <div
+      className={`overflow-auto border border-slate-600 ${scroll?.x ? 'overflow-x-auto' : ''}}`}
+    >
+      <Table>
+        <TableHeader>
+          <TableRow>
+            {columns.map((column) => (
+              <TableHead
+                className="sticky top-0 whitespace-nowrap bg-emerald-700 text-base font-medium text-black"
+                key={column.key}
+                style={
+                  column.width
+                    ? { width: column.width, minWidth: column.width }
+                    : undefined
+                }
+              >
+                {column.title}
+              </TableHead>
+            ))}
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {loading ? (
             <TableRow>
-              {columns.map((column) => (
-                <TableHead
-                  className="sticky top-0 bg-emerald-500 text-black"
-                  key={column.key}
-                  style={
-                    column.width
-                      ? { width: column.width, minWidth: column.width }
-                      : undefined
-                  }
-                >
-                  {column.title}
-                </TableHead>
-              ))}
+              <TableCell colSpan={columns.length} className="text-center">
+                <Loader className="max-h-20" />
+              </TableCell>
             </TableRow>
-          </TableHeader>
-          <TableBody>
-            {loading ? (
-              <TableRow>
-                <TableCell colSpan={columns.length} className="text-center">
-                  Loading...
-                </TableCell>
+          ) : dataSource.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={columns.length} className="text-center">
+                No data
+              </TableCell>
+            </TableRow>
+          ) : (
+            dataSource.map((record, index) => (
+              <TableRow key={index}>
+                {columns.map((column) => (
+                  <TableCell
+                    className={cn()}
+                    key={column.key}
+                    style={column.width ? { width: column.width } : undefined}
+                  >
+                    {column.render
+                      ? column.render(record[column.dataIndex], record)
+                      : String(record[column.dataIndex] ?? '-')}
+                  </TableCell>
+                ))}
               </TableRow>
-            ) : dataSource.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={columns.length} className="text-center">
-                  No data
-                </TableCell>
-              </TableRow>
-            ) : (
-              dataSource.map((record, index) => (
-                <TableRow key={index}>
-                  {columns.map((column) => (
-                    <TableCell
-                      key={column.key}
-                      style={column.width ? { width: column.width } : undefined}
-                    >
-                      {column.render
-                        ? column.render(record[column.dataIndex], record)
-                        : String(record[column.dataIndex] ?? '-')}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </div>
+            ))
+          )}
+        </TableBody>
+      </Table>
     </div>
   );
 }

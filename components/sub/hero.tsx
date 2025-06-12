@@ -495,7 +495,7 @@ export default function Hero() {
             {/* Video container */}
             <motion.div
               whileHover={{ scale: 1.02 }}
-              className="relative w-full max-w-2xl overflow-hidden border border-emerald-500/20 shadow-2xl shadow-emerald-500/10"
+              className="relative min-h-[360px] w-full max-w-2xl overflow-hidden border border-emerald-500/20 shadow-2xl shadow-emerald-500/10"
             >
               <video
                 src="/video-home.mp4"

@@ -13,7 +13,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="">
+    <html lang="en" className="scrollbar-custom">
       <body className="">
         <Providers>{children}</Providers>
       </body>

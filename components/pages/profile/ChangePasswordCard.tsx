@@ -287,7 +287,7 @@ export const ChangePasswordCard = () => {
         </CardContent>
       </Card>
       <QrCodeModal
-        open={true}
+        open={false}
         onClose={handleModalClose}
         onOk={handleModalClose}
       />

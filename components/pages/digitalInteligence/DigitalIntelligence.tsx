@@ -243,6 +243,7 @@ export default function DigitalIntelligence() {
   };
 
   function onClose() {
+    setCurrentStep('method');
     setIsOpen(false);
     setSelectedTool(null);
     setSelectedSubTool('');
