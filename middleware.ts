@@ -58,7 +58,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // If not logged in → redirect to login
+  // // If not logged in → redirect to login
   if (!accessToken) {
     return NextResponse.redirect(new URL('/auth', request.url));
   }

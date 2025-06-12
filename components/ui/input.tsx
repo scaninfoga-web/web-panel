@@ -26,7 +26,7 @@ import { forwardRef } from 'react';
 export const Input = forwardRef<
   HTMLInputElement,
   React.InputHTMLAttributes<HTMLInputElement>
->(({ className, type, value = '', ...props }, ref) => {
+>(({ className, type = 'text', value, ...props }, ref) => {
   return (
     <input
       type={type}
@@ -35,7 +35,7 @@ export const Input = forwardRef<
         className,
       )}
       ref={ref}
-      value={value}
+      {...(value !== undefined ? { value } : {})}
       {...props}
     />
   );
