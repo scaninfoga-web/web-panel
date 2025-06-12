@@ -103,12 +103,19 @@ import {
   LayoutDashboard,
   Telescope,
   Monitor,
+  Search,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useSelector } from 'react-redux';
 
 const sidebarLinks = [
+  {
+    title: 'User Profile',
+    icon: LayoutDashboard,
+    href: '/profile',
+    roles: ['ADMIN', 'USER'],
+  },
   {
     title: 'User Transactions',
     icon: LayoutDashboard,
@@ -128,9 +135,9 @@ const sidebarLinks = [
     roles: ['USER'],
   },
   {
-    title: 'Ghunt',
-    icon: Telescope,
-    href: '/ghunt',
+    title: 'Digital Intelligence',
+    icon: Search,
+    href: '/digitalIntelligence',
     roles: ['USER', 'ADMIN'],
   },
   {
@@ -173,9 +180,7 @@ const sidebarLinks = [
 
 export function DashboardSidebar() {
   const pathname = usePathname();
-  const userType = useSelector((state: any) => state.user.user.userType);
-
-  console.log('USERTYOE: ', userType);
+  const userType = useSelector((state: any) => state?.user?.user?.userType);
 
   const filteredLinks = sidebarLinks.filter((link) =>
     link.roles.includes(userType),

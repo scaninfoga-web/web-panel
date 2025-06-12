@@ -46,8 +46,8 @@ const AdminLogin: React.FC<{}> = () => {
         setQrCode(data.responseData.require_otp);
       } else {
         const { user, accessToken } = data.responseData;
-        setCookie('accessToken', accessToken, { maxAge: 60 * 60 * 24 * 10 });
-        setCookie('userType', user.userType, { maxAge: 60 * 60 * 24 * 10 });
+        // setCookie('accessToken', accessToken, { maxAge: 60 * 60 * 24 * 10 });
+        // setCookie('userType', user.userType, { maxAge: 60 * 60 * 24 * 10 });
         dispatch(
           setCredentials({
             token: accessToken,

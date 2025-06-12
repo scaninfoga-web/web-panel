@@ -26,25 +26,26 @@ export const WalletWidget = ({ credits, onTopUp }: WalletWidgetProps) => {
   };
 
   const handleBtnClick = () => {
-    console.log('HANDLE BTN CLICK');
     setIsOpen(false);
     setPaymentModalOpen(true);
   };
-
-  console.log('PAYMEND MODAL: ', paymentModalOpen);
 
   return (
     <>
       <Popover open={isOpen} onOpenChange={setIsOpen}>
         <PopoverTrigger asChild>
-          <button className="hover:bg-gray-750 flex cursor-pointer items-center gap-2 rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 transition-colors">
+          <Button
+            variant="default"
+            className="hover:bg-gray-750 flex cursor-pointer items-center gap-2 rounded-2xl border border-gray-700 bg-gray-800 px-3 py-2 transition-colors"
+            onClick={() => setIsOpen(true)}
+          >
             <CreditCard className="h-4 w-4 text-teal-500" />
             <span className="text-sm font-medium text-white">{credits}</span>
             <span className="text-xs text-gray-400">credits</span>
-          </button>
+          </Button>
         </PopoverTrigger>
         <PopoverContent
-          className="w-64 border-gray-700 bg-gray-800 p-4 text-white"
+          className="relative -left-4 top-4 w-64 border-gray-700 bg-[#060b17] p-4 text-white backdrop-blur-md"
           align="start"
         >
           <div className="space-y-4">
@@ -82,10 +83,7 @@ export const WalletWidget = ({ credits, onTopUp }: WalletWidgetProps) => {
               </div>
             </div>
 
-            <Button
-              onClick={handleBtnClick}
-              className="w-full bg-gradient-to-r from-teal-500 to-emerald-500 text-white hover:from-teal-600 hover:to-emerald-600"
-            >
+            <Button onClick={handleBtnClick} className="w-full">
               <Plus className="mr-2 h-4 w-4" />
               Top Up Credits
             </Button>

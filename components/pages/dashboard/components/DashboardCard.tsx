@@ -1,8 +1,6 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
-import { AlertCircleIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface DashboardCardProps {
@@ -31,7 +29,6 @@ export function DashboardCard({
         'relative overflow-hidden',
         'bg-[#0e1421]/30 backdrop-blur-xl',
         'border border-white/10',
-        // 'before:absolute before:inset-0 before:bg-gradient-to-b before:from-white/5 before:to-transparent',
         'shadow-lg transition-all duration-300 hover:shadow-xl',
         className,
       )}

@@ -1,9 +1,9 @@
-import Footer from '@/components/footer';
-import LeftRightComponents from '@/components/services/LeftRightComponents';
-import { providedServices } from '@/lib/constant';
-import FullServiceHeroSection from '@/components/services/FullServiceHeroSection';
-import ServicesMiniCards from '@/components/services/ServicesMiniCards';
 import BookInformation from '@/components/services/BookInformation';
+import FullServiceHeroSection from '@/components/services/FullServiceHeroSection';
+import LeftRightComponents from '@/components/services/LeftRightComponents';
+import ServicesMiniCards from '@/components/services/ServicesMiniCards';
+import Footer from '@/components/sub/footer';
+import { providedServices } from '@/lib/constant';
 
 interface PageProps {
   params: Promise<{

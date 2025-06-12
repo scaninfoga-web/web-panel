@@ -1,19 +1,21 @@
 'use client';
-import MapLoading from '@/components/pages/BeFiSc/2/MapLoading';
-import axios from 'axios';
+
+import { Alert } from '@/components/ui/alert';
 import React, { useState } from 'react';
 
-export default function page() {
-  const [loading, setLoading] = useState(false);
-  const handleClick = async () => {
-    setLoading(!loading);
+export default function Page() {
+  const [showAlert, setShowAlert] = useState(false);
+
+  const handleClick = () => {
+    setShowAlert(true); // this will trigger re-render
   };
+
   return (
     <div className="flex h-screen flex-col items-center justify-center">
-      <button className="border px-8 py-4" onClick={handleClick}>
-        Click me
+      <button onClick={handleClick} className="mb-4">
+        Click to show alert
       </button>
-      {loading && <MapLoading />}
+      {showAlert && <Alert>hell</Alert>}
     </div>
   );
 }

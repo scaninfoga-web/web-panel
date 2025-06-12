@@ -1,9 +1,13 @@
 'use client';
-import CustomCheckBox from '@/components/checkbox';
+// @ts-ignore
 import DashboardTitle from '@/components/common/DashboardTitle';
 import { SearchBar2 } from '@/components/search/SearchBar2';
+import CustomCheckBox from '@/components/sub/checkbox';
+import NotFound from '@/components/sub/NotFound';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { getClientInfo, post } from '@/lib/api';
+import { cn } from '@/lib/utils';
 import {
   EquifaxV3Type,
   EsicDetailsType,
@@ -16,41 +20,54 @@ import {
   UPIType,
   VerifyUdyamType,
 } from '@/types/BeFiSc';
+import { BreachInfoType } from '@/types/BreachInfo';
+import { GhuntData } from '@/types/ghunt';
+import { OlaGeoApiType } from '@/types/ola-geo-api';
 import { AxiosError } from 'axios';
+import { motion } from 'framer-motion';
 import Image from 'next/image';
+import { useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { cn } from '@/lib/utils';
-import { motion } from 'framer-motion';
-// @ts-ignore
-import NotFound from '@/components/NotFound';
-import { getClientInfo, post } from '@/lib/api';
-import { GhuntData } from '@/types/ghunt';
-import Ghunt from '../ghunt/Ghunt';
-import BeFiScBusiness from './2/BeFiScBusiness';
-import BeFiScFinancial from './2/BeFiScFinancial';
-import BefiScPersonal from './2/BefiScPersonal';
-import {
-  cleanAndCapitalize,
-  formatSentence,
-  numberToIndianRuppe,
-} from './APIUtils';
-import BeFiScLoadingSkeleton from './BeFiScLoadingSkeleton';
-import CustomBadge from './CustomBadge';
 import { DashboardCard } from '../dashboard/components/DashboardCard';
-import { OlaGeoApiType } from '@/types/ola-geo-api';
-import SentenceLoader from './2/SentenceLoader';
+import BeFiScBreachInfo from './BeFiScBreachInfo';
+import BeFiScBusiness from './BeFiScBusiness';
 import BeFiScDigitalFootprint, {
   getAddressesWithDifferentPincode,
   getOtherEmails,
   getOtherPhoneNumbers,
-} from './2/BeFiScDigitalFootprint';
-import MapLoading from './2/MapLoading';
+} from './BeFiScDigitalFootprint';
+import BeFiScFinancial from './BeFiScFinancial';
+import BefiScPersonal from './BefiScPersonal';
+import {
+  cleanAndCapitalize,
+  formatSentence,
+  numberToIndianRuppe,
+} from './sub/APIUtils';
+import BeFiScLoadingSkeleton from './sub/BeFiScLoadingSkeleton';
+import CustomBadge from './sub/CustomBadge';
+import Ghunt from './sub/Ghunt';
+import MapLoading from './sub/MapLoading';
+import SentenceLoader from './sub/SentenceLoader';
 
-export function isValidIndianMobileNumber(input: string): boolean {
+export function isValidIndianMobileNumber(input: string): {
+  result: boolean;
+  fixedNumber: string;
+} {
   const mobileRegex = /^(?:\+91[\-\s]?)?[5-9]\d{9}$/;
-  return mobileRegex.test(input.trim());
+  input = input.replace(/\s/g, '');
+  if (input.length === 12) {
+    input = input.slice(2, 13);
+  }
+  if (input.length === 13) {
+    input = input.slice(3, 14);
+  }
+  const isValid = mobileRegex.test(input.trim());
+
+  return {
+    result: isValid,
+    fixedNumber: input,
+  };
 }
 
 export default function BeFiSc() {
@@ -65,41 +82,31 @@ export default function BeFiSc() {
   const [mobile360Data, setMobile360Data] = useState<Mobile360Type | null>(
     null,
   );
-  // const [ghuntData, setGhuntData] = useState<GhuntData | null>(null);
-  // const [ghuntLoading, setGhuntLoading] = useState(false);
 
   const [ghuntMultipleData, setGhuntMultipleData] = useState<GhuntData[]>([]);
   const [ghuntMultipleLoading, setGhuntMultipleLoading] = useState(false);
 
-  const [verifyUdyamLoading, setVerifyUdyamLoading] = useState(false);
   const [verfiyUdyamData, setVerfiyUdyamData] =
     useState<VerifyUdyamType | null>(null);
 
-  const [gstAdvanceLoading, setGstAdvanceLoading] = useState(false);
   const [gstAdvanceData, setGstAdvanceData] =
     useState<GstVerificationAdvanceType | null>(null);
 
-  const [gstTurnoverLoading, setGstTurnoverLoading] = useState(false);
   const [gstTurnoverData, setGstTurnoverData] =
     useState<GstTurnoverType | null>(null);
 
-  const [profileAdvanceLoading, setProfileAdvanceLoading] = useState(false);
   const [profileAdvanceData, setProfileAdvanceData] =
     useState<ProfileAdvanceType | null>(null);
 
-  const [esicsLoading, setEsicsLoading] = useState(false);
   const [esicsData, setEsicsData] = useState<EsicDetailsType | null>(null);
 
-  const [mobileToAccountLoading, setMobileToAccountLoading] = useState(false);
   const [mobileToAccountData, setMobileToAccountData] =
     useState<MobileToAccountNumberType | null>(null);
 
-  const [EquifaxV3Loading, setEquifaxV3Loading] = useState(false);
   const [EquifaxV3Data, setEquifaxV3Data] = useState<EquifaxV3Type | null>(
     null,
   );
 
-  const [panAllInOneLoading, setPanAllInOneLoading] = useState(false);
   const [panAllInOneData, setPanAllInOneData] =
     useState<PanAllInOneType | null>(null);
 
@@ -122,32 +129,20 @@ export default function BeFiSc() {
     }[]
   >([]);
 
-  // const isSuspicious = Object.values(upiDetailsData?.responseData ?? {}).some(
-  //   (val) => {
-  //     if (val?.success) {
-  //       return (
-  //         val?.data?.result?.name.trim().replace(/\s+/g, ' ').toLowerCase() !==
-  //         realName
-  //       );
-  //     }
-  //   },
-  // );
+  const [breachInfoLoading, setBreachInfoLoading] = useState(false);
+  const [breachInfo, setBreachInfo] = useState<
+    {
+      value: string;
+      type: string;
+      data: BreachInfoType;
+    }[]
+  >([]);
 
   const setAllOnLoading = () => {
     setIsLoading(true);
-    // setGhuntLoading(true);
-    setVerifyUdyamLoading(true);
-    setGstAdvanceLoading(true);
-    setGstTurnoverLoading(true);
-    setProfileAdvanceLoading(true);
-    setEsicsLoading(true);
-    setMobileToAccountLoading(true);
-    setEquifaxV3Loading(true);
-    setPanAllInOneLoading(true);
     setUpiDetailsLoading(true);
   };
   const clearOldData = () => {
-    // setGhuntData(null);
     setMobile360Data(null);
     setVerfiyUdyamData(null);
     setGstAdvanceData(null);
@@ -161,20 +156,7 @@ export default function BeFiSc() {
     setOlaGeoApiData(null);
     setOtherAdressOlaData([]);
     setGhuntMultipleData([]);
-  };
-
-  const setAllOffLoading = () => {
-    setIsLoading(false);
-    // setGhuntLoading(false);
-    setVerifyUdyamLoading(false);
-    setGstAdvanceLoading(false);
-    setGstTurnoverLoading(false);
-    setProfileAdvanceLoading(false);
-    setEsicsLoading(false);
-    setMobileToAccountLoading(false);
-    setEquifaxV3Loading(false);
-    setPanAllInOneLoading(false);
-    setUpiDetailsLoading(false);
+    setBreachInfo([]);
   };
 
   useEffect(() => {
@@ -194,26 +176,7 @@ export default function BeFiSc() {
             Number(ProfileAdvanceResponse.responseData?.status) === 2
           ) {
             setProfileAdvanceData(ProfileAdvanceResponse.responseData);
-            // const emailAddress =
-            //   ProfileAdvanceResponse.responseData?.result?.email?.[0]?.value
-            //     .trim()
-            //     .toLowerCase();
-            // calling ghunt api with emailaddess
-            // try {
-            //   if (emailAddress) {
-            //     const data = await post('/api/ghunt/getEmailDetails', {
-            //       email: emailAddress,
-            //     });
-            //     setGhuntData(data.responseData);
-            //     setGhuntLoading(false);
-            //   } else {
-            //     toast.error('Ghunt Data Not Found', { id: toastRef.current! });
-            //   }
-            // } catch (error) {
-            //   toast.error('Ghunt Data Not Found', { id: toastRef.current! });
-            // }
           }
-          setProfileAdvanceLoading(false);
           const panNumber =
             ProfileAdvanceResponse.responseData.result?.document_data?.pan[0]
               .value || mobile360Data?.result?.din_info?.data[0]?.pan;
@@ -265,9 +228,7 @@ export default function BeFiSc() {
                 );
               }
             }
-            setPanAllInOneLoading(false);
           }
-          setEquifaxV3Loading(false);
         } catch (error) {
           if (error instanceof AxiosError) {
             toast.error(
@@ -276,11 +237,7 @@ export default function BeFiSc() {
               { id: toastRef.current! },
             );
           }
-          setEquifaxV3Loading(false);
-          setProfileAdvanceLoading(false);
         }
-        toast.success(`${apiMessage.current!}`, { id: toastRef.current! });
-        setIsLoading(false);
 
         // epicsInfo
         const EsicsArray = mobile360Data.result?.key_highlights?.esic_number;
@@ -297,7 +254,6 @@ export default function BeFiSc() {
             ) {
               setEsicsData(EsicsInfo.responseData);
             }
-            setEsicsLoading(false);
           } catch (error) {
             if (error instanceof AxiosError) {
               toast.error(
@@ -305,7 +261,6 @@ export default function BeFiSc() {
                 { id: toastRef.current! },
               );
             }
-            setEsicsLoading(false);
           }
         }
 
@@ -322,7 +277,6 @@ export default function BeFiSc() {
             if (Number(UdyamData.responseData?.status) === 1) {
               setVerfiyUdyamData(UdyamData.responseData);
             }
-            setVerifyUdyamLoading(false);
           }
         } catch (error) {
           if (error instanceof AxiosError) {
@@ -330,7 +284,6 @@ export default function BeFiSc() {
               id: toastRef.current!,
             });
           }
-          setVerifyUdyamLoading(false);
         }
 
         // get gst advance data
@@ -346,7 +299,6 @@ export default function BeFiSc() {
             if (Number(GSTDATA.responseData?.status) === 1) {
               setGstAdvanceData(GSTDATA.responseData);
             }
-            setGstAdvanceLoading(false);
 
             const GstTurnover = await post('/api/mobile/gstturnover', {
               gst_no: gstAdvanceNumberArray[0],
@@ -360,7 +312,6 @@ export default function BeFiSc() {
             ) {
               setGstTurnoverData(GstTurnover.responseData);
             }
-            setGstTurnoverLoading(false);
           }
         } catch (error) {
           if (error instanceof AxiosError) {
@@ -368,10 +319,26 @@ export default function BeFiSc() {
               id: toastRef.current!,
             });
           }
-          setGstAdvanceLoading(false);
-          setGstTurnoverLoading(false);
         }
-
+        try {
+          const ActDetails = await post('/api/mobile/getAcDtlsFromMobNo', {
+            mobile_number: mobileNo,
+            realtimeData: isRealtime,
+          });
+          if (ActDetails.responseData?.status === 1) {
+            setMobileToAccountData(ActDetails.responseData);
+          }
+        } catch (error) {
+          if (error instanceof AxiosError) {
+            toast.error(
+              'Mobile To Account ' +
+                error.response?.data?.responseStatus?.message,
+              { id: toastRef.current! },
+            );
+          }
+        }
+        setIsLoading(false);
+        toast.success(`${apiMessage.current!}`, { id: toastRef.current! });
         // calling upi details
         try {
           const UpiDetails = await post('/api/mobile/digitalpayment', {
@@ -390,27 +357,6 @@ export default function BeFiSc() {
           }
         }
         setUpiDetailsLoading(false);
-
-        try {
-          const ActDetails = await post('/api/mobile/getAcDtlsFromMobNo', {
-            mobile_number: mobileNo,
-            realtimeData: isRealtime,
-          });
-          if (ActDetails.responseData?.status === 1) {
-            setMobileToAccountData(ActDetails.responseData);
-          }
-          setMobileToAccountLoading(false);
-        } catch (error) {
-          if (error instanceof AxiosError) {
-            toast.error(
-              'Mobile To Account ' +
-                error.response?.data?.responseStatus?.message,
-              { id: toastRef.current! },
-            );
-          }
-        }
-
-        setAllOffLoading();
         setisRealtime(false);
       };
       callOtherAPIs();
@@ -426,13 +372,12 @@ export default function BeFiSc() {
       .normalize('NFKD')
       .replace(/[\u200B-\u200D\uFEFF\u202C\u202D\u202E]/g, '')
       .trim();
-    const validation = isValidIndianMobileNumber(query);
-    if (!validation) {
-      toast.error(`Invalid mobile ${query}`, { duration: 800 });
+    const isValid = isValidIndianMobileNumber(query);
+    if (!isValid.result) {
+      toast.error(`Invalid mobile ${query.slice(0, 15)}`, { duration: 800 });
       return;
     }
-    query = query.replace(/^(\+91)/, '');
-    setMobileNo(query);
+    setMobileNo(isValid.fixedNumber);
     setAllOnLoading();
     let mobile360R: null | {
       responseData: Mobile360Type;
@@ -451,7 +396,7 @@ export default function BeFiSc() {
         });
         try {
           const Mobile360Data = await post('/api/mobile/getMobile360Dtls', {
-            mobile_number: query,
+            mobile_number: isValid.fixedNumber,
             realtimeData: isRealtime,
           });
 
@@ -478,8 +423,6 @@ export default function BeFiSc() {
                 toast.error('Server Timeout. Try again after some time', {
                   id: toastId,
                 });
-                setIsLoading(false);
-                setAllOffLoading();
               }
               resolve();
             } else {
@@ -492,25 +435,18 @@ export default function BeFiSc() {
           attempt();
         });
       };
-
       await retryUntilSuccess();
-
       if (!mobile360R) {
+        setIsLoading(false);
         return;
-      } else {
-        // await new Promise((resolve) => setTimeout(resolve, 5000));
-        // toast.success(`${mobile360ResponseMessage}`, { id: toastId });
       }
     } catch (err) {
       if (err instanceof AxiosError) {
         toast.error(err.response?.data?.responseStatus?.message);
-        setIsLoading(false);
-        setAllOffLoading();
         return;
       }
       toast.error('Something went wrong');
       setIsLoading(false);
-      setAllOffLoading();
     }
   };
 
@@ -530,19 +466,26 @@ export default function BeFiSc() {
   };
 
   const firstAddress = panAllInOneData?.result?.address?.full;
-
+  const eciscAddress =
+    esicsData?.result?.esic_details[0]?.employer_details?.address?.split(
+      ', employer',
+    )[0] || '';
   const secondAddress =
-    profileAdvanceData?.result?.address?.[0]?.detailed_address || '';
+    profileAdvanceData?.result?.address?.[0]?.detailed_address &&
+    profileAdvanceData?.result?.address?.[0]?.detailed_address?.length > 10
+      ? profileAdvanceData?.result?.address?.[0]?.detailed_address
+      : eciscAddress;
 
   // location api
   useEffect(() => {
-    setOlaGeoApiLoading(true);
-
     const callGeoApi = async () => {
+      setOlaGeoApiLoading(true);
       await new Promise((resolve) => setTimeout(resolve, 500));
       if (
-        (firstAddress && firstAddress?.length > 5) ||
-        secondAddress?.length > 5
+        !isLoading &&
+        mobile360Data &&
+        profileAdvanceData &&
+        panAllInOneData
       ) {
         const clientInfo = getClientInfo();
         setOlaGeoApiLoading(true);
@@ -554,8 +497,7 @@ export default function BeFiSc() {
               address: firstAddress,
             });
             setOlaGeoApiData(imageData);
-          }
-          if (secondAddress.length > 5) {
+          } else if (secondAddress.length > 5) {
             const imageData = await post('/api/auth/getmap', {
               userLng: clientInfo?.longitude,
               userLat: clientInfo?.latitude,
@@ -573,26 +515,27 @@ export default function BeFiSc() {
         } finally {
           setOlaGeoApiLoading(false);
         }
-      } else {
-        setOlaGeoApiLoading(false);
       }
     };
     callGeoApi();
-  }, [panAllInOneData, profileAdvanceData]);
+  }, [isLoading]);
+
   useEffect(() => {
     const callOtherAddressApis = async () => {
-      if (!profileAdvanceLoading && !EquifaxV3Loading && !gstAdvanceLoading) {
-        setOtherAddressOlaLoading(true);
+      if (!isLoading && mobile360Data) {
         const clientInfo = getClientInfo();
         const otherAddressArray = getAddressesWithDifferentPincode(
+          esicsData,
           gstAdvanceData,
           profileAdvanceData,
           EquifaxV3Data,
           panAllInOneData?.result?.address?.zip ||
             profileAdvanceData?.result?.address?.[0]?.pincode ||
-            '0',
+            '',
         );
+        console.log('OHTer address', otherAddressArray);
         if (otherAddressArray.length > 0) {
+          setOtherAddressOlaLoading(true);
           try {
             const results = await Promise.all(
               otherAddressArray.map((addressObj) =>
@@ -607,26 +550,111 @@ export default function BeFiSc() {
               olaData: result,
               addressData: otherAddressArray[index],
             }));
-
             setOtherAdressOlaData(updatedData);
             setOtherAddressOlaLoading(false);
           } catch (error) {
             setOtherAddressOlaLoading(false);
           }
-        } else {
-          setOtherAddressOlaLoading(false);
         }
       }
     };
     callOtherAddressApis();
-  }, [gstAdvanceLoading, EquifaxV3Loading, profileAdvanceLoading]);
+  }, [isLoading]);
+
+  //caling breachInfo Api after
+  useEffect(() => {
+    const callBreachInfoApi = async () => {
+      if (!isLoading && mobile360Data) {
+        const otherEmails = getOtherEmails(
+          esicsData,
+          gstAdvanceData,
+          EquifaxV3Data,
+          profileAdvanceData,
+          '',
+        );
+
+        const otherNumber = getOtherPhoneNumbers(
+          esicsData,
+          gstAdvanceData,
+          EquifaxV3Data,
+          profileAdvanceData,
+          mobileNo,
+          true,
+        );
+
+        otherNumber?.map((number) => {
+          if (number?.number?.length === 10) {
+            otherNumber.push({
+              number: '+91' + number.number,
+              type: number.type,
+            });
+          }
+        });
+
+        if (otherNumber.length > 0 || otherEmails.length > 0) {
+          setBreachInfoLoading(true);
+          let finalArray: {
+            value: string;
+            type: string;
+            data: BreachInfoType;
+          }[] = [];
+          if (otherEmails.length > 0) {
+            try {
+              const results = await Promise.all(
+                otherEmails.map((email) =>
+                  post('/api/mobile/breachinfo', {
+                    request_body: email.email,
+                    realtimeData: isRealtime,
+                  }),
+                ),
+              );
+              results.map((result, index) =>
+                finalArray.push({
+                  value: otherEmails[index]?.email,
+                  type: otherEmails[index]?.type,
+                  data: result,
+                }),
+              );
+            } catch (error) {
+              toast.error('Breach info fetching error', {
+                id: toastRef.current!,
+              });
+            }
+          }
+          if (otherNumber.length > 0) {
+            try {
+              const results = await Promise.all(
+                otherNumber.map((number) =>
+                  post('/api/mobile/breachinfo', {
+                    request_body: number.number,
+                    realtimeData: isRealtime,
+                  }),
+                ),
+              );
+              results.map((result, index) =>
+                finalArray.push({
+                  value: otherNumber[index]?.number,
+                  type: otherNumber[index]?.type,
+                  data: result,
+                }),
+              );
+            } catch (error) {}
+          }
+          setBreachInfo(finalArray);
+          setBreachInfoLoading(false);
+        }
+      }
+    };
+    callBreachInfoApi();
+  }, [isLoading]);
 
   // here ghunt call
   useEffect(() => {
     const callGhuntApis = async () => {
-      if (!profileAdvanceLoading && !EquifaxV3Loading && !gstAdvanceLoading) {
+      if (!isLoading && mobile360Data) {
         setGhuntMultipleLoading(true);
         const otherEmails = getOtherEmails(
+          esicsData,
           gstAdvanceData,
           EquifaxV3Data,
           profileAdvanceData,
@@ -637,7 +665,7 @@ export default function BeFiSc() {
             const results = await Promise.all(
               otherEmails.map((email) =>
                 post('/api/ghunt/getEmailDetails', {
-                  email: email,
+                  email: email.email,
                 }),
               ),
             );
@@ -653,7 +681,7 @@ export default function BeFiSc() {
       }
     };
     callGhuntApis();
-  }, [gstAdvanceLoading, EquifaxV3Loading, profileAdvanceLoading]);
+  }, [isLoading]);
 
   const OverviewData = [
     {
@@ -664,27 +692,44 @@ export default function BeFiSc() {
     },
     {
       title: 'Gender',
-      value: panAllInOneData?.result?.gender || '----',
+      value:
+        panAllInOneData?.result?.gender ||
+        profileAdvanceData?.result?.personal_information?.gender ||
+        esicsData?.result?.esic_details[0]?.gender ||
+        '----',
       titleClassname: '',
       valueClassname: '',
     },
     {
       title: 'Date of Birth',
-      value: panAllInOneData?.result?.dob || '----',
+      value:
+        panAllInOneData?.result?.dob ||
+        esicsData?.result?.esic_details[0]?.date_of_birth ||
+        '----',
       titleClassname: '',
       valueClassname: '',
     },
     {
       title: 'Age',
-      value: profileAdvanceData?.result?.personal_information?.age || '----',
+      value:
+        profileAdvanceData?.result?.personal_information?.age ||
+        esicsData?.result?.esic_details[0]?.age ||
+        '----',
       titleClassname: '',
       valueClassname: '',
     },
     {
       title: 'Alternate Number',
-      value: getOtherPhoneNumbers(profileAdvanceData, mobileNo)[0] || '----',
+      value:
+        getOtherPhoneNumbers(
+          esicsData,
+          gstAdvanceData,
+          EquifaxV3Data,
+          profileAdvanceData,
+          mobileNo,
+        )[0]?.number || '----',
       titleClassname: '',
-      valueClassname: '',
+      valueClassname: 'text-yellow-500',
     },
     {
       title: 'Income',
@@ -714,13 +759,14 @@ export default function BeFiSc() {
       title: 'Email Address',
       value:
         getOtherEmails(
+          esicsData,
           gstAdvanceData,
           EquifaxV3Data,
           profileAdvanceData,
           '',
-        )[0] || '----',
+        )[0]?.email || '----',
       titleClassname: '',
-      valueClassname: 'max-w-24',
+      valueClassname: 'max-w-24 text-yellow-500',
     },
     {
       title: 'isSole Proprietor',
@@ -737,10 +783,11 @@ export default function BeFiSc() {
 
     {
       title: 'Line1',
-      value:
+      value: formatSentence(
         panAllInOneData?.result?.address?.line_1?.toLowerCase() ||
-        panAllInOneData?.result?.address?.line_2?.toLowerCase() ||
-        '----',
+          panAllInOneData?.result?.address?.line_2?.toLowerCase() ||
+          '----',
+      ),
       titleClassname: '',
       valueClassname: '',
     },
@@ -755,16 +802,19 @@ export default function BeFiSc() {
       value:
         panAllInOneData?.result?.address?.zip ||
         profileAdvanceData?.result?.address?.[0]?.pincode ||
+        esicsData?.result?.esic_details[0]?.employer_details?.pincode ||
         '----',
       titleClassname: '',
       valueClassname: '',
     },
     {
       title: 'State',
-      value:
+      value: formatSentence(
         panAllInOneData?.result?.address?.state ||
-        profileAdvanceData?.result?.address?.[0]?.state ||
-        '----',
+          profileAdvanceData?.result?.address?.[0]?.state ||
+          esicsData?.result?.esic_details[0]?.employer_details?.state ||
+          '----',
+      ),
       titleClassname: '',
       valueClassname: '',
     },
@@ -881,7 +931,7 @@ export default function BeFiSc() {
                 className="mt-6 flex flex-col space-y-4"
               >
                 <DashboardCard title="" className="col-span-full lg:col-span-2">
-                  <div className="flex items-center gap-x-2">
+                  <div className="mb-2 flex items-center gap-x-2">
                     <div className="group relative h-[65px] w-[65px]">
                       <Image
                         src={getImageUrl()}
@@ -907,7 +957,8 @@ export default function BeFiSc() {
                       {formatSentence(
                         panAllInOneData?.result?.full_name ||
                           profileAdvanceData?.result?.personal_information
-                            ?.full_name,
+                            ?.full_name ||
+                          esicsData?.result?.esic_details[0]?.name,
                       )}
                     </p>
                   </div>
@@ -952,7 +1003,10 @@ export default function BeFiSc() {
                                   ? formatSentence(secondAddress)
                                   : formatSentence(
                                       mobile360Data?.result?.lpg_info?.data?.[0]
-                                        ?.address,
+                                        ?.address.length > 10
+                                        ? mobile360Data?.result?.lpg_info
+                                            ?.data?.[0]?.address
+                                        : '----',
                                     )}
                             </p>
                           </div>
@@ -966,10 +1020,8 @@ export default function BeFiSc() {
                                 <SentenceLoader />
                               ) : (
                                 <p className="text-lg font-medium text-emerald-500">
-                                  {
-                                    olaGeoApiData?.responseData?.duration
-                                      ?.readable_duration
-                                  }
+                                  {olaGeoApiData?.responseData?.duration
+                                    ?.readable_duration || '----'}
                                 </p>
                               )}
                             </div>
@@ -981,10 +1033,8 @@ export default function BeFiSc() {
                                 <SentenceLoader />
                               ) : (
                                 <p className="text-lg font-medium text-yellow-500">
-                                  {
-                                    olaGeoApiData?.responseData?.distance
-                                      ?.distance_kilometers
-                                  }
+                                  {olaGeoApiData?.responseData?.distance
+                                    ?.distance_kilometers || '----'}
                                 </p>
                               )}
                             </div>
@@ -1153,6 +1203,7 @@ export default function BeFiSc() {
               </TabsContent>
               <TabsContent value="digitalInfo" className="mt-6">
                 <BeFiScDigitalFootprint
+                  EcicsData={esicsData}
                   email={
                     profileAdvanceData?.result?.email?.[0]?.value.toLowerCase() ||
                     panAllInOneData?.result?.email ||
@@ -1165,7 +1216,13 @@ export default function BeFiSc() {
                   mobileNumber={mobileNo}
                 />
               </TabsContent>
-              <TabsContent value="breachInfo" className="mt-6"></TabsContent>
+              <TabsContent value="breachInfo" className="mt-6">
+                {breachInfoLoading ? (
+                  <BeFiScLoadingSkeleton />
+                ) : (
+                  <BeFiScBreachInfo data={breachInfo} />
+                )}
+              </TabsContent>
               <TabsContent value="googleProfile" className="mt-6">
                 {ghuntMultipleLoading ? (
                   <BeFiScLoadingSkeleton />

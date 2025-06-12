@@ -5,7 +5,7 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FormInput } from '@/components/ui/form-input';
 import { Button } from '@/components/ui/button';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { Form } from '@/components/ui/form';
@@ -15,6 +15,8 @@ import { useDispatch } from 'react-redux';
 import { clearCookies } from '@/actions/clearCookies';
 import { GoogleLogin } from '@react-oauth/google';
 import { useAuth } from '@/components/providers/AuthProvider';
+import { Alert } from '@/components/ui/alert';
+import Image from 'next/image';
 
 // Base schema for common fields
 const baseSchema = {
@@ -101,6 +103,7 @@ export function Register({ type: initialType }: RegisterProps) {
     'bg-green-500',
   ];
   const strengthLabels = ['Very Weak', 'Weak', 'Good', 'Strong'];
+  const [qrCode, setQrCode] = useState<string | null>(null);
 
   // Reset form when type changes
   useEffect(() => {
@@ -114,56 +117,39 @@ export function Register({ type: initialType }: RegisterProps) {
     });
   }, [type, form]);
 
-  const handleGoogleSuccess = async (credentialResponse: any) => {
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/google/`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-          },
-          body: JSON.stringify({
-            idToken: credentialResponse.credential,
-            backend: 'google-oauth2',
-            grant_type: 'convert_token',
-          }),
-        },
-      );
+  // const handleGoogleSuccess = async (credentialResponse: any) => {
+  //   try {
+  //     const response = await fetch(
+  //       `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/google/`,
+  //       {
+  //         method: 'POST',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //           Accept: 'application/json',
+  //         },
+  //         body: JSON.stringify({
+  //           idToken: credentialResponse.credential,
+  //           backend: 'google-oauth2',
+  //           grant_type: 'convert_token',
+  //         }),
+  //       },
+  //     );
 
-      const data = await response.json();
+  //     const data = await response.json();
 
-      const res = await axios.get(`/api/get/tokens`, {
-        withCredentials: true,
-      });
-      const tokens = res.data;
-      // if (tokens && tokens.accessToken && tokens.refreshToken) {
-      //   dispatch(
-      //     setCredentials({
-      //       token: tokens.accessToken,
-      //       refreshToken: tokens.refreshToken,
-      //       user,
-      //     }),
-      //   );
-      //   toast.success('Logged in successfully!');
-      //   return router.push('/combinedDash');
-      // }
-      // return await clearCookies();
-
-      if (data.responseStatus?.status) {
-        login(data.responseData.token);
-        toast.success('Logged in successfully!');
-        router.push('/combinedDash');
-      } else {
-        console.error('Authentication failed:', data.responseStatus?.message);
-        toast.error('Login failed. Check your credentials and try again.');
-      }
-    } catch (error) {
-      console.error('Authentication error:', error);
-      toast.error('Login failed. Check your credentials and try again.');
-    }
-  };
+  //     if (data.responseStatus?.status) {
+  //       login(data.responseData.token);
+  //       toast.success('Logged in successfully!');
+  //       router.push('/combinedDash');
+  //     } else {
+  //       console.error('Authentication failed:', data.responseStatus?.message);
+  //       toast.error('Login failed. Check your credentials and try again.');
+  //     }
+  //   } catch (error) {
+  //     console.error('Authentication error:', error);
+  //     toast.error('Login failed. Check your credentials and try again.');
+  //   }
+  // };
 
   const onSubmit = async (data: any) => {
     try {
@@ -186,15 +172,25 @@ export function Register({ type: initialType }: RegisterProps) {
           },
         },
       );
-      const { responseData } = response.data;
-      if (responseData) {
-        toast.success('Successfully registered', { duration: 1000 });
-        await new Promise((resolve) => setTimeout(resolve, 2000));
-        window.location.reload();
+      const { responseStatus } = response.data;
+      if (responseStatus.status) {
+        setQrCode(response.data.responseData.qr_code);
+        const toastId = toast.success('Successfully registered', {
+          duration: 1000,
+        });
+        toast.info('Please scan the QR code with your authenticator app', {
+          duration: 10000,
+          id: toastId,
+        });
       }
     } catch (error: any) {
-      console.error('Registration error:', error);
-      toast.error('Email already exits ');
+      if (error instanceof AxiosError) {
+        toast.error(error.response?.data?.responseStatus?.message);
+      } else {
+        toast.error(
+          'Registration failed. Check your credentials and try again.',
+        );
+      }
       await new Promise((resolve) => setTimeout(resolve, 2000));
       window.location.reload();
     }
@@ -316,12 +312,26 @@ export function Register({ type: initialType }: RegisterProps) {
           </div>
         )}
 
-        <Button
-          type="submit"
-          className="w-full bg-emerald-500 text-black hover:bg-emerald-400"
-        >
-          Request Authorization
-        </Button>
+        {qrCode ? (
+          <div className="flex flex-col space-y-2">
+            <p>Please scan this QR code with your authenticator app.</p>
+            <Image
+              src={`data:image/png;base64,${qrCode}`}
+              alt="map"
+              width={150}
+              height={150}
+              className="max-h-72 rounded-xl"
+              unoptimized={true}
+            />
+          </div>
+        ) : (
+          <Button
+            type="submit"
+            className="w-full bg-emerald-500 text-black hover:bg-emerald-400"
+          >
+            Request Authorization
+          </Button>
+        )}
 
         {/* {type === 'normal' ? (
           <>

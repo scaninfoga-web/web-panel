@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import { RootState } from '@/redux/store';
 import { useSelector } from 'react-redux';
+import DashboardTitle from '@/components/common/DashboardTitle';
 
 interface UserActivity {
   id: number;
@@ -21,6 +22,10 @@ interface UserActivity {
   location: string; // Add this property to store the formatted location string
   activity: string; // Add this property to store the formatted location string
 }
+
+const responsePageName = new Map([
+  ['/api/mobile/getMobile360Dtls', 'Scaninfoga Intelligence'],
+]);
 
 const History: React.FC = () => {
   const [activities, setActivities] = useState<UserActivity[]>([]);
@@ -43,9 +48,6 @@ const History: React.FC = () => {
   };
 
   const userType = useSelector((state: RootState) => state.user.user.userType);
-
-  console.log('YSERTYPEL ', userType);
-
   const fetchActivities = async () => {
     try {
       const url =
@@ -66,24 +68,11 @@ const History: React.FC = () => {
   const router = useRouter();
 
   const columns: Column<UserActivity>[] = [
-    // {
-    //   title: 'ID',
-    //   dataIndex: 'id',
-    //   key: 'id',
-    // },
-    // {
-    //   title: 'Email',
-    //   dataIndex: 'email',
-    //   key: 'email',
-    // },
     {
       title: 'Page Visited',
       dataIndex: 'api_called',
       key: 'api_called',
-      render: (text: string) =>
-        text === '/api/mobile/getMobile360Dtls'
-          ? 'Scaninfoga Intelligence'
-          : '',
+      render: (text: string) => responsePageName.get(text) || text,
     },
     {
       title: 'Activity Time',
@@ -98,7 +87,15 @@ const History: React.FC = () => {
       key: 'request_payload',
       render: (payload: any) => (
         <pre className="max-w-xs overflow-x-auto text-sm">
-          {JSON.stringify(payload, null, 2)}
+          {/* {JSON.stringify(payload, null, 2)} */}
+          {Object.entries(payload).map(([key, value]) => (
+            <span key={key} className="flex">
+              <span className="text-white/70">{key}:</span>
+              <span className="font-semibold text-yellow-300 opacity-80">
+                {String(value)}
+              </span>
+            </span>
+          ))}
         </pre>
       ),
     },
@@ -143,9 +140,10 @@ const History: React.FC = () => {
   ];
 
   return (
-    <div className="container mx-auto py-8">
-      <h1 className="mb-6 text-2xl font-bold">Activity History</h1>
+    <div className="space-y-6">
+      <DashboardTitle title="Activity History"></DashboardTitle>
       <CustomTable
+        // @ts-ignore
         columns={columns}
         dataSource={activities}
         loading={loading}

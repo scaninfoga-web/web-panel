@@ -374,6 +374,9 @@ export interface EsicDetailsType {
   result: {
     esic_number: string;
     esic_details: {
+      gender: string;
+      esic_status: string;
+      age: string;
       esic_number: string;
       name: string;
       employer_code: string;
@@ -383,6 +386,23 @@ export interface EsicDetailsType {
       bank_name: string;
       branch_name: string;
       bank_account_status: string;
+      date_of_birth: string;
+      uhid_number: string;
+      dispensary_name: string;
+      disability_type: string;
+      first_date_of_appointment: string;
+      registration_date: string;
+
+      employer_details: {
+        email: string;
+        state: string;
+        mobile: string;
+        address: string;
+        pincode: string;
+        district: string;
+        employer_code: string;
+        employer_name: string;
+      };
     }[];
   };
 }

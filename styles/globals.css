@@ -92,3 +92,7 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+.card-bg{
+  @apply bg-gradient-to-br bg-[#0e1421]/30 bg-[#11151F];
+}
