@@ -49,6 +49,7 @@ import CustomBadge from './sub/CustomBadge';
 import Ghunt from './sub/Ghunt';
 import MapLoading from './sub/MapLoading';
 import SentenceLoader from './sub/SentenceLoader';
+import { HunterVerifyType } from '@/types/hunter';
 
 export function isValidIndianMobileNumber(input: string): {
   result: boolean;
@@ -135,6 +136,14 @@ export default function BeFiSc() {
       value: string;
       type: string;
       data: BreachInfoType;
+    }[]
+  >([]);
+
+  const [hunterVerifyData, setHunterVerifyData] = useState<
+    {
+      value: string;
+      type: string;
+      data: HunterVerifyType;
     }[]
   >([]);
 
@@ -593,6 +602,34 @@ export default function BeFiSc() {
 
         if (otherNumber.length > 0 || otherEmails.length > 0) {
           setBreachInfoLoading(true);
+          // calling hunterVerfy
+          let hunterData: {
+            value: string;
+            type: string;
+            data: HunterVerifyType;
+          }[] = [];
+          try {
+            const results = await Promise.all(
+              otherEmails.map((email) =>
+                post('/api/mobile/hunterverify', {
+                  email: email?.email,
+                  realtimeData: isRealtime,
+                }),
+              ),
+            );
+            results.map((result, index) =>
+              hunterData.push({
+                value: otherEmails[index]?.email,
+                type: otherEmails[index]?.type,
+                data: result,
+              }),
+            );
+            setHunterVerifyData(hunterData);
+          } catch (error) {
+            if (error instanceof AxiosError) {
+              toast.error('Hunter verify error', { id: toastRef.current! });
+            }
+          }
           let finalArray: {
             value: string;
             type: string;
@@ -603,7 +640,7 @@ export default function BeFiSc() {
               const results = await Promise.all(
                 otherEmails.map((email) =>
                   post('/api/mobile/breachinfo', {
-                    request_body: email.email,
+                    request_body: email?.email,
                     realtimeData: isRealtime,
                   }),
                 ),
@@ -652,7 +689,6 @@ export default function BeFiSc() {
   useEffect(() => {
     const callGhuntApis = async () => {
       if (!isLoading && mobile360Data) {
-        setGhuntMultipleLoading(true);
         const otherEmails = getOtherEmails(
           esicsData,
           gstAdvanceData,
@@ -661,6 +697,7 @@ export default function BeFiSc() {
           '',
         );
         if (otherEmails.length > 0) {
+          setGhuntMultipleLoading(true);
           try {
             const results = await Promise.all(
               otherEmails.map((email) =>
@@ -675,13 +712,11 @@ export default function BeFiSc() {
           } catch (error) {
             setGhuntMultipleLoading(false);
           }
-        } else {
-          setGhuntMultipleLoading(false);
         }
       }
     };
     callGhuntApis();
-  }, [isLoading]);
+  }, [isLoading, mobile360Data]);
 
   const OverviewData = [
     {
@@ -1220,7 +1255,10 @@ export default function BeFiSc() {
                 {breachInfoLoading ? (
                   <BeFiScLoadingSkeleton />
                 ) : (
-                  <BeFiScBreachInfo data={breachInfo} />
+                  <BeFiScBreachInfo
+                    HunterVerifyData={hunterVerifyData}
+                    data={breachInfo}
+                  />
                 )}
               </TabsContent>
               <TabsContent value="googleProfile" className="mt-6">
