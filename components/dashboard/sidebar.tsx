@@ -170,12 +170,12 @@ const sidebarLinks = [
     href: '/dashboard/monitor',
     roles: ['ADMIN'],
   },
-  {
-    title: 'Transaction History',
-    icon: Monitor,
-    href: '/transactionHistory',
-    roles: ['USER'],
-  },
+  // {
+  //   title: 'Transaction History',
+  //   icon: Monitor,
+  //   href: '/transactionHistory',
+  //   roles: ['USER'],
+  // },
 ];
 
 export function DashboardSidebar() {

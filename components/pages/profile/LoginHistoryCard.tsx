@@ -1,5 +1,7 @@
+'use client';
 import { Clock, Monitor } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Key } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import {
   Table,
@@ -9,6 +11,10 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
+import { get } from '@/lib/api';
+import { CustomTable } from '@/components/ui/custom-table';
 
 interface LoginRecord {
   id: number;
@@ -54,70 +60,69 @@ const loginHistory: LoginRecord[] = [
   },
 ];
 
+interface LoginHistorySchema {
+  id: number;
+  created_at: string;
+  ipAddress: string;
+  browser: string;
+  device: string;
+  latitude: string;
+  longitude: string;
+}
+
+const columns = [
+  {
+    title: 'Timestamp',
+    dataIndex: 'created_at',
+  },
+  {
+    title: 'Device',
+    dataIndex: 'device',
+  },
+  {
+    title: 'IP Address',
+    dataIndex: 'ipAddress',
+  },
+  {
+    title: 'Browser',
+    dataIndex: 'browser',
+  },
+  {
+    title: 'Latitude',
+    dataIndex: 'latitude',
+  },
+  {
+    title: 'Longitude',
+    dataIndex: 'longitude',
+  },
+];
+
 export const LoginHistoryCard = () => {
+  const [loginHistory, setLoginHistory] = useState<LoginHistorySchema[]>([]);
+
+  const populateData = async () => {
+    try {
+      const data = await get('/api/auth/getSessionDtls');
+      setLoginHistory(data?.responseData || []);
+    } catch (error) {
+      toast.error('Error fetching login history');
+      console.log('Login history fetch error', error);
+    }
+  };
+
+  useEffect(() => {
+    populateData();
+  }, []);
   return (
     <Card className="card-bg">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-emerald-500">
-          <Clock className="h-5 w-5" />
+          <Key className="h-5 w-5" />
           Login History
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow className="border-slate-600">
-              <TableHead className="font-semibold text-slate-300">
-                Timestamp
-              </TableHead>
-              <TableHead className="font-semibold text-slate-300">
-                Device
-              </TableHead>
-              <TableHead className="font-semibold text-slate-300">
-                Location
-              </TableHead>
-              <TableHead className="font-semibold text-slate-300">
-                IP Address
-              </TableHead>
-              <TableHead className="font-semibold text-slate-300">
-                Status
-              </TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {loginHistory.map((login) => (
-              <TableRow
-                key={login.id}
-                className="border-slate-600 hover:bg-slate-700/50"
-              >
-                <TableCell className="font-medium text-white">
-                  {login.timestamp}
-                </TableCell>
-                <TableCell className="flex items-center gap-2 text-slate-300">
-                  <Monitor className="h-4 w-4" />
-                  {login.device}
-                </TableCell>
-                <TableCell className="text-slate-300">
-                  {login.location}
-                </TableCell>
-                <TableCell className="text-slate-300">
-                  {login.ipAddress}
-                </TableCell>
-                <TableCell>
-                  <Badge
-                    className={
-                      login.status === 'Success'
-                        ? 'bg-green-500 font-semibold text-white'
-                        : 'bg-red-500 font-semibold text-white'
-                    }
-                  >
-                    {login.status}
-                  </Badge>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+        <CustomTable columns={columns} dataSource={loginHistory} />
       </CardContent>
     </Card>
   );
