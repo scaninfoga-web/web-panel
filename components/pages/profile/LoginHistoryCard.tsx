@@ -2,15 +2,7 @@
 import { Clock, Monitor } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Key } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
+
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { get } from '@/lib/api';
@@ -114,7 +106,7 @@ export const LoginHistoryCard = () => {
     populateData();
   }, []);
   return (
-    <Card className="card-bg">
+    <Card className="card-bg border-slate-700">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-emerald-500">
           <Key className="h-5 w-5" />
@@ -122,6 +114,7 @@ export const LoginHistoryCard = () => {
         </CardTitle>
       </CardHeader>
       <CardContent>
+        {/* @ts-ignore */}
         <CustomTable columns={columns} dataSource={loginHistory} />
       </CardContent>
     </Card>

@@ -23,8 +23,16 @@ export function cleanAndCapitalize(input: string | undefined): string {
   return cleaned.toUpperCase();
 }
 
-export const formatSentence = (value: string | undefined) => {
+export const formatSentence = (
+  value: string | undefined | null | number | boolean,
+) => {
   if (!value) return '----';
+  if (typeof value === 'number') {
+    return String(value);
+  }
+  if (typeof value === 'boolean') {
+    return String(value);
+  }
   return value
     .toLowerCase()
     .split(' ')

@@ -1,4 +1,4 @@
-import { DialogContent } from '@radix-ui/react-dialog';
+import { DialogContent, DialogTitle } from '@radix-ui/react-dialog';
 import {
   Dialog,
   DialogHeader,
@@ -60,6 +60,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose }) => {
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogPortal>
+        <DialogTitle className="text-3xl font-bold text-emerald-500"></DialogTitle>
         <DialogOverlay className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm" />
         <DialogContent className="fixed left-[50%] top-[50%] z-50 w-full max-w-md translate-x-[-50%] translate-y-[-50%] rounded-xl bg-black p-4 text-white shadow-md shadow-gray-500 backdrop-blur-0">
           <DialogHeader className="space-y-2">
@@ -71,11 +72,11 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose }) => {
                 <h2 className="text-xl font-semibold text-white">
                   {stepTitles[currentStep]}
                 </h2>
-                <p>
+                <div>
                   <p className="text-sm text-gray-400">
                     Step {stepNumbers[currentStep]} of 3
                   </p>
-                </p>
+                </div>
               </div>
             </div>
 

@@ -6,6 +6,7 @@ import {
 } from '../../dashboard/components/DashboardCard';
 import { formatSentence } from './APIUtils';
 import { formatKey } from './CustomBeFiScCard';
+import { Button } from '@/components/ui/button';
 const upiIcons = new Map<string, string>([
   ['PhonePe', '/upi/phonepe.png'],
   ['FinoPay', '/upi/FinoPay.png'],
@@ -96,6 +97,9 @@ export default function UpiDetails({
                 );
               })}
             </div>
+            <Button className="mt-4 px-4 py-1" variant={'default'}>
+              View Details
+            </Button>
           </DashboardCard>
         );
       })}

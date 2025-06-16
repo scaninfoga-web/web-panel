@@ -110,10 +110,10 @@ export function CustomTable<T extends object>({
       <Table>
         <TableHeader>
           <TableRow>
-            {columns.map((column) => (
+            {columns.map((column, index) => (
               <TableHead
                 className="sticky top-0 whitespace-nowrap bg-emerald-700 text-base font-medium text-black"
-                key={column.key}
+                key={`${column.key}-${index}`}
                 style={
                   column.width
                     ? { width: column.width, minWidth: column.width }
@@ -141,10 +141,10 @@ export function CustomTable<T extends object>({
           ) : (
             dataSource.map((record, index) => (
               <TableRow key={index}>
-                {columns.map((column) => (
+                {columns.map((column, index) => (
                   <TableCell
                     className={cn()}
-                    key={column.key}
+                    key={`${column.key}-${index}`}
                     style={column.width ? { width: column.width } : undefined}
                   >
                     {column.render

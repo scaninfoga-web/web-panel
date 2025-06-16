@@ -14,8 +14,12 @@ import CustomBeFiScCard, { getValue } from './sub/CustomBeFiScCard';
 import CustomBadge from './sub/CustomBadge';
 import BeFiScLoadingSkeleton from './sub/BeFiScLoadingSkeleton';
 import UpiDetails from './sub/UpiDetails';
+import { PayWorldType } from '@/types/payworld';
+import NotFound from '@/components/sub/NotFound';
+import PayWorld from './sub/PayWorld';
 
 interface PageProps {
+  mobileNo: string;
   Mobile360Data: Mobile360Type | null;
   profileAdvanceData: ProfileAdvanceType | null;
   MobileToAccountData: MobileToAccountNumberType | null;
@@ -23,9 +27,11 @@ interface PageProps {
   upiDetailsLoading: boolean;
   upiDetailsData: UPIType | null;
   panAllInOneData: PanAllInOneType | null;
+  payworldData: PayWorldType | null;
 }
 
 export default function BeFiScFinancial({
+  mobileNo,
   Mobile360Data,
   profileAdvanceData,
   MobileToAccountData,
@@ -33,6 +39,7 @@ export default function BeFiScFinancial({
   upiDetailsLoading,
   upiDetailsData,
   panAllInOneData,
+  payworldData,
 }: PageProps) {
   const [activeTab, setActiveTab] = React.useState('bank');
   let creditCount = 0;
@@ -48,6 +55,7 @@ export default function BeFiScFinancial({
     { value: 'bank', label: 'Bank Details' },
     { value: 'loan', label: 'Loan Details' },
     { value: 'digitalInfo', label: 'Digital Info' },
+    { value: 'digitalTracker', label: 'Offline Digital Tracker' },
   ];
 
   const getGridCols = (tabCount: number) => {
@@ -72,6 +80,10 @@ export default function BeFiScFinancial({
       .toLowerCase()
       .replace(/\s+/g, ' ') ||
     profileAdvanceData?.result?.personal_information?.full_name
+      .trim()
+      .replace(/\s+/g, ' ')
+      .toLowerCase() ||
+    MobileToAccountData?.result?.vpa_details?.account_holder_name
       .trim()
       .replace(/\s+/g, ' ')
       .toLowerCase();
@@ -568,11 +580,17 @@ export default function BeFiScFinancial({
         <TabsContent value="digitalInfo" className="">
           {upiDetailsLoading ? (
             <BeFiScLoadingSkeleton />
-          ) : (
+          ) : Object.keys(upiDetailsData?.responseData || {}).length > 0 ? (
             <div className="flex flex-col space-y-4">
               <UpiDetails realName={realName} UpiData={upiDetailsData} />
             </div>
+          ) : (
+            <NotFound value="Upi Details Not Found" />
           )}
+        </TabsContent>
+
+        <TabsContent value="digitalTracker" className="space-y-4">
+          <PayWorld payWorldData={payworldData} mobileNo={mobileNo} />
         </TabsContent>
       </Tabs>
     </div>

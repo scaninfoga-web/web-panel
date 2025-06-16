@@ -20,7 +20,7 @@ import {
   IconMailSearch,
   IconUserSearch,
 } from '@tabler/icons-react';
-import { BadgeIndianRupee, CreditCard } from 'lucide-react';
+import { BadgeIndianRupee } from 'lucide-react';
 import React, { useState } from 'react';
 
 const tools: {

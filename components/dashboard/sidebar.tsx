@@ -96,6 +96,7 @@
 
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import {
   Bookmark,
   Clock,
@@ -104,6 +105,7 @@ import {
   Telescope,
   Monitor,
   Search,
+  Crown,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -178,9 +180,26 @@ const sidebarLinks = [
   // },
 ];
 
+const getSubscriptionColor = (type: string) => {
+  switch (type) {
+    case 'silver':
+      return 'bg-gradient-to-r from-gray-400 to-gray-600 text-white border-gray-300';
+    case 'gold':
+      return 'bg-gradient-to-r from-yellow-400 to-yellow-600 text-white border-yellow-300';
+    case 'platinum':
+      return 'bg-gradient-to-r from-purple-400 to-purple-600 text-white border-purple-300';
+    default:
+      return 'bg-gradient-to-r text-xs from-gray-400 to-gray-600 text-white border-gray-300';
+  }
+};
+const getSubscriptionIcon = (type: string) => {
+  return <Crown className="h-5 w-5" />;
+};
+
 export function DashboardSidebar() {
   const pathname = usePathname();
   const userType = useSelector((state: any) => state?.user?.user?.userType);
+  const userInfo = useSelector((state: any) => state?.user?.user);
 
   const filteredLinks = sidebarLinks.filter((link) =>
     link.roles.includes(userType),
@@ -188,7 +207,7 @@ export function DashboardSidebar() {
 
   return (
     <aside className="left-0 top-0 z-40 hidden h-screen w-64 border-r border-gray-800 bg-gray-900/50 pt-16 backdrop-blur-sm md:fixed md:block">
-      <div className="flex h-full flex-col px-3 py-4">
+      <div className="flex h-full flex-col justify-between p-4">
         <nav className="space-y-1">
           {filteredLinks.map((link) => {
             const isActive = pathname === link.href;
@@ -209,6 +228,24 @@ export function DashboardSidebar() {
             );
           })}
         </nav>
+        <div className="group flex min-h-16 items-center space-x-2 overflow-hidden border-t border-slate-700 pt-2 hover:cursor-pointer">
+          <div className="flex min-h-10 min-w-10 items-center justify-center rounded-full border border-slate-800 text-sm font-semibold uppercase transition-colors duration-500 group-hover:border-slate-700">
+            {userInfo?.firstName.charAt(0) + userInfo?.lastName.charAt(0)}
+          </div>
+          <div>
+            <div className="flex items-center space-x-2 text-sm font-medium">
+              <span className="whitespace-nowrap">
+                {userInfo?.firstName + ' ' + userInfo?.lastName || ''}
+              </span>
+              <span className="animate-pulse rounded-full border border-slate-600 px-1.5 py-0.5 text-xs text-slate-300">
+                Free plan
+              </span>
+            </div>
+            <div className="overflow-hidden text-xs text-slate-400">
+              {userInfo?.email || ''}
+            </div>
+          </div>
+        </div>
       </div>
     </aside>
   );

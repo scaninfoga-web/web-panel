@@ -47,7 +47,7 @@ const TransactionHistory = () => {
 
   return (
     <>
-      <Card className="card-bg">
+      <Card className="card-bg border-slate-700">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-emerald-500">
             <Key className="h-5 w-5" />

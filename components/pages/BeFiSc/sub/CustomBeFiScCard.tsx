@@ -25,7 +25,7 @@ const redWord = ['No', 'DISCONNECTED', 'NA'];
 const yellowWord = ['Pending', 'In Progress'];
 
 export const getValue = (
-  value: string | undefined | null | Array<any> | Boolean,
+  value: string | undefined | null | Array<any> | Boolean | number,
 ) => {
   if (typeof value === 'undefined' || typeof value === null) {
     return '----';
@@ -62,7 +62,7 @@ export const getValue = (
     );
   }
   if (typeof value === 'number') {
-    return value;
+    return String(value);
   }
 
   if (Array.isArray(value)) {
@@ -206,7 +206,12 @@ export default function CustomBeFiScCard({ title, data }: PageProps) {
   if (
     Array.isArray(data) &&
     data.length > 0 &&
-    data.every((item) => typeof item === 'string')
+    data.every(
+      (item) =>
+        typeof item === 'string' ||
+        typeof item === 'number' ||
+        typeof item === 'boolean',
+    )
   ) {
     return (
       <DashboardCard

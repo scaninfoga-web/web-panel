@@ -23,7 +23,7 @@ import {
 import { BreachInfoType } from '@/types/BreachInfo';
 import { GhuntData } from '@/types/ghunt';
 import { OlaGeoApiType } from '@/types/ola-geo-api';
-import { AxiosError } from 'axios';
+import axios, { AxiosError } from 'axios';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
@@ -50,6 +50,7 @@ import Ghunt from './sub/Ghunt';
 import MapLoading from './sub/MapLoading';
 import SentenceLoader from './sub/SentenceLoader';
 import { HunterVerifyType } from '@/types/hunter';
+import { PayWorldType } from '@/types/payworld';
 
 export function isValidIndianMobileNumber(input: string): {
   result: boolean;
@@ -146,6 +147,7 @@ export default function BeFiSc() {
       data: HunterVerifyType;
     }[]
   >([]);
+  const [payworldData, setPayworldData] = useState<PayWorldType | null>(null);
 
   const setAllOnLoading = () => {
     setIsLoading(true);
@@ -166,11 +168,31 @@ export default function BeFiSc() {
     setOtherAdressOlaData([]);
     setGhuntMultipleData([]);
     setBreachInfo([]);
+    setHunterVerifyData([]);
+    setPayworldData(null);
   };
 
   useEffect(() => {
     if (mobile360Data) {
       const callOtherAPIs = async () => {
+        //calling payworldApi
+        try {
+          const payworldResponse = await post('/api/secondary/payworld-data', {
+            sender_mobile: mobileNo,
+            realtimeData: isRealtime,
+          });
+          if (payworldResponse.responseData) {
+            setPayworldData(payworldResponse);
+          }
+        } catch (error) {
+          if (error instanceof AxiosError) {
+            toast.error(
+              'PayWorld' + error.response?.data?.responseStatus?.message,
+              { id: toastRef.current! },
+            );
+          }
+        }
+
         // profile advance
         try {
           const ProfileAdvanceResponse = await post(
@@ -1216,6 +1238,7 @@ export default function BeFiSc() {
               </TabsContent>
               <TabsContent value="financial" className="mt-6">
                 <BeFiScFinancial
+                  mobileNo={mobileNo}
                   panAllInOneData={panAllInOneData}
                   upiDetailsLoading={upiDetailsLoading}
                   upiDetailsData={upiDetailsData}
@@ -1223,6 +1246,7 @@ export default function BeFiSc() {
                   profileAdvanceData={profileAdvanceData}
                   MobileToAccountData={mobileToAccountData}
                   EquifaxV3Data={EquifaxV3Data}
+                  payworldData={payworldData}
                 />
               </TabsContent>
               <TabsContent value="business" className="mt-6 space-y-4">
