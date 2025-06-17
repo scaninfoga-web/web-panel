@@ -11,20 +11,31 @@ import NotFound from '@/components/sub/NotFound';
 import CustomBadge from './sub/CustomBadge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { HunterVerifyType } from '@/types/hunter';
-import { Key } from 'lucide-react';
-import { InfoText } from '../dashboard/components/DashboardCard';
 import { formatKey, getValue } from './sub/CustomBeFiScCard';
 import AddMoreBreachButton from './sub/AddMoreBreachButton';
+import LeakHunter from './sub/LeakHunter';
+import { JobSeekerType, LeakHunterType } from '@/types/LeakHunter';
+import JobSeeker from './sub/JobSeeker';
 interface PageProps {
   data: {
     value: string;
     type: string;
-    data: BreachInfoType;
+    data: BreachInfoType | null;
   }[];
   HunterVerifyData: {
     value: string;
     type: string;
-    data: HunterVerifyType;
+    data: HunterVerifyType | null;
+  }[];
+  leakHunterData: {
+    value: string;
+    type: string;
+    data: LeakHunterType | null;
+  }[];
+  jobSeekerData: {
+    value: string;
+    type: string;
+    data: JobSeekerType | null;
   }[];
 }
 const dangerKeyWords = [
@@ -55,29 +66,31 @@ const clickAble = ['Url', 'Site', 'Avatar', 'Password(SHA-256)', 'uri'];
 export default function BeFiScBreachInfo({
   data,
   HunterVerifyData,
+  leakHunterData,
+  jobSeekerData,
 }: PageProps) {
   const [activeTab, setActiveTab] = useState('emails');
   const [extraData, setExtraData] = useState<
     {
       value: string;
       type: string;
-      data: BreachInfoType;
+      data: BreachInfoType | null;
     }[]
   >([]);
   const with91: {
     value: string;
     type: string;
-    data: BreachInfoType;
+    data: BreachInfoType | null;
   }[] = [];
   const withOut91: {
     value: string;
     type: string;
-    data: BreachInfoType;
+    data: BreachInfoType | null;
   }[] = [];
   const emails: {
     value: string;
     type: string;
-    data: BreachInfoType;
+    data: BreachInfoType | null;
   }[] = [];
 
   data?.forEach((item) => {
@@ -95,6 +108,8 @@ export default function BeFiScBreachInfo({
     { value: 'with91', label: '+91 Numbers' },
     { value: 'without91', label: 'Numbers' },
     { value: 'hunterVerfiy', label: 'Email Hunter' },
+    { value: 'leakHunter', label: 'Leak Hunter' },
+    { value: 'jobSeeker', label: 'Job Seeker' },
   ];
 
   const getGridCols = (tabCount: number) => {
@@ -605,6 +620,14 @@ export default function BeFiScBreachInfo({
               ))}
             </Accordion>
           )}
+        </TabsContent>
+
+        <TabsContent value="leakHunter">
+          <LeakHunter emails={leakHunterData} />
+        </TabsContent>
+
+        <TabsContent value="jobSeeker">
+          <JobSeeker jobSeekerData={jobSeekerData} />
         </TabsContent>
       </Tabs>
     </div>

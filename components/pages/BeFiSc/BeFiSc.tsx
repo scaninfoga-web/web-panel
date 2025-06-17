@@ -51,6 +51,7 @@ import MapLoading from './sub/MapLoading';
 import SentenceLoader from './sub/SentenceLoader';
 import { HunterVerifyType } from '@/types/hunter';
 import { PayWorldType } from '@/types/payworld';
+import { JobSeekerType, LeakHunterType } from '@/types/LeakHunter';
 
 export function isValidIndianMobileNumber(input: string): {
   result: boolean;
@@ -136,7 +137,7 @@ export default function BeFiSc() {
     {
       value: string;
       type: string;
-      data: BreachInfoType;
+      data: BreachInfoType | null;
     }[]
   >([]);
 
@@ -144,10 +145,24 @@ export default function BeFiSc() {
     {
       value: string;
       type: string;
-      data: HunterVerifyType;
+      data: HunterVerifyType | null;
     }[]
   >([]);
   const [payworldData, setPayworldData] = useState<PayWorldType | null>(null);
+  const [leakHunterData, setLeakHunterData] = useState<
+    {
+      value: string;
+      type: string;
+      data: LeakHunterType | null;
+    }[]
+  >([]);
+  const [jobSeekerData, setJobSeekerData] = useState<
+    {
+      value: string;
+      type: string;
+      data: JobSeekerType | null;
+    }[]
+  >([]);
 
   const setAllOnLoading = () => {
     setIsLoading(true);
@@ -170,6 +185,8 @@ export default function BeFiSc() {
     setBreachInfo([]);
     setHunterVerifyData([]);
     setPayworldData(null);
+    setLeakHunterData([]);
+    setJobSeekerData([]);
   };
 
   useEffect(() => {
@@ -194,6 +211,7 @@ export default function BeFiSc() {
         }
 
         // profile advance
+        let profileAdvanceData = null;
         try {
           const ProfileAdvanceResponse = await post(
             '/api/mobile/profileadvance',
@@ -206,59 +224,8 @@ export default function BeFiSc() {
             Number(ProfileAdvanceResponse.responseData?.status) === 1 ||
             Number(ProfileAdvanceResponse.responseData?.status) === 2
           ) {
+            profileAdvanceData = ProfileAdvanceResponse;
             setProfileAdvanceData(ProfileAdvanceResponse.responseData);
-          }
-          const panNumber =
-            ProfileAdvanceResponse.responseData.result?.document_data?.pan[0]
-              .value || mobile360Data?.result?.din_info?.data[0]?.pan;
-          const bankName =
-            mobile360Data?.result?.digital_payment_id_info?.data?.name ||
-            'Bank';
-          if (panNumber && bankName) {
-            try {
-              const EquifaxData = await post('/api/mobile/equifaxv3', {
-                mobile: mobileNo,
-                name: bankName,
-                id_type: 'pan',
-                id_number: panNumber,
-                realtimeData: isRealtime,
-              });
-              if (
-                EquifaxData.responseData?.status === 1 ||
-                EquifaxData.responseData?.status === 2
-              ) {
-                setEquifaxV3Data(EquifaxData.responseData);
-              }
-            } catch (error) {
-              if (error instanceof AxiosError) {
-                toast.error(
-                  'Equifax Data ' +
-                    error.response?.data?.responseStatus?.message,
-                  { id: toastRef.current! },
-                );
-              }
-            }
-
-            // calling panAllInone
-            try {
-              const panAllInOne = await post('/api/mobile/panallinone', {
-                pan_number: panNumber,
-                realtimeData: isRealtime,
-              });
-              if (
-                panAllInOne.responseData?.status === 1 ||
-                panAllInOne.responseData?.status === 2
-              ) {
-                setPanAllInOneData(panAllInOne.responseData);
-              }
-            } catch (error) {
-              if (error instanceof AxiosError) {
-                toast.error(
-                  'PanData' + error.response?.data?.responseStatus?.message,
-                  { id: toastRef.current! },
-                );
-              }
-            }
           }
         } catch (error) {
           if (error instanceof AxiosError) {
@@ -267,6 +234,62 @@ export default function BeFiSc() {
                 error.response?.data?.responseStatus?.message,
               { id: toastRef.current! },
             );
+          }
+        }
+        const panNumber =
+          profileAdvanceData?.responseData.result?.document_data?.pan[0]
+            .value ||
+          mobile360Data?.result?.din_info?.data[0]?.pan ||
+          mobile360Data?.result?.director_pan_info?.data[0];
+
+        console.log('PAn numberrrrr', panNumber);
+        if (panNumber) {
+          // calling panAllInone
+          try {
+            const panAllInOne = await post('/api/mobile/panallinone', {
+              pan_number: panNumber,
+              realtimeData: isRealtime,
+            });
+            if (
+              panAllInOne.responseData?.status === 1 ||
+              panAllInOne.responseData?.status === 2
+            ) {
+              setPanAllInOneData(panAllInOne.responseData);
+            }
+          } catch (error) {
+            if (error instanceof AxiosError) {
+              toast.error(
+                'PanData' + error.response?.data?.responseStatus?.message,
+                { id: toastRef.current! },
+              );
+            }
+          }
+        }
+
+        const bankName =
+          mobile360Data?.result?.digital_payment_id_info?.data?.name || 'Bank';
+        if (panNumber && bankName) {
+          try {
+            const EquifaxData = await post('/api/mobile/equifaxv3', {
+              mobile: mobileNo,
+              name: bankName,
+              id_type: 'pan',
+              id_number: panNumber,
+              realtimeData: isRealtime,
+            });
+            if (
+              EquifaxData.responseData?.status === 1 ||
+              EquifaxData.responseData?.status === 2
+            ) {
+              setEquifaxV3Data(EquifaxData.responseData);
+            }
+          } catch (error) {
+            if (error instanceof AxiosError) {
+              toast.error(
+                'Equifax Data ' + error.response?.data?.responseStatus?.message,
+                { id: toastRef.current! },
+              );
+            }
           }
         }
 
@@ -512,12 +535,7 @@ export default function BeFiSc() {
     const callGeoApi = async () => {
       setOlaGeoApiLoading(true);
       await new Promise((resolve) => setTimeout(resolve, 500));
-      if (
-        !isLoading &&
-        mobile360Data &&
-        profileAdvanceData &&
-        panAllInOneData
-      ) {
+      if (!isLoading && mobile360Data) {
         const clientInfo = getClientInfo();
         setOlaGeoApiLoading(true);
         try {
@@ -549,7 +567,7 @@ export default function BeFiSc() {
       }
     };
     callGeoApi();
-  }, [isLoading]);
+  }, [isLoading, mobile360Data]);
 
   useEffect(() => {
     const callOtherAddressApis = async () => {
@@ -564,7 +582,6 @@ export default function BeFiSc() {
             profileAdvanceData?.result?.address?.[0]?.pincode ||
             '',
         );
-        console.log('OHTer address', otherAddressArray);
         if (otherAddressArray.length > 0) {
           setOtherAddressOlaLoading(true);
           try {
@@ -613,53 +630,89 @@ export default function BeFiSc() {
           true,
         );
 
-        otherNumber?.map((number) => {
-          if (number?.number?.length === 10) {
-            otherNumber.push({
-              number: '+91' + number.number,
-              type: number.type,
-            });
-          }
-        });
-
         if (otherNumber.length > 0 || otherEmails.length > 0) {
           setBreachInfoLoading(true);
-          // calling hunterVerfy
-          let hunterData: {
-            value: string;
-            type: string;
-            data: HunterVerifyType;
-          }[] = [];
-          try {
-            const results = await Promise.all(
-              otherEmails.map((email) =>
-                post('/api/mobile/hunterverify', {
-                  email: email?.email,
-                  realtimeData: isRealtime,
-                }),
-              ),
-            );
-            results.map((result, index) =>
-              hunterData.push({
-                value: otherEmails[index]?.email,
-                type: otherEmails[index]?.type,
-                data: result,
-              }),
-            );
-            setHunterVerifyData(hunterData);
-          } catch (error) {
-            if (error instanceof AxiosError) {
-              toast.error('Hunter verify error', { id: toastRef.current! });
-            }
-          }
           let finalArray: {
             value: string;
             type: string;
-            data: BreachInfoType;
+            data: BreachInfoType | null;
           }[] = [];
           if (otherEmails.length > 0) {
+            // leakHunterPassword
+            let leakHunterData: {
+              value: string;
+              type: string;
+              data: LeakHunterType | null;
+            }[] = [];
+            // otherEmails.push({
+            //   type: 'Dummy',
+            //   email: 'lucasonicleroy@gmail.com',
+            // });
             try {
-              const results = await Promise.all(
+              const results = await Promise.allSettled(
+                otherEmails.map((email) =>
+                  post('/api/leak-data/get-password', {
+                    email: email?.email,
+                  }),
+                ),
+              );
+              results.forEach((result, index) => {
+                if (result.status === 'fulfilled') {
+                  leakHunterData.push({
+                    value: otherEmails[index]?.email,
+                    type: otherEmails[index]?.type,
+                    data: result.value,
+                  });
+                } else {
+                  leakHunterData.push({
+                    value: otherEmails[index]?.email,
+                    type: otherEmails[index]?.type,
+                    data: null,
+                  });
+                }
+              });
+              setLeakHunterData(leakHunterData);
+            } catch (error) {}
+
+            // calling hunterVerfy
+            let hunterData: {
+              value: string;
+              type: string;
+              data: HunterVerifyType | null;
+            }[] = [];
+            try {
+              const results = await Promise.allSettled(
+                otherEmails.map((email) =>
+                  post('/api/mobile/hunterverify', {
+                    email: email?.email,
+                    realtimeData: isRealtime,
+                  }),
+                ),
+              );
+              results.map((result, index) => {
+                if (result?.status === 'fulfilled') {
+                  hunterData.push({
+                    value: otherEmails[index]?.email,
+                    type: otherEmails[index]?.type,
+                    data: result.value,
+                  });
+                } else {
+                  hunterData.push({
+                    value: otherEmails[index]?.email,
+                    type: otherEmails[index]?.type,
+                    data: null,
+                  });
+                }
+              });
+              setHunterVerifyData(hunterData);
+            } catch (error) {
+              if (error instanceof AxiosError) {
+                toast.error('Hunter verify error', { id: toastRef.current! });
+              }
+            }
+
+            try {
+              const results = await Promise.allSettled(
                 otherEmails.map((email) =>
                   post('/api/mobile/breachinfo', {
                     request_body: email?.email,
@@ -667,13 +720,21 @@ export default function BeFiSc() {
                   }),
                 ),
               );
-              results.map((result, index) =>
-                finalArray.push({
-                  value: otherEmails[index]?.email,
-                  type: otherEmails[index]?.type,
-                  data: result,
-                }),
-              );
+              results.map((result, index) => {
+                if (result?.status === 'fulfilled') {
+                  finalArray.push({
+                    value: otherEmails[index]?.email,
+                    type: otherEmails[index]?.type,
+                    data: result?.value,
+                  });
+                } else {
+                  finalArray.push({
+                    value: otherEmails[index]?.email,
+                    type: otherEmails[index]?.type,
+                    data: null,
+                  });
+                }
+              });
             } catch (error) {
               toast.error('Breach info fetching error', {
                 id: toastRef.current!,
@@ -681,8 +742,49 @@ export default function BeFiSc() {
             }
           }
           if (otherNumber.length > 0) {
+            // calling jobSeeker
+            let jobSeeker: {
+              value: string;
+              type: string;
+              data: JobSeekerType | null;
+            }[] = [];
             try {
-              const results = await Promise.all(
+              const results = await Promise.allSettled(
+                otherNumber.map((number) =>
+                  post('/api/leak-data/get-jobseeker', {
+                    mobile: number.number,
+                  }),
+                ),
+              );
+              results.map((result, index) => {
+                if (result?.status === 'fulfilled') {
+                  jobSeeker.push({
+                    value: otherNumber[index]?.number,
+                    type: otherNumber[index]?.type,
+                    data: result?.value,
+                  });
+                } else {
+                  jobSeeker.push({
+                    value: otherNumber[index]?.number,
+                    type: otherNumber[index]?.type,
+                    data: null,
+                  });
+                }
+              });
+              setJobSeekerData(jobSeeker);
+            } catch (error) {}
+
+            // calling breachInfo with also +91
+            otherNumber?.map((number) => {
+              if (number?.number?.length === 10) {
+                otherNumber.push({
+                  number: '+91' + number.number,
+                  type: number.type,
+                });
+              }
+            });
+            try {
+              const results = await Promise.allSettled(
                 otherNumber.map((number) =>
                   post('/api/mobile/breachinfo', {
                     request_body: number.number,
@@ -690,13 +792,21 @@ export default function BeFiSc() {
                   }),
                 ),
               );
-              results.map((result, index) =>
-                finalArray.push({
-                  value: otherNumber[index]?.number,
-                  type: otherNumber[index]?.type,
-                  data: result,
-                }),
-              );
+              results.map((result, index) => {
+                if (result?.status === 'fulfilled') {
+                  finalArray.push({
+                    value: otherNumber[index]?.number,
+                    type: otherNumber[index]?.type,
+                    data: result?.value,
+                  });
+                } else {
+                  finalArray.push({
+                    value: otherNumber[index]?.number,
+                    type: otherNumber[index]?.type,
+                    data: null,
+                  });
+                }
+              });
             } catch (error) {}
           }
           setBreachInfo(finalArray);
@@ -1252,6 +1362,7 @@ export default function BeFiSc() {
               <TabsContent value="business" className="mt-6 space-y-4">
                 {gstAdvanceData ? (
                   <BeFiScBusiness
+                    panAllInOneData={panAllInOneData}
                     GstAdvanceData={gstAdvanceData}
                     GstTurnoverData={gstTurnoverData}
                     verfiyUdyamData={verfiyUdyamData}
@@ -1281,7 +1392,9 @@ export default function BeFiSc() {
                 ) : (
                   <BeFiScBreachInfo
                     HunterVerifyData={hunterVerifyData}
+                    leakHunterData={leakHunterData}
                     data={breachInfo}
+                    jobSeekerData={jobSeekerData}
                   />
                 )}
               </TabsContent>

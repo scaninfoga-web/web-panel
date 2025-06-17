@@ -84,31 +84,35 @@ export function LPGInfoTable({ lpgInfo }: LPGInfoTableProps) {
                     {formatSentence(item?.name)}
                   </TableCell>
                   <TableCell className="whitespace-nowrap">
-                    {item?.consumer_details.consumer_mobile}
+                    {item?.consumer_details?.consumer_mobile}
                   </TableCell>
                   <TableCell className="whitespace-nowrap">
-                    {getValue(item?.consumer_details.consumer_id)}
+                    {getValue(item?.consumer_details?.consumer_id)}
                   </TableCell>
                   <TableCell className="whitespace-nowrap">
-                    {getValue(item?.consumer_details.consumer_status)}
+                    {getValue(item?.consumer_details?.consumer_status)}
                   </TableCell>
                   <TableCell className="whitespace-nowrap">
-                    {getValue(item?.consumer_details.consumer_type)}
+                    {getValue(item?.consumer_details?.consumer_type)}
                   </TableCell>
                   <TableCell className="whitespace-nowrap">
-                    {formatSentence(item?.address.slice(0, 50))}
+                    {formatSentence(item?.address?.slice(0, 50))}
                   </TableCell>
                   <TableCell className="whitespace-nowrap">
-                    {getValue(item?.distributor_details.distributor_code)}
+                    {getValue(item?.distributor_details?.distributor_code)}
                   </TableCell>
                   <TableCell className="whitespace-nowrap">
-                    {formatSentence(item?.distributor_details.distributor_name)}
+                    {formatSentence(
+                      item?.distributor_details?.distributor_name,
+                    )}
                   </TableCell>
                   <TableCell className="whitespace-nowrap">
-                    {getValue(item?.distributor_details.distributor_address)}
+                    {getValue(item?.distributor_details?.distributor_contact)}
                   </TableCell>
                   <TableCell className="whitespace-nowrap">
-                    {getValue(item?.distributor_details.distributor_address)}
+                    {formatSentence(
+                      item?.distributor_details?.distributor_address,
+                    )}
                   </TableCell>
                 </TableRow>
               ))

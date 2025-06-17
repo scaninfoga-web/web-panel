@@ -1,20 +1,57 @@
 {
-  "NoOfAccounts": "1",
-  "TotalPastDue": "0.00",
-  "NoOfWriteOffs": "0",
-  "OldestAccount": "Two-wheeler Loan on 15-04-2024",
-  "RecentAccount": "Two-wheeler Loan on 15-04-2024",
-  "TotalHighCredit": "0.00",
-  "TotalCreditLimit": "0.0",
-  "AverageOpenBalance": "28859.00",
-  "NoOfActiveAccounts": "1",
-  "TotalBalanceAmount": "28859.00",
-  "NoOfPastDueAccounts": "0",
-  "SingleHighestCredit": "0.00",
-  "TotalSanctionAmount": "80681.00",
-  "SingleHighestBalance": "28859.00",
-  "NoOfZeroBalanceAccounts": "0",
-  "TotalMonthlyPaymentAmount": "5020.00",
-  "SingleHighestSanctionAmount": "80681.00",
-  "MostSevereStatusWithIn24Months": "Non-Delnqt"
+  "responseStatus": {
+    "status": true,
+    "message": "Data fetched from database"
+  },
+  "responseData": {
+    "result": {
+      
+      "din_info": {
+        "din": "02960308",
+        "company_list": [
+          {
+            "cin": "U45201WB2004PTC098722",
+            "company_name": "ROSE APARTMENT PRIVATE LIMITED"
+          },
+          {
+            "cin": "AAZ-0074",
+            "company_name": "MAHATO INFRASTRUCTURE LLP"
+          }
+        ],
+        "dinAllocationDate": "02/25/2010"
+      },
+      "is_director": {
+        "info": [
+          {
+            "gst": "19ALAPM8466B1Z1",
+            "status": "Provisional",
+            "aggregate_turn_over": "Slab: Rs. 40 lakhs to 1.5 Cr."
+          },
+          {
+            "gst": "19ABSFM9096R1ZO",
+            "status": "NA",
+            "aggregate_turn_over": "NA"
+          }
+        ],
+        "found": "Yes"
+      },
+      "is_sole_proprietor": {
+        "info": [
+          {
+            "gst": "19ALAPM8466B2Z0",
+            "status": "Active",
+            "aggregate_turn_over": "Slab: Rs. 40 lakhs to 1.5 Cr."
+          }
+        ],
+        "found": "Yes"
+      }
+    },
+    "status": 1,
+    "txn_id": "7c47a557-660b-4368-b4cf-f625bdd58971",
+    "message": "Success",
+    "api_name": "PAN All in One",
+    "billable": true,
+    "datetime": "2025-06-17 10:06:54.596638",
+    "api_category": "Know Your Customer (KYC)"
+  }
 }

@@ -19,7 +19,7 @@ interface PageProps {
       {
         value: string;
         type: string;
-        data: BreachInfoType;
+        data: BreachInfoType | null;
       }[]
     >
   >;

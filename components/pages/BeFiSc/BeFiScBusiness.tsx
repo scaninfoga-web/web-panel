@@ -2,6 +2,7 @@ import { Separator } from '@/components/ui/separator';
 import {
   GstTurnoverType,
   GstVerificationAdvanceType,
+  PanAllInOneType,
   VerifyUdyamType,
 } from '@/types/BeFiSc';
 import { DashboardCard } from '../dashboard/components/DashboardCard';
@@ -10,12 +11,14 @@ import { formatSentence } from './sub/APIUtils';
 import CustomBadge from './sub/CustomBadge';
 
 interface Props {
+  panAllInOneData: PanAllInOneType | null;
   GstAdvanceData: GstVerificationAdvanceType | null;
   GstTurnoverData: GstTurnoverType | null;
   verfiyUdyamData: VerifyUdyamType | null;
 }
 
 export default function BeFiScBusiness({
+  panAllInOneData,
   GstAdvanceData,
   GstTurnoverData,
   verfiyUdyamData,
@@ -191,6 +194,21 @@ export default function BeFiScBusiness({
           </div>
         </DashboardCard>
       </div>
+
+      <div className="grid grid-cols-2 gap-3">
+        <CustomBeFiScCard
+          data={panAllInOneData?.result?.is_sole_proprietor?.info}
+          title="isSoleProprietor"
+        />
+        <CustomBeFiScCard
+          data={panAllInOneData?.result?.is_director?.info}
+          title="isDirector"
+        />
+      </div>
+      <CustomBeFiScCard
+        data={panAllInOneData?.result?.din_info?.company_list}
+        title={`Din  Info: ${panAllInOneData?.result?.din_info?.din}`}
+      />
 
       <CustomBeFiScCard
         data={
