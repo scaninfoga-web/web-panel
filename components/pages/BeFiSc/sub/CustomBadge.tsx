@@ -20,7 +20,7 @@ const dangerBadge = [
   'Email Not Linked',
   'Not Verified',
 ];
-const warningBadge = ['CONNECTED', 'DISCONNECTED'];
+const warningBadge = ['CONNECTED', 'DISCONNECTED', 'PENDING'];
 
 export default function CustomBadge({
   variantToUse,

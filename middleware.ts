@@ -53,8 +53,11 @@ export async function middleware(request: NextRequest) {
   const isPublic =
     publicRoutes.includes(pathname) || pathname.startsWith('/services');
 
-  // Allow public route
+  if (pathname === '/auth' && accessToken) {
+    return NextResponse.redirect(new URL('/dashboard', request.url));
+  }
   if (isPublic) {
+    // Allow public route
     return NextResponse.next();
   }
 

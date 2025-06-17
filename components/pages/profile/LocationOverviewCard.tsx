@@ -6,7 +6,7 @@ import { RootState } from '@/redux/store';
 export const LocationOverviewCard = () => {
   const info = useSelector((state: RootState) => state.info);
   return (
-    <Card className="card-bg">
+    <Card className="card-bg border-slate-700">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-emerald-500">
           <MapPin className="h-5 w-5 text-emerald-500" />

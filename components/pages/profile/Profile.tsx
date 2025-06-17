@@ -28,6 +28,7 @@ import { LocationOverviewCard } from './LocationOverviewCard';
 import { ChangePasswordCard } from './ChangePasswordCard';
 import { LoginHistoryCard } from './LoginHistoryCard';
 import DashboardTitle from '@/components/common/DashboardTitle';
+import TransactionHistory from '../transactionHistory/TransactionHistory';
 
 const changePassSchema = z
   .object({
@@ -187,6 +188,7 @@ const Profile = () => {
       </div>
       <ChangePasswordCard />
       <LoginHistoryCard />
+      <TransactionHistory />
     </div>
     // <div className="min-h-screen">
     //   <div className="max-w-7xl mx-auto space-y-6">

@@ -54,14 +54,7 @@ export function DashboardCard({
             )}
           </div>
         )}
-        <div className="flex flex-col">
-          {children}
-          {notifytitle && (
-            <Button className="mt-4 px-4 py-1" variant={'default'}>
-              {notifytitle}
-            </Button>
-          )}
-        </div>
+        <div className="flex flex-col">{children}</div>
       </CardContent>
     </Card>
   );

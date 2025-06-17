@@ -153,7 +153,7 @@ export const ChangePasswordCard = () => {
 
   return (
     <>
-      <Card className="card-bg">
+      <Card className="card-bg border-slate-700">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-emerald-500">
             <Key className="h-5 w-5" />
@@ -161,18 +161,18 @@ export const ChangePasswordCard = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <Tabs defaultValue="password" className="w-full">
+          <Tabs defaultValue="password " className="w-full">
             <TabsList className="grid w-full grid-cols-2 p-0">
               <TabsTrigger
                 value="password"
-                className="border border-gray-300 font-semibold data-[state=active]:border data-[state=active]:border-emerald-500 data-[state=active]:text-emerald-500"
+                className="border border-slate-600 font-semibold data-[state=active]:border data-[state=active]:border-emerald-500 data-[state=active]:text-emerald-500"
               >
                 <Key className="mr-2 h-4 w-4" />
                 Change Password
               </TabsTrigger>
               <TabsTrigger
                 value="email"
-                className="border border-gray-300 font-semibold data-[state=active]:border data-[state=active]:border-emerald-500 data-[state=active]:text-emerald-500"
+                className="border border-slate-600 font-semibold data-[state=active]:border data-[state=active]:border-emerald-500 data-[state=active]:text-emerald-500"
               >
                 <Mail className="mr-2 h-4 w-4" />
                 Change Email
@@ -188,14 +188,6 @@ export const ChangePasswordCard = () => {
                   <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                     <FormInput
                       form={passwordForm}
-                      name="oldPassword"
-                      label="Old Password"
-                      type="password"
-                      placeholder="Enter your old password"
-                    />
-
-                    <FormInput
-                      form={passwordForm}
                       name="newPassword"
                       label="New Password"
                       type="password"
@@ -208,6 +200,13 @@ export const ChangePasswordCard = () => {
                       label="Confirm Password"
                       type="password"
                       placeholder="Confirm your new password"
+                    />
+                    <FormInput
+                      form={passwordForm}
+                      name="oldPassword"
+                      label="Old Password"
+                      type="password"
+                      placeholder="Enter your old password"
                     />
 
                     {passwordQrCode && (
@@ -244,14 +243,6 @@ export const ChangePasswordCard = () => {
                   <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                     <FormInput
                       form={emailForm}
-                      name="newEmail"
-                      label="New Email"
-                      type="email"
-                      placeholder="Enter your new email address"
-                    />
-
-                    <FormInput
-                      form={emailForm}
                       name="password"
                       label="Password"
                       type="password"
@@ -264,6 +255,13 @@ export const ChangePasswordCard = () => {
                       label="Confirm Password"
                       type="password"
                       placeholder="Confirm your password"
+                    />
+                    <FormInput
+                      form={emailForm}
+                      name="newEmail"
+                      label="New Email"
+                      type="email"
+                      placeholder="Enter your new email address"
                     />
 
                     {emailQrCode && (

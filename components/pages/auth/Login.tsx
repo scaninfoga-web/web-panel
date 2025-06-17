@@ -132,8 +132,7 @@ const Login = () => {
           }),
         );
         toast.success('Logged in successfully!', { duration: 800 });
-        router.push('/combinedDash');
-        router.refresh();
+        window.location.reload();
       }
     } catch (error) {
       await clearCookies();

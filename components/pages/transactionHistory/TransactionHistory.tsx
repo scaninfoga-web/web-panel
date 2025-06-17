@@ -1,10 +1,12 @@
 'use client';
 import DashboardTitle from '@/components/common/DashboardTitle';
 import TxnSubmissionForm from '@/components/common/TxnSubmissionForm';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CustomTable } from '@/components/ui/custom-table';
 import { get } from '@/lib/api';
 import { formatDate } from '@/lib/utils';
 import { useEffect, useState } from 'react';
+import { Key, Mail } from 'lucide-react';
 
 const TransactionHistory = () => {
   const [tableData, setTableData] = useState<any>([]);
@@ -45,14 +47,17 @@ const TransactionHistory = () => {
 
   return (
     <>
-      {/* <DashboardTitle title="Transactions" /> */}
-      <div className="grid gap-x-2 md:grid-cols-2">
-        {/* <div className="py-8 px-4 border border-gray-500">
-        <TxnSubmissionForm />
-        </div> */}
-      </div>
-      <DashboardTitle title="Transaction History" />
-      <CustomTable columns={columns} dataSource={tableData} />
+      <Card className="card-bg border-slate-700">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-emerald-500">
+            <Key className="h-5 w-5" />
+            Transaction History
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <CustomTable columns={columns} dataSource={tableData} />
+        </CardContent>
+      </Card>
     </>
   );
 };

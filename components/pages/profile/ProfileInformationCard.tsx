@@ -19,8 +19,10 @@ interface ProfileInformationCardProps {
 }
 
 export const ProfileInformationCard = () => {
-  let userData = useSelector((state: RootState) => state.user.user);
-  const walletBalance = useSelector((state: RootState) => state.wallet.balance);
+  let userData = useSelector((state: RootState) => state?.user?.user);
+  const walletBalance = useSelector(
+    (state: RootState) => state?.wallet?.balance,
+  );
   userData = { ...userData, walletBalance, susbcriptionType: 'gold' };
   const getSubscriptionColor = (type: string) => {
     switch (type) {
@@ -60,7 +62,7 @@ export const ProfileInformationCard = () => {
   };
 
   return (
-    <Card className="card-bg">
+    <Card className="card-bg border-slate-700">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-emerald-500">
           <User className="h-5 w-5" />
@@ -119,8 +121,9 @@ export const ProfileInformationCard = () => {
               className={`${getSubscriptionColor(userData.subscriptionType)} border-2 px-4 py-2 text-sm font-bold shadow-lg`}
             >
               {getSubscriptionIcon(userData.subscriptionType)}
-              <span className="ml-2 uppercase tracking-wide">
-                {userData.subscriptionType} Member
+              <span className="space-x-1 uppercase tracking-wide">
+                <span>{userData?.subscriptionType} </span>
+                <span className="text-xs">Member</span>
               </span>
             </Badge>
           </div>

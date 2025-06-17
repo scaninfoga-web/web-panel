@@ -17,20 +17,18 @@ export const userSlice = createSlice({
       state.token = action.payload.token;
       state.user = action.payload.user;
       setCookie('accessToken', JSON.stringify(action.payload.token || null), {
-        maxAge: 60 * 60 * 24, // 1 day
+        maxAge: 60 * 60 * 24 * 10,
         path: '/',
       });
 
       setCookie('user', JSON.stringify(action.payload.user || null), {
-        maxAge: 60 * 60 * 24, // 1 day
+        maxAge: 60 * 60 * 24 * 10,
         path: '/',
       });
     },
     logout: (state) => {
       state.token = null;
       state.user = null;
-
-      // clearCookies();
       deleteCookie('accessToken');
       deleteCookie('user');
     },
@@ -39,24 +37,3 @@ export const userSlice = createSlice({
 
 export const { setCredentials, logout } = userSlice.actions;
 export default userSlice.reducer;
-
-// interface User {
-//   email: string;
-//   firstName: string;
-//   lastName: string;
-//   userType?: string;
-//   company?: string;
-//   domain?: string;
-//   dateJoined: string
-//   approvalStatus?: string;
-// }
-
-// interface UserState {
-//   token: string | null;
-//   user: User | null;
-// }
-
-// type CredentialsPayload = {
-//   token: string;
-//   user: User;
-// };
