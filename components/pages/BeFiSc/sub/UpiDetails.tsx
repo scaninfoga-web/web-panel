@@ -279,7 +279,7 @@ export default function UpiDetails({
                   onOpenChange={(open) => !open && handleCloseDetails()}
                 >
                   <DialogPortal>
-                    <DialogContent className="min-[400px] flex min-w-[800px] flex-col border-slate-800 bg-slate-950 p-10 text-white shadow-2xl shadow-slate-800 backdrop-blur-3xl">
+                    <DialogContent className="min-[400px] flex min-w-[800px] flex-col rounded-lg border-slate-800 bg-slate-950 p-10 text-white shadow-2xl shadow-slate-800 backdrop-blur-3xl">
                       <DialogTitle className="flex items-center justify-between space-x-44 font-bold text-emerald-500">
                         <span className="text-2xl">
                           {
