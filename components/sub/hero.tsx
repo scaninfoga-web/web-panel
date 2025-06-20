@@ -498,7 +498,7 @@ export default function Hero() {
               className="relative min-h-[360px] w-full max-w-2xl overflow-hidden border border-emerald-500/20 shadow-2xl shadow-emerald-500/10"
             >
               <video
-                src="/video-home.mp4"
+                src="https://website-stuff-logos.s3.ap-south-1.amazonaws.com/video-home.mp4"
                 autoPlay
                 loop
                 muted

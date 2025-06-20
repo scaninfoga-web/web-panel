@@ -10,10 +10,16 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
-import { IconMailSearch, IconNumber } from '@tabler/icons-react';
+import {
+  IconMailSearch,
+  IconNumber,
+  IconPhoneFilled,
+} from '@tabler/icons-react';
+import { isValidIndianMobileNumber } from '../BeFiSc';
+import { toast } from 'sonner';
 
 interface PageProps {
-  label: 'Email' | '+91 Number' | 'Number';
+  label: 'Email' | 'Number';
   setExtraData: React.Dispatch<
     React.SetStateAction<
       {
@@ -28,24 +34,6 @@ function isValidEmail(email: string): boolean {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
 }
-function isValidNumber(
-  input: string,
-  label: 'Email' | '+91 Number' | 'Number',
-) {
-  const mobileRegex = /^(?:\+91[\-\s]?)?[5-9]\d{9}$/;
-  input = input.replace(/\s/g, '');
-  const isValid = mobileRegex.test(input);
-
-  if (isValid && label === '+91 Number') {
-    if (input.length === 10) {
-      input = '+91' + input;
-    }
-  }
-  return {
-    isValid,
-    fixedNumber: input,
-  };
-}
 
 export default function AddMoreBreachButton({
   label,
@@ -53,12 +41,24 @@ export default function AddMoreBreachButton({
 }: PageProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isValidInput, setIsValidInput] = useState(false);
+  const [input, setInput] = useState('');
 
   function onClose() {
     setIsOpen(false);
   }
 
-  const handleSubmit = async () => {};
+  function handleValid(input: string) {
+    if (label === 'Email' && input?.length > 0) {
+      setIsValidInput(isValidEmail(input));
+    }
+    if (label === 'Number' && input?.length > 0) {
+      setIsValidInput(isValidIndianMobileNumber(input).result);
+    }
+  }
+
+  const handleSubmit = async () => {
+    toast.success('Goode');
+  };
 
   return (
     <div className="flex w-full items-center justify-center">
@@ -66,7 +66,7 @@ export default function AddMoreBreachButton({
         onClick={() => setIsOpen(true)}
         className="max-w-64 bg-slate-700 text-white hover:bg-slate-700/50 hover:text-white/70"
       >
-        Add More {label} ?
+        Search {label} ?
       </Button>
 
       {/* popUp */}
@@ -82,7 +82,7 @@ export default function AddMoreBreachButton({
                   {label === 'Email' ? (
                     <IconMailSearch className="h-5 w-5" />
                   ) : (
-                    <IconNumber className="h-5 w-5" />
+                    <IconPhoneFilled className="h-5 w-5" />
                   )}
                 </div>
               </div>
@@ -95,18 +95,32 @@ export default function AddMoreBreachButton({
                 )}
               >
                 <div className="flex min-w-full flex-col space-y-10">
-                  <Input
-                    id="firstInput"
-                    placeholder="Enter mobile no"
-                    className="w-full border border-neutral-700"
-                  />
+                  <div className="flex flex-col space-y-2">
+                    <Input
+                      id="firstInput"
+                      value={input}
+                      type={label === 'Email' ? 'email' : 'number'}
+                      placeholder={`Enter ${label}`}
+                      onChange={(e) => {
+                        setInput(e.target.value);
+                        handleValid(e.target.value);
+                      }}
+                      className="w-full border border-neutral-700 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                    />
+
+                    {!isValidInput && input.length > 0 && (
+                      <p className="pl-1 text-sm font-medium text-red-500">
+                        Enter valid {label?.toLowerCase()}
+                      </p>
+                    )}
+                  </div>
                   <div className="min-w-full">
                     <Button
                       className="w-full bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20"
-                      disabled={isValidInput}
+                      disabled={!isValidInput}
                       onClick={handleSubmit}
                     >
-                      Click to Continue
+                      Search {label}
                     </Button>
                   </div>
                 </div>

@@ -14,6 +14,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { WalletWidget } from '../common/WalletWidget';
+import Image from 'next/image';
 
 const navItems = [
   { label: 'Home', href: '/' },
@@ -91,11 +92,19 @@ export default function Navbar() {
     >
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between">
-          <Link href="/" className="flex items-center space-x-2">
-            <Shield className="h-8 w-8 text-emerald-500" />
+          <Link href="/" className="flex items-center">
+            {/* <Shield className="h-8 w-8 text-emerald-500" />
             <span className="text-xl font-bold tracking-tight">
               <span className="text-emerald-500">scan</span>infoga
-            </span>
+            </span> */}
+            <Image
+              src="/logo/1.png"
+              alt="scaninfoga"
+              // className="border object-contain"
+              className="relative bottom-3"
+              width={200}
+              height={200}
+            />
           </Link>
 
           {paths.includes(pathname) ? (

@@ -195,21 +195,6 @@ export default function BeFiScBusiness({
         </DashboardCard>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
-        <CustomBeFiScCard
-          data={panAllInOneData?.result?.is_sole_proprietor?.info}
-          title="isSoleProprietor"
-        />
-        <CustomBeFiScCard
-          data={panAllInOneData?.result?.is_director?.info}
-          title="isDirector"
-        />
-      </div>
-      <CustomBeFiScCard
-        data={panAllInOneData?.result?.din_info?.company_list}
-        title={`Din  Info: ${panAllInOneData?.result?.din_info?.din}`}
-      />
-
       <CustomBeFiScCard
         data={
           GstAdvanceData?.result?.business_details?.bzsdtls ||
@@ -232,6 +217,20 @@ export default function BeFiScBusiness({
           business_mobile: GstAdvanceData?.result?.business_mobile,
         }}
         title="GST Details"
+      />
+      <div className="grid grid-cols-2 gap-3">
+        <CustomBeFiScCard
+          data={panAllInOneData?.result?.is_sole_proprietor?.info}
+          title="isSoleProprietor"
+        />
+        <CustomBeFiScCard
+          data={panAllInOneData?.result?.is_director?.info}
+          title="isDirector"
+        />
+      </div>
+      <CustomBeFiScCard
+        data={panAllInOneData?.result?.din_info?.company_list}
+        title={`Din  Info: ${panAllInOneData?.result?.din_info?.din}`}
       />
 
       <div className="grid grid-cols-1 gap-4">

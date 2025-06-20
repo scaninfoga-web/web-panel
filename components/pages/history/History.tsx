@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation';
 import { RootState } from '@/redux/store';
 import { useSelector } from 'react-redux';
 import DashboardTitle from '@/components/common/DashboardTitle';
+import { formatDateTime } from '../BeFiSc/sub/dateFormat';
 
 interface UserActivity {
   id: number;
@@ -34,18 +35,6 @@ const History: React.FC = () => {
   useEffect(() => {
     fetchActivities();
   }, []);
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: 'numeric',
-      hour12: true,
-    }).format(date);
-  };
 
   const userType = useSelector((state: RootState) => state.user.user.userType);
   const fetchActivities = async () => {
@@ -78,7 +67,7 @@ const History: React.FC = () => {
       title: 'Activity Time',
       dataIndex: 'activity_time',
       key: 'activity_time',
-      render: (text: string) => formatDate(text),
+      render: (text: string) => formatDateTime(text),
       width: '200px',
     },
     {

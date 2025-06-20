@@ -58,6 +58,7 @@
     "framer-motion": "latest",
     "input-otp": "1.4.1",
     "js-cookie": "^3.0.5",
+    "lodash.isequal": "^4.5.0",
     "lucide-react": "^0.454.0",
     "next": "15.2.4",
     "next-auth": "^4.24.11",
@@ -82,6 +83,7 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
+    "@types/lodash.isequal": "^4.5.8",
     "@types/node": "^22",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",

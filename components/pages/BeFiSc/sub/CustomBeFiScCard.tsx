@@ -74,7 +74,7 @@ export const getValue = (
 
 function isValidObjectData(
   data: unknown,
-): data is Record<string, string | boolean | Array<any>> {
+): data is Record<string, string | boolean | Array<any> | undefined | null> {
   return (
     typeof data === 'object' &&
     data !== null &&
@@ -83,13 +83,16 @@ function isValidObjectData(
       ([_, value]) =>
         typeof value === 'string' ||
         typeof value === 'boolean' ||
+        typeof value === 'number' ||
+        typeof value === 'undefined' ||
+        typeof value === null ||
         Array.isArray(value),
     )
   );
 }
 function isValidObjectInsideObjectArrayData(
   data: unknown,
-): data is Array<{ [key: string]: string | boolean | Record<string, string> }> {
+): data is Array<{ [key: string]: string | boolean | Record<any, any> }> {
   return (
     Array.isArray(data) &&
     data.length > 0 &&
@@ -102,10 +105,19 @@ function isValidObjectInsideObjectArrayData(
           ([_, value]) =>
             typeof value === 'string' ||
             typeof value === 'boolean' ||
+            typeof value === 'number' ||
+            typeof value === 'undefined' ||
+            typeof value === null ||
             (typeof value === 'object' &&
               value !== null &&
               !Array.isArray(value) &&
-              Object.values(value).every((v) => typeof v === 'string')),
+              Object.values(value).every(
+                (v) =>
+                  typeof v === 'string' ||
+                  typeof v === 'number' ||
+                  typeof v === 'boolean' ||
+                  typeof v === 'undefined',
+              )),
         ),
     )
   );
@@ -269,5 +281,5 @@ export default function CustomBeFiScCard({ title, data }: PageProps) {
     );
   }
 
-  // return <div>{JSON.stringify(data)}</div>;
+  return <div>{JSON.stringify(data)}</div>;
 }

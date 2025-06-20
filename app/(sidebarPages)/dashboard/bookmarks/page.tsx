@@ -1,9 +1,11 @@
-import React from 'react';
+import Bookmark from '@/components/pages/boomark/Bookmark';
+import { Loader } from '@/components/ui/loader';
+import React, { Suspense } from 'react';
 
 export default function Page() {
   return (
-    <div className="flex h-screen animate-pulse items-center justify-center text-2xl text-neutral-500">
-      Bookmarks
-    </div>
+    <Suspense fallback={<Loader />}>
+      <Bookmark />
+    </Suspense>
   );
 }
