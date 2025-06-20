@@ -98,7 +98,7 @@ export default function Navbar() {
               <span className="text-emerald-500">scan</span>infoga
             </span> */}
             <Image
-              src="/logo/1.png"
+              src="https://website-stuff-logos.s3.ap-south-1.amazonaws.com/1.png"
               alt="scaninfoga"
               // className="border object-contain"
               className="relative bottom-3"

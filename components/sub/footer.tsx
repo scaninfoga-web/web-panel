@@ -24,7 +24,7 @@ export default function Footer() {
                 <span className="text-emerald-500">scan</span>infoga
               </span> */}
               <Image
-                src="/logo/4.png"
+                src="https://website-stuff-logos.s3.ap-south-1.amazonaws.com/4.png"
                 alt="scaninfoga"
                 // className="border object-contain"
                 className="relative -left-5 bottom-7"
