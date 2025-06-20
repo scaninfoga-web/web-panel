@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Copy, ArrowLeft, QrCode, Building } from 'lucide-react';
+import Image from 'next/image';
 import { toast } from 'sonner';
 
 interface PaymentDetailsStepProps {
@@ -21,11 +22,11 @@ const PaymentDetailsStep = ({
   };
 
   const bankDetails = {
-    bankName: 'SecureBank International',
-    accountNumber: '1234567890123456',
-    routingNumber: '987654321',
-    accountName: 'ScanInfoga Ltd',
-    swiftCode: 'SECBGB2L',
+    bankName: 'Kotak Mahindra Bank',
+    accountNumber: '7622004401',
+    ifsc: 'KKBK0002875',
+    accountName: 'SCANINFOGA SOLUTIONS PRIVATE LIMITED',
+    // swiftCode: 'SECBGB2L',
   };
 
   // If no payment method is selected, show a fallback
@@ -72,15 +73,21 @@ const PaymentDetailsStep = ({
           <div className="flex justify-center">
             <div className="flex h-48 w-48 items-center justify-center rounded-lg bg-white p-4">
               <div className="flex h-full w-full flex-col items-center justify-center rounded bg-gray-900">
-                <QrCode className="mb-2 h-16 w-16 text-teal-500" />
-                <p className="text-center text-xs text-gray-400">QR Code</p>
-                <p className="text-xs text-gray-500">₹1,000</p>
+                {/* <QrCode className="mb-2 h-16 w-16 text-teal-500" /> */}
+                <Image
+                  src="/images/scaninfoga_qr.jpeg"
+                  alt="qr"
+                  height={500}
+                  width={200}
+                />
+                {/* <p className="text-center text-xs text-gray-400">QR Code</p> */}
+                {/* <p className="text-xs text-gray-500">₹1,000</p> */}
               </div>
             </div>
           </div>
           <div className="text-center">
             <p className="text-sm text-gray-400">
-              Scan this QR code with your banking app to pay ₹1,000
+              Scan this QR code with your banking app to pay desired amount
             </p>
           </div>
         </div>
@@ -95,7 +102,7 @@ const PaymentDetailsStep = ({
             <div className="grid gap-3">
               <div className="flex items-center justify-between">
                 <span className="text-sm text-gray-400">Bank Name:</span>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center">
                   <span className="text-sm text-white">
                     {bankDetails.bankName}
                   </span>
@@ -135,19 +142,16 @@ const PaymentDetailsStep = ({
               </div>
 
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-400">Routing Number:</span>
-                <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-400">IFSC Code:</span>
+                <div className="flex items-center gap-1">
                   <span className="font-mono text-sm text-white">
-                    {bankDetails.routingNumber}
+                    {bankDetails.ifsc}
                   </span>
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={() =>
-                      copyToClipboard(
-                        bankDetails.routingNumber,
-                        'Routing number',
-                      )
+                      copyToClipboard(bankDetails.ifsc, 'IFSC Code')
                     }
                     className="h-6 w-6 p-0 hover:bg-gray-700"
                   >
@@ -156,7 +160,7 @@ const PaymentDetailsStep = ({
                 </div>
               </div>
 
-              <div className="flex items-center justify-between">
+              <div className="flex items-center">
                 <span className="text-sm text-gray-400">Account Name:</span>
                 <div className="flex items-center gap-2">
                   <span className="text-sm text-white">
@@ -168,13 +172,13 @@ const PaymentDetailsStep = ({
                     onClick={() =>
                       copyToClipboard(bankDetails.accountName, 'Account name')
                     }
-                    className="h-6 w-6 p-0 hover:bg-gray-700"
+                    className="display-block h-6 w-6 p-0 hover:bg-gray-700"
                   >
                     <Copy className="h-3 w-3" />
                   </Button>
                 </div>
               </div>
-
+              {/* 
               <div className="flex items-center justify-between">
                 <span className="text-sm text-gray-400">SWIFT Code:</span>
                 <div className="flex items-center gap-2">
@@ -192,7 +196,7 @@ const PaymentDetailsStep = ({
                     <Copy className="h-3 w-3" />
                   </Button>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
 
