@@ -277,9 +277,13 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Shield, Lock, Database, Code } from 'lucide-react';
 import { Typewriter } from 'react-simple-typewriter';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/redux/store';
 
 export default function Hero() {
   const [mounted, setMounted] = useState(false);
+  const data = useSelector((state: RootState) => state.info);
+  console.log('LAtitude, lon: ', data);
 
   useEffect(() => {
     setMounted(true);

@@ -33,8 +33,9 @@ export default function Navbar() {
   const router = useRouter();
   const accessToken = getCookie('accessToken');
 
-  const walletBalance = useSelector((state: RootState) => state.wallet.balance);
+  const wallet = useSelector((state: RootState) => state.wallet);
   const token = useSelector((state: RootState) => state.user.token);
+  console.log('Wallet: ', wallet);
 
   const paths = [
     '/',
@@ -211,7 +212,7 @@ export default function Navbar() {
             {token &&
               // <Button variant='outline' className='flex gap-x-2'><CircleDollarSign className='text-yellow-500'/> {walletBalance}</Button>
               !paths.includes(pathname) && (
-                <WalletWidget credits={walletBalance} onTopUp={() => {}} />
+                <WalletWidget credits={wallet.balance} onTopUp={() => {}} />
               )}
             {!paths.includes(pathname) && (
               <Button

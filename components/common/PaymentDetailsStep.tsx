@@ -172,7 +172,7 @@ const PaymentDetailsStep = ({
                     onClick={() =>
                       copyToClipboard(bankDetails.accountName, 'Account name')
                     }
-                    className="display-block h-6 w-6 p-0 hover:bg-gray-700"
+                    className="h-6 w-6 p-0 hover:bg-gray-700"
                   >
                     <Copy className="h-3 w-3" />
                   </Button>
@@ -202,7 +202,7 @@ const PaymentDetailsStep = ({
 
           <div className="rounded-lg border border-teal-500/20 bg-teal-500/10 p-3">
             <p className="text-center text-sm text-teal-400">
-              <strong>Amount to Pay:</strong> ₹1,000
+              <strong>Amount to Pay:</strong> ₹5,000 (Minimum)
             </p>
           </div>
         </div>

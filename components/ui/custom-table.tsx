@@ -112,7 +112,7 @@ export function CustomTable<T extends object>({
           <TableRow>
             {columns.map((column, index) => (
               <TableHead
-                className="sticky top-0 whitespace-nowrap bg-emerald-700 text-base font-medium text-black"
+                className="sticky top-0 whitespace-nowrap bg-emerald-500 text-base font-medium text-black"
                 key={`${column.key}-${index}`}
                 style={
                   column.width

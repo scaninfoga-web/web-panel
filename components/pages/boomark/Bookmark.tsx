@@ -19,6 +19,8 @@ interface UserBookmark {
   payload?: {
     [key: string]: string | boolean | number;
   };
+  latitude: string;
+  longitude: string;
 }
 [];
 
@@ -60,6 +62,16 @@ const Bookmark: React.FC = () => {
       dataIndex: 'bookmark_page',
       key: 'bookmark_page',
       render: (text: number) => responsePageName.get(text) || text,
+    },
+    {
+      title: 'Latitude',
+      dataIndex: 'latitude',
+      key: 'latitude',
+    },
+    {
+      title: 'Longitude',
+      dataIndex: 'longitude',
+      key: 'longitude',
     },
     {
       title: 'Bookmarked At',

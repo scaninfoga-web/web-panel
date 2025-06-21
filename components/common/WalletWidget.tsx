@@ -8,6 +8,9 @@ import {
 } from '@/components/ui/popover';
 import { CreditCard, Plus, Calendar, IndianRupee } from 'lucide-react';
 import PaymentModal from './PaymentModal';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/redux/store';
+import { formatDate } from '@/lib/utils';
 
 interface WalletWidgetProps {
   credits: number;
@@ -17,11 +20,14 @@ interface WalletWidgetProps {
 export const WalletWidget = ({ credits, onTopUp }: WalletWidgetProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [paymentModalOpen, setPaymentModalOpen] = useState(false);
+  const wallet = useSelector((state: RootState) => state.wallet);
 
   // Mock transaction data - in a real app this would come from your backend
   const lastTransaction = {
-    date: 'Dec 15, 2024',
-    amount: 1000,
+    date: wallet?.lastSuccessTxnDate
+      ? formatDate(wallet?.lastSuccessTxnDate)
+      : '---',
+    amount: wallet?.lastSuccessTxnAmount || '---',
     type: 'Top-up',
   };
 
@@ -45,7 +51,7 @@ export const WalletWidget = ({ credits, onTopUp }: WalletWidgetProps) => {
           </Button>
         </PopoverTrigger>
         <PopoverContent
-          className="relative -left-4 top-4 w-64 border-gray-700 bg-[#060b17] p-4 text-white backdrop-blur-md"
+          className="relative -left-4 top-4 w-72 border-gray-700 bg-[#060b17] p-4 text-white backdrop-blur-md"
           align="start"
         >
           <div className="space-y-4">
