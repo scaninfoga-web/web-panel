@@ -49,9 +49,12 @@ import CustomBadge from './sub/CustomBadge';
 import Ghunt from './sub/Ghunt';
 import MapLoading from './sub/MapLoading';
 import SentenceLoader from './sub/SentenceLoader';
-import { HunterVerifyType } from '@/types/hunter';
+import { HunterFindType, HunterVerifyType } from '@/types/hunter';
 import { PayWorldType } from '@/types/payworld';
 import { JobSeekerType, LeakHunterType } from '@/types/LeakHunter';
+import { Bookmark, BookmarkCheck } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import BookmarkButton from '@/components/BookmarkButton';
 
 export function isValidIndianMobileNumber(input: string): {
   result: boolean;
@@ -148,6 +151,13 @@ export default function BeFiSc() {
       data: HunterVerifyType | null;
     }[]
   >([]);
+  const [hunterFindData, setHunterFindData] = useState<
+    {
+      value: string;
+      type: string;
+      data: HunterFindType | null;
+    }[]
+  >([]);
   const [payworldData, setPayworldData] = useState<PayWorldType | null>(null);
   const [leakHunterData, setLeakHunterData] = useState<
     {
@@ -164,6 +174,8 @@ export default function BeFiSc() {
     }[]
   >([]);
 
+  const [isBookmarkedChecked, setIsBookmarkedChecked] = useState(false);
+  const [isBookmarkedLoading, setIsBookMarkLoading] = useState(false);
   const setAllOnLoading = () => {
     setIsLoading(true);
     setUpiDetailsLoading(true);
@@ -194,19 +206,21 @@ export default function BeFiSc() {
       const callOtherAPIs = async () => {
         //calling payworldApi
         try {
-          const payworldResponse = await post('/api/secondary/payworld-data', {
-            sender_mobile: mobileNo,
-            realtimeData: isRealtime,
-          });
-          if (payworldResponse.responseData) {
+          const payworldResponse = await post(
+            '/api/secondary/payworld-all-data',
+            {
+              sender_mobile: mobileNo,
+            },
+          );
+          if (
+            payworldResponse.responseData &&
+            Object.keys(payworldResponse.responseData)?.length > 0
+          ) {
             setPayworldData(payworldResponse);
           }
         } catch (error) {
           if (error instanceof AxiosError) {
-            toast.error(
-              'PayWorld' + error.response?.data?.responseStatus?.message,
-              { id: toastRef.current! },
-            );
+            toast.error('PayWorld Down', { id: toastRef.current! });
           }
         }
 
@@ -504,6 +518,29 @@ export default function BeFiSc() {
     }
   };
 
+  const handleBookmark = async () => {
+    try {
+      setIsBookMarkLoading(true);
+      if (isBookmarkedChecked) {
+        await post('/api/mobile/delBookmark', {
+          mobile_number: mobileNo,
+        });
+        return toast.error('Cannot delete now');
+      } else {
+        await post('/api/auth/addBookmark', {
+          bookmarkPage: 1,
+          payload: { mobileNumber: mobileNo },
+        });
+        toast.success('Bookmarked Successfully');
+        setIsBookmarkedChecked((c) => !c);
+      }
+    } catch (error) {
+      toast.error('Something went wrong');
+    } finally {
+      setIsBookMarkLoading(false);
+    }
+  };
+
   const getImageUrl = (): string => {
     if (ghuntMultipleData[0]?.profile?.profilePictureUrl) {
       return ghuntMultipleData[0]?.profile.profilePictureUrl;
@@ -705,6 +742,47 @@ export default function BeFiSc() {
                 }
               });
               setHunterVerifyData(hunterData);
+            } catch (error) {
+              if (error instanceof AxiosError) {
+                toast.error('Hunter verify error', { id: toastRef.current! });
+              }
+            }
+
+            // calling hunterFind
+            let hunterFind: {
+              value: string;
+              type: string;
+              data: HunterFindType | null;
+            }[] = [];
+            otherEmails.push({
+              type: 'Dummy email',
+              email: 'rohan@scaninfoga.in',
+            });
+            try {
+              const results = await Promise.allSettled(
+                otherEmails.map((email) =>
+                  post('/api/mobile/hunterfind', {
+                    email: email?.email,
+                    realtimeData: isRealtime,
+                  }),
+                ),
+              );
+              results.map((result, index) => {
+                if (result?.status === 'fulfilled') {
+                  hunterFind.push({
+                    value: otherEmails[index]?.email,
+                    type: otherEmails[index]?.type,
+                    data: result.value,
+                  });
+                } else {
+                  hunterFind.push({
+                    value: otherEmails[index]?.email,
+                    type: otherEmails[index]?.type,
+                    data: null,
+                  });
+                }
+              });
+              setHunterFindData(hunterFind);
             } catch (error) {
               if (error instanceof AxiosError) {
                 toast.error('Hunter verify error', { id: toastRef.current! });
@@ -1004,10 +1082,17 @@ export default function BeFiSc() {
 
   return (
     <div className="space-y-4">
-      <DashboardTitle
-        title="Scaninfoga Intelligence"
-        subTitle="Get the info you are looking for"
-      />
+      <div className="flex w-full justify-between">
+        <DashboardTitle
+          title="Scaninfoga Intelligence"
+          subTitle="Get the info you are looking for"
+        />
+        {/* <BookmarkButton
+          whenShown={mobile360Data ? true : false}
+          // handleBookmark={handleBookmark}
+        /> */}
+      </div>
+
       <SearchBar2
         searchFilterOptions={searchFilterOptions}
         selectedFilter="mobileNumber"
@@ -1015,6 +1100,7 @@ export default function BeFiSc() {
         defaultFilter="mobileNumber"
         defaultQuery={mobileNumber || ''}
       />
+
       {/* checkbox */}
       <div className="flex w-full items-center justify-center">
         <CustomCheckBox
@@ -1395,6 +1481,7 @@ export default function BeFiSc() {
                     leakHunterData={leakHunterData}
                     data={breachInfo}
                     jobSeekerData={jobSeekerData}
+                    HunterFindData={hunterFindData}
                   />
                 )}
               </TabsContent>

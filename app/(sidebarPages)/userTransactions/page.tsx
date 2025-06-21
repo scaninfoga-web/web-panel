@@ -45,10 +45,6 @@ export default function page() {
 
   return (
     <Suspense fallback={<Loader2 />}>
-      {/* <div>
-        <h1>User Transactions</h1>
-        <TabbedView tabs={tabData} />
-      </div> */}
       <UserTransactions />
     </Suspense>
   );

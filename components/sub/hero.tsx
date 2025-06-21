@@ -277,9 +277,13 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Shield, Lock, Database, Code } from 'lucide-react';
 import { Typewriter } from 'react-simple-typewriter';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/redux/store';
 
 export default function Hero() {
   const [mounted, setMounted] = useState(false);
+  const data = useSelector((state: RootState) => state.info);
+  console.log('LAtitude, lon: ', data);
 
   useEffect(() => {
     setMounted(true);
@@ -498,7 +502,7 @@ export default function Hero() {
               className="relative min-h-[360px] w-full max-w-2xl overflow-hidden border border-emerald-500/20 shadow-2xl shadow-emerald-500/10"
             >
               <video
-                src="/video-home.mp4"
+                src="https://website-stuff-logos.s3.ap-south-1.amazonaws.com/video-home.mp4"
                 autoPlay
                 loop
                 muted

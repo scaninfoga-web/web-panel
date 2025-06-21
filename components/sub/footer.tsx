@@ -10,21 +10,29 @@ import {
   Facebook,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import Image from 'next/image';
 
 export default function Footer() {
   return (
     <footer className="border-t border-green-950">
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-5 gap-8 md:grid-cols-2 lg:grid-cols-4 lg:gap-12">
-          <div className="space-y-4 border-r border-green-950">
-            <Link href="/" className="flex items-center space-x-2">
-              <Shield className="h-8 w-8 text-emerald-500" />
+          <div className="border-r border-green-950">
+            <Link href="/" className="relative left-0 flex">
+              {/* <Shield className="h-8 w-8 text-emerald-500" />
               <span className="text-xl font-bold tracking-tight">
                 <span className="text-emerald-500">scan</span>infoga
-              </span>
+              </span> */}
+              <Image
+                src="https://website-stuff-logos.s3.ap-south-1.amazonaws.com/4.png"
+                alt="scaninfoga"
+                // className="border object-contain"
+                className="relative -left-5 bottom-7"
+                width={250}
+                height={250}
+              />
             </Link>
-            <p className="text-white/70">
+            <p className="relative bottom-4 pr-2 text-white/70">
               Pioneers in cyber security and digital crime investigation,
               Scaninfoga proudly launches the world’s first OSINT-based tool
               offering real, high-sensitive data for law enforcement and private
