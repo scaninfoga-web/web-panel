@@ -31,7 +31,8 @@ export const formatSentence = (
     return String(value);
   }
   if (typeof value === 'boolean') {
-    return String(value);
+    const word = String(value);
+    return word.charAt(0).toUpperCase() + word.slice(1);
   }
   return value
     ?.toLowerCase()

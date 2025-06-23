@@ -1,4 +1,4 @@
-import { SingleUpiData, UPIType } from '@/types/BeFiSc';
+import { RazorPayUpiType, SingleUpiRes, UPIType } from '@/types/BeFiSc';
 import Image from 'next/image';
 import {
   DashboardCard,
@@ -39,36 +39,20 @@ const upiIcons = new Map<string, string>([
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
   DialogPortal,
   DialogTitle,
 } from '@/components/ui/dialog';
 import { formatDateTime } from './dateFormat';
-import isEqual from 'lodash.isequal';
-import { CustomCombox } from '@/components/sub/CustomComBox';
-import { IconRefresh } from '@tabler/icons-react';
+import { Loader } from '@/components/ui/loader';
 
-interface SingleUpi2AccItem {
-  datetime: string;
-  data: {
-    result: {
-      account_details: {
-        account_ifsc: string;
-        account_number: string;
-        amount_deposited: string;
-      };
-      digital_payment_details: {
-        digital_payment_id: string;
-        account_holder_name: string;
-      };
-    };
-    status: number;
-    message: string;
-    api_name: string;
-    billable: boolean;
-    api_category: string;
-  };
-}
+const mapState: Map<
+  string,
+  {
+    razorPayUpi: RazorPayUpiType | null;
+    Upi2AccData: UPI2AccountType | null;
+  } | null
+> = new Map();
+const nameBank: string[] = [];
 
 export default function UpiDetails({
   UpiData,
@@ -80,99 +64,98 @@ export default function UpiDetails({
   if (!UpiData) {
     return <></>;
   }
-  const [loading, setLoading] = useState<boolean[]>([]);
-  const [upi2AccountData, setUpi2AccountData] = useState<
-    (UPI2AccountType | null)[]
-  >([]);
+
+  const [loading, setLoading] = useState(false);
   const [isViewDetails, setIsViewDetails] = useState(false);
   const [selectedData, setSelectedData] = useState<{
-    UpiDetails: SingleUpiData | null;
+    razorPayUpi: RazorPayUpiType | null;
     Upi2AccData: UPI2AccountType | null;
-    selectedItem: SingleUpi2AccItem | null;
+    selectedUPI: string;
+    selectDateTime: string;
   } | null>(null);
 
   const [refreshLoading, setRefreshLoading] = useState(false);
-
   const handleCloseDetails = () => {
     setIsViewDetails(false);
   };
 
-  useEffect(() => {
-    if (UpiData?.responseData && Object.keys(UpiData.responseData).length > 0) {
-      const length = Object.keys(UpiData.responseData).length;
-      setUpi2AccountData(new Array(length).fill(null));
-      setLoading(new Array(length).fill(false));
-    }
-  }, [UpiData]);
+  const handleFetch = async (UpiData: SingleUpiRes, upiId: string) => {
+    const nameAndBank =
+      UpiData?.data?.result?.bank?.trim().replace(/\s+/g, '').toLowerCase() +
+      UpiData?.data?.result?.name?.trim().replace(/\s+/g, '').toLowerCase();
 
-  const list =
-    selectedData?.Upi2AccData?.responseData?.map((item) => {
-      return {
-        label: formatDateTime(item?.datetime),
-        value: item?.datetime,
-      };
-    }) || [];
+    if (!nameBank.includes(nameAndBank)) {
+      try {
+        const res = await post('/api/mobile/upi-to-account-full-data', {
+          upi_id: upiId,
+          realtimeData: false,
+        });
 
-  const handleViewDetails = async (upiId: string, index: number) => {
-    try {
-      const data = upi2AccountData[index];
-      if (data) {
-        const isEqualData = isEqual(selectedData?.Upi2AccData, data);
-        if (!isEqualData) {
-          setSelectedData({
-            UpiDetails: { upiId: UpiData?.responseData?.[upiId] },
-            Upi2AccData: data,
-            selectedItem: data?.responseData?.[data?.responseData?.length - 1],
-          });
-          setIsViewDetails(true);
-          return true;
-        } else {
-          setIsViewDetails(true);
-          return;
-        }
+        const ifsc =
+          res?.responseData?.at(-1)?.data?.result?.account_details
+            ?.account_ifsc;
+
+        const razorPayRes = await post('/api/secondary/ifsc-data', {
+          ifsc_code: ifsc,
+          realtimeData: false,
+        });
+
+        nameBank.push(nameAndBank);
+        mapState.set(nameAndBank, {
+          Upi2AccData: res,
+          razorPayUpi: razorPayRes,
+        });
+      } catch (error) {
+        toast.error('Upi fetch error');
+        setIsViewDetails(false);
       }
-      setLoading((prev) => {
-        const updated = [...prev];
-        updated[index] = true;
-        return updated;
-      });
-      const res = await post('/api/mobile/upi-to-account-full-data', {
-        upi_id: upiId,
-        realtimeData: false,
-      });
+    }
+  };
 
-      setUpi2AccountData((prev) => {
-        const updated = [...prev];
-        updated[index] = res;
-        return updated;
-      });
-      setSelectedData({
-        UpiDetails: { upiId: UpiData?.responseData?.[upiId] },
-        Upi2AccData: res,
-        selectedItem: res?.responseData?.[res?.responseData?.length - 1],
-      });
+  // const list =
+  //   selectedData?.Upi2AccData?.responseData?.map((item) => {
+  //     return {
+  //       label: formatDateTime(item?.datetime),
+  //       value: item?.datetime,
+  //     };
+  //   }) || [];
+
+  const handleViewDetails = async (upiId: string, data: SingleUpiRes) => {
+    try {
+      setLoading(true);
       setIsViewDetails(true);
+      await handleFetch(data, upiId);
+      const nameAndBank =
+        data.data?.result?.bank?.trim().replace(/\s+/g, '').toLowerCase() +
+        data?.data?.result?.name?.trim().replace(/\s+/g, '').toLowerCase();
+      const getData = mapState?.get(nameAndBank);
+      if (getData) {
+        const upi2dataLength = getData?.Upi2AccData?.responseData?.length || 1;
+        setSelectedData({
+          Upi2AccData: getData.Upi2AccData,
+          razorPayUpi: getData.razorPayUpi,
+          selectedUPI: upiId,
+          selectDateTime:
+            getData?.Upi2AccData?.responseData?.[upi2dataLength - 1]
+              ?.datetime || '',
+        });
+      }
     } catch (error) {
-      toast.error('Upi fetch error');
     } finally {
-      setLoading((prev) => [
-        ...prev.slice(0, index),
-        false,
-        ...prev.slice(index + 1),
-      ]);
+      setLoading(false);
     }
   };
 
   const handleSelect = async (date: string) => {
-    const data = selectedData?.Upi2AccData?.responseData?.find(
-      (item) => item?.datetime === date,
-    );
-    if (data && selectedData) {
-      setSelectedData({
-        ...selectedData,
-        selectedItem: data,
-      });
-    }
+    // const data = selectedData?.Upi2AccData?.responseData?.find(
+    //   (item) => item?.datetime === date,
+    // );
+    // if (data && selectedData) {
+    //   setSelectedData({
+    //     ...selectedData,
+    //     selectedItem: data,
+    //   });
+    // }
   };
 
   const handleRefresh = async (upiId: string, index: number) => {
@@ -184,18 +167,8 @@ export default function UpiDetails({
       });
       await new Promise((resolve) => setTimeout(resolve, 7000));
       const res = await post('/api/mobile/upi-to-account-full-data', {
-        upi_id: upiId,
+        ifsc_code: selectedData?.razorPayUpi?.responseData?.data?.IFSC,
         realtimeData: false,
-      });
-      setUpi2AccountData((prev) => {
-        const updated = [...prev];
-        updated[index] = res;
-        return updated;
-      });
-      setSelectedData({
-        UpiDetails: { upiId: UpiData?.responseData?.[upiId] },
-        Upi2AccData: res,
-        selectedItem: res?.responseData?.[res?.responseData?.length - 1],
       });
     } catch (error) {
       toast.error('Upi fetch error');
@@ -205,15 +178,31 @@ export default function UpiDetails({
   };
 
   return (
-    <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+    <div className="relative grid grid-cols-1 gap-2 sm:grid-cols-3">
       {Object.entries(UpiData.responseData).map(([upiId, data], index) => {
         if (!data.success) {
           return null;
         }
 
         return (
-          <>
+          <div key={data.data.txn_id}>
+            <div className="group absolute right-0 flex items-center justify-center space-x-2">
+              {/* <CustomCombox
+                      selected={selectedData?.selectDateTime}
+                      onSelect={handleSelect}
+                      list={list}
+                      isDate={true}
+                    />
+                    <button
+                      onClick={() => handleRefresh(upiId, index)}
+                      className="group flex items-center space-x-1 font-medium text-blue-500 transition-opacity duration-300 hover:cursor-pointer hover:opacity-50"
+                    >
+                      <IconRefresh className="h-5 w-5" />
+                      <span className="text-sm">Refresh</span>
+                    </button> */}
+            </div>
             <DashboardCard
+              className=""
               notifytitle={
                 data?.data?.result?.name
                   .trim()
@@ -233,7 +222,6 @@ export default function UpiDetails({
               }
               titleBig={false}
               title={`${upiId}-${'  '}${data.platform}`}
-              key={data.data.txn_id}
             >
               <div>
                 {Object.entries(data?.data?.result).map(
@@ -261,9 +249,8 @@ export default function UpiDetails({
                 )}
               </div>
               <Button
-                loading={loading[index]}
                 onClick={() => {
-                  handleViewDetails(upiId || '', index);
+                  handleViewDetails(upiId, data);
                 }}
                 className="mt-4 px-4 py-1"
                 variant={'default'}
@@ -280,178 +267,214 @@ export default function UpiDetails({
                 >
                   <DialogPortal>
                     <DialogContent className="min-[400px] flex min-w-[800px] flex-col rounded-lg border-slate-800 bg-slate-950 p-10 text-white shadow-2xl shadow-slate-800 backdrop-blur-3xl">
-                      <DialogTitle className="flex items-center justify-between space-x-44 font-bold text-emerald-500">
-                        <span className="text-2xl">
-                          {
-                            selectedData?.selectedItem?.data?.result
-                              ?.digital_payment_details?.digital_payment_id
-                          }
-                        </span>
-                        <div className="group flex items-center justify-center space-x-2">
-                          <CustomCombox
-                            selected={selectedData?.selectedItem?.datetime}
-                            onSelect={handleSelect}
-                            list={list}
-                            isDate={true}
-                          />
-                          <button
-                            onClick={() => handleRefresh(upiId, index)}
-                            className="group flex items-center space-x-1 font-medium text-blue-500 transition-opacity duration-300 hover:cursor-pointer hover:opacity-50"
-                          >
-                            <IconRefresh className="h-5 w-5" />
-                            <span className="text-sm">Refresh</span>
-                          </button>
-                        </div>
-                      </DialogTitle>
-                      <DialogHeader className="mt-4 space-y-2 rounded-full"></DialogHeader>
-                      <div className="relative flex min-h-full flex-col space-y-10 overflow-hidden">
-                        <div className="flex flex-col text-lg">
-                          <div className="space-x-1 font-semibold">
-                            <span className="text-white/70">
-                              Account Holder Name :
+                      {loading ? (
+                        <DialogTitle className="">
+                          <Loader className="max-h-[400px]" />
+                        </DialogTitle>
+                      ) : (
+                        <>
+                          <DialogTitle className="flex items-center justify-between space-x-44 font-bold text-emerald-500">
+                            <span className="text-2xl">
+                              {selectedData?.selectedUPI}
                             </span>
-                            <span>
-                              {formatSentence(
-                                selectedData?.selectedItem?.data?.result
-                                  ?.digital_payment_details
-                                  ?.account_holder_name,
-                              )}
-                            </span>
-                          </div>
-                          <div className="space-x-1 font-semibold">
-                            <span className="text-white/70">
-                              Account Number :
-                            </span>
-                            <span>
-                              {
-                                selectedData?.selectedItem?.data?.result
-                                  ?.account_details?.account_number
-                              }
-                            </span>
-                          </div>
-                          <div className="space-x-1 font-semibold">
-                            <span className="text-white/70">
-                              Account IFSC :
-                            </span>
-                            <span>
-                              {
-                                selectedData?.selectedItem?.data?.result
-                                  ?.account_details?.account_ifsc
-                              }
-                            </span>
-                          </div>
-                        </div>
-
-                        <div className="flex justify-between space-x-4">
-                          <div className="flex flex-col space-y-2">
-                            <div className="space-x-1 font-semibold">
-                              <span className="text-white/70">Bank Name :</span>
-                              <span>
-                                {formatSentence(
-                                  selectedData?.UpiDetails?.upiId?.data?.result
-                                    ?.bank,
-                                )}
-                              </span>
+                          </DialogTitle>
+                          <div className="relative flex min-h-full flex-col space-y-10 overflow-hidden">
+                            <div className="flex flex-col text-lg">
+                              <div className="space-x-1 font-semibold">
+                                <span className="text-white/70">
+                                  Account Holder Name :
+                                </span>
+                                <span>
+                                  {formatSentence(
+                                    selectedData?.Upi2AccData?.responseData?.at(
+                                      -1,
+                                    )?.data?.result?.digital_payment_details
+                                      ?.account_holder_name,
+                                  )}
+                                </span>
+                              </div>
+                              <div className="space-x-1 font-semibold">
+                                <span className="text-white/70">
+                                  Account Number :
+                                </span>
+                                <span>
+                                  {formatSentence(
+                                    selectedData?.Upi2AccData?.responseData?.at(
+                                      -1,
+                                    )?.data?.result?.account_details
+                                      ?.account_number,
+                                  )}
+                                </span>
+                              </div>
+                              <div className="space-x-1 font-semibold">
+                                <span className="text-white/70">
+                                  Account IFSC :
+                                </span>
+                                <span>
+                                  {
+                                    selectedData?.Upi2AccData?.responseData?.at(
+                                      -1,
+                                    )?.data?.result?.account_details
+                                      ?.account_ifsc
+                                  }
+                                </span>
+                              </div>
                             </div>
 
-                            <div className="space-x-1 font-semibold">
-                              <span className="text-white/70">Branch :</span>
-                              <span>
-                                {formatSentence(
-                                  selectedData?.UpiDetails?.upiId?.data?.result
-                                    ?.branch,
-                                )}
-                              </span>
-                            </div>
-                            <div className="space-x-1 font-semibold">
-                              <span className="text-white/70">Address :</span>
-                              <span className="">
-                                {formatSentence(
-                                  selectedData?.UpiDetails?.upiId?.data?.result
-                                    ?.address,
-                                )}
-                              </span>
-                            </div>
-                            <div className="space-x-1 font-semibold">
-                              <span className="text-white/70">State :</span>
-                              <span>
-                                {formatSentence(
-                                  selectedData?.UpiDetails?.upiId?.data?.result
-                                    ?.state,
-                                )}
-                              </span>
-                            </div>
-                            <div className="space-x-1 font-semibold">
-                              <span className="text-white/70">District :</span>
-                              <span>
-                                {formatSentence(
-                                  selectedData?.UpiDetails?.upiId?.data?.result
-                                    ?.district,
-                                )}
-                              </span>
-                            </div>
-                            <div className="space-x-1 font-semibold">
-                              <span className="text-white/70">City :</span>
-                              <span>
-                                {formatSentence(
-                                  selectedData?.UpiDetails?.upiId?.data?.result
-                                    ?.city,
-                                )}
-                              </span>
-                            </div>
-                            <div className="space-x-1 font-semibold">
-                              <span className="text-white/70">Center :</span>
-                              <span>
-                                {formatSentence(
-                                  selectedData?.UpiDetails?.upiId?.data?.result
-                                    ?.center,
-                                )}
-                              </span>
-                            </div>
-                            <div className="space-x-1 font-semibold">
-                              <span className="text-white/70">Contact :</span>
-                              <span>
-                                {formatSentence(
-                                  selectedData?.UpiDetails?.upiId?.data?.result
-                                    ?.contact,
-                                )}
-                              </span>
+                            <div className="flex justify-between space-x-4">
+                              <div className="flex flex-col space-y-2">
+                                <div className="space-x-1 font-semibold">
+                                  <span className="text-white/70">
+                                    Bank Name :
+                                  </span>
+                                  <span>
+                                    {formatSentence(
+                                      selectedData?.razorPayUpi?.responseData
+                                        ?.data?.BANK,
+                                    )}
+                                  </span>
+                                </div>
+
+                                <div className="space-x-1 font-semibold">
+                                  <span className="text-white/70">
+                                    Branch :
+                                  </span>
+                                  <span>
+                                    {formatSentence(
+                                      selectedData?.razorPayUpi?.responseData
+                                        ?.data?.BRANCH,
+                                    )}
+                                  </span>
+                                </div>
+                                <div className="space-x-1 font-semibold">
+                                  <span className="text-white/70">
+                                    Address :
+                                  </span>
+                                  <span className="">
+                                    {formatSentence(
+                                      selectedData?.razorPayUpi?.responseData
+                                        ?.data?.ADDRESS,
+                                    )}
+                                  </span>
+                                </div>
+                                <div className="space-x-1 font-semibold">
+                                  <span className="text-white/70">State :</span>
+                                  <span>
+                                    {formatSentence(
+                                      selectedData?.razorPayUpi?.responseData
+                                        ?.data?.STATE,
+                                    )}
+                                  </span>
+                                </div>
+                                <div className="space-x-1 font-semibold">
+                                  <span className="text-white/70">
+                                    District :
+                                  </span>
+                                  <span>
+                                    {formatSentence(
+                                      selectedData?.razorPayUpi?.responseData
+                                        ?.data?.DISTRICT,
+                                    )}
+                                  </span>
+                                </div>
+                                <div className="space-x-1 font-semibold">
+                                  <span className="text-white/70">City :</span>
+                                  <span>
+                                    {formatSentence(
+                                      selectedData?.razorPayUpi?.responseData
+                                        ?.data?.CITY,
+                                    )}
+                                  </span>
+                                </div>
+                                <div className="space-x-1 font-semibold">
+                                  <span className="text-white/70">
+                                    Center :
+                                  </span>
+                                  <span>
+                                    {formatSentence(
+                                      selectedData?.razorPayUpi?.responseData
+                                        ?.data?.CENTRE,
+                                    )}
+                                  </span>
+                                </div>
+                                <div className="space-x-1 font-semibold">
+                                  <span className="text-white/70">
+                                    Contact :
+                                  </span>
+                                  <span>
+                                    {formatSentence(
+                                      selectedData?.razorPayUpi?.responseData
+                                        ?.data?.CONTACT,
+                                    )}
+                                  </span>
+                                </div>
+                              </div>
+                              <div className="min-w-60">
+                                <div className="space-x-1 font-semibold">
+                                  <span className="text-white/70">
+                                    ISCO3166 :
+                                  </span>
+                                  <span>
+                                    {selectedData?.razorPayUpi?.responseData?.data?.ISO3166?.toUpperCase() ||
+                                      '----'}
+                                  </span>
+                                </div>
+                                <div className="space-x-1 font-semibold">
+                                  <span className="text-white/70">MICR :</span>
+                                  <span>
+                                    {formatSentence(
+                                      selectedData?.razorPayUpi?.responseData
+                                        ?.data?.MICR,
+                                    )}
+                                  </span>
+                                </div>
+                                <div className="space-x-1 font-semibold">
+                                  <span className="text-white/70">NEFT :</span>
+                                  <span>
+                                    {formatSentence(
+                                      selectedData?.razorPayUpi?.responseData
+                                        ?.data?.NEFT,
+                                    )}
+                                  </span>
+                                </div>
+                                <div className="space-x-1 font-semibold">
+                                  <span className="text-white/70">IMPS :</span>
+                                  <span>
+                                    {formatSentence(
+                                      selectedData?.razorPayUpi?.responseData
+                                        ?.data?.IMPS,
+                                    )}
+                                  </span>
+                                </div>
+                                <div className="space-x-1 font-semibold">
+                                  <span className="text-white/70">SWIFT :</span>
+                                  <span>
+                                    {formatSentence(
+                                      selectedData?.razorPayUpi?.responseData
+                                        ?.data?.SWIFT,
+                                    )}
+                                  </span>
+                                </div>
+                                <div className="space-x-1 font-semibold">
+                                  <span className="text-white/70">UPI :</span>
+                                  <span>
+                                    {formatSentence(
+                                      selectedData?.razorPayUpi?.responseData
+                                        ?.data?.UPI,
+                                    )}
+                                  </span>
+                                </div>
+                              </div>
                             </div>
                           </div>
-                          <div className="min-w-60">
-                            <div className="space-x-1 font-semibold">
-                              <span className="text-white/70">ISCO3166 :</span>
-                              <span>"IN-OR"</span>
-                            </div>
-                            <div className="space-x-1 font-semibold">
-                              <span className="text-white/70">MICR :</span>
-                              <span>"IN-OR"</span>
-                            </div>
-                            <div className="space-x-1 font-semibold">
-                              <span className="text-white/70">NEFT :</span>
-                              <span className="text-yellow-500">True</span>
-                            </div>
-                            <div className="space-x-1 font-semibold">
-                              <span className="text-white/70">IMPS :</span>
-                              <span className="text-yellow-500">True</span>
-                            </div>
-                            <div className="space-x-1 font-semibold">
-                              <span className="text-white/70">SWIFT :</span>
-                              <span className="text-yellow-500">True</span>
-                            </div>
-                            <div className="space-x-1 font-semibold">
-                              <span className="text-white/70">UPI :</span>
-                              <span className="text-yellow-500">True</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+                        </>
+                      )}
                     </DialogContent>
                   </DialogPortal>
                 </Dialog>
               </div>
             )}
-          </>
+          </div>
         );
       })}
     </div>
