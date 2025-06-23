@@ -6,8 +6,8 @@ import { Suspense } from 'react';
 export default function Page() {
   return (
     <Suspense fallback={<Loader />}>
-      {/* <BeFiSc /> */}
-      <NotFound value="We are working on this tool" />
+      <BeFiSc />
+      {/* <NotFound value="We are working on this tool" /> */}
     </Suspense>
   );
 }

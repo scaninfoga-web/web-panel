@@ -8,7 +8,7 @@ import { AppDispatch, RootState } from '@/redux/store';
 import { logout } from '@/redux/userSlice';
 import { fetchWalletBalance } from '@/redux/walletSlice';
 import { getCookie } from 'cookies-next';
-import { Menu, Shield, ShoppingCart, User, X } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -35,7 +35,6 @@ export default function Navbar() {
 
   const wallet = useSelector((state: RootState) => state.wallet);
   const token = useSelector((state: RootState) => state.user.token);
-  console.log('Wallet: ', wallet);
 
   const paths = [
     '/',
