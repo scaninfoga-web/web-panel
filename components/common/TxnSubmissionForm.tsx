@@ -69,6 +69,7 @@ import { Button } from '@/components/ui/button'; // fix import if incorrect
 import { post } from '@/lib/api';
 import { toast } from 'sonner';
 import { useState } from 'react';
+import { AxiosError } from 'axios';
 
 const txnFormSchema = z.object({
   txn_id: z.string().nonempty('Transaction ID is required'),
@@ -119,7 +120,12 @@ const TxnSubmissionForm: React.FC<FormProviderProps> = ({
       if (onClose) onClose();
     } catch (e) {
       console.log('ERROR ejhge: ', e);
-      toast.error('Error submitting transaction.');
+      if (e instanceof AxiosError) {
+        toast.error(
+          e?.response?.data?.responseStatus?.message ||
+            'Unable to post transaction',
+        );
+      }
     } finally {
       setLoading(false);
     }

@@ -8,6 +8,8 @@ import Hero from '@/components/sub/hero';
 import SecurityAnimation from '@/components/sub/security-animation';
 import Services from '@/components/sub/services';
 import Testimonials from '@/components/sub/testimonials';
+import { RootState } from '@/redux/store';
+import { useSelector } from 'react-redux';
 
 export default async function Home() {
   return (

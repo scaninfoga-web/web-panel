@@ -109,7 +109,7 @@ const Login = () => {
     try {
       setLoading(true);
       const response = await post(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/login`,
+        `/api/auth/login`,
         {
           ...data,
           type: data.userType,

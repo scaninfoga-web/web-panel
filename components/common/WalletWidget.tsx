@@ -11,6 +11,7 @@ import PaymentModal from './PaymentModal';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
 import { formatDate } from '@/lib/utils';
+import { toast } from 'sonner';
 
 interface WalletWidgetProps {
   credits: number;
@@ -22,6 +23,8 @@ export const WalletWidget = ({ credits, onTopUp }: WalletWidgetProps) => {
   const [paymentModalOpen, setPaymentModalOpen] = useState(false);
   const wallet = useSelector((state: RootState) => state.wallet);
 
+  const { isPendingTxn } = useSelector((state: RootState) => state.wallet);
+
   // Mock transaction data - in a real app this would come from your backend
   const lastTransaction = {
     date: wallet?.lastSuccessTxnDate
@@ -32,6 +35,12 @@ export const WalletWidget = ({ credits, onTopUp }: WalletWidgetProps) => {
   };
 
   const handleBtnClick = () => {
+    if (isPendingTxn) {
+      toast.error(
+        'Cannot initiate a transaction when a transaciton is in pending state',
+      );
+      return;
+    }
     setIsOpen(false);
     setPaymentModalOpen(true);
   };

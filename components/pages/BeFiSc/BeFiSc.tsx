@@ -55,6 +55,8 @@ import { JobSeekerType, LeakHunterType } from '@/types/LeakHunter';
 import { Bookmark, BookmarkCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import BookmarkButton from '@/components/BookmarkButton';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/redux/store';
 
 export function isValidIndianMobileNumber(input: string): {
   result: boolean;
@@ -518,6 +520,9 @@ export default function BeFiSc() {
     }
   };
 
+  const { latitude, longitude } = useSelector((state: RootState) => state.info);
+  console.log('LAtitude, lon: ', latitude, longitude);
+
   const handleBookmark = async () => {
     try {
       setIsBookMarkLoading(true);
@@ -530,6 +535,8 @@ export default function BeFiSc() {
         await post('/api/auth/addBookmark', {
           bookmarkPage: 1,
           payload: { mobileNumber: mobileNo },
+          latitude: latitude,
+          longitude: longitude,
         });
         toast.success('Bookmarked Successfully');
         setIsBookmarkedChecked((c) => !c);
