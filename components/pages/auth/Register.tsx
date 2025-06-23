@@ -1150,8 +1150,8 @@ export function Register({ type: initialType }: RegisterProps) {
 
       // setCurrentStep("otp")
 
-      toast.error('Registeration is Off Now');
-      return;
+      // toast.error('Registeration is Off Now');
+      // return;
       const data = await post(endpoint, payload);
 
       if (data.responseStatus.status) {
