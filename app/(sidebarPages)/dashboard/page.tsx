@@ -47,6 +47,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { CustomProgress } from '@/components/ui/custom-progress';
 import { SearchBar2 } from '@/components/search/SearchBar2';
+import NotFound from '@/components/sub/NotFound';
 
 // Add these interfaces before the Dashboard component
 interface CardItem {
@@ -95,6 +96,8 @@ export default function Dashboard() {
     // Implement your search logic here based on searchFilter
     // console.log(`Searching for ${query} in ${searchFilter}`);
   };
+
+  return <NotFound value="We will get back to you soon" />;
 
   if (isLoading) {
     return (

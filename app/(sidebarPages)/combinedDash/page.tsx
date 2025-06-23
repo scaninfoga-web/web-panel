@@ -1,11 +1,13 @@
 import CombinedDash from '@/components/pages/combinedDash/CombinedDash';
+import NotFound from '@/components/sub/NotFound';
 import { Loader } from '@/components/ui/loader';
 import { Suspense } from 'react';
 
 export default function Page() {
   return (
     <Suspense fallback={<Loader />}>
-      <CombinedDash />
+      {/* <CombinedDash /> */}
+      <NotFound value="We will get back to you soon" />
     </Suspense>
   );
 }

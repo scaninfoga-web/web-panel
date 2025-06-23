@@ -1,3 +1,5 @@
+import { StringValidation } from 'zod';
+
 export interface Mobile360Type {
   txn_id: string;
   api_category: 'Fraud Check';
@@ -186,31 +188,60 @@ export interface Mobile360Type {
   };
 }
 
-export interface SingleUpiData {
-  [upiId: string]: {
-    success: boolean;
-    upi_handle: string;
-    platform: 'PhonePe';
+export interface RazorPayUpiType {
+  responseStatus: {
+    status: boolean;
+    message: string;
+  };
+  responseData: {
+    count: number;
+    datetime_list: string[];
+    datetime: string;
     data: {
-      txn_id: string;
-      api_category: string;
-      api_name: string;
-      billable: boolean;
-      message: string;
-      status: number;
-      result: {
-        name: string;
-        bank: string;
-        branch: string;
-        center: string;
-        district: string;
-        state: string;
-        address: string;
-        contact: string;
-        city: string;
-      };
-      datetime: '2025-05-24 05:40:33.141852';
+      UPI: boolean;
+      BANK: string;
+      CITY: string;
+      IFSC: string;
+      IMPS: boolean;
+      MICR: string;
+      NEFT: boolean;
+      RTGS: boolean;
+      STATE: string;
+      SWIFT: string | null;
+      BRANCH: string;
+      CENTRE: string;
+      ADDRESS: string;
+      CONTACT: string;
+      ISO3166: string;
+      BANKCODE: string;
+      DISTRICT: string;
     };
+  };
+}
+
+export interface SingleUpiRes {
+  success: boolean;
+  upi_handle: string;
+  platform: string;
+  data: {
+    txn_id: string;
+    api_category: string;
+    api_name: string;
+    billable: boolean;
+    message: string;
+    status: number;
+    result: {
+      name: string;
+      bank: string;
+      branch: string;
+      center: string;
+      district: string;
+      state: string;
+      address: string;
+      contact: string;
+      city: string;
+    };
+    datetime: string;
   };
 }
 
@@ -223,7 +254,7 @@ export interface UPIType {
     [upiId: string]: {
       success: boolean;
       upi_handle: string;
-      platform: 'PhonePe';
+      platform: string;
       data: {
         txn_id: string;
         api_category: string;
@@ -242,7 +273,7 @@ export interface UPIType {
           contact: string;
           city: string;
         };
-        datetime: '2025-05-24 05:40:33.141852';
+        datetime: string;
       };
     };
   };
