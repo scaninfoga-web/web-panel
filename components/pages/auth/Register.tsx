@@ -1004,7 +1004,7 @@ interface RegisterProps {
 }
 
 export function Register({ type: initialType }: RegisterProps) {
-  const [type, setType] = useState<RegistrationType>(initialType);
+  const [type, setType] = useState<RegistrationType>('agent');
   const [currentStep, setCurrentStep] = useState<RegistrationStep>('details');
   const [qrCode, setQrCode] = useState<string | null>(null);
   const [timeLeft, setTimeLeft] = useState(600); // 10 minutes in seconds
