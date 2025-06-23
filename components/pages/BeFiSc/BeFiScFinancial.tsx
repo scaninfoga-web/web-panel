@@ -581,7 +581,7 @@ export default function BeFiScFinancial({
             <BeFiScLoadingSkeleton />
           ) : Object.keys(upiDetailsData?.responseData || {}).length > 0 ? (
             <div className="flex flex-col space-y-4">
-              <UpiDetails realName={realName} UpiData={upiDetailsData} />
+              {/* <UpiDetails realName={realName} UpiData={upiDetailsData} /> */}
             </div>
           ) : (
             <NotFound value="Upi Details Not Found" />
