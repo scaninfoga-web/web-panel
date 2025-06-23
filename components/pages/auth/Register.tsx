@@ -996,7 +996,7 @@ const otpSchema = z.object({
   otp: z.string().min(6, 'OTP must be 6 digits').max(6, 'OTP must be 6 digits'),
 });
 
-type RegistrationType = 'normal' | 'corporate' | 'developer';
+type RegistrationType = 'agent' | 'corporate' | 'developer';
 type RegistrationStep = 'details' | 'otp' | 'qr';
 
 interface RegisterProps {
@@ -1004,7 +1004,7 @@ interface RegisterProps {
 }
 
 export function Register({ type: initialType }: RegisterProps) {
-  const [type, setType] = useState<RegistrationType>(initialType);
+  const [type, setType] = useState<RegistrationType>('agent');
   const [currentStep, setCurrentStep] = useState<RegistrationStep>('details');
   const [qrCode, setQrCode] = useState<string | null>(null);
   const [timeLeft, setTimeLeft] = useState(600); // 10 minutes in seconds
@@ -1130,7 +1130,7 @@ export function Register({ type: initialType }: RegisterProps) {
     setIsSubmitting(true);
     try {
       const endpoint =
-        type === 'normal'
+        type === 'agent'
           ? '/api/auth/register'
           : type === 'corporate'
             ? '/api/auth/register-corporate'
@@ -1150,8 +1150,13 @@ export function Register({ type: initialType }: RegisterProps) {
 
       // setCurrentStep("otp")
 
-      toast.error('Registeration is Off Now');
-      return;
+      // toast.error('Registeration is Off Now');
+      // return;
+
+      if (type !== 'agent') {
+        toast.error(type + ' registeration are OFF');
+        return;
+      }
       const data = await post(endpoint, payload);
 
       if (data.responseStatus.status) {
@@ -1172,7 +1177,7 @@ export function Register({ type: initialType }: RegisterProps) {
   // Handle OTP verification
   const onSubmitOTP = async (formData: { otp: string }) => {
     setIsSubmitting(true);
-    console.log('USER EAIL: ', userEmail);
+
     const payload = {
       email: userEmail,
       otp: formData.otp,
@@ -1466,11 +1471,11 @@ export function Register({ type: initialType }: RegisterProps) {
             <button
               type="button"
               className={`flex-1 rounded-md px-4 py-2 transition-colors ${
-                type === 'normal'
+                type === 'agent'
                   ? 'bg-emerald-500 text-black'
                   : 'text-white hover:bg-emerald-500/20'
               }`}
-              onClick={() => setType('normal')}
+              onClick={() => setType('agent')}
             >
               Agent
             </button>

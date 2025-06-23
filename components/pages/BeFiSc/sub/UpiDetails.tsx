@@ -7,7 +7,7 @@ import {
 import { formatSentence } from './APIUtils';
 import { formatKey } from './CustomBeFiScCard';
 import { Button } from '@/components/ui/button';
-import { post } from '@/lib/api';
+import { getClientInfo, post } from '@/lib/api';
 import { toast } from 'sonner';
 import { useEffect, useState } from 'react';
 import { UPI2AccountType } from '@/types/Upi2Acc';
@@ -35,6 +35,7 @@ const upiIcons = new Map<string, string>([
   ['Zomato', '/upi/zomato.png'],
   ['Jupiter', '/upi/jupiter.svg'],
   ['Bank of Baroda', '/upi/BankofBaroda.png'],
+  ['Indian Bank', '/upi/Indian_Bank_.png'],
 ]);
 import {
   Dialog,
@@ -44,12 +45,14 @@ import {
 } from '@/components/ui/dialog';
 import { formatDateTime } from './dateFormat';
 import { Loader } from '@/components/ui/loader';
+import { OlaGeoApiType } from '@/types/ola-geo-api';
 
 const mapState: Map<
   string,
   {
     razorPayUpi: RazorPayUpiType | null;
     Upi2AccData: UPI2AccountType | null;
+    mapData: OlaGeoApiType | null;
   } | null
 > = new Map();
 const nameBank: string[] = [];
@@ -70,6 +73,8 @@ export default function UpiDetails({
   const [selectedData, setSelectedData] = useState<{
     razorPayUpi: RazorPayUpiType | null;
     Upi2AccData: UPI2AccountType | null;
+    mapData: OlaGeoApiType | null;
+    upiData: SingleUpiRes | null;
     selectedUPI: string;
     selectDateTime: string;
   } | null>(null);
@@ -99,12 +104,32 @@ export default function UpiDetails({
           ifsc_code: ifsc,
           realtimeData: false,
         });
-
-        nameBank.push(nameAndBank);
-        mapState.set(nameAndBank, {
-          Upi2AccData: res,
-          razorPayUpi: razorPayRes,
-        });
+        try {
+          const clientInfo = getClientInfo();
+          const bankAddress =
+            razorPayRes?.responseData?.data?.ADDRESS ||
+            UpiData?.data?.result?.address;
+          // call for map details
+          const mapRes = await post('/api/auth/getmap', {
+            userLng: clientInfo?.longitude,
+            userLat: clientInfo?.latitude,
+            address: bankAddress,
+          });
+          nameBank.push(nameAndBank);
+          mapState.set(nameAndBank, {
+            Upi2AccData: res,
+            razorPayUpi: razorPayRes,
+            mapData: mapRes,
+          });
+        } catch (error) {
+          toast.error('Map fetch error');
+          nameBank.push(nameAndBank);
+          mapState.set(nameAndBank, {
+            Upi2AccData: res,
+            razorPayUpi: razorPayRes,
+            mapData: null,
+          });
+        }
       } catch (error) {
         toast.error('Upi fetch error');
         setIsViewDetails(false);
@@ -134,7 +159,9 @@ export default function UpiDetails({
         setSelectedData({
           Upi2AccData: getData.Upi2AccData,
           razorPayUpi: getData.razorPayUpi,
+          mapData: getData.mapData,
           selectedUPI: upiId,
+          upiData: data,
           selectDateTime:
             getData?.Upi2AccData?.responseData?.[upi2dataLength - 1]
               ?.datetime || '',
@@ -330,7 +357,9 @@ export default function UpiDetails({
                                   <span>
                                     {formatSentence(
                                       selectedData?.razorPayUpi?.responseData
-                                        ?.data?.BANK,
+                                        ?.data?.BANK ||
+                                        selectedData?.upiData?.data?.result
+                                          ?.bank,
                                     )}
                                   </span>
                                 </div>
@@ -342,27 +371,21 @@ export default function UpiDetails({
                                   <span>
                                     {formatSentence(
                                       selectedData?.razorPayUpi?.responseData
-                                        ?.data?.BRANCH,
+                                        ?.data?.BRANCH ||
+                                        selectedData?.upiData?.data?.result
+                                          ?.branch,
                                     )}
                                   </span>
                                 </div>
-                                <div className="space-x-1 font-semibold">
-                                  <span className="text-white/70">
-                                    Address :
-                                  </span>
-                                  <span className="">
-                                    {formatSentence(
-                                      selectedData?.razorPayUpi?.responseData
-                                        ?.data?.ADDRESS,
-                                    )}
-                                  </span>
-                                </div>
+
                                 <div className="space-x-1 font-semibold">
                                   <span className="text-white/70">State :</span>
                                   <span>
                                     {formatSentence(
                                       selectedData?.razorPayUpi?.responseData
-                                        ?.data?.STATE,
+                                        ?.data?.STATE ||
+                                        selectedData?.upiData?.data?.result
+                                          ?.district,
                                     )}
                                   </span>
                                 </div>
@@ -373,7 +396,9 @@ export default function UpiDetails({
                                   <span>
                                     {formatSentence(
                                       selectedData?.razorPayUpi?.responseData
-                                        ?.data?.DISTRICT,
+                                        ?.data?.DISTRICT ||
+                                        selectedData?.upiData?.data?.result
+                                          ?.district,
                                     )}
                                   </span>
                                 </div>
@@ -382,7 +407,9 @@ export default function UpiDetails({
                                   <span>
                                     {formatSentence(
                                       selectedData?.razorPayUpi?.responseData
-                                        ?.data?.CITY,
+                                        ?.data?.CITY ||
+                                        selectedData?.upiData?.data?.result
+                                          ?.city,
                                     )}
                                   </span>
                                 </div>
@@ -393,7 +420,9 @@ export default function UpiDetails({
                                   <span>
                                     {formatSentence(
                                       selectedData?.razorPayUpi?.responseData
-                                        ?.data?.CENTRE,
+                                        ?.data?.CENTRE ||
+                                        selectedData?.upiData?.data?.result
+                                          ?.center,
                                     )}
                                   </span>
                                 </div>
@@ -404,7 +433,9 @@ export default function UpiDetails({
                                   <span>
                                     {formatSentence(
                                       selectedData?.razorPayUpi?.responseData
-                                        ?.data?.CONTACT,
+                                        ?.data?.CONTACT ||
+                                        selectedData?.upiData?.data?.result
+                                          ?.contact,
                                     )}
                                   </span>
                                 </div>
@@ -414,14 +445,14 @@ export default function UpiDetails({
                                   <span className="text-white/70">
                                     ISCO3166 :
                                   </span>
-                                  <span>
+                                  <span className="text-yellow-500">
                                     {selectedData?.razorPayUpi?.responseData?.data?.ISO3166?.toUpperCase() ||
                                       '----'}
                                   </span>
                                 </div>
                                 <div className="space-x-1 font-semibold">
                                   <span className="text-white/70">MICR :</span>
-                                  <span>
+                                  <span className="text-yellow-500">
                                     {formatSentence(
                                       selectedData?.razorPayUpi?.responseData
                                         ?.data?.MICR,
@@ -430,7 +461,7 @@ export default function UpiDetails({
                                 </div>
                                 <div className="space-x-1 font-semibold">
                                   <span className="text-white/70">NEFT :</span>
-                                  <span>
+                                  <span className="text-yellow-500">
                                     {formatSentence(
                                       selectedData?.razorPayUpi?.responseData
                                         ?.data?.NEFT,
@@ -439,7 +470,7 @@ export default function UpiDetails({
                                 </div>
                                 <div className="space-x-1 font-semibold">
                                   <span className="text-white/70">IMPS :</span>
-                                  <span>
+                                  <span className="text-yellow-500">
                                     {formatSentence(
                                       selectedData?.razorPayUpi?.responseData
                                         ?.data?.IMPS,
@@ -448,7 +479,7 @@ export default function UpiDetails({
                                 </div>
                                 <div className="space-x-1 font-semibold">
                                   <span className="text-white/70">SWIFT :</span>
-                                  <span>
+                                  <span className="text-yellow-500">
                                     {formatSentence(
                                       selectedData?.razorPayUpi?.responseData
                                         ?.data?.SWIFT,
@@ -457,13 +488,69 @@ export default function UpiDetails({
                                 </div>
                                 <div className="space-x-1 font-semibold">
                                   <span className="text-white/70">UPI :</span>
-                                  <span>
+                                  <span className="text-yellow-500">
                                     {formatSentence(
                                       selectedData?.razorPayUpi?.responseData
                                         ?.data?.UPI,
                                     )}
                                   </span>
                                 </div>
+                              </div>
+                            </div>
+
+                            <div className="flex w-full justify-between gap-4 text-lg font-semibold">
+                              <div className="flex flex-col space-y-6">
+                                <div>
+                                  <p className={'text-xs text-slate-400'}>
+                                    Address
+                                  </p>
+                                  <p className="max-w-[610px] bg-opacity-75 text-base">
+                                    {formatSentence(
+                                      selectedData?.razorPayUpi?.responseData
+                                        ?.data?.ADDRESS ||
+                                        selectedData?.upiData?.data?.result
+                                          ?.address,
+                                    )}
+                                  </p>
+                                </div>
+                                <div className="flex space-x-8">
+                                  <div>
+                                    <p className="text-base text-slate-400">
+                                      Total Duration
+                                    </p>
+
+                                    <p className="text-lg font-medium text-emerald-500">
+                                      {formatSentence(
+                                        selectedData?.mapData?.responseData
+                                          ?.duration?.readable_duration,
+                                      )}
+                                    </p>
+                                  </div>
+                                  <div>
+                                    <p className="text-base text-slate-400">
+                                      Distance Kilometers
+                                    </p>
+                                    <p className="text-lg font-medium text-emerald-500">
+                                      {formatSentence(
+                                        selectedData?.mapData?.responseData
+                                          ?.distance?.distance_kilometers,
+                                      )}
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="">
+                                <Image
+                                  src={
+                                    `data:${selectedData?.mapData?.responseData?.content_type};base64,${selectedData?.mapData?.responseData?.image}` ||
+                                    '/null.png'
+                                  }
+                                  alt="map"
+                                  width={350}
+                                  height={350}
+                                  className="max-h-64 rounded-xl"
+                                  unoptimized={true}
+                                />
                               </div>
                             </div>
                           </div>

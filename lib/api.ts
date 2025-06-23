@@ -2,7 +2,8 @@ import axios, { AxiosRequestConfig, Method } from 'axios';
 import { store } from '@/redux/store';
 
 // Base URL for your API
-const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
+const BASE_URL =
+  process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000/';
 
 // Create axios instance with default config
 const axiosInstance = axios.create({
