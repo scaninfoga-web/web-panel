@@ -21,9 +21,8 @@ interface Props {
     value: string;
     label: string;
   }[];
-  isDate: boolean;
   selected?: string;
-  onSelect?: (data: string) => void;
+  onSelect?: (data: string) => void | Promise<void>;
 }
 
 export function CustomCombox({ list, onSelect, selected }: Props) {
@@ -41,16 +40,16 @@ export function CustomCombox({ list, onSelect, selected }: Props) {
         >
           {value
             ? list.find((item) => item.value === value)?.label
-            : 'Select Data...'}
+            : 'Select ...'}
           <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="gr w-[200px] border-2 border-slate-800 p-0">
+      <PopoverContent className="gr w-[300px] border-2 border-slate-800 p-0">
         <Command className="">
-          <CommandInput className="" placeholder="Search date..." />
+          <CommandInput className="" placeholder="Search ..." />
           <CommandList>
             <CommandEmpty>No Previous Data.</CommandEmpty>
-            <CommandGroup className="bg-slate-900 backdrop-blur-xl">
+            <CommandGroup className="bg-slate-900">
               {list.map((item) => (
                 <CommandItem
                   key={item.value}

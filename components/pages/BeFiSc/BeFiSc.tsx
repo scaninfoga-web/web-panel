@@ -57,6 +57,8 @@ import { Button } from '@/components/ui/button';
 import BookmarkButton from '@/components/BookmarkButton';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
+import BookmarkWidget from './sub/BookmarkWidget';
+import { BookMarkOptionScaninFogaIntelligence } from './sub/BookmarkBeFiSc';
 
 export function isValidIndianMobileNumber(input: string): {
   result: boolean;
@@ -176,8 +178,6 @@ export default function BeFiSc() {
     }[]
   >([]);
 
-  const [isBookmarkedChecked, setIsBookmarkedChecked] = useState(false);
-  const [isBookmarkedLoading, setIsBookMarkLoading] = useState(false);
   const setAllOnLoading = () => {
     setIsLoading(true);
     setUpiDetailsLoading(true);
@@ -517,34 +517,6 @@ export default function BeFiSc() {
       }
       toast.error('Something went wrong');
       setIsLoading(false);
-    }
-  };
-
-  const { latitude, longitude } = useSelector((state: RootState) => state.info);
-  console.log('LAtitude, lon: ', latitude, longitude);
-
-  const handleBookmark = async () => {
-    try {
-      setIsBookMarkLoading(true);
-      if (isBookmarkedChecked) {
-        await post('/api/mobile/delBookmark', {
-          mobile_number: mobileNo,
-        });
-        return toast.error('Cannot delete now');
-      } else {
-        await post('/api/auth/addBookmark', {
-          bookmarkPage: 1,
-          payload: { mobileNumber: mobileNo },
-          latitude: latitude,
-          longitude: longitude,
-        });
-        toast.success('Bookmarked Successfully');
-        setIsBookmarkedChecked((c) => !c);
-      }
-    } catch (error) {
-      toast.error('Something went wrong');
-    } finally {
-      setIsBookMarkLoading(false);
     }
   };
 
@@ -1094,10 +1066,15 @@ export default function BeFiSc() {
           title="Scaninfoga Intelligence"
           subTitle="Get the info you are looking for"
         />
-        {/* <BookmarkButton
-          whenShown={mobile360Data ? true : false}
-          // handleBookmark={handleBookmark}
-        /> */}
+        {mobile360Data && (
+          <BookmarkWidget
+            isRealtime={isRealtime}
+            mobileNo={mobileNo}
+            bookmarkPage={1}
+            title="Scaninfoga Intelligence Bookmark"
+            tools={BookMarkOptionScaninFogaIntelligence}
+          />
+        )}
       </div>
 
       <SearchBar2
@@ -1305,10 +1282,7 @@ export default function BeFiSc() {
                             <SentenceLoader className="min-h-[280px] w-[420px]" />
                           ) : (
                             <Image
-                              src={
-                                `data:${olaGeoApiData?.responseData?.content_type};base64,${olaGeoApiData?.responseData?.image}` ||
-                                '/null.png'
-                              }
+                              src={`data:${olaGeoApiData?.responseData?.content_type};base64,${olaGeoApiData?.responseData?.image}`}
                               alt="map"
                               width={450}
                               height={450}

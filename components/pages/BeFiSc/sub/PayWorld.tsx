@@ -200,7 +200,6 @@ export default function PayWorld({ PayWorldData, mobileNo }: PageProps) {
                     selected={selectedItem?.datetime}
                     onSelect={handleSelect}
                     list={list}
-                    isDate={true}
                   />
                   <button
                     onClick={handleClick}

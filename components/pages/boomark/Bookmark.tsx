@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { CustomTable } from '@/components/ui/custom-table';
 import { Column } from '@/types/table';
-import { get } from '@/lib/api';
+import { get, post } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import { RootState } from '@/redux/store';
@@ -11,6 +11,8 @@ import DashboardTitle from '@/components/common/DashboardTitle';
 import { formatDateTime } from '../BeFiSc/sub/dateFormat';
 import { toast } from 'sonner';
 import { Delete, Trash2 } from 'lucide-react';
+import CustomBadge from '../BeFiSc/sub/CustomBadge';
+import Image from 'next/image';
 
 interface UserBookmark {
   bookmark_page: number;
@@ -19,12 +21,17 @@ interface UserBookmark {
   payload?: {
     [key: string]: string | boolean | number;
   };
-  latitude: string;
-  longitude: string;
+  case_type: string;
+  case_description: string;
+  investigator: string;
+  latitude: number;
+  longitude: number;
+  caseNumber: string;
+  status: string;
 }
 [];
 
-const responsePageName = new Map([[1, 'Scaninfoga Intelligence']]);
+const responsePageName = new Map([[1, 'scaninfogaIntelligence']]);
 
 const Bookmark: React.FC = () => {
   const [activities, setActivities] = useState<UserBookmark[]>([]);
@@ -47,67 +54,108 @@ const Bookmark: React.FC = () => {
   };
 
   const deleteBookmark = async (id: number) => {
-    console.log('Bookmark id', id);
+    try {
+      await post('/api/auth/deleteBookmark', {
+        caseId: id,
+      });
+      toast.success('Deleted ' + id);
+      fetchActivities();
+    } catch (error) {
+      toast.error('error while deleting');
+    }
   };
   const router = useRouter();
+  const handleView = (record: any) => {
+    const page = responsePageName.get(record?.bookmark_page || 1);
+    if (page) {
+      router.push(`/${page}/?mobile_number=${record?.payload?.mobileNumber}`);
+    }
+  };
   const columns: Column<UserBookmark>[] = [
     {
-      title: 'Id',
+      title: 'Case Id',
       dataIndex: 'id',
       key: 'id',
-      render: (text: string) => text,
+      render: (text: string) => <span className="">{text}</span>,
     },
     {
-      title: 'Page',
-      dataIndex: 'bookmark_page',
-      key: 'bookmark_page',
-      render: (text: number) => responsePageName.get(text) || text,
-    },
-    {
-      title: 'Latitude',
-      dataIndex: 'latitude',
-      key: 'latitude',
-    },
-    {
-      title: 'Longitude',
-      dataIndex: 'longitude',
-      key: 'longitude',
+      title: 'Mobile',
+      dataIndex: 'payload',
+      key: 'payload',
+      render: (payload: any) => (
+        <span className="">{payload?.mobileNumber || ''}</span>
+      ),
+      width: '20px',
     },
     {
       title: 'Bookmarked At',
       dataIndex: 'created_at',
       key: 'created_at',
-      render: (text: string) => formatDateTime(text),
-      width: '300px',
-    },
-    {
-      title: 'Request Payload',
-      dataIndex: 'payload',
-      key: 'payload',
-      render: (payload: any) => (
-        <pre className="max-w-xs overflow-x-auto text-sm">
-          {/* {JSON.stringify(payload, null, 2)} */}
-          {Object.entries(payload).map(([key, value]) => (
-            <span key={key} className="flex">
-              <span className="text-white/70">{key}:</span>
-              <span className="font-semibold text-yellow-300 opacity-80">
-                {String(value)}
-              </span>
-            </span>
-          ))}
-        </pre>
+      render: (text: string) => (
+        <span className="opacity-80">{formatDateTime(text)}</span>
       ),
+      width: '120px',
     },
     {
-      title: 'Action',
+      title: 'Case Type',
+      dataIndex: 'case_type',
+      key: 'payload-CaseType',
+      render: (text: string) => <span className="">{text}</span>,
+      width: '180px',
+    },
+
+    {
+      title: 'Investigator',
+      dataIndex: 'investigator',
+      key: 'payload_Officer',
+      render: (investigator: string) => <span>{investigator}</span>,
+      width: '20px',
+    },
+    {
+      title: 'Case Status',
+      dataIndex: 'status',
+      key: 'payload_Status',
+      render: (caseStatus: string) => (
+        <CustomBadge value={caseStatus || 'pending'} />
+      ),
+      width: '20px',
+    },
+    {
+      title: 'Location',
       dataIndex: 'id',
-      key: 'delete_id',
-      render: (id: number) => (
-        <Button variant={'destructive'} onClick={() => deleteBookmark(id)}>
-          <Trash2 className="h-5 w-5" />
-        </Button>
+      key: 'payload-Location',
+      render: (_, record) => {
+        return (
+          <span className="text-sm">
+            {record?.latitude}, {record?.longitude}
+          </span>
+        );
+      },
+      width: '20px',
+    },
+    {
+      title: 'Actions',
+      dataIndex: 'payload',
+      key: 'handleView',
+      render: (_, record: UserBookmark) => (
+        <div className="flex space-x-1">
+          <Button
+            className="rounded-2xl"
+            size={'sm'}
+            onClick={() => handleView(record)}
+          >
+            View
+          </Button>
+          <Button
+            size={'sm'}
+            variant={'destructive'}
+            className="rounded-2xl"
+            onClick={() => deleteBookmark(record?.id)}
+          >
+            <Trash2 className="h-5 w-5" />
+          </Button>
+        </div>
       ),
-      width: '100px',
     },
   ];
 
