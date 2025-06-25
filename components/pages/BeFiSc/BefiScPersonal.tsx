@@ -380,8 +380,8 @@ export default function BefiScPersonal({
           title="ESIC Info"
           className="scrollbar-custom grid max-h-[400px] grid-cols-3 overflow-auto"
         >
-          {Mobile360Data?.result?.epfo_info?.data.map((val, index) => (
-            <div key={index}>{val}</div>
+          {Mobile360Data?.result?.esic_info?.data.map((val, index) => (
+            <div key={index}>{val?.esic_number}</div>
           ))}
         </DashboardCard>
         <DashboardCard

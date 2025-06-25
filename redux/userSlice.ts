@@ -17,7 +17,7 @@ export const userSlice = createSlice({
       state.token = action.payload.token;
       state.user = action.payload.user;
       setCookie('accessToken', JSON.stringify(action.payload.token || null), {
-        maxAge: 60 * 60 * 24 * 10,
+        maxAge: 60 * 60 * 24,
         path: '/',
       });
 

@@ -163,7 +163,7 @@ interface WalletAPIResponse {
 }
 
 const initialState: WalletState = {
-  loading: false,
+  loading: true,
   error: null,
   balance: 0,
   isPendingTxn: false,
@@ -177,7 +177,6 @@ export const fetchWalletBalance = createAsyncThunk<
   try {
     const balanceData = await get('/api/payments/getWalletBalance');
     const pendingData = await get('/api/payments/isTxnPending');
-
     return {
       ...balanceData.responseData,
       isPendingTxn: pendingData.responseData.isPendingTxn,

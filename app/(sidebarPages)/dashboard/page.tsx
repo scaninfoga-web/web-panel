@@ -97,7 +97,7 @@ export default function Dashboard() {
     // console.log(`Searching for ${query} in ${searchFilter}`);
   };
 
-  return <NotFound value="We will get back to you soon" />;
+  // return <NotFound value="We will get back to you soon" />;
 
   if (isLoading) {
     return (

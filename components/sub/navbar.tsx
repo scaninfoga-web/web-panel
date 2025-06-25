@@ -57,9 +57,7 @@ export default function Navbar() {
       try {
         const info = await getClientInfo();
         dispatch(setInfo(info));
-      } catch (e) {
-        console.log('client fetch error', e);
-      }
+      } catch (e) {}
     };
     fetchInfo();
   }, [dispatch]);
@@ -93,14 +91,9 @@ export default function Navbar() {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between">
           <Link href="/" className="flex items-center">
-            {/* <Shield className="h-8 w-8 text-emerald-500" />
-            <span className="text-xl font-bold tracking-tight">
-              <span className="text-emerald-500">scan</span>infoga
-            </span> */}
             <Image
               src="https://website-stuff-logos.s3.ap-south-1.amazonaws.com/1.png"
               alt="scaninfoga"
-              // className="border object-contain"
               className="relative bottom-3"
               width={200}
               height={200}
@@ -211,7 +204,11 @@ export default function Navbar() {
             {token &&
               // <Button variant='outline' className='flex gap-x-2'><CircleDollarSign className='text-yellow-500'/> {walletBalance}</Button>
               !paths.includes(pathname) && (
-                <WalletWidget credits={wallet.balance} onTopUp={() => {}} />
+                <WalletWidget
+                  walletLoading={wallet?.loading}
+                  credits={wallet.balance}
+                  onTopUp={() => {}}
+                />
               )}
             {!paths.includes(pathname) && (
               <Button

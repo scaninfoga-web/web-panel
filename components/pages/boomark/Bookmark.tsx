@@ -5,16 +5,14 @@ import { Column } from '@/types/table';
 import { get, post } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
-import { RootState } from '@/redux/store';
-import { useSelector } from 'react-redux';
 import DashboardTitle from '@/components/common/DashboardTitle';
 import { formatDateTime } from '../BeFiSc/sub/dateFormat';
 import { toast } from 'sonner';
-import { Delete, Trash2 } from 'lucide-react';
+import { Pencil, Trash2 } from 'lucide-react';
 import CustomBadge from '../BeFiSc/sub/CustomBadge';
-import Image from 'next/image';
+import EditBookmark from '../BeFiSc/sub/EditBookmark';
 
-interface UserBookmark {
+export interface UserBookmark {
   bookmark_page: number;
   created_at: string;
   id: number;
@@ -27,15 +25,16 @@ interface UserBookmark {
   latitude: number;
   longitude: number;
   caseNumber: string;
-  status: string;
+  status: 'pending' | 'success';
 }
 [];
-
 const responsePageName = new Map([[1, 'scaninfogaIntelligence']]);
 
 const Bookmark: React.FC = () => {
   const [activities, setActivities] = useState<UserBookmark[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isEditShown, setIsEditShown] = useState(false);
+  const [editBookmark, setEditBookmark] = useState<UserBookmark | null>(null);
 
   useEffect(() => {
     fetchActivities();
@@ -51,6 +50,11 @@ const Bookmark: React.FC = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleEdit = (record: UserBookmark) => {
+    setEditBookmark(record);
+    setIsEditShown((c) => !c);
   };
 
   const deleteBookmark = async (id: number) => {
@@ -115,9 +119,7 @@ const Bookmark: React.FC = () => {
       title: 'Case Status',
       dataIndex: 'status',
       key: 'payload_Status',
-      render: (caseStatus: string) => (
-        <CustomBadge value={caseStatus || 'pending'} />
-      ),
+      render: (caseStatus: string) => <CustomBadge value={caseStatus} />,
       width: '20px',
     },
     {
@@ -147,6 +149,14 @@ const Bookmark: React.FC = () => {
             View
           </Button>
           <Button
+            className="rounded-2xl"
+            variant={'outline'}
+            size={'sm'}
+            onClick={() => handleEdit(record)}
+          >
+            <Pencil className="h-5 w-5" />
+          </Button>
+          <Button
             size={'sm'}
             variant={'destructive'}
             className="rounded-2xl"
@@ -168,6 +178,12 @@ const Bookmark: React.FC = () => {
         dataSource={activities}
         loading={loading}
         scroll={{ x: true }}
+      />
+      <EditBookmark
+        setIsEditShown={setIsEditShown}
+        userBookmark={editBookmark}
+        isShown={isEditShown}
+        fetchActivities={fetchActivities}
       />
     </div>
   );

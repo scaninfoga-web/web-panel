@@ -52,13 +52,11 @@ import SentenceLoader from './sub/SentenceLoader';
 import { HunterFindType, HunterVerifyType } from '@/types/hunter';
 import { PayWorldType } from '@/types/payworld';
 import { JobSeekerType, LeakHunterType } from '@/types/LeakHunter';
-import { Bookmark, BookmarkCheck } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import BookmarkButton from '@/components/BookmarkButton';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/redux/store';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '@/redux/store';
 import BookmarkWidget from './sub/BookmarkWidget';
 import { BookMarkOptionScaninFogaIntelligence } from './sub/BookmarkBeFiSc';
+import { fetchWalletBalance } from '@/redux/walletSlice';
 
 export function isValidIndianMobileNumber(input: string): {
   result: boolean;
@@ -92,6 +90,8 @@ export default function BeFiSc() {
   const [mobile360Data, setMobile360Data] = useState<Mobile360Type | null>(
     null,
   );
+  const wallet = useSelector((state: RootState) => state.wallet);
+  const dispatch = useDispatch<AppDispatch>();
 
   const [ghuntMultipleData, setGhuntMultipleData] = useState<GhuntData[]>([]);
   const [ghuntMultipleLoading, setGhuntMultipleLoading] = useState(false);
@@ -258,7 +258,6 @@ export default function BeFiSc() {
           mobile360Data?.result?.din_info?.data[0]?.pan ||
           mobile360Data?.result?.director_pan_info?.data[0];
 
-        console.log('PAn numberrrrr', panNumber);
         if (panNumber) {
           // calling panAllInone
           try {
@@ -311,7 +310,6 @@ export default function BeFiSc() {
 
         // epicsInfo
         const EsicsArray = mobile360Data.result?.key_highlights?.esic_number;
-
         if (EsicsArray?.length > 0) {
           try {
             const EsicsInfo = await post('/api/mobile/esicsearch', {
@@ -407,8 +405,15 @@ export default function BeFiSc() {
             );
           }
         }
+
         setIsLoading(false);
         toast.success(`${apiMessage.current!}`, { id: toastRef.current! });
+        new Promise((resolve) =>
+          setTimeout(async () => {
+            await dispatch(fetchWalletBalance());
+            resolve;
+          }, 5000),
+        );
         // calling upi details
         try {
           const UpiDetails = await post('/api/mobile/digitalpayment', {
@@ -428,6 +433,7 @@ export default function BeFiSc() {
         }
         setUpiDetailsLoading(false);
         setisRealtime(false);
+        dispatch(fetchWalletBalance());
       };
       callOtherAPIs();
     }
@@ -448,15 +454,21 @@ export default function BeFiSc() {
       return;
     }
     setMobileNo(isValid.fixedNumber);
+    if (wallet?.balance < 3000) {
+      toast.error('Insufficient balance');
+      return;
+    }
+
     setAllOnLoading();
     let mobile360R: null | {
       responseData: Mobile360Type;
     } = null;
+
     try {
       const toastId = toast.loading('fetching data...');
       toastRef.current = toastId;
       let mobile360ResponseMessage = null;
-      const MAXDURATION = 2 * 60 * 1000;
+      const MAXDURATION = 30 * 1000;
       const RETRYINTERVAL = 5000;
       const startTime = Date.now();
 
@@ -480,6 +492,12 @@ export default function BeFiSc() {
           mobile360R = null;
           return false;
         } catch (error) {
+          if (error instanceof AxiosError) {
+            if (error.status === 402) {
+              toast.error('Insufficent balance api call failed');
+              return true;
+            }
+          }
           return false;
         }
       };
@@ -733,10 +751,10 @@ export default function BeFiSc() {
               type: string;
               data: HunterFindType | null;
             }[] = [];
-            otherEmails.push({
-              type: 'Dummy email',
-              email: 'rohan@scaninfoga.in',
-            });
+            // otherEmails.push({
+            //   type: 'Dummy email',
+            //   email: 'rohan@scaninfoga.in',
+            // });
             try {
               const results = await Promise.allSettled(
                 otherEmails.map((email) =>

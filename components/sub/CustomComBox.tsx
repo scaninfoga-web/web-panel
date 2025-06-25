@@ -46,7 +46,7 @@ export function CustomCombox({ list, onSelect, selected }: Props) {
       </PopoverTrigger>
       <PopoverContent className="gr w-[300px] border-2 border-slate-800 p-0">
         <Command className="">
-          <CommandInput className="" placeholder="Search ..." />
+          <CommandInput className="bg-slate-950" placeholder="Search ..." />
           <CommandList>
             <CommandEmpty>No Previous Data.</CommandEmpty>
             <CommandGroup className="bg-slate-900">
