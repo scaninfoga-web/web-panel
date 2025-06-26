@@ -5,6 +5,8 @@ import { FormInput } from '@/components/ui/form-input';
 import { FormRadioGroup } from '@/components/ui/form-radio-group';
 import { post } from '@/lib/api';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { AxiosError } from 'axios';
+import { CheckCircle } from 'lucide-react';
 import React, { useState } from 'react';
 import { Form, FormProvider, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -41,12 +43,18 @@ const ChangePassword = () => {
     },
   });
 
-  const handleSubmit = async (data: ChangePassFormValues) => {
+  const handleSubmit = async () => {
+    console.log('Called');
     try {
-      const res = await post('/api/auth/change-password', data);
-      if (res.responseData.require_otp) {
-        setQrCode(true);
-        toast.warning('Please enter OTP from the authenticator.');
+      const payload = {
+        email: form.getValues('email'),
+        otp: form.getValues('otp'),
+        newPassword: form.getValues('newPassword'),
+      };
+      const res = await post('/api/auth/verify-password-reset-otp', payload);
+      if (res.responseData.qr_code) {
+        setQrCode(res.responseData.qr_code);
+        toast.success('Password reset successful.');
         setStep(3); // Move to OTP verification step
       } else {
         toast.success('Password changed successfully');
@@ -57,8 +65,27 @@ const ChangePassword = () => {
     }
   };
 
+  const callForgetPass = async () => {
+    try {
+      await post('/api/auth/forget-password', {
+        email: form.getValues('email'),
+      });
+      toast.success('Enter OTP sent to your email');
+      setStep(2);
+    } catch (error) {
+      console.log(error);
+      if (error instanceof AxiosError) {
+        toast.error(
+          error.response?.data?.responseStatus?.message || 'Some error occured',
+        );
+      }
+    }
+  };
+
   const handleNextStep = () => {
-    setStep((prevStep) => prevStep + 1); // Proceed to next step
+    if (step === 1) {
+      callForgetPass();
+    }
   };
 
   return (
@@ -93,16 +120,9 @@ const ChangePassword = () => {
           </>
         )}
 
-        {/* Step 2 - Password Inputs */}
+        {/* Step 2 - Password Inputs
         {step === 3 && (
           <>
-            {/* <FormInput
-                            form={form}
-                            name="oldPassword"
-                            label="Old Password"
-                            type="password"
-                            placeholder="Enter your old password"
-                        /> */}
             <FormInput
               form={form}
               name="newPassword"
@@ -117,13 +137,12 @@ const ChangePassword = () => {
               type="password"
               placeholder="Confirm your new password"
             />
-            {/* <Button type="button" onClick={handleNextStep}>Next</Button> */}
             <Button type="submit">Change Password</Button>
           </>
-        )}
+        )} */}
 
         {/* Step 3 - OTP (if required) */}
-        {qrCode && step === 2 && (
+        {step === 2 && (
           <>
             <FormInput
               form={form}
@@ -132,10 +151,66 @@ const ChangePassword = () => {
               type="text"
               placeholder="Enter OTP"
             />
-            <Button type="button" onClick={handleNextStep}>
+            <FormInput
+              form={form}
+              name="newPassword"
+              label="New Password"
+              type="password"
+              placeholder="Enter your new password"
+            />
+            <FormInput
+              form={form}
+              name="confirmPassword"
+              label="Confirm Password"
+              type="password"
+              placeholder="Confirm your new password"
+            />
+            <Button onClick={handleSubmit}>Change Password</Button>
+            {/* <Button type="button" onClick={handleNextStep}>
               Next
-            </Button>
+            </Button> */}
           </>
+        )}
+
+        {step === 3 && (
+          <div className="space-y-6 text-center">
+            <div className="space-y-2">
+              <CheckCircle className="mx-auto h-12 w-12 text-emerald-500" />
+              <h3 className="text-xl font-semibold text-white">
+                Registration Complete!
+              </h3>
+              <p className="text-gray-400">
+                Scan the QR code below with your authenticator app to complete
+                the setup.
+              </p>
+            </div>
+
+            <div className="flex justify-center">
+              <div className="rounded-lg bg-white p-4">
+                <img
+                  src={`data:image/png;base64,${qrCode}`}
+                  alt="QR Code for authenticator setup"
+                  className="h-48 w-48"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2 text-sm text-gray-400">
+              <p>
+                • Open your authenticator app (Google Authenticator, Authy,
+                etc.)
+              </p>
+              <p>• Scan this QR code</p>
+              <p>• Save the generated codes for future logins</p>
+            </div>
+
+            <Button
+              onClick={() => (window.location.href = '/login')}
+              className="w-full bg-emerald-500 text-black hover:bg-emerald-400"
+            >
+              Continue to Login
+            </Button>
+          </div>
         )}
       </form>
     </FormProvider>

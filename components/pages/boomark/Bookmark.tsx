@@ -102,10 +102,19 @@ const Bookmark: React.FC = () => {
       title: 'Action',
       dataIndex: 'id',
       key: 'delete_id',
-      render: (id: number) => (
-        <Button variant={'destructive'} onClick={() => deleteBookmark(id)}>
-          <Trash2 className="h-5 w-5" />
-        </Button>
+
+      render: (id: number, record: UserBookmark) => (
+        <>
+          <Button variant={'destructive'} onClick={() => deleteBookmark(id)}>
+            <Trash2 className="h-5 w-5" />
+          </Button>
+          <Button
+            variant={'destructive'}
+            onClick={() => console.log('Record: ', record)}
+          >
+            {/* <Trash2 className="h-5 w-5" /> */}
+          </Button>
+        </>
       ),
       width: '100px',
     },
