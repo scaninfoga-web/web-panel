@@ -275,7 +275,7 @@ export default function AuthPage() {
                 className="text-center font-semibold text-emerald-500"
                 onClick={() => setIsRegistering('changePass')}
               >
-                Change Password
+                Forget Password
               </div>
             )}
           </div>
