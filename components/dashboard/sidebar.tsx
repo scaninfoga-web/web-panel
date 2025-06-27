@@ -161,6 +161,12 @@ const sidebarLinks = [
     roles: ['USER', 'ADMIN'],
   },
   {
+    title: 'Subscription Info',
+    icon: Clock,
+    href: '/subscriptions',
+    roles: ['USER', 'ADMIN'],
+  },
+  {
     title: 'Reports',
     icon: FileText,
     href: '/dashboard/reports',

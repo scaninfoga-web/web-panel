@@ -64,6 +64,9 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose }) => {
         <DialogOverlay className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm" />
         <DialogContent className="fixed left-[50%] top-[50%] z-50 w-full max-w-md translate-x-[-50%] translate-y-[-50%] rounded-xl bg-black p-4 text-white shadow-md shadow-gray-500 backdrop-blur-0">
           <DialogHeader className="space-y-2">
+            <div className="mt-2 font-semibold text-red-500">
+              Note: 18% GST is applicable on your transactions.
+            </div>
             <div className="flex items-center gap-4">
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-r from-teal-500 to-emerald-500">
                 <CreditCard className="h-5 w-5 text-white" />
