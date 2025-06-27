@@ -90,13 +90,16 @@ export default function Navbar() {
     >
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between">
-          <Link href="/" className="flex items-center">
+          <Link
+            href="/"
+            className="relative bottom-4 flex h-16 w-52 items-center justify-center"
+          >
             <Image
               src="https://website-stuff-logos.s3.ap-south-1.amazonaws.com/1.png"
               alt="scaninfoga"
-              className="relative bottom-3"
-              width={200}
-              height={200}
+              fill
+              priority={true}
+              loading="eager"
             />
           </Link>
 
@@ -216,9 +219,10 @@ export default function Navbar() {
                 className="border-emerald-500 text-emerald-500 hover:bg-emerald-500 hover:text-black"
                 onClick={async () => {
                   if (accessToken) {
+                    router.push('/');
+                    await new Promise((resolve) => setTimeout(resolve, 1000));
                     dispatch(logout());
                     await clearCookies();
-                    router.push('/');
                     return;
                   }
                   router.push('/auth');

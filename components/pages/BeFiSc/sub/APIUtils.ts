@@ -40,3 +40,29 @@ export const formatSentence = (
     ?.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     ?.join(' ');
 };
+export function timeAgo(timestamp: string | undefined | null): string {
+  if (!timestamp) {
+    return '----';
+  }
+
+  const now = new Date();
+  const past = new Date(timestamp);
+  const diffMs = now.getTime() - past.getTime();
+
+  const seconds = Math.floor(diffMs / 1000);
+  const minutes = Math.floor(diffMs / (1000 * 60));
+  const hours = Math.floor(diffMs / (1000 * 60 * 60));
+  const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+  if (seconds < 60) return `${seconds} sec ago`;
+  if (minutes < 60) return `${minutes} min ago`;
+  if (hours < 24) return `${hours} hr ago`;
+  if (days < 7) return `${days} day${days > 1 ? 's' : ''} ago`;
+
+  // For dates older than a week, show the actual date
+  return past.toLocaleDateString(undefined, {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  });
+}

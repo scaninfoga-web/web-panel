@@ -6,7 +6,7 @@ import CustomCheckBox from '@/components/sub/checkbox';
 import NotFound from '@/components/sub/NotFound';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { getClientInfo, post } from '@/lib/api';
+import { get, getClientInfo, post } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import {
   EquifaxV3Type,
@@ -57,6 +57,9 @@ import { AppDispatch, RootState } from '@/redux/store';
 import BookmarkWidget from './sub/BookmarkWidget';
 import { BookMarkOptionScaninFogaIntelligence } from './sub/BookmarkBeFiSc';
 import { fetchWalletBalance } from '@/redux/walletSlice';
+import BeFiScOverview from './BeFiScOverview';
+import { CountScanType } from '@/types/countRequest';
+import { HudsonEmailType } from '@/types/hudson';
 
 export function isValidIndianMobileNumber(input: string): {
   result: boolean;
@@ -96,6 +99,14 @@ export default function BeFiSc() {
   const [ghuntMultipleData, setGhuntMultipleData] = useState<GhuntData[]>([]);
   const [ghuntMultipleLoading, setGhuntMultipleLoading] = useState(false);
 
+  const [hudsonEmailData, setHudsonEmailData] = useState<
+    {
+      value: string;
+      type: string;
+      data: HudsonEmailType | null;
+    }[]
+  >([]);
+
   const [verfiyUdyamData, setVerfiyUdyamData] =
     useState<VerifyUdyamType | null>(null);
 
@@ -109,7 +120,7 @@ export default function BeFiSc() {
     useState<ProfileAdvanceType | null>(null);
 
   const [esicsData, setEsicsData] = useState<EsicDetailsType | null>(null);
-
+  const [lastScanData, setlastScanData] = useState<CountScanType | null>(null);
   const [mobileToAccountData, setMobileToAccountData] =
     useState<MobileToAccountNumberType | null>(null);
 
@@ -225,6 +236,13 @@ export default function BeFiSc() {
             toast.error('PayWorld Down', { id: toastRef.current! });
           }
         }
+        // countingApi that tells how much time this number is get called
+        try {
+          const res = await get(
+            `/api/mobile/mobile-count?mobile_number=${mobileNo}`,
+          );
+          setlastScanData(res);
+        } catch (error) {}
 
         // profile advance
         let profileAdvanceData = null;
@@ -455,7 +473,8 @@ export default function BeFiSc() {
     }
     setMobileNo(isValid.fixedNumber);
     if (wallet?.balance < 3000) {
-      toast.error('Insufficient balance');
+      const id = toast.error('Insufficient balance', { id: toastRef.current! });
+      toastRef.current = id;
       return;
     }
 
@@ -481,7 +500,6 @@ export default function BeFiSc() {
             mobile_number: isValid.fixedNumber,
             realtimeData: isRealtime,
           });
-
           if (Number(Mobile360Data.responseData?.status) === 1) {
             setMobile360Data(Mobile360Data.responseData);
             mobile360R = Mobile360Data;
@@ -672,6 +690,57 @@ export default function BeFiSc() {
             data: BreachInfoType | null;
           }[] = [];
           if (otherEmails.length > 0) {
+            otherEmails.push({
+              type: 'dummy',
+              email: 'Support@scaninfoga.in',
+            });
+            let hudsonEmailData: {
+              value: string;
+              type: string;
+              data: HudsonEmailType | null;
+            }[] = [];
+            // calling hudsonIP
+            const clientInfo = getClientInfo();
+            try {
+              const res = await post('/api/hudson/search-by-ip', {
+                ip: clientInfo?.ip,
+                realtimeData: isRealtime,
+              });
+              hudsonEmailData.push({
+                value: clientInfo?.ip,
+                type: 'IP',
+                data: res,
+              });
+            } catch (error) {}
+
+            // calling hudsonEmail
+            try {
+              const results = await Promise.allSettled(
+                otherEmails.map((email) =>
+                  post('/api/hudson/search-by-email', {
+                    email: email?.email,
+                    realtimeData: isRealtime,
+                  }),
+                ),
+              );
+              results.forEach((result, index) => {
+                if (result.status === 'fulfilled') {
+                  hudsonEmailData.push({
+                    value: otherEmails[index]?.email,
+                    type: otherEmails[index]?.type,
+                    data: result.value,
+                  });
+                } else {
+                  hudsonEmailData.push({
+                    value: otherEmails[index]?.email,
+                    type: otherEmails[index]?.type,
+                    data: null,
+                  });
+                }
+              });
+              setHudsonEmailData(hudsonEmailData);
+            } catch (error) {}
+
             // leakHunterPassword
             let leakHunterData: {
               value: string;
@@ -905,6 +974,7 @@ export default function BeFiSc() {
         );
         if (otherEmails.length > 0) {
           setGhuntMultipleLoading(true);
+
           try {
             const results = await Promise.all(
               otherEmails.map((email) =>
@@ -1179,7 +1249,20 @@ export default function BeFiSc() {
                 </TabsTrigger>
               </TabsList>
 
-              <TabsContent value="overview" className="mt-6"></TabsContent>
+              <TabsContent value="overview" className="mt-6">
+                <BeFiScOverview
+                  hudsonEmailData={hudsonEmailData}
+                  lptConnection={
+                    mobile360Data?.result?.lpg_info?.data?.length || 0
+                  }
+                  ghuntLoading={ghuntMultipleLoading}
+                  totalGoogleAccount={ghuntMultipleData?.length}
+                  upiLoading={upiDetailsLoading}
+                  upiData={upiDetailsData}
+                  lastScanData={lastScanData}
+                  mobile360Data={mobile360Data}
+                />
+              </TabsContent>
 
               <TabsContent
                 value="profile"

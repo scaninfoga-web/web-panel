@@ -36,6 +36,8 @@ const upiIcons = new Map<string, string>([
   ['Jupiter', '/upi/jupiter.svg'],
   ['Bank of Baroda', '/upi/BankofBaroda.png'],
   ['Indian Bank', '/upi/Indian_Bank_.png'],
+  ['CRED', '/upi/cred.jpeg'],
+  ['POPclub', '/upi/POPclub.png'],
 ]);
 import {
   Dialog,

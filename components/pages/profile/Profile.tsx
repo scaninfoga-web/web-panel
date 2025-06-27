@@ -29,6 +29,7 @@ import { ChangePasswordCard } from './ChangePasswordCard';
 import { LoginHistoryCard } from './LoginHistoryCard';
 import DashboardTitle from '@/components/common/DashboardTitle';
 import TransactionHistory from '../transactionHistory/TransactionHistory';
+import { userLocation } from '@/types/ola-geo-api';
 
 const changePassSchema = z
   .object({
@@ -48,7 +49,8 @@ type ChangePassFormValues = z.infer<typeof changePassSchema>;
 
 const Profile = () => {
   const info = useSelector((state: RootState) => state.info);
-
+  const [olaGeoApiData, setOlaGeoApiData] = useState<userLocation | null>(null);
+  const [mapLoading, setMapLoading] = useState(false);
   const form = useForm<ChangePassFormValues>({
     resolver: zodResolver(changePassSchema),
     defaultValues: {
@@ -58,40 +60,6 @@ const Profile = () => {
       otp: '',
     },
   });
-  const loginHistory = [
-    {
-      id: 1,
-      timestamp: '2024-06-10 14:32:15',
-      device: 'Chrome - Windows 10',
-      location: 'New York, NY',
-      ipAddress: '192.168.1.1',
-      status: 'Success',
-    },
-    {
-      id: 2,
-      timestamp: '2024-06-09 09:45:22',
-      device: 'Safari - macOS',
-      location: 'San Francisco, CA',
-      ipAddress: '192.168.1.2',
-      status: 'Success',
-    },
-    {
-      id: 3,
-      timestamp: '2024-06-08 18:12:08',
-      device: 'Firefox - Ubuntu',
-      location: 'Los Angeles, CA',
-      ipAddress: '192.168.1.3',
-      status: 'Failed',
-    },
-    {
-      id: 4,
-      timestamp: '2024-06-07 11:28:45',
-      device: 'Chrome - Android',
-      location: 'Miami, FL',
-      ipAddress: '192.168.1.4',
-      status: 'Success',
-    },
-  ];
 
   const getSubscriptionColor = (type: string) => {
     switch (type) {
@@ -132,15 +100,17 @@ const Profile = () => {
 
   const populateMapImg = async () => {
     try {
-      const imageData = await post('/api/auth/getmap', {
-        userLng: info?.longitude,
-        userLat: info?.latitude,
-        // address: firstAddress,
+      if (olaGeoApiData) return;
+      setMapLoading(true);
+      const imageData = await post('/api/auth/getlocation', {
+        longitude: info?.longitude,
+        latitude: info?.latitude,
       });
-      //   setOlaGeoApiData(imageData);
+      setOlaGeoApiData(imageData);
     } catch (error) {
-      console.log('ERROR UPLOADING MAP: ', error);
       toast.error('Error getting maps data.');
+    } finally {
+      setMapLoading(false);
     }
   };
 
@@ -171,7 +141,7 @@ const Profile = () => {
   //   }
 
   useEffect(() => {
-    if (info.latitude && info.longitude) {
+    if (info.latitude && info.longitude && !olaGeoApiData) {
       populateMapImg();
     }
   }, [info.latitude, info.longitude]);
@@ -184,7 +154,10 @@ const Profile = () => {
       />
       <div className="grid grid-cols-1 gap-x-3 md:grid-cols-2">
         <ProfileInformationCard />
-        <LocationOverviewCard />
+        <LocationOverviewCard
+          mapLoading={mapLoading}
+          locationData={olaGeoApiData}
+        />
       </div>
       <ChangePasswordCard />
       <LoginHistoryCard />

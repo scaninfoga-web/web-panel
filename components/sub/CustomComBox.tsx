@@ -22,10 +22,16 @@ interface Props {
     label: string;
   }[];
   selected?: string;
+  searchNeed?: boolean;
   onSelect?: (data: string) => void | Promise<void>;
 }
 
-export function CustomCombox({ list, onSelect, selected }: Props) {
+export function CustomCombox({
+  list,
+  onSelect,
+  selected,
+  searchNeed = true,
+}: Props) {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState(selected || '');
 
@@ -46,7 +52,10 @@ export function CustomCombox({ list, onSelect, selected }: Props) {
       </PopoverTrigger>
       <PopoverContent className="gr w-[300px] border-2 border-slate-800 p-0">
         <Command className="">
-          <CommandInput className="bg-slate-950" placeholder="Search ..." />
+          {searchNeed && (
+            <CommandInput className="bg-slate-950" placeholder="Search ..." />
+          )}
+
           <CommandList>
             <CommandEmpty>No Previous Data.</CommandEmpty>
             <CommandGroup className="bg-slate-900">

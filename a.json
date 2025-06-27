@@ -5,53 +5,137 @@
   },
   "responseData": {
     "result": {
-      
-      "din_info": {
-        "din": "02960308",
-        "company_list": [
-          {
-            "cin": "U45201WB2004PTC098722",
-            "company_name": "ROSE APARTMENT PRIVATE LIMITED"
-          },
-          {
-            "cin": "AAZ-0074",
-            "company_name": "MAHATO INFRASTRUCTURE LLP"
-          }
-        ],
-        "dinAllocationDate": "02/25/2010"
+      "dic": "BANGALORE (URBAN)",
+      "email": "bonv.tech@gmail.com",
+      "gender": "Male",
+      "mobile": "99*****250",
+      "address": {
+        "pin": "560024",
+        "city": "Bangalore North",
+        "block": "Godrej Apt, Hebbal Kempapura",
+        "state": "KARNATAKA",
+        "street": "Behind Ramanshree California",
+        "flat_no": "HD-094, WeWork",
+        "village": "Bellary Road, Hebbal, Near",
+        "building": "Latitude, 9th Floor, RMZ Latitude Commercial",
+        "district": "BENGALURU (URBAN)"
       },
-      "is_director": {
-        "info": [
-          {
-            "gst": "19ALAPM8466B1Z1",
-            "status": "Provisional",
-            "aggregate_turn_over": "Slab: Rs. 40 lakhs to 1.5 Cr."
-          },
-          {
-            "gst": "19ABSFM9096R1ZO",
-            "status": "NA",
-            "aggregate_turn_over": "NA"
-          }
-        ],
-        "found": "Yes"
-      },
-      "is_sole_proprietor": {
-        "info": [
-          {
-            "gst": "19ALAPM8466B2Z0",
-            "status": "Active",
-            "aggregate_turn_over": "Slab: Rs. 40 lakhs to 1.5 Cr."
-          }
-        ],
-        "found": "Yes"
-      }
+      "msme-dfo": "BANGALORE",
+      "nic_code": [
+        {
+          "date": "25/07/2021",
+          "activity": "Manufacturing",
+          "nic_2_digit": "30 - Manufacture of other transport equipment",
+          "nic_4_digit": "3030 - Manufacture of air and spacecraft and related machinery",
+          "nic_5_digit": "30301 - Manufacture of airplanes"
+        },
+        {
+          "date": "25/07/2021",
+          "activity": "Manufacturing",
+          "nic_2_digit": "30 - Manufacture of other transport equipment",
+          "nic_4_digit": "3030 - Manufacture of air and spacecraft and related machinery",
+          "nic_5_digit": "30304 - Manufacture of spacecraft and launch vehicles, satellites, planetary probes,orbital stations, shuttles, intercontinental ballistic (ICBM) and similar missiles"
+        },
+        {
+          "date": "25/07/2021",
+          "activity": "Manufacturing",
+          "nic_2_digit": "30 - Manufacture of other transport equipment",
+          "nic_4_digit": "3030 - Manufacture of air and spacecraft and related machinery",
+          "nic_5_digit": "30305 - Manufacture of parts and accessories of the aircraft and spacecraft of this class (major assemblies such as fuselages, wings, doors, control surfaces, landing gear, fuel tanks, nacelles, airscrews, helicopter rotors and propelled rotor blades, motors and engines of a kind typically found on aircraft, parts of turbojets and turbopropellers for aircraft, aircraft seats etc. and other specialised parts of spacecraft)"
+        },
+        {
+          "date": "30/01/2025",
+          "activity": "Trading",
+          "nic_2_digit": "47 - Retail trade, except of motor vehicles and motorcycles",
+          "nic_4_digit": "4791 - Retail sale via mail order houses or via Internet",
+          "nic_5_digit": "47912 - Retail sale via e-commerce"
+        },
+        {
+          "date": "25/07/2021",
+          "activity": "Services",
+          "nic_2_digit": "51 - Air Transport",
+          "nic_4_digit": "5120 - Freight air transport",
+          "nic_5_digit": "51201 - Freight air transport services"
+        },
+        {
+          "date": "25/07/2021",
+          "activity": "Services",
+          "nic_2_digit": "62 - Computer programming, consultancy and related activities",
+          "nic_4_digit": "6201 - Computer programming activities",
+          "nic_5_digit": "62013 - Providing software support and maintenance to the clients"
+        },
+        {
+          "date": "30/01/2025",
+          "activity": "Services",
+          "nic_2_digit": "80 - Security and investigation activities",
+          "nic_4_digit": "8020 - Security systems service activities",
+          "nic_5_digit": "80200 - Security systems service activities"
+        },
+        {
+          "date": "25/07/2021",
+          "activity": "Manufacturing",
+          "nic_2_digit": "26 - Manufacture of computer, electronic and optical products",
+          "nic_4_digit": "2610 - Manufacture of electronic components",
+          "nic_5_digit": "26109 - Manufacture of other electronic components n.e.c"
+        },
+        {
+          "date": "25/07/2021",
+          "activity": "Manufacturing",
+          "nic_2_digit": "26 - Manufacture of computer, electronic and optical products",
+          "nic_4_digit": "2651 - Manufacture of measuring, testing, navigating and control equipment",
+          "nic_5_digit": "26515 - Manufacture of radar equipment, GPS devices, search, detection, navigation, aeronautical and nautical equipment"
+        }
+      ],
+      "service_type": "Manufacturing",
+      "plant_details": [
+        {
+          "pin": "752054",
+          "city": "BHUBANESWAR",
+          "flat": "PLOT NO 115",
+          "road": "MAHURA",
+          "block": "JANLA",
+          "state": "ODISHA",
+          "village": "MAHURA",
+          "building": "CV RAMAN COLLEGE OF ENGINEERING",
+          "district": "KHORDHA",
+          "unit_name": "M/S BONV TECHNOLOGY PRIVATE LIMITED, Bhubaneswar"
+        }
+      ],
+      "enterprise_name": "M/S BONV TECHNOLOGY PRIVATE LIMITED",
+      "enterprise_type": [
+        {
+          "enterprise_type": "Micro",
+          "classification_date": "01/04/2025",
+          "classification_year": "2025-26"
+        },
+        {
+          "enterprise_type": "Micro",
+          "classification_date": "27/04/2024",
+          "classification_year": "2024-25"
+        },
+        {
+          "enterprise_type": "Micro",
+          "classification_date": "19/03/2024",
+          "classification_year": "2023-24"
+        },
+        {
+          "enterprise_type": "Micro",
+          "classification_date": "26/06/2022",
+          "classification_year": "2022-23"
+        }
+      ],
+      "social_category": "General",
+      "organisation_type": "Private Limited Company",
+      "date_of_commencement": "10/04/2021",
+      "date_of_incorporation": "31/03/2021",
+      "date_of_udyam_registeration": "25/07/2021"
     },
     "status": 1,
-    "txn_id": "7c47a557-660b-4368-b4cf-f625bdd58971",
+    "txn_id": "d1f51071-2964-4bf3-8ade-18b64341cbb9",
     "message": "Success",
-    "api_name": "PAN All in One",
+    "api_name": "Udyam",
     "billable": true,
-    "datetime": "2025-06-17 10:06:54.596638",
-    "api_category": "Know Your Customer (KYC)"
+    "datetime": "2025-05-20 17:35:35.868607",
+    "api_category": "Know Your Business (KYB)"
   }
 }

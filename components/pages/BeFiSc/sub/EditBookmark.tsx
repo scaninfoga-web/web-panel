@@ -80,7 +80,7 @@ export default function EditBookmark({
             >
               <div className="flex justify-center gap-4">
                 <div className="space-y-1 px-4 pb-4">
-                  <label className="font-base select-none text-sm text-neutral-300">
+                  <label className="font-base select-none text-base text-neutral-300">
                     Investigator Officer
                   </label>
 
@@ -103,8 +103,8 @@ export default function EditBookmark({
                   />
                 </div>
                 <div className="space-y-1 px-4 pb-4">
-                  <label className="font-base text-sm text-neutral-300">
-                    status
+                  <label className="font-base text-base text-neutral-300">
+                    Status
                   </label>
 
                   <CustomCombox
@@ -112,6 +112,7 @@ export default function EditBookmark({
                       { label: 'success', value: 'success' },
                       { label: 'pending', value: 'pending' },
                     ]}
+                    searchNeed={false}
                     onSelect={(val) => {
                       if (val === 'pending' || val === 'success') {
                         setEditStatus(val);
