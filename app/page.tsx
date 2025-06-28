@@ -1,5 +1,4 @@
 import CTA from '@/components/sub/cta';
-import Education from '@/components/sub/education';
 import FAQ from '@/components/sub/faq';
 import Featured from '@/components/sub/featured';
 import Features from '@/components/sub/features';
@@ -8,8 +7,6 @@ import Hero from '@/components/sub/hero';
 import SecurityAnimation from '@/components/sub/security-animation';
 import Services from '@/components/sub/services';
 import Testimonials from '@/components/sub/testimonials';
-import { RootState } from '@/redux/store';
-import { useSelector } from 'react-redux';
 
 export default async function Home() {
   return (

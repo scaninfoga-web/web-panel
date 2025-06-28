@@ -5,6 +5,9 @@ import { Loader } from '@/components/ui/loader';
 import { ContactInfo } from '../dashboard/components/ContactInfo';
 import { EmailInfo } from '../dashboard/components/EmailInfo';
 import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
+import TermsModal from '@/components/common/TermsModal';
 
 const searchFilterOptions = [
   { label: 'Email', value: 'email' },
@@ -24,6 +27,11 @@ function CombinedDash() {
     await new Promise((resolve) => setTimeout(resolve, 2000));
 
     setIsLoading(false);
+  };
+
+  const [open, setIsOpen] = useState(false);
+  const handleAgree = () => {
+    toast.success('Agreed');
   };
 
   return (
