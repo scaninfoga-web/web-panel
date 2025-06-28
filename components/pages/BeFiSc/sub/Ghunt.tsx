@@ -11,6 +11,7 @@ import {
 const Ghunt: React.FC<{ accountData: GhuntData | null | undefined }> = ({
   accountData,
 }) => {
+  console.log('GHUNT DATA :', accountData);
   const getImageUrl = () => {
     if (
       accountData?.profile?.profilePictureUrl &&
@@ -24,7 +25,7 @@ const Ghunt: React.FC<{ accountData: GhuntData | null | undefined }> = ({
     <div className="space-y-4">
       <DashboardCard
         titleBig={false}
-        title={`${accountData?.email.toLowerCase() || ''}`}
+        title={`${accountData?.email?.toLowerCase() || ''}`}
         icon={
           <Image
             src={getImageUrl()}

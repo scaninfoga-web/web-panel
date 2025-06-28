@@ -12,6 +12,7 @@ const defaultBadge = [
   'postpaid',
   'Email Linked',
   'Verified',
+  'Found',
 ];
 const dangerBadge = [
   'No',
@@ -21,6 +22,7 @@ const dangerBadge = [
   'Not Verified',
   'Alert',
   'Warning',
+  'Not Found',
 ];
 const warningBadge = ['CONNECTED', 'DISCONNECTED', 'PENDING', 'pending'];
 

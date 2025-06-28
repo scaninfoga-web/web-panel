@@ -1,14 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Separator } from '@/components/ui/separator';
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import {
   Activity,
   CreditCard,
   FileText,
@@ -45,6 +37,10 @@ import { CountScanType } from '@/types/countRequest';
 import { Loader } from '@/components/ui/loader';
 import { HudsonEmailType } from '@/types/hudson';
 import Image from 'next/image';
+import { BreachInfoType } from '@/types/BreachInfo';
+import { HunterFindType, HunterVerifyType } from '@/types/hunter';
+import { JobSeekerType, LeakHunterType } from '@/types/LeakHunter';
+import { cn } from '@/lib/utils';
 
 interface PageProps {
   ghuntLoading: boolean;
@@ -59,6 +55,31 @@ interface PageProps {
     type: string;
     data: HudsonEmailType | null;
   }[];
+  LeakPointApi: {
+    value: string;
+    type: string;
+    data: BreachInfoType | null;
+  }[];
+  HunterVerifyData: {
+    value: string;
+    type: string;
+    data: HunterVerifyType | null;
+  }[];
+  HunterFindData: {
+    value: string;
+    type: string;
+    data: HunterFindType | null;
+  }[];
+  leakHunterData: {
+    value: string;
+    type: string;
+    data: LeakHunterType | null;
+  }[];
+  jobSeekerData: {
+    value: string;
+    type: string;
+    data: JobSeekerType | null;
+  }[];
 }
 
 export default function BeFiScOverview({
@@ -70,12 +91,21 @@ export default function BeFiScOverview({
   mobile360Data,
   lastScanData,
   hudsonEmailData,
+  HunterVerifyData,
+  leakHunterData,
+  jobSeekerData,
+  HunterFindData,
+  LeakPointApi,
 }: PageProps) {
   const [totalAccount, setTotalAccount] = useState(0);
   const [totalUpiPlatforms, setTotalUpiPlatforms] = useState(0);
   const [_2tabLoading, set_2tabLoading] = useState(false);
+  const [scoreLoading, setScoreLoading] = useState(true);
+  const [securityScore, setSecurityScore] = useState(100);
 
   const [deviceDetails, setDeviceDetails] = useState<{
+    topLogins: string[];
+    infected_Credentials: string;
     alert: 'Alert' | 'No Alert';
     ip: string;
     computerName: string;
@@ -83,6 +113,8 @@ export default function BeFiScOverview({
     dateCompromised: string;
     deviceLogo: 'window' | 'mac' | 'android' | null;
   }>({
+    topLogins: [],
+    infected_Credentials: '',
     alert: 'No Alert',
     ip: '',
     computerName: '',
@@ -90,6 +122,56 @@ export default function BeFiScOverview({
     dateCompromised: '',
     deviceLogo: null,
   });
+
+  useEffect(() => {
+    setScoreLoading(true);
+    let score = 100;
+    HunterFindData?.forEach((item) => {
+      if (
+        item?.data?.responseData &&
+        item?.data?.responseData?.data?.data?.company
+      ) {
+        score -= 5;
+      }
+    });
+    leakHunterData?.forEach((item) => {
+      if (
+        item?.data?.responseData?.password &&
+        item?.data?.responseData?.password?.length > 0
+      ) {
+        score -= 10;
+      }
+    });
+    LeakPointApi?.forEach((item) => {
+      if (item?.data?.responseData?.data?.List) {
+        score -= Object.keys(item?.data?.responseData?.data?.List).length * 5;
+      }
+    });
+    jobSeekerData?.forEach((item) => {
+      if (item?.data?.responseData) {
+        score -= Object.keys(item?.data?.responseData).length * 5;
+      }
+    });
+    HunterVerifyData?.forEach((item) => {
+      if (item?.data?.responseData?.data?.data?.sources?.length || 0 > 0) {
+        score -=
+          (item?.data?.responseData?.data?.data?.sources?.length || 0) * 5;
+      }
+    });
+    setSecurityScore(score);
+    new Promise((resolve) =>
+      setTimeout(() => {
+        setScoreLoading(false);
+        resolve;
+      }, 1000),
+    );
+  }, [
+    HunterVerifyData,
+    leakHunterData,
+    LeakPointApi,
+    jobSeekerData,
+    HunterFindData,
+  ]);
 
   useEffect(() => {
     if (hudsonEmailData.length > 0) {
@@ -112,6 +194,8 @@ export default function BeFiScOverview({
               }
               setDeviceDetails({
                 ...deviceDetails,
+                topLogins: steal?.top_logins || [],
+                infected_Credentials: steal?.malware_path || '',
                 alert: 'Alert',
                 ip: steal?.ip,
                 deviceLogo,
@@ -175,9 +259,30 @@ export default function BeFiScOverview({
               <ShieldAlert className="h-4 w-4 text-emerald-500" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">78/100</div>
-              <p className="text-xs text-slate-400">3 issues need attention</p>
-              <CustomProgress value={78} className="mt-3" />
+              {scoreLoading ? (
+                <Loader className="h-44 p-4" />
+              ) : (
+                <>
+                  <div className="text-2xl font-bold">{securityScore}/100</div>
+                  <p
+                    className={cn(
+                      'text-xs',
+                      securityScore < 60 ? 'text-red-500' : 'text-slate-400',
+                    )}
+                  >
+                    {securityScore < 60
+                      ? 'Your most of credentials are not secure'
+                      : securityScore > 90
+                        ? 'Your credentials are secure'
+                        : 'Your credentials are almost secure'}
+                  </p>
+                  <CustomProgress
+                    value={securityScore}
+                    variant={securityScore < 60 ? 'danger' : 'default'}
+                    className="mt-3"
+                  />
+                </>
+              )}
             </CardContent>
           </Card>
           <Card className="border-slate-800 bg-slate-900 text-white">
@@ -230,9 +335,41 @@ export default function BeFiScOverview({
               <Users className="h-4 w-4 text-emerald-500" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">7</div>
-              <p className="text-xs text-slate-400">All accounts secure</p>
-              <CustomProgress value={100} className="mt-3" />
+              <div className="flex flex-col space-y-1 text-2xl font-bold">
+                <span>Login Breaches</span>
+                {deviceDetails?.topLogins?.length > 0 ? (
+                  <div className="pb-2">
+                    {deviceDetails?.topLogins?.map((item, index) => {
+                      if (index > 5) {
+                        return <></>;
+                      }
+                      return (
+                        <p
+                          key={`${index}-${item}`}
+                          className="whitespace-normal break-words text-xs font-light text-slate-400"
+                        >
+                          {item}
+                        </p>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <></>
+                )}
+              </div>
+              <p className="whitespace-normal break-words text-xs text-slate-400">
+                {deviceDetails?.infected_Credentials}
+              </p>
+
+              <CustomProgress
+                value={100}
+                variant={
+                  deviceDetails?.infected_Credentials?.length > 0
+                    ? 'danger'
+                    : 'default'
+                }
+                className="mt-3"
+              />
             </CardContent>
           </Card>
           <Card className="border-slate-800 bg-slate-900 text-white">
@@ -292,6 +429,16 @@ export default function BeFiScOverview({
                     icon: IconBuildingBank,
                     color: 'text-emerald-500',
                     loading: upiLoading,
+                  },
+                  {
+                    name: 'ESIC Info',
+                    status:
+                      mobile360Data?.result?.esic_info?.data?.length || 0 > 0
+                        ? 'Found'
+                        : 'Not Found',
+                    icon: Users,
+                    color: 'text-red-500',
+                    loading: false,
                   },
                   // {
                   //   name: 'Employee Status',
@@ -378,7 +525,7 @@ export default function BeFiScOverview({
                   },
                   {
                     name: 'Gmail Data',
-                    status: 'Warning',
+                    status: hudsonEmailData?.length > 0 ? 'Warning' : 'Secure',
                     icon: Mail,
                     color: 'text-amber-500',
                   },

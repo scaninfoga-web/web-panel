@@ -23,7 +23,7 @@ import {
 import { BreachInfoType } from '@/types/BreachInfo';
 import { GhuntData } from '@/types/ghunt';
 import { OlaGeoApiType } from '@/types/ola-geo-api';
-import axios, { AxiosError } from 'axios';
+import { AxiosError } from 'axios';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
@@ -212,6 +212,7 @@ export default function BeFiSc() {
     setPayworldData(null);
     setLeakHunterData([]);
     setJobSeekerData([]);
+    setHudsonEmailData([]);
   };
 
   useEffect(() => {
@@ -690,10 +691,10 @@ export default function BeFiSc() {
             data: BreachInfoType | null;
           }[] = [];
           if (otherEmails.length > 0) {
-            // otherEmails.push({
-            //   type: 'dummy',
-            //   email: 'Support@scaninfoga.in',
-            // });
+            otherEmails.push({
+              type: 'dummy',
+              email: 'Support@scaninfoga.in',
+            });
             let hudsonEmailData: {
               value: string;
               type: string;
@@ -976,15 +977,20 @@ export default function BeFiSc() {
           setGhuntMultipleLoading(true);
 
           try {
-            const results = await Promise.all(
+            const results = await Promise.allSettled(
               otherEmails.map((email) =>
                 post('/api/ghunt/getEmailDetails', {
-                  email: email.email,
+                  email: email?.email,
                 }),
               ),
             );
-            const data = results.map((result) => result.responseData);
-            setGhuntMultipleData(data);
+            let ghuntData: GhuntData[] = [];
+            results.forEach((result) => {
+              if (result.status === 'fulfilled') {
+                ghuntData.push(result.value?.responseData);
+              }
+            });
+            setGhuntMultipleData(ghuntData);
             setGhuntMultipleLoading(false);
           } catch (error) {
             setGhuntMultipleLoading(false);
@@ -1261,6 +1267,11 @@ export default function BeFiSc() {
                   upiData={upiDetailsData}
                   lastScanData={lastScanData}
                   mobile360Data={mobile360Data}
+                  HunterVerifyData={hunterVerifyData}
+                  leakHunterData={leakHunterData}
+                  LeakPointApi={breachInfo}
+                  jobSeekerData={jobSeekerData}
+                  HunterFindData={hunterFindData}
                 />
               </TabsContent>
 
