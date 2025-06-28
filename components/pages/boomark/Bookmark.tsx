@@ -35,7 +35,6 @@ const Bookmark: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [isEditShown, setIsEditShown] = useState(false);
   const [editBookmark, setEditBookmark] = useState<UserBookmark | null>(null);
-
   useEffect(() => {
     fetchActivities();
   }, []);

@@ -73,6 +73,8 @@ export default function BeFiScOverview({
 }: PageProps) {
   const [totalAccount, setTotalAccount] = useState(0);
   const [totalUpiPlatforms, setTotalUpiPlatforms] = useState(0);
+  const [_2tabLoading, set_2tabLoading] = useState(false);
+
   const [deviceDetails, setDeviceDetails] = useState<{
     alert: 'Alert' | 'No Alert';
     ip: string;
@@ -91,13 +93,12 @@ export default function BeFiScOverview({
 
   useEffect(() => {
     if (hudsonEmailData.length > 0) {
-      let isAlert = false;
+      set_2tabLoading(true);
       hudsonEmailData.forEach((item) => {
         if (
           item?.data?.responseData?.stealers &&
           item?.data?.responseData?.stealers?.length > 0 &&
           item?.data?.responseData?.stealers?.map((steal) => {
-            isAlert = true;
             if (steal?.computer_name && steal?.computer_name?.length > 2) {
               let deviceLogo: 'window' | 'mac' | 'android' | null = null;
               if (steal?.operating_system?.toLowerCase().includes('mac')) {
@@ -123,6 +124,7 @@ export default function BeFiScOverview({
         )
           return;
       });
+      set_2tabLoading(false);
     }
   }, [hudsonEmailData]);
 
@@ -179,35 +181,46 @@ export default function BeFiScOverview({
             </CardContent>
           </Card>
           <Card className="border-slate-800 bg-slate-900 text-white">
-            <CardHeader className="relative bottom-2 flex flex-row items-center justify-between">
-              <CardTitle className="text-sm font-medium">
-                Infected Device
-              </CardTitle>
-              <Image
-                src={
-                  deviceDetails?.deviceLogo
-                    ? `/${deviceDetails?.deviceLogo}.png`
-                    : '/null.png'
-                }
-                alt="dv"
-                width={40}
-                height={40}
-                className="rounded-full"
-              />
-            </CardHeader>
-            <CardContent className="relative bottom-8">
-              <div className="text-2xl font-bold">
-                {formatSentence(deviceDetails?.computerName)}
-              </div>
-              <div className="flex flex-col text-xs text-slate-400">
-                <span>IP : {formatSentence(deviceDetails?.ip)}</span>
-                <span>OS : {formatSentence(deviceDetails?.OS)}</span>
-                <span>
-                  Date Compromised : {timeAgo(deviceDetails?.dateCompromised)}
-                </span>
-              </div>
-              <CustomProgress value={25} className="mt-3" variant="danger" />
-            </CardContent>
+            {_2tabLoading ? (
+              <Loader className="h-44 p-4" />
+            ) : (
+              <>
+                <CardHeader className="relative bottom-2 flex flex-row items-center justify-between">
+                  <CardTitle className="text-sm font-medium">
+                    Infected Device
+                  </CardTitle>
+                  <Image
+                    src={
+                      deviceDetails?.deviceLogo
+                        ? `/${deviceDetails?.deviceLogo}.png`
+                        : '/null.png'
+                    }
+                    alt="dv"
+                    width={40}
+                    height={40}
+                    className="rounded-full"
+                  />
+                </CardHeader>
+                <CardContent className="relative bottom-8">
+                  <div className="pb-1 text-2xl font-bold">
+                    {formatSentence(deviceDetails?.computerName)}
+                  </div>
+                  <div className="flex flex-col text-xs text-slate-400">
+                    <span>IP : {formatSentence(deviceDetails?.ip)}</span>
+                    <span>OS : {formatSentence(deviceDetails?.OS)}</span>
+                    <span>
+                      Date Compromised :{' '}
+                      {timeAgo(deviceDetails?.dateCompromised)}
+                    </span>
+                  </div>
+                  <CustomProgress
+                    value={25}
+                    className="mt-3"
+                    variant="danger"
+                  />
+                </CardContent>
+              </>
+            )}
           </Card>
           <Card className="border-slate-800 bg-slate-900 text-white">
             <CardHeader className="flex flex-row items-center justify-between pb-2">

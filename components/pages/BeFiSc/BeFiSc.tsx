@@ -690,10 +690,10 @@ export default function BeFiSc() {
             data: BreachInfoType | null;
           }[] = [];
           if (otherEmails.length > 0) {
-            otherEmails.push({
-              type: 'dummy',
-              email: 'Support@scaninfoga.in',
-            });
+            // otherEmails.push({
+            //   type: 'dummy',
+            //   email: 'Support@scaninfoga.in',
+            // });
             let hudsonEmailData: {
               value: string;
               type: string;
