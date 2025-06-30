@@ -188,6 +188,9 @@ export default function BeFiSc() {
       data: JobSeekerType | null;
     }[]
   >([]);
+  const numbersFoundRef = useRef<number>(0);
+  const emailsFoundRef = useRef<number>(0);
+  const addressesFound = useRef<number>(0);
 
   const setAllOnLoading = () => {
     setIsLoading(true);
@@ -213,6 +216,10 @@ export default function BeFiSc() {
     setLeakHunterData([]);
     setJobSeekerData([]);
     setHudsonEmailData([]);
+    numbersFoundRef.current = 0;
+    emailsFoundRef.current = 0;
+
+    addressesFound.current = 0;
   };
 
   useEffect(() => {
@@ -622,6 +629,7 @@ export default function BeFiSc() {
     callGeoApi();
   }, [isLoading, mobile360Data]);
 
+  // other address api
   useEffect(() => {
     const callOtherAddressApis = async () => {
       if (!isLoading && mobile360Data) {
@@ -635,6 +643,14 @@ export default function BeFiSc() {
             profileAdvanceData?.result?.address?.[0]?.pincode ||
             '',
         );
+        if (
+          profileAdvanceData?.result?.address ||
+          panAllInOneData?.result?.address?.zip
+        ) {
+          addressesFound.current = otherAddressArray.length + 1;
+        } else {
+          addressesFound.current = otherAddressArray.length;
+        }
         if (otherAddressArray.length > 0) {
           setOtherAddressOlaLoading(true);
           try {
@@ -682,6 +698,7 @@ export default function BeFiSc() {
           mobileNo,
           true,
         );
+        numbersFoundRef.current = otherNumber.length - 1;
 
         if (otherNumber.length > 0 || otherEmails.length > 0) {
           setBreachInfoLoading(true);
@@ -973,6 +990,7 @@ export default function BeFiSc() {
           profileAdvanceData,
           '',
         );
+        emailsFoundRef.current = otherEmails.length;
         if (otherEmails.length > 0) {
           setGhuntMultipleLoading(true);
 
@@ -1257,6 +1275,16 @@ export default function BeFiSc() {
 
               <TabsContent value="overview" className="mt-6">
                 <BeFiScOverview
+                  OverviewData={OverviewData}
+                  isSoleProprietor={
+                    panAllInOneData?.result?.is_sole_proprietor?.found || '----'
+                  }
+                  isDirector={
+                    panAllInOneData?.result?.is_director?.found || '----'
+                  }
+                  emailsFound={emailsFoundRef.current}
+                  numbersFound={numbersFoundRef.current}
+                  addressesFound={addressesFound.current}
                   hudsonEmailData={hudsonEmailData}
                   lptConnection={
                     mobile360Data?.result?.lpg_info?.data?.length || 0

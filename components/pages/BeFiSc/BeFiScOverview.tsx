@@ -1,5 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import { Separator } from '@/components/ui/separator';
+import { Progress } from '@/components/ui/progress';
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+} from 'recharts';
+import {
+  Share2,
+  Key,
+  Globe,
+  AlertTriangle,
+  LineChart,
+  PieChart as PieChartIcon,
+} from 'lucide-react';
 import {
   Activity,
   CreditCard,
@@ -13,6 +33,7 @@ import {
   Shield,
   ShieldAlert,
   User,
+  User2,
   Users,
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -29,7 +50,9 @@ import { Mobile360Type, UPIType } from '@/types/BeFiSc';
 import {
   IconBrandWhatsapp,
   IconBuildingBank,
+  IconDeviceSim,
   IconLocation,
+  IconMail,
 } from '@tabler/icons-react';
 import CustomBadge from './sub/CustomBadge';
 import { formatSentence, timeAgo } from './sub/APIUtils';
@@ -41,8 +64,16 @@ import { BreachInfoType } from '@/types/BreachInfo';
 import { HunterFindType, HunterVerifyType } from '@/types/hunter';
 import { JobSeekerType, LeakHunterType } from '@/types/LeakHunter';
 import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import { DashboardCard, InfoText } from '../dashboard/components/DashboardCard';
+import CustomPopUp from './sub/CustomPopUp';
 
 interface PageProps {
+  addressesFound: number;
+  isSoleProprietor: string;
+  isDirector: string;
+  emailsFound: number;
+  numbersFound: number;
   ghuntLoading: boolean;
   lptConnection: number;
   totalGoogleAccount: number;
@@ -80,9 +111,20 @@ interface PageProps {
     type: string;
     data: JobSeekerType | null;
   }[];
+  OverviewData: {
+    title: string;
+    value: string;
+    titleClassname: string;
+    valueClassname: string;
+  }[];
 }
 
 export default function BeFiScOverview({
+  addressesFound,
+  isDirector,
+  isSoleProprietor,
+  emailsFound,
+  numbersFound,
   lptConnection,
   ghuntLoading,
   totalGoogleAccount,
@@ -96,15 +138,24 @@ export default function BeFiScOverview({
   jobSeekerData,
   HunterFindData,
   LeakPointApi,
+  OverviewData,
 }: PageProps) {
   const [totalAccount, setTotalAccount] = useState(0);
   const [totalUpiPlatforms, setTotalUpiPlatforms] = useState(0);
   const [_2tabLoading, set_2tabLoading] = useState(false);
   const [scoreLoading, setScoreLoading] = useState(true);
   const [securityScore, setSecurityScore] = useState(100);
+  const breachData = [
+    { name: 'Passwords', value: 40 },
+    { name: 'Personal Info', value: 30 },
+    { name: 'Financial', value: 20 },
+    { name: 'Other', value: 10 },
+  ];
+  const COLORS = ['#10B981', '#3B82F6', '#EF4444', '#F59E0B'];
 
   const [deviceDetails, setDeviceDetails] = useState<{
     topLogins: string[];
+    topPasswords: string[];
     infected_Credentials: string;
     alert: 'Alert' | 'No Alert';
     ip: string;
@@ -114,6 +165,7 @@ export default function BeFiScOverview({
     deviceLogo: 'window' | 'mac' | 'android' | null;
   }>({
     topLogins: [],
+    topPasswords: [],
     infected_Credentials: '',
     alert: 'No Alert',
     ip: '',
@@ -125,7 +177,26 @@ export default function BeFiScOverview({
 
   useEffect(() => {
     setScoreLoading(true);
-    let score = 100;
+    let score = 95;
+    hudsonEmailData?.forEach((item) => {
+      if (
+        item?.data?.responseData?.total_corporate_services &&
+        item?.data?.responseData?.total_user_services > 0
+      ) {
+      }
+      item?.data?.responseData?.stealers?.forEach((steal) => {
+        if (steal?.top_logins) {
+          score -= steal?.top_logins?.length;
+        }
+        if (steal?.top_passwords) {
+          score -= steal?.top_passwords?.length;
+        }
+        if (steal?.malware_path && steal?.malware_path?.length > 2) {
+          score -= 10;
+        }
+      });
+    });
+
     HunterFindData?.forEach((item) => {
       if (
         item?.data?.responseData &&
@@ -194,6 +265,7 @@ export default function BeFiScOverview({
               }
               setDeviceDetails({
                 ...deviceDetails,
+                topPasswords: steal?.top_passwords || [],
                 topLogins: steal?.top_logins || [],
                 infected_Credentials: steal?.malware_path || '',
                 alert: 'Alert',
@@ -250,19 +322,42 @@ export default function BeFiScOverview({
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
       >
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <Card className="border-slate-800 bg-slate-900 text-white">
+        <div className="grid gap-4 md:grid-cols-2">
+          {/* <Card className="border-slate-800 bg-[#0e1421]/30 backdrop-blur-xl text-white">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium">
-                Security Score
+                Profile Info
               </CardTitle>
-              <ShieldAlert className="h-4 w-4 text-emerald-500" />
+              <User2 className="h-4 w-4 text-emerald-500" />
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-8">
+              <div className="space-y-0.5 pt-2">
+                <InfoText
+                  value={
+                    <CustomBadge
+                      value={
+                        mobile360Data?.result?.gst_list?.data &&
+                        mobile360Data?.result?.gst_list?.data?.length > 0
+                          ? 'Business'
+                          : 'Personal'
+                      }
+                    />
+                  }
+                  label="Profile"
+                />
+                <InfoText
+                  value={<CustomBadge value={isSoleProprietor} />}
+                  label="isSoleProprietor"
+                />
+                <InfoText
+                  value={<CustomBadge value={isDirector} />}
+                  label="isDirector"
+                />
+              </div>
               {scoreLoading ? (
-                <Loader className="h-44 p-4" />
+                <Loader className="h-16 p-4" />
               ) : (
-                <>
+                <div>
                   <div className="text-2xl font-bold">{securityScore}/100</div>
                   <p
                     className={cn(
@@ -281,131 +376,200 @@ export default function BeFiScOverview({
                     variant={securityScore < 60 ? 'danger' : 'default'}
                     className="mt-3"
                   />
-                </>
+                </div>
               )}
             </CardContent>
-          </Card>
-          <Card className="border-slate-800 bg-slate-900 text-white">
-            {_2tabLoading ? (
-              <Loader className="h-44 p-4" />
-            ) : (
-              <>
-                <CardHeader className="relative bottom-2 flex flex-row items-center justify-between">
-                  <CardTitle className="text-sm font-medium">
-                    Infected Device
-                  </CardTitle>
-                  <Image
-                    src={
-                      deviceDetails?.deviceLogo
-                        ? `/${deviceDetails?.deviceLogo}.png`
-                        : '/null.png'
-                    }
-                    alt="dv"
-                    width={40}
-                    height={40}
-                    className="rounded-full"
+          </Card> */}
+          <DashboardCard
+            title={
+              mobile360Data?.result?.gst_list?.data &&
+              mobile360Data?.result?.gst_list?.data?.length > 0
+                ? 'Business Profile'
+                : 'Personal Profile'
+            }
+            icon={<PieChartIcon className="mr-2 h-5 w-5 text-emerald-500" />}
+          >
+            <div className="mt-4 h-[215px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={breachData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={80}
+                    fill="#8884d8"
+                    dataKey="value"
+                    label={({ name, value }) => `${name}: ${value}%`}
+                    labelLine={false}
+                  >
+                    {breachData.map((entry, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={COLORS[index % COLORS.length]}
+                      />
+                    ))}
+                  </Pie>
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: '#1F2937',
+                      border: '1px solid #374151',
+                      color: '#E5E7EB',
+                    }}
+                    itemStyle={{
+                      color: '#E5E7EB',
+                    }}
+                    labelStyle={{
+                      color: '#E5E7EB',
+                    }}
                   />
-                </CardHeader>
-                <CardContent className="relative bottom-8">
-                  <div className="pb-1 text-2xl font-bold">
-                    {formatSentence(deviceDetails?.computerName)}
-                  </div>
-                  <div className="flex flex-col text-xs text-slate-400">
-                    <span>IP : {formatSentence(deviceDetails?.ip)}</span>
-                    <span>OS : {formatSentence(deviceDetails?.OS)}</span>
-                    <span>
-                      Date Compromised :{' '}
-                      {timeAgo(deviceDetails?.dateCompromised)}
-                    </span>
-                  </div>
-                  <CustomProgress
-                    value={25}
-                    className="mt-3"
-                    variant="danger"
-                  />
-                </CardContent>
-              </>
-            )}
-          </Card>
-          <Card className="border-slate-800 bg-slate-900 text-white">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">
-                Infected Credentials
-              </CardTitle>
-              <Users className="h-4 w-4 text-emerald-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-col space-y-1 text-2xl font-bold">
-                <span>Login Breaches</span>
-                {deviceDetails?.topLogins?.length > 0 ? (
-                  <div className="pb-2">
-                    {deviceDetails?.topLogins?.map((item, index) => {
-                      if (index > 5) {
-                        return <></>;
-                      }
-                      return (
-                        <p
-                          key={`${index}-${item}`}
-                          className="whitespace-normal break-words text-xs font-light text-slate-400"
-                        >
-                          {item}
-                        </p>
-                      );
-                    })}
-                  </div>
-                ) : (
-                  <></>
-                )}
-              </div>
-              <p className="whitespace-normal break-words text-xs text-slate-400">
-                {deviceDetails?.infected_Credentials}
-              </p>
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          </DashboardCard>
 
-              <CustomProgress
-                value={100}
-                variant={
-                  deviceDetails?.infected_Credentials?.length > 0
-                    ? 'danger'
-                    : 'default'
-                }
-                className="mt-3"
-              />
-            </CardContent>
-          </Card>
-          <Card className="border-slate-800 bg-slate-900 text-white">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">
-                Last Real Scan
-              </CardTitle>
-              <Activity className="h-4 w-4 text-emerald-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {timeAgo(
-                  lastScanData?.responseData?.last_updated_at ||
-                    Date.now().toString(),
-                )}
-              </div>
-              <p className="text-xs text-slate-400">
-                Total Scans {lastScanData?.responseData?.call_count || '--'}
-              </p>
-              {lastScanData?.responseData?.call_count && (
-                <CustomProgress
-                  value={
-                    lastScanData?.responseData?.call_count > 100
-                      ? lastScanData?.responseData?.call_count / 10
-                      : lastScanData?.responseData?.call_count
-                  }
-                  className="mt-3"
-                />
+          <div className="grid grid-cols-2 gap-4">
+            <Card className="border-slate-800 bg-[#0e1421]/30 text-white backdrop-blur-xl">
+              {_2tabLoading ? (
+                <Loader className="h-44 p-4" />
+              ) : (
+                <div className="flex flex-col">
+                  <CardHeader className="flex flex-row items-center justify-between py-0 pt-2">
+                    <CardTitle className="text-sm font-medium">
+                      Infected Device
+                    </CardTitle>
+                    <Image
+                      src={
+                        deviceDetails?.deviceLogo
+                          ? `/${deviceDetails?.deviceLogo}.png`
+                          : '/null.png'
+                      }
+                      alt="dv"
+                      width={45}
+                      height={45}
+                      className="rounded-full"
+                    />
+                  </CardHeader>
+                  <CardContent className="flex flex-col justify-between space-y-4">
+                    <div>
+                      <div className="pb-1 text-2xl font-bold">
+                        {formatSentence(deviceDetails?.computerName)}
+                      </div>
+                      <div className="flex flex-col text-xs text-slate-400">
+                        <span>IP : {formatSentence(deviceDetails?.ip)}</span>
+                        <span>OS : {formatSentence(deviceDetails?.OS)}</span>
+                        <span>
+                          Date Compromised :{' '}
+                          {timeAgo(deviceDetails?.dateCompromised)}
+                        </span>
+                        <p className="whitespace-normal break-words pt-2 text-xs text-slate-400">
+                          {deviceDetails?.infected_Credentials}
+                        </p>
+                      </div>
+                      <CustomProgress
+                        value={
+                          deviceDetails?.topLogins &&
+                          deviceDetails?.topLogins?.length > 0
+                            ? deviceDetails?.topLogins?.length * 10
+                            : 0
+                        }
+                        className="mt-3"
+                        variant={
+                          deviceDetails?.topLogins &&
+                          deviceDetails?.topLogins?.length > 0
+                            ? 'danger'
+                            : 'default'
+                        }
+                      />
+                    </div>
+
+                    <CustomPopUp
+                      dialogTitle={'Leaked Information'}
+                      triggerElement={
+                        <Button
+                          variant={'ghost'}
+                          className="border border-slate-700 p-0 px-0 py-0"
+                        >
+                          view
+                        </Button>
+                      }
+                      children={
+                        <div className="flex w-full space-x-5">
+                          <div className="flex flex-col space-y-1">
+                            <span className="text-lg font-bold">
+                              Top Logins
+                            </span>
+                            <div className="flex flex-col">
+                              {deviceDetails?.topLogins?.map((item, index) => (
+                                <span className="text-base" key={index}>
+                                  {item}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                          <div className="flex flex-col space-y-1">
+                            <span className="text-lg font-bold">
+                              Top Passwords
+                            </span>
+                            <div className="flex flex-col">
+                              {deviceDetails?.topLogins?.map((item, index) => (
+                                <span className="text-base" key={index}>
+                                  {item}
+                                </span>
+                              ))}
+                            </div>
+                            <div className="flex flex-col">
+                              {deviceDetails?.topPasswords?.map(
+                                (item, index) => (
+                                  <span className="text-base" key={index}>
+                                    {item}
+                                  </span>
+                                ),
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      }
+                    />
+                  </CardContent>
+                </div>
               )}
-            </CardContent>
-          </Card>
+            </Card>
+            <Card className="border-slate-800 bg-[#0e1421]/30 text-white backdrop-blur-xl">
+              <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-sm font-medium">
+                  Last Real Scan
+                </CardTitle>
+                <Activity className="h-4 w-4 text-emerald-500" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">
+                  {timeAgo(
+                    lastScanData?.responseData?.last_updated_at ||
+                      Date.now().toString(),
+                  )}
+                </div>
+                <p className="text-xs text-slate-400">
+                  Total Scans {lastScanData?.responseData?.call_count || '--'}
+                </p>
+                {lastScanData?.responseData?.call_count && (
+                  <CustomProgress
+                    value={
+                      lastScanData?.responseData?.call_count > 100
+                        ? lastScanData?.responseData?.call_count / 10
+                        : lastScanData?.responseData?.call_count
+                    }
+                    className="mt-3"
+                  />
+                )}
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </motion.div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        <Card className="col-span-full border-slate-800 bg-slate-900 text-white lg:col-span-2">
+        <Card className="col-span-full border-slate-800 bg-[#0e1421]/30 text-white backdrop-blur-xl lg:col-span-2">
           <CardHeader>
             <CardTitle>Security Overview</CardTitle>
             <CardDescription className="text-slate-400">
@@ -431,6 +595,49 @@ export default function BeFiScOverview({
                     loading: upiLoading,
                   },
                   {
+                    name: 'Address Detected',
+                    status: addressesFound,
+                    icon: IconMail,
+                    color: 'text-red-500',
+                    loading: false,
+                  },
+                  {
+                    name: 'Email Detected',
+                    status: emailsFound,
+                    icon: IconMail,
+                    color: 'text-red-500',
+                    loading: false,
+                  },
+                  {
+                    name: 'Alternate Mobile Numbers',
+                    status: numbersFound,
+                    icon: IconDeviceSim,
+                    color: 'text-red-500',
+                    loading: false,
+                  },
+                  {
+                    name: 'GST Numbers',
+                    status:
+                      mobile360Data?.result?.gst_list?.data &&
+                      mobile360Data?.result?.gst_list?.data?.length > 0
+                        ? mobile360Data?.result?.gst_list?.data?.length
+                        : 0,
+                    icon: Users,
+                    color: 'text-red-500',
+                    loading: false,
+                  },
+                  {
+                    name: 'Udyam Numbers',
+                    status:
+                      mobile360Data?.result?.msme_info?.data &&
+                      mobile360Data?.result?.msme_info?.data?.length > 0
+                        ? mobile360Data?.result?.msme_info?.data?.length
+                        : 0,
+                    icon: Users,
+                    color: 'text-red-500',
+                    loading: false,
+                  },
+                  {
                     name: 'ESIC Info',
                     status:
                       mobile360Data?.result?.esic_info?.data?.length || 0 > 0
@@ -440,20 +647,26 @@ export default function BeFiScOverview({
                     color: 'text-red-500',
                     loading: false,
                   },
-                  // {
-                  //   name: 'Employee Status',
-                  //   status: 'Verified',
-                  //   icon: Users,
-                  //   color: 'text-emerald-500',
-                  //   loading: true,
-                  // },
-                  // {
-                  //   name: 'ESIC History',
-                  //   status: 'Complete',
-                  //   icon: FileText,
-                  //   color: 'text-emerald-500',
-                  //   loading: false,
-                  // },
+                  {
+                    name: 'EPFO Info',
+                    status:
+                      mobile360Data?.result?.epfo_info?.data?.length || 0 > 0
+                        ? 'Found'
+                        : 'Not Found',
+                    icon: Users,
+                    color: 'text-red-500',
+                    loading: false,
+                  },
+                  {
+                    name: 'IEC Info',
+                    status:
+                      mobile360Data?.result?.iec_list?.data?.length || 0 > 0
+                        ? 'Found'
+                        : 'Not Found',
+                    icon: Users,
+                    color: 'text-red-500',
+                    loading: false,
+                  },
                   {
                     name: 'Google Account',
                     status: totalGoogleAccount,
@@ -468,13 +681,6 @@ export default function BeFiScOverview({
                     color: 'text-red-500',
                     loading: false,
                   },
-                  // {
-                  //   name: 'Info Stealer Intelligence',
-                  //   status: 'Secure',
-                  //   icon: Shield,
-                  //   color: 'text-emerald-500',
-                  //   loading: false,
-                  // },
                   {
                     name: 'LPG Connections',
                     status: lptConnection,
@@ -573,7 +779,7 @@ export default function BeFiScOverview({
           </CardContent>
         </Card>
 
-        <Card className="border-slate-800 bg-slate-900 text-white">
+        <Card className="border-slate-800 bg-[#0e1421]/30 text-white backdrop-blur-xl">
           <CardHeader>
             <CardTitle>Number Details</CardTitle>
           </CardHeader>
@@ -790,6 +996,19 @@ export default function BeFiScOverview({
                     ? 'Active'
                     : 'Inactive'}
                 </Badge>
+              </div>
+              <div className="flex justify-between">
+                <p className="text-sm font-semibold text-slate-400">
+                  Whatsapp Business Account
+                </p>
+                <CustomBadge
+                  value={
+                    mobile360Data?.result?.whatsapp_info.data.is_business ===
+                    '0'
+                      ? 'No'
+                      : 'Yes'
+                  }
+                />
               </div>
               <Separator className="my-2.5 h-0.5 bg-slate-700" />
 
