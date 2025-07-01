@@ -81,7 +81,7 @@ export default function BeFiSc() {
   const [ghuntMultipleData, setGhuntMultipleData] = useState<GhuntData[]>([]);
   const [ghuntMultipleLoading, setGhuntMultipleLoading] = useState(false);
 
-  const [hudsonEmailData, setHudsonEmailData] = useState<
+  const [hudsonData, setHudsonData] = useState<
     {
       value: string;
       type: string;
@@ -171,8 +171,40 @@ export default function BeFiSc() {
     }[]
   >([]);
   const numbersFoundRef = useRef<number>(0);
-  const emailsFoundRef = useRef<number>(0);
   const addressesFound = useRef<number>(0);
+  const [_1tabLoading, set_1tabLoading] = useState(false);
+  const [_2tabLoading, set_2tabLoading] = useState(false);
+  const [deviceDetails, setDeviceDetails] = useState<{
+    topLogins: string[];
+    topPasswords: string[];
+    infected_Credentials: string;
+    alert: 'Alert' | 'No Alert';
+    ip: string;
+    computerName: string;
+    OS: string;
+    dateCompromised: string;
+    deviceLogo: 'window' | 'mac' | 'android' | null;
+    totalIP: string[];
+    totalPassword: string[];
+    totalEmail: string[];
+    securityScore: number;
+    totalBreachFields: number;
+  }>({
+    topLogins: [],
+    topPasswords: [],
+    infected_Credentials: '',
+    alert: 'No Alert',
+    ip: '',
+    computerName: '',
+    OS: '',
+    dateCompromised: '',
+    deviceLogo: null,
+    totalIP: [],
+    totalPassword: [],
+    totalEmail: [],
+    securityScore: 0,
+    totalBreachFields: 0,
+  });
 
   const setAllOnLoading = () => {
     setIsLoading(true);
@@ -197,12 +229,174 @@ export default function BeFiSc() {
     setPayworldData(null);
     setLeakHunterData([]);
     setJobSeekerData([]);
-    setHudsonEmailData([]);
+    setHudsonData([]);
     numbersFoundRef.current = 0;
-    emailsFoundRef.current = 0;
-
     addressesFound.current = 0;
   };
+
+  useEffect(() => {
+    set_1tabLoading(true);
+    let score = 100;
+    let totalEmails: string[] = [];
+    let totalPasswords: string[] = [];
+    let totalBreachFields = 0;
+    let totalIp: string[] = [];
+
+    if (hudsonData?.length > 0) {
+      hudsonData?.forEach((item) => {
+        if (
+          item?.data?.responseData?.total_corporate_services &&
+          item?.data?.responseData?.total_user_services > 0
+        ) {
+        }
+        item?.data?.responseData?.stealers?.forEach((steal) => {
+          if (steal?.top_logins) {
+            score -= steal?.top_logins?.length;
+          }
+          if (steal?.top_passwords) {
+            score -= steal?.top_passwords?.length;
+          }
+          if (steal?.malware_path && steal?.malware_path?.length > 2) {
+            score -= 10;
+          }
+        });
+      });
+    }
+    if (hunterFindData?.length > 0) {
+      hunterFindData?.forEach((item) => {
+        if (
+          item?.data?.responseData &&
+          item?.data?.responseData?.data?.data?.company
+        ) {
+          score -= 5;
+        }
+      });
+    }
+    if (leakHunterData?.length > 0) {
+      leakHunterData?.forEach((item) => {
+        if (
+          item?.data?.responseData?.password &&
+          item?.data?.responseData?.password?.length > 0
+        ) {
+          score -= 10;
+          item?.data?.responseData?.password?.map((item) =>
+            totalPasswords.push(item),
+          );
+        }
+      });
+    }
+    if (breachInfo?.length > 0) {
+      breachInfo?.forEach((item) => {
+        if (item?.value?.includes('@') && !totalEmails.includes(item?.value)) {
+          totalEmails.push(item?.value);
+        }
+        let keysFound = Object.keys(
+          item?.data?.responseData?.data?.List || {},
+        ).length;
+        if (keysFound > 0 && item?.data?.responseData?.data?.List) {
+          score -= keysFound;
+          totalBreachFields += keysFound;
+
+          Object.entries(item?.data?.responseData?.data?.List).forEach(
+            ([_, value]) => {
+              value?.Data?.forEach((item) => {
+                let email =
+                  item?.Email?.toLowerCase()?.replace(/\s/g, '') ||
+                  item?.email?.toLowerCase()?.replace(/\s/g, '') ||
+                  '';
+                let password =
+                  item?.Password?.toLowerCase()?.replace(/\s/g, '') ||
+                  item?.password?.toLowerCase()?.replace(/\s/g, '') ||
+                  '';
+                if (email.length > 0 && !totalEmails.includes(email)) {
+                  totalEmails.push(email);
+                }
+                if (password.length > 0 && !totalPasswords.includes(password)) {
+                  totalPasswords.push(password);
+                }
+                if (item?.IP && !totalIp.includes(item?.IP)) {
+                  totalIp.push(item?.IP);
+                }
+              });
+            },
+          );
+        }
+      });
+    }
+    if (jobSeekerData.length > 0) {
+      jobSeekerData?.forEach((item) => {
+        if (item?.data?.responseData) {
+          score -= Object.keys(item?.data?.responseData).length * 5;
+        }
+      });
+    }
+    if (hunterVerifyData?.length > 0) {
+      hunterVerifyData?.forEach((item) => {
+        if (item?.data?.responseData?.data?.data?.sources?.length || 0 > 0) {
+          score -=
+            (item?.data?.responseData?.data?.data?.sources?.length || 0) * 5;
+        }
+      });
+    }
+    if (hudsonData.length > 0) {
+      set_2tabLoading(true);
+      hudsonData.forEach((item) => {
+        if (
+          item?.data?.responseData?.stealers &&
+          item?.data?.responseData?.stealers?.length > 0 &&
+          item?.data?.responseData?.stealers?.map((steal) => {
+            if (steal?.computer_name && steal?.computer_name?.length > 2) {
+              let deviceLogo: 'window' | 'mac' | 'android' | null = null;
+              if (steal?.operating_system?.toLowerCase().includes('mac')) {
+                deviceLogo = 'mac';
+              }
+              if (steal?.operating_system?.toLowerCase().includes('window')) {
+                deviceLogo = 'window';
+              }
+              if (steal?.operating_system?.length > 2 && !deviceLogo) {
+                deviceLogo = 'android';
+              }
+              setDeviceDetails({
+                ...deviceDetails,
+                topPasswords: steal?.top_passwords || [],
+                topLogins: steal?.top_logins || [],
+                infected_Credentials: steal?.malware_path || '',
+                alert: 'Alert',
+                ip: steal?.ip,
+                deviceLogo,
+                computerName: steal?.computer_name,
+                OS: steal?.operating_system,
+                dateCompromised: steal?.date_compromised,
+              });
+            }
+          })
+        )
+          return;
+      });
+      set_2tabLoading(false);
+    }
+    setDeviceDetails((prev) => ({
+      ...prev,
+      totalIP: totalIp,
+      totalPassword: totalPasswords,
+      totalEmail: totalEmails,
+      securityScore: score,
+      totalBreachFields,
+    }));
+
+    new Promise((resolve) =>
+      setTimeout(() => {
+        set_1tabLoading(false);
+        resolve;
+      }, 1000),
+    );
+  }, [
+    hunterVerifyData,
+    leakHunterData,
+    breachInfo,
+    jobSeekerData,
+    hunterFindData,
+  ]);
 
   useEffect(() => {
     if (mobile360Data) {
@@ -694,7 +888,7 @@ export default function BeFiSc() {
             //   type: 'dummy',
             //   email: 'Support@scaninfoga.in',
             // });
-            let hudsonEmailData: {
+            let hudsonDataa: {
               value: string;
               type: string;
               data: HudsonEmailType | null;
@@ -706,7 +900,7 @@ export default function BeFiSc() {
                 ip: clientInfo?.ip,
                 realtimeData: isRealtime,
               });
-              hudsonEmailData.push({
+              hudsonDataa.push({
                 value: clientInfo?.ip,
                 type: 'IP',
                 data: res,
@@ -725,20 +919,20 @@ export default function BeFiSc() {
               );
               results.forEach((result, index) => {
                 if (result.status === 'fulfilled') {
-                  hudsonEmailData.push({
+                  hudsonDataa.push({
                     value: otherEmails[index]?.email,
                     type: otherEmails[index]?.type,
                     data: result.value,
                   });
                 } else {
-                  hudsonEmailData.push({
+                  hudsonDataa.push({
                     value: otherEmails[index]?.email,
                     type: otherEmails[index]?.type,
                     data: null,
                   });
                 }
               });
-              setHudsonEmailData(hudsonEmailData);
+              setHudsonData(hudsonDataa);
             } catch (error) {}
 
             // leakHunterPassword
@@ -972,7 +1166,6 @@ export default function BeFiSc() {
           profileAdvanceData,
           '',
         );
-        emailsFoundRef.current = otherEmails.length;
         if (otherEmails.length > 0) {
           setGhuntMultipleLoading(true);
           try {
@@ -1226,20 +1419,12 @@ export default function BeFiSc() {
 
               <TabsContent value="overview" className="mt-6">
                 <BeFiScOverview
-                  OverviewData={OverviewData}
-                  isSoleProprietor={
-                    panAllInOneData?.result?.is_sole_proprietor?.found || '----'
-                  }
-                  isDirector={
-                    panAllInOneData?.result?.is_director?.found || '----'
-                  }
-                  emailsFound={emailsFoundRef.current}
+                  deviceDetails={deviceDetails}
+                  _1tabLoading={_1tabLoading}
+                  _2tabLoading={_2tabLoading}
                   numbersFound={numbersFoundRef.current}
                   addressesFound={addressesFound.current}
-                  hudsonEmailData={hudsonEmailData}
-                  lptConnection={
-                    mobile360Data?.result?.lpg_info?.data?.length || 0
-                  }
+                  hudsonData={hudsonData}
                   ghuntLoading={ghuntMultipleLoading}
                   totalGoogleAccount={ghuntMultipleData?.length}
                   upiLoading={upiDetailsLoading}
@@ -1549,6 +1734,7 @@ export default function BeFiSc() {
                     data={breachInfo}
                     jobSeekerData={jobSeekerData}
                     HunterFindData={hunterFindData}
+                    hudsonData={hudsonData}
                   />
                 )}
               </TabsContent>

@@ -5,37 +5,12 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { cn } from '@/lib/utils';
-import { BreachInfoType } from '@/types/BreachInfo';
 import React, { useState } from 'react';
 import CustomBadge from './CustomBadge';
 import { HunterVerifyType } from '@/types/hunter';
-import { JobSeekerType, LeakHunterType } from '@/types/LeakHunter';
 import isEqual from 'lodash.isequal';
 import { formatKey } from '@/components/custom/functions/formatUtils';
 import { getValue } from './CustomBeFiScCard';
-
-interface PageProps {
-  data: {
-    value: string;
-    type: string;
-    data: BreachInfoType | null;
-  }[];
-  HunterVerifyData: {
-    value: string;
-    type: string;
-    data: HunterVerifyType | null;
-  }[];
-  leakHunterData: {
-    value: string;
-    type: string;
-    data: LeakHunterType | null;
-  }[];
-  jobSeekerData: {
-    value: string;
-    type: string;
-    data: JobSeekerType | null;
-  }[];
-}
 const dangerKeyWords = [
   'Password',
   'Password(SHA-256)',
@@ -116,14 +91,6 @@ function HunterVerifyComponent({
                                 clickAble.includes(key) &&
                                   'text-blue-400 underline transition-all duration-300 ease-in-out hover:cursor-pointer',
                               )}
-                              onClick={() => {
-                                if (
-                                  clickAble.includes(key) &&
-                                  String(value)?.includes('http://')
-                                ) {
-                                  window.open(String(value), '_blank');
-                                }
-                              }}
                             >
                               {String(value)?.length > 30
                                 ? String(value)?.slice(0, 30)
@@ -149,7 +116,6 @@ const HunterVerify = React.memo(
       prevProps.HunterVerifyData,
       nextProps.HunterVerifyData,
     );
-    console.log('🔁 Memo comparison:', isSame);
     return isSame;
   },
 );

@@ -1,17 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Separator } from '@/components/ui/separator';
-
-import {
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-} from 'recharts';
+import { Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import {
   Share2,
   Key,
@@ -72,19 +61,34 @@ import {
 } from '@/components/custom/functions/formatUtils';
 
 interface PageProps {
+  _1tabLoading: boolean;
+  _2tabLoading: boolean;
+  deviceDetails: {
+    topLogins: string[];
+    topPasswords: string[];
+    infected_Credentials: string;
+    alert: 'Alert' | 'No Alert';
+    ip: string;
+    computerName: string;
+    OS: string;
+    dateCompromised: string;
+    deviceLogo: 'window' | 'mac' | 'android' | null;
+    totalIP: string[];
+    totalPassword: string[];
+    totalEmail: string[];
+    securityScore: number;
+    totalBreachFields: number;
+  };
+
   addressesFound: number;
-  isSoleProprietor: string;
-  isDirector: string;
-  emailsFound: number;
   numbersFound: number;
   ghuntLoading: boolean;
-  lptConnection: number;
   totalGoogleAccount: number;
   upiLoading: boolean;
   upiData: UPIType | null;
   mobile360Data: Mobile360Type | null;
   lastScanData: CountScanType | null;
-  hudsonEmailData: {
+  hudsonData: {
     value: string;
     type: string;
     data: HudsonEmailType | null;
@@ -114,40 +118,30 @@ interface PageProps {
     type: string;
     data: JobSeekerType | null;
   }[];
-  OverviewData: {
-    title: string;
-    value: string;
-    titleClassname: string;
-    valueClassname: string;
-  }[];
 }
 
 export default function BeFiScOverview({
+  _1tabLoading,
+  _2tabLoading,
+  deviceDetails,
   addressesFound,
-  isDirector,
-  isSoleProprietor,
-  emailsFound,
   numbersFound,
-  lptConnection,
   ghuntLoading,
   totalGoogleAccount,
   upiLoading,
   upiData,
   mobile360Data,
   lastScanData,
-  hudsonEmailData,
+  hudsonData,
   HunterVerifyData,
   leakHunterData,
   jobSeekerData,
   HunterFindData,
   LeakPointApi,
-  OverviewData,
 }: PageProps) {
   const [totalAccount, setTotalAccount] = useState(0);
   const [totalUpiPlatforms, setTotalUpiPlatforms] = useState(0);
-  const [_2tabLoading, set_2tabLoading] = useState(false);
-  const [scoreLoading, setScoreLoading] = useState(true);
-  const [securityScore, setSecurityScore] = useState(100);
+
   const breachData = [
     { name: 'Passwords', value: 40 },
     { name: 'Personal Info', value: 30 },
@@ -155,137 +149,6 @@ export default function BeFiScOverview({
     { name: 'Other', value: 10 },
   ];
   const COLORS = ['#10B981', '#3B82F6', '#EF4444', '#F59E0B'];
-
-  const [deviceDetails, setDeviceDetails] = useState<{
-    topLogins: string[];
-    topPasswords: string[];
-    infected_Credentials: string;
-    alert: 'Alert' | 'No Alert';
-    ip: string;
-    computerName: string;
-    OS: string;
-    dateCompromised: string;
-    deviceLogo: 'window' | 'mac' | 'android' | null;
-  }>({
-    topLogins: [],
-    topPasswords: [],
-    infected_Credentials: '',
-    alert: 'No Alert',
-    ip: '',
-    computerName: '',
-    OS: '',
-    dateCompromised: '',
-    deviceLogo: null,
-  });
-
-  useEffect(() => {
-    setScoreLoading(true);
-    let score = 95;
-    hudsonEmailData?.forEach((item) => {
-      if (
-        item?.data?.responseData?.total_corporate_services &&
-        item?.data?.responseData?.total_user_services > 0
-      ) {
-      }
-      item?.data?.responseData?.stealers?.forEach((steal) => {
-        if (steal?.top_logins) {
-          score -= steal?.top_logins?.length;
-        }
-        if (steal?.top_passwords) {
-          score -= steal?.top_passwords?.length;
-        }
-        if (steal?.malware_path && steal?.malware_path?.length > 2) {
-          score -= 10;
-        }
-      });
-    });
-
-    HunterFindData?.forEach((item) => {
-      if (
-        item?.data?.responseData &&
-        item?.data?.responseData?.data?.data?.company
-      ) {
-        score -= 5;
-      }
-    });
-    leakHunterData?.forEach((item) => {
-      if (
-        item?.data?.responseData?.password &&
-        item?.data?.responseData?.password?.length > 0
-      ) {
-        score -= 10;
-      }
-    });
-    LeakPointApi?.forEach((item) => {
-      if (item?.data?.responseData?.data?.List) {
-        score -= Object.keys(item?.data?.responseData?.data?.List).length * 5;
-      }
-    });
-    jobSeekerData?.forEach((item) => {
-      if (item?.data?.responseData) {
-        score -= Object.keys(item?.data?.responseData).length * 5;
-      }
-    });
-    HunterVerifyData?.forEach((item) => {
-      if (item?.data?.responseData?.data?.data?.sources?.length || 0 > 0) {
-        score -=
-          (item?.data?.responseData?.data?.data?.sources?.length || 0) * 5;
-      }
-    });
-    setSecurityScore(score);
-    new Promise((resolve) =>
-      setTimeout(() => {
-        setScoreLoading(false);
-        resolve;
-      }, 1000),
-    );
-  }, [
-    HunterVerifyData,
-    leakHunterData,
-    LeakPointApi,
-    jobSeekerData,
-    HunterFindData,
-  ]);
-
-  useEffect(() => {
-    if (hudsonEmailData.length > 0) {
-      set_2tabLoading(true);
-      hudsonEmailData.forEach((item) => {
-        if (
-          item?.data?.responseData?.stealers &&
-          item?.data?.responseData?.stealers?.length > 0 &&
-          item?.data?.responseData?.stealers?.map((steal) => {
-            if (steal?.computer_name && steal?.computer_name?.length > 2) {
-              let deviceLogo: 'window' | 'mac' | 'android' | null = null;
-              if (steal?.operating_system?.toLowerCase().includes('mac')) {
-                deviceLogo = 'mac';
-              }
-              if (steal?.operating_system?.toLowerCase().includes('window')) {
-                deviceLogo = 'window';
-              }
-              if (steal?.operating_system?.length > 2 && !deviceLogo) {
-                deviceLogo = 'android';
-              }
-              setDeviceDetails({
-                ...deviceDetails,
-                topPasswords: steal?.top_passwords || [],
-                topLogins: steal?.top_logins || [],
-                infected_Credentials: steal?.malware_path || '',
-                alert: 'Alert',
-                ip: steal?.ip,
-                deviceLogo,
-                computerName: steal?.computer_name,
-                OS: steal?.operating_system,
-                dateCompromised: steal?.date_compromised,
-              });
-            }
-          })
-        )
-          return;
-      });
-      set_2tabLoading(false);
-    }
-  }, [hudsonEmailData]);
 
   useEffect(() => {
     if (upiData?.responseData) {
@@ -392,45 +255,92 @@ export default function BeFiScOverview({
             }
             icon={<PieChartIcon className="mr-2 h-5 w-5 text-emerald-500" />}
           >
-            <div className="ml-4 mt-4 h-40 w-40">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    stroke="#0f172a"
-                    strokeWidth={2}
-                    data={breachData}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={60}
-                    outerRadius={80}
-                    fill="#8884d8"
-                    dataKey="value"
-                    // label={({ name, value }) => `${name}: ${value}%`}
-                    labelLine={false}
-                  >
-                    {breachData.map((entry, index) => (
-                      <Cell
-                        key={`cell-${index}`}
-                        fill={COLORS[index % COLORS.length]}
+            {_1tabLoading ? (
+              <Loader className="h-44 p-4" />
+            ) : (
+              <div className="flex items-center space-x-16">
+                <div className="ml-4 h-40 w-40">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        stroke="#0f172a"
+                        strokeWidth={2}
+                        data={breachData}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={60}
+                        outerRadius={80}
+                        fill="#8884d8"
+                        dataKey="value"
+                        // label={({ name, value }) => `${name}: ${value}%`}
+                        labelLine={false}
+                      >
+                        {breachData.map((entry, index) => (
+                          <Cell
+                            key={`cell-${index}`}
+                            fill={COLORS[index % COLORS.length]}
+                          />
+                        ))}
+                      </Pie>
+                      <Tooltip
+                        contentStyle={{
+                          backgroundColor: '#0f172a',
+                          border: '1px solid #374151',
+                          color: '#E5E7EB',
+                        }}
+                        itemStyle={{
+                          color: '#E5E7EB',
+                        }}
+                        labelStyle={{
+                          color: '#E5E7EB',
+                        }}
                       />
-                    ))}
-                  </Pie>
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: '#0f172a',
-                      border: '1px solid #374151',
-                      color: '#E5E7EB',
-                    }}
-                    itemStyle={{
-                      color: '#E5E7EB',
-                    }}
-                    labelStyle={{
-                      color: '#E5E7EB',
-                    }}
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+                <div className="space-y-1">
+                  <InfoText
+                    value={
+                      <span
+                        className={cn(
+                          'text-xl font-bold',
+                          deviceDetails?.securityScore < 60
+                            ? 'text-red-500'
+                            : 'text-emerald-500',
+                        )}
+                      >
+                        {deviceDetails?.securityScore}
+                      </span>
+                    }
+                    label="Security Score"
                   />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
+                  <InfoText
+                    value={String(deviceDetails?.totalBreachFields)}
+                    label="Total Breach Fields"
+                  />
+                  <InfoText
+                    value={String(deviceDetails?.totalPassword?.length)}
+                    label="Total Leaked Password"
+                  />
+                  <InfoText
+                    value={String(deviceDetails?.totalIP?.length)}
+                    label="Total IP Detected"
+                  />
+                  <InfoText
+                    value={String(deviceDetails?.totalEmail?.length)}
+                    label="Total Email Detected"
+                  />
+                  <InfoText
+                    value={String(numbersFound)}
+                    label="Total Phone Detected"
+                  />
+                  <InfoText
+                    value={String(addressesFound)}
+                    label="Total Addresses Found"
+                  />
+                </div>
+              </div>
+            )}
           </DashboardCard>
 
           <div className="grid grid-cols-2 gap-4">
@@ -601,27 +511,27 @@ export default function BeFiScOverview({
                     color: 'text-emerald-500',
                     loading: upiLoading,
                   },
-                  {
-                    name: 'Address Detected',
-                    status: addressesFound,
-                    icon: IconMail,
-                    color: 'text-red-500',
-                    loading: false,
-                  },
-                  {
-                    name: 'Email Detected',
-                    status: emailsFound,
-                    icon: IconMail,
-                    color: 'text-red-500',
-                    loading: false,
-                  },
-                  {
-                    name: 'Alternate Mobile Numbers',
-                    status: numbersFound,
-                    icon: IconDeviceSim,
-                    color: 'text-red-500',
-                    loading: false,
-                  },
+                  // {
+                  //   name: 'Address Detected',
+                  //   status: addressesFound,
+                  //   icon: IconMail,
+                  //   color: 'text-red-500',
+                  //   loading: false,
+                  // },
+                  // {
+                  //   name: 'Email Detected',
+                  //   status: deviceDetails?.totalEmail?.length,
+                  //   icon: IconMail,
+                  //   color: 'text-red-500',
+                  //   loading: _1tabLoading,
+                  // },
+                  // {
+                  //   name: 'Alternate Mobile Numbers',
+                  //   status: numbersFound,
+                  //   icon: IconDeviceSim,
+                  //   color: 'text-red-500',
+                  //   loading: false,
+                  // },
                   {
                     name: 'GST Numbers',
                     status:
@@ -690,45 +600,11 @@ export default function BeFiScOverview({
                   },
                   {
                     name: 'LPG Connections',
-                    status: lptConnection,
+                    status: mobile360Data?.result?.lpg_info?.data?.length || 0,
                     icon: Info,
                     color: 'text-emerald-500',
                     loading: false,
                   },
-                  // {
-                  //   name: 'Mobile Email Detection',
-                  //   status: 'Secure',
-                  //   icon: Mail,
-                  //   color: 'text-emerald-500',
-                  //   loading: false,
-                  // },
-                  // {
-                  //   name: 'Mobile Details',
-                  //   status: 'Secure',
-                  //   icon: Phone,
-                  //   color: 'text-emerald-500',
-                  //   loading: false,
-                  // },
-                  // {
-                  //   name: 'Multiple UPI IDs',
-                  //   status: 'Warning',
-                  //   icon: CreditCard,
-                  //   color: 'text-amber-500',
-                  // },
-                  // {
-                  //   name: 'UAN Passbook',
-                  //   status: 'Secure',
-                  //   icon: FileText,
-                  //   color: 'text-emerald-500',
-                  //   loading: false,
-                  // },
-                  // {
-                  //   name: 'User Attributes',
-                  //   status: 'Secure',
-                  //   icon: User,
-                  //   color: 'text-emerald-500',
-                  //   loading: false,
-                  // },
                   {
                     name: 'WhatsApp Data',
                     status: 'Secure',
@@ -738,7 +614,7 @@ export default function BeFiScOverview({
                   },
                   {
                     name: 'Gmail Data',
-                    status: hudsonEmailData?.length > 0 ? 'Warning' : 'Secure',
+                    status: hudsonData?.length > 0 ? 'Warning' : 'Secure',
                     icon: Mail,
                     color: 'text-amber-500',
                   },
@@ -991,14 +867,14 @@ export default function BeFiScOverview({
                 <Badge
                   className="mt-1 gap-x-0.5"
                   variant={
-                    mobile360Data?.result?.whatsapp_info.data.status ===
+                    mobile360Data?.result?.whatsapp_info?.data?.status ===
                     'Account Found'
                       ? 'default'
                       : 'danger'
                   }
                 >
                   <IconBrandWhatsapp className="size-4" />
-                  {mobile360Data?.result?.whatsapp_info.data.status ===
+                  {mobile360Data?.result?.whatsapp_info?.data?.status ===
                   'Account Found'
                     ? 'Active'
                     : 'Inactive'}
@@ -1010,7 +886,7 @@ export default function BeFiScOverview({
                 </p>
                 <CustomBadge
                   value={
-                    mobile360Data?.result?.whatsapp_info.data.is_business ===
+                    mobile360Data?.result?.whatsapp_info?.data?.is_business ===
                     '0'
                       ? 'No'
                       : 'Yes'

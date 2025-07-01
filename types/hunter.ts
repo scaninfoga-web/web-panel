@@ -10,7 +10,7 @@ export interface HunterVerifyType {
         email: string;
         score: number;
         regexp: boolean;
-        result: string; // deprecated, use 'status'
+        result: string;
         status: string;
         sources: {
           uri: string;

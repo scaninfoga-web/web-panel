@@ -11,6 +11,9 @@ export interface BreachInfoType {
           Data: Array<{
             Email?: string;
             Password?: string;
+            IP?: string;
+            email?: string;
+            password?: string;
             Address?: string;
             FullName?: string;
             NickName?: string;
