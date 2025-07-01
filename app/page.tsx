@@ -10,14 +10,12 @@ import Testimonials from '@/components/sub/testimonials';
 
 export default async function Home() {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen overflow-x-hidden">
       <main>
         <Hero />
-        {/* <Featured /> */}
         <SecurityAnimation />
         <Services />
         <Features />
-        {/* <Education /> */}
         <Testimonials />
         <FAQ />
         <CTA

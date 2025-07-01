@@ -122,8 +122,10 @@ export const ProfileInformationCard = () => {
             >
               {getSubscriptionIcon(userData.subscriptionType)}
               <span className="space-x-1 uppercase tracking-wide">
-                <span>{userData?.subscriptionType} </span>
-                <span className="text-xs">Member</span>
+                <span className="ml-2 text-xs">
+                  {' '}
+                  {userData?.subscriptionPlan}{' '}
+                </span>
               </span>
             </Badge>
           </div>

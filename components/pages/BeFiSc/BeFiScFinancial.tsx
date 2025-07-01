@@ -104,7 +104,7 @@ export default function BeFiScFinancial({
     <div className="grid grid-cols-1 gap-2 space-y-4">
       <Tabs value={activeTab} className="w-full" onValueChange={setActiveTab}>
         <TabsList
-          className={`grid h-auto w-full ${gridColsClass} rounded-lg border border-slate-800 bg-slate-900 p-1 text-white sm:w-auto`}
+          className={`grid h-auto w-full grid-cols-2 rounded-lg border border-slate-800 bg-slate-900 p-1 text-white sm:w-auto md:grid-cols-4`}
         >
           {tabs.map((tab) => (
             <TabsTrigger

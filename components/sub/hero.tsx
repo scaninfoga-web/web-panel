@@ -43,7 +43,7 @@ export default function Hero() {
   };
 
   return (
-    <section className="flex min-h-screen items-center overflow-hidden pb-8 pt-20">
+    <section className="flex min-h-screen items-center overflow-hidden pb-8 pt-28 md:pt-20">
       <div className="absolute inset-0 bg-[url('/images/grid.svg')] bg-center opacity-25 [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]"></div>
 
       {/* Animated background elements */}

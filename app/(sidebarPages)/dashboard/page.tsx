@@ -570,7 +570,7 @@ export default function Dashboard() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                       <div>
                         <p className="text-xs text-slate-400">PAN Number</p>
                         <p className="font-medium">ABCDE1234F</p>

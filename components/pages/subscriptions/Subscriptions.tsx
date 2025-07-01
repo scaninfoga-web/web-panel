@@ -703,7 +703,7 @@ export default function SubscriptionsPage() {
         </motion.div>
 
         {/* Plans Grid */}
-        <div className="mx-auto mb-20 grid max-w-6xl grid-cols-1 gap-8 md:grid-cols-3">
+        <div className="mx-auto mb-20 grid max-w-6xl grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
           {plans.map((plan, index) => {
             const gstAmount = plan.basePrice * plan.gst;
             const totalPrice = plan.basePrice + gstAmount;

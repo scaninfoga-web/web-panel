@@ -1662,18 +1662,19 @@ export default function BeFiSc() {
                                   )}
                                 </p>
                               </div>
+
+                              <Image
+                                src={
+                                  `data:${item?.olaData?.responseData?.content_type};base64,${item?.olaData?.responseData?.image}` ||
+                                  '/null.png'
+                                }
+                                alt="map"
+                                width={500}
+                                height={500}
+                                className="rounded-xl object-contain"
+                                unoptimized={true}
+                              />
                             </div>
-                            <Image
-                              src={
-                                `data:${item?.olaData?.responseData?.content_type};base64,${item?.olaData?.responseData?.image}` ||
-                                '/null.png'
-                              }
-                              alt="map"
-                              width={500}
-                              height={500}
-                              className="h-[300px] min-w-[400px] rounded-xl"
-                              unoptimized={true}
-                            />
                           </div>
                         ))}
                       </div>

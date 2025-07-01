@@ -10,7 +10,7 @@ import { PersistGate } from 'redux-persist/integration/react';
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <Provider store={store}>
-      <Navbar />
+      {/* <Navbar /> */}
       <Toaster position="top-right" richColors />
       <PersistGate loading={null} persistor={persistor}>
         <AuthProvider>{children}</AuthProvider>

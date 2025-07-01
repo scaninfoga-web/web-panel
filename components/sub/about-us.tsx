@@ -12,9 +12,9 @@ const fadeUp = {
 
 export default function AboutUsSection() {
   return (
-    <section className="relative z-30 flex flex-col items-center justify-center overflow-hidden px-4 text-white sm:px-6 sm:py-20 md:px-8 md:py-24">
-      <div className="absolute left-0 top-32 -z-30 hidden h-56 w-56 rounded-full bg-emerald-500 opacity-30 blur-3xl sm:h-72 sm:w-72 md:visible"></div>
-      <div className="absolute bottom-0 right-0 -z-30 hidden h-72 w-72 rounded-full bg-orange-800 opacity-30 blur-3xl sm:h-96 sm:w-96 md:visible"></div>
+    <section className="flex flex-col items-center justify-center overflow-hidden text-white">
+      {/* <div className="absolute left-0 top-32 -z-30 hidden h-56 w-56 rounded-full bg-emerald-500 opacity-30 blur-3xl sm:h-72 sm:w-72 md:visible"></div> */}
+      {/* <div className="absolute bottom-0 right-0 -z-30 hidden h-72 w-72 rounded-full bg-orange-800 opacity-30 blur-3xl sm:h-96 sm:w-96 md:visible"></div> */}
 
       <motion.div
         initial="hidden"
@@ -27,7 +27,7 @@ export default function AboutUsSection() {
           About Us
         </h2>
 
-        <p className="px-2 text-xl text-gray-300 text-white/70 sm:px-6 sm:text-lg md:text-2xl">
+        <p className="text-xl text-gray-300 text-white/70 sm:text-lg md:text-2xl">
           At <span className="font-semibold text-emerald-400">scaninfoga</span>,
           we specialize in protecting businesses from cyber threats through
           advanced penetration testing and tailored security strategies. Our
@@ -36,7 +36,7 @@ export default function AboutUsSection() {
           organization.
         </p>
 
-        <p className="px-2 text-xl text-gray-300 text-white/70 sm:px-6 sm:text-lg md:text-2xl">
+        <p className="text-xl text-gray-300 text-white/70 sm:text-lg md:text-2xl">
           We empower businesses to operate confidently, knowing they are
           safeguarded by cutting-edge solutions designed to stay ahead of the
           ever-changing cyber landscape.
@@ -59,7 +59,7 @@ export default function AboutUsSection() {
           whileInView="show"
           viewport={{ once: true }}
           variants={fadeUp}
-          className="space-y-6 px-4 text-left text-base text-gray-300 text-white/70 sm:space-y-8 sm:text-lg md:text-2xl"
+          className="space-y-6 text-left text-base text-gray-300 text-white/70 sm:space-y-8 sm:text-lg md:text-2xl"
         >
           <li>
             <strong className="text-white/90">
@@ -88,7 +88,7 @@ export default function AboutUsSection() {
         </motion.ul>
       </div>
 
-      <div className="mt-20 flex w-full max-w-6xl flex-col items-center justify-center space-y-4 px-4 sm:mt-28 sm:space-y-6 md:mt-32">
+      <div className="mt-20 flex w-full max-w-6xl flex-col items-center justify-center space-y-4 sm:mt-28 sm:space-y-6 md:mt-32">
         <motion.h3
           initial="hidden"
           whileInView="show"
