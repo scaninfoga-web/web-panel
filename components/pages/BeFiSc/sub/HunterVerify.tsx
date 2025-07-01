@@ -9,9 +9,10 @@ import { BreachInfoType } from '@/types/BreachInfo';
 import React, { useState } from 'react';
 import CustomBadge from './CustomBadge';
 import { HunterVerifyType } from '@/types/hunter';
-import { formatKey, getValue } from './CustomBeFiScCard';
 import { JobSeekerType, LeakHunterType } from '@/types/LeakHunter';
 import isEqual from 'lodash.isequal';
+import { formatKey } from '@/components/custom/functions/formatUtils';
+import { getValue } from './CustomBeFiScCard';
 
 interface PageProps {
   data: {

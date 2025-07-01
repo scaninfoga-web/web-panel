@@ -8,7 +8,7 @@ import {
   UPIType,
 } from '@/types/BeFiSc';
 import React from 'react';
-import { formatSentence, numberToIndianRuppe } from './sub/APIUtils';
+
 import { DashboardCard } from '../dashboard/components/DashboardCard';
 import CustomBeFiScCard, { getValue } from './sub/CustomBeFiScCard';
 import CustomBadge from './sub/CustomBadge';
@@ -17,6 +17,10 @@ import UpiDetails from './sub/UpiDetails';
 import { PayWorldType } from '@/types/payworld';
 import NotFound from '@/components/sub/NotFound';
 import PayWorld from './sub/PayWorld';
+import {
+  formatSentence,
+  numberToIndianRuppe,
+} from '@/components/custom/functions/formatUtils';
 
 interface PageProps {
   mobileNo: string;

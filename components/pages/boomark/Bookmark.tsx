@@ -6,11 +6,11 @@ import { get, post } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import DashboardTitle from '@/components/common/DashboardTitle';
-import { formatDateTime } from '../BeFiSc/sub/dateFormat';
 import { toast } from 'sonner';
 import { Pencil, Trash2 } from 'lucide-react';
 import CustomBadge from '../BeFiSc/sub/CustomBadge';
 import EditBookmark from '../BeFiSc/sub/EditBookmark';
+import { formatDateTime } from '@/components/custom/functions/formatUtils';
 
 export interface UserBookmark {
   bookmark_page: number;

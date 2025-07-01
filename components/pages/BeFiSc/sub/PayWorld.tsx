@@ -2,7 +2,6 @@ import { PayWorldType } from '@/types/payworld';
 import React, { useState } from 'react';
 import { DashboardCard } from '../../dashboard/components/DashboardCard';
 import { IconRefresh } from '@tabler/icons-react';
-import { formatSentence } from './APIUtils';
 import CustomBadge from './CustomBadge';
 import { getValue } from './CustomBeFiScCard';
 import { CustomTable } from '@/components/ui/custom-table';
@@ -10,11 +9,14 @@ import BeFiScLoadingSkeleton from './BeFiScLoadingSkeleton';
 import axios from 'axios';
 import { toast } from 'sonner';
 import NotFound from '@/components/sub/NotFound';
-import { formatDateTime } from './dateFormat';
 import { CustomCombox } from '@/components/sub/CustomComBox';
 import Image from 'next/image';
 import { post } from '@/lib/api';
 import isEqual from 'lodash.isequal';
+import {
+  formatDateTime,
+  formatSentence,
+} from '@/components/custom/functions/formatUtils';
 
 interface PageProps {
   PayWorldData: PayWorldType | null;

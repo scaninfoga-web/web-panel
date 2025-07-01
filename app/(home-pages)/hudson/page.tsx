@@ -30,31 +30,13 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
-import { CustomProgress } from '@/components/ui/custom-progress';
 import React from 'react';
 import axios from 'axios';
 import { useAppSelector } from '@/redux/hooks';
 import { Alert } from '@/components/ui/alert';
-import { hudsonDummyata, HudsonResponseType } from '@/types/hudson';
+import { HudsonResponseType } from '@/types/hudson';
 import { SearchBar2 } from '@/components/search/SearchBar2';
 import { ContactInfo } from '@/components/pages/dashboard/components/ContactInfo';
 import { EmailInfo } from '@/components/pages/dashboard/components/EmailInfo';
@@ -62,9 +44,7 @@ import { EmailInfo } from '@/components/pages/dashboard/components/EmailInfo';
 export default function Page() {
   const user = useAppSelector((state) => state.user);
   const [activeTab, setActiveTab] = useState('Detection 1');
-  const [hudsonData, setHudsonData] = useState<HudsonResponseType | null>(
-    hudsonDummyata,
-  );
+  const [hudsonData, setHudsonData] = useState<HudsonResponseType | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [searchType, setSearchType] = useState<string>('');
 

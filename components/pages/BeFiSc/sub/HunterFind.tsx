@@ -5,14 +5,12 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-import { cn } from '@/lib/utils';
 import { BreachInfoType } from '@/types/BreachInfo';
 import React, { useState } from 'react';
 import CustomBadge from './CustomBadge';
 import { HunterVerifyType } from '@/types/hunter';
-import CustomBeFiScCard, { formatKey, getValue } from './CustomBeFiScCard';
+import CustomBeFiScCard from './CustomBeFiScCard';
 import { JobSeekerType, LeakHunterType } from '@/types/LeakHunter';
-import isEqual from 'lodash.isequal';
 
 interface PageProps {
   data: {

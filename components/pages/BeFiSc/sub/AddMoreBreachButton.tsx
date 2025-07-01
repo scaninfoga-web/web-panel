@@ -15,7 +15,7 @@ import {
   IconNumber,
   IconPhoneFilled,
 } from '@tabler/icons-react';
-import { isValidIndianMobileNumber } from '../BeFiSc';
+import { isValidIndianMobileNumber } from '@/components/custom/functions/checkingUtils';
 import { toast } from 'sonner';
 
 interface PageProps {

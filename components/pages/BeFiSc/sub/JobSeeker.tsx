@@ -10,7 +10,8 @@ import {
 import NotFound from '@/components/sub/NotFound';
 import CustomBadge from './CustomBadge';
 import { InfoText } from '../../dashboard/components/DashboardCard';
-import { formatKey, getValue } from './CustomBeFiScCard';
+import { getValue } from './CustomBeFiScCard';
+import { formatKey } from '@/components/custom/functions/formatUtils';
 
 interface PageProps {
   jobSeekerData: {

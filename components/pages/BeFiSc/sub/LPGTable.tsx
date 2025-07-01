@@ -6,8 +6,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { formatSentence } from './APIUtils';
 import { getValue } from './CustomBeFiScCard';
+import { formatSentence } from '@/components/custom/functions/formatUtils';
 
 type LPGInfo = {
   code: 'SUC';

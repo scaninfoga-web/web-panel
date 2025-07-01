@@ -11,7 +11,7 @@ import NotFound from '@/components/sub/NotFound';
 import CustomBadge from './sub/CustomBadge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { HunterFindType, HunterVerifyType } from '@/types/hunter';
-import { formatKey, getValue } from './sub/CustomBeFiScCard';
+import { getValue } from './sub/CustomBeFiScCard';
 import AddMoreBreachButton from './sub/AddMoreBreachButton';
 import LeakHunter from './sub/LeakHunter';
 import { JobSeekerType, LeakHunterType } from '@/types/LeakHunter';

@@ -18,7 +18,7 @@ import { DashboardCard, InfoText } from '../dashboard/components/DashboardCard';
 import CustomBadge from './sub/CustomBadge';
 import { getValue } from './sub/CustomBeFiScCard';
 import { LPGInfoTable } from './sub/LPGTable';
-import { formatSentence } from './sub/APIUtils';
+import { formatSentence } from '@/components/custom/functions/formatUtils';
 
 interface Props {
   Mobile360Data: Mobile360Type | null;

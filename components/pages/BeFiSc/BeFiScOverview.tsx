@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Separator } from '@/components/ui/separator';
-import { Progress } from '@/components/ui/progress';
+
 import {
   AreaChart,
   Area,
@@ -55,7 +55,6 @@ import {
   IconMail,
 } from '@tabler/icons-react';
 import CustomBadge from './sub/CustomBadge';
-import { formatSentence, timeAgo } from './sub/APIUtils';
 import { CountScanType } from '@/types/countRequest';
 import { Loader } from '@/components/ui/loader';
 import { HudsonEmailType } from '@/types/hudson';
@@ -67,6 +66,10 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { DashboardCard, InfoText } from '../dashboard/components/DashboardCard';
 import CustomPopUp from './sub/CustomPopUp';
+import {
+  formatSentence,
+  timeAgo,
+} from '@/components/custom/functions/formatUtils';
 
 interface PageProps {
   addressesFound: number;
@@ -389,10 +392,12 @@ export default function BeFiScOverview({
             }
             icon={<PieChartIcon className="mr-2 h-5 w-5 text-emerald-500" />}
           >
-            <div className="mt-4 h-[215px] w-full">
+            <div className="ml-4 mt-4 h-40 w-40">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
+                    stroke="#0f172a"
+                    strokeWidth={2}
                     data={breachData}
                     cx="50%"
                     cy="50%"
@@ -400,7 +405,7 @@ export default function BeFiScOverview({
                     outerRadius={80}
                     fill="#8884d8"
                     dataKey="value"
-                    label={({ name, value }) => `${name}: ${value}%`}
+                    // label={({ name, value }) => `${name}: ${value}%`}
                     labelLine={false}
                   >
                     {breachData.map((entry, index) => (
@@ -412,7 +417,7 @@ export default function BeFiScOverview({
                   </Pie>
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: '#1F2937',
+                      backgroundColor: '#0f172a',
                       border: '1px solid #374151',
                       color: '#E5E7EB',
                     }}
@@ -512,11 +517,13 @@ export default function BeFiScOverview({
                               Top Passwords
                             </span>
                             <div className="flex flex-col">
-                              {deviceDetails?.topLogins?.map((item, index) => (
-                                <span className="text-base" key={index}>
-                                  {item}
-                                </span>
-                              ))}
+                              {deviceDetails?.topPasswords?.map(
+                                (item, index) => (
+                                  <span className="text-base" key={index}>
+                                    {item}
+                                  </span>
+                                ),
+                              )}
                             </div>
                             <div className="flex flex-col">
                               {deviceDetails?.topPasswords?.map(

@@ -32,18 +32,8 @@ import { toast } from 'sonner';
 import { DashboardCard } from '../dashboard/components/DashboardCard';
 import BeFiScBreachInfo from './BeFiScBreachInfo';
 import BeFiScBusiness from './BeFiScBusiness';
-import BeFiScDigitalFootprint, {
-  getAddressesWithDifferentPincode,
-  getOtherEmails,
-  getOtherPhoneNumbers,
-} from './BeFiScDigitalFootprint';
 import BeFiScFinancial from './BeFiScFinancial';
 import BefiScPersonal from './BefiScPersonal';
-import {
-  cleanAndCapitalize,
-  formatSentence,
-  numberToIndianRuppe,
-} from './sub/APIUtils';
 import BeFiScLoadingSkeleton from './sub/BeFiScLoadingSkeleton';
 import CustomBadge from './sub/CustomBadge';
 import Ghunt from './sub/Ghunt';
@@ -60,26 +50,18 @@ import { fetchWalletBalance } from '@/redux/walletSlice';
 import BeFiScOverview from './BeFiScOverview';
 import { CountScanType } from '@/types/countRequest';
 import { HudsonEmailType } from '@/types/hudson';
-
-export function isValidIndianMobileNumber(input: string): {
-  result: boolean;
-  fixedNumber: string;
-} {
-  const mobileRegex = /^(?:\+91[\-\s]?)?[5-9]\d{9}$/;
-  input = input.replace(/\s/g, '');
-  if (input.length === 12) {
-    input = input.slice(2, 13);
-  }
-  if (input.length === 13) {
-    input = input.slice(3, 14);
-  }
-  const isValid = mobileRegex.test(input.trim());
-
-  return {
-    result: isValid,
-    fixedNumber: input,
-  };
-}
+import {
+  getAddressesWithDifferentPincode,
+  getOtherEmails,
+  getOtherPhoneNumbers,
+} from '@/components/custom/functions/befiscUtils';
+import {
+  cleanAndCapitalize,
+  formatSentence,
+  numberToIndianRuppe,
+} from '@/components/custom/functions/formatUtils';
+import BeFiScDigitalFootprint from './BeFiScDigitalFootprint';
+import { isValidIndianMobileNumber } from '@/components/custom/functions/checkingUtils';
 
 export default function BeFiSc() {
   const searchParams = useSearchParams();
@@ -708,10 +690,10 @@ export default function BeFiSc() {
             data: BreachInfoType | null;
           }[] = [];
           if (otherEmails.length > 0) {
-            otherEmails.push({
-              type: 'dummy',
-              email: 'Support@scaninfoga.in',
-            });
+            // otherEmails.push({
+            //   type: 'dummy',
+            //   email: 'Support@scaninfoga.in',
+            // });
             let hudsonEmailData: {
               value: string;
               type: string;
@@ -993,7 +975,6 @@ export default function BeFiSc() {
         emailsFoundRef.current = otherEmails.length;
         if (otherEmails.length > 0) {
           setGhuntMultipleLoading(true);
-
           try {
             const results = await Promise.allSettled(
               otherEmails.map((email) =>
@@ -1223,54 +1204,24 @@ export default function BeFiSc() {
               onValueChange={setActiveTab}
             >
               <TabsList className="grid h-auto w-full grid-cols-2 rounded-lg border border-slate-800 bg-slate-900 p-1 text-white sm:w-auto sm:grid-cols-7 md:grid-cols-8">
-                <TabsTrigger
-                  value="overview"
-                  className="rounded-md data-[state=active]:bg-slate-800 data-[state=active]:text-emerald-500"
-                >
-                  Overview
-                </TabsTrigger>
-                <TabsTrigger
-                  value="profile"
-                  className="rounded-md data-[state=active]:bg-slate-800 data-[state=active]:text-emerald-500"
-                >
-                  Profile
-                </TabsTrigger>
-                <TabsTrigger
-                  value="personal"
-                  className="rounded-md data-[state=active]:bg-slate-800 data-[state=active]:text-emerald-500"
-                >
-                  Personal
-                </TabsTrigger>
-                <TabsTrigger
-                  value="financial"
-                  className="rounded-md data-[state=active]:bg-slate-800 data-[state=active]:text-emerald-500"
-                >
-                  Financial
-                </TabsTrigger>
-                <TabsTrigger
-                  value="business"
-                  className="rounded-md data-[state=active]:bg-slate-800 data-[state=active]:text-emerald-500"
-                >
-                  Business
-                </TabsTrigger>
-                <TabsTrigger
-                  value="digitalInfo"
-                  className="rounded-md data-[state=active]:bg-slate-800 data-[state=active]:text-emerald-500"
-                >
-                  Digital Footprint
-                </TabsTrigger>
-                <TabsTrigger
-                  value="breachInfo"
-                  className="rounded-md data-[state=active]:bg-slate-800 data-[state=active]:text-emerald-500"
-                >
-                  Breach Info
-                </TabsTrigger>
-                <TabsTrigger
-                  value="googleProfile"
-                  className="rounded-md data-[state=active]:bg-slate-800 data-[state=active]:text-emerald-500"
-                >
-                  Google Profile
-                </TabsTrigger>
+                {[
+                  { value: 'overview', label: 'Overview' },
+                  { value: 'profile', label: 'Profile' },
+                  { value: 'personal', label: 'Personal' },
+                  { value: 'financial', label: 'Financial' },
+                  { value: 'business', label: 'Business' },
+                  { value: 'digitalInfo', label: 'Digital Footprint' },
+                  { value: 'breachInfo', label: 'Breach Info' },
+                  { value: 'googleProfile', label: 'Google Profile' },
+                ].map((item) => (
+                  <TabsTrigger
+                    key={item.value}
+                    value={item.value}
+                    className="rounded-md data-[state=active]:bg-slate-800 data-[state=active]:text-emerald-500"
+                  >
+                    {item.label}
+                  </TabsTrigger>
+                ))}
               </TabsList>
 
               <TabsContent value="overview" className="mt-6">
@@ -1581,11 +1532,6 @@ export default function BeFiSc() {
               <TabsContent value="digitalInfo" className="mt-6">
                 <BeFiScDigitalFootprint
                   EcicsData={esicsData}
-                  email={
-                    profileAdvanceData?.result?.email?.[0]?.value.toLowerCase() ||
-                    panAllInOneData?.result?.email ||
-                    ''
-                  }
                   EquifaxData={EquifaxV3Data}
                   PanAllInOneData={panAllInOneData}
                   GstAdvanceData={gstAdvanceData}
