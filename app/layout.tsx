@@ -19,7 +19,7 @@ export default function RootLayout({
       <body className="">
         <SidebarProvider>
           <Providers>
-            <Navbar />
+            {/* <Navbar /> */}
             {children}
           </Providers>
         </SidebarProvider>

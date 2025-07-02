@@ -768,22 +768,36 @@ export default function Navbar() {
                 <Button
                   variant="outline"
                   className="w-full border-emerald-500 text-emerald-500 hover:bg-emerald-500 hover:text-black"
-                  onClick={() => {
-                    setIsOpen(false);
+                  onClick={async () => {
+                    if (accessToken) {
+                      router.push('/');
+                      await new Promise((resolve) => setTimeout(resolve, 1000));
+                      dispatch(logout());
+                      await clearCookies();
+                      return;
+                    }
                     router.push('/auth');
                   }}
                 >
-                  Sign In
-                </Button>
-                <Button
-                  className="w-full bg-emerald-500 text-black hover:bg-emerald-600"
-                  onClick={() => {
-                    setIsOpen(false);
-                    router.push('/auth');
-                  }}
-                >
-                  Get Started
-                </Button>
+                  {accessToken ? 'Sign out' : 'Sign in'}
+                </Button>{' '}
+                {accessToken ? (
+                  publicPaths.includes(pathname) && (
+                    <Button
+                      className="w-full bg-emerald-500 text-black hover:bg-emerald-600"
+                      onClick={() => router.push('/dashboard')}
+                    >
+                      Go to dashboard
+                    </Button>
+                  )
+                ) : (
+                  <Button
+                    className="w-full bg-emerald-500 text-black hover:bg-emerald-600"
+                    onClick={() => router.push('/auth')}
+                  >
+                    Get Started
+                  </Button>
+                )}
               </div>
             </nav>
           </div>
