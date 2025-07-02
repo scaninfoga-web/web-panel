@@ -584,7 +584,7 @@ export function DashboardSidebar() {
           })}
         </nav>
 
-        <div className="mb-24 border-t border-slate-700 bg-gray-900 p-4">
+        <div className="bg-black-900/50 mb-16 border-t border-slate-700 p-4">
           <div className="group mb-3 flex items-center space-x-3 rounded-full p-2 transition-all duration-300 hover:bg-slate-800/50">
             <div className="relative">
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-white shadow-lg transition-transform duration-300 group-hover:scale-105">
