@@ -54,7 +54,7 @@ interface InfoState {
   language: string | null;
   cookiesEnabled: boolean | null;
   javascriptEnabled: boolean | null;
-  touchSupport: string | null;
+  touchSupport: boolean | null;
   deviceType: string | null;
   cpuCores: number | null;
   memory: string | null;
@@ -69,7 +69,7 @@ interface InfoState {
   asn: string | null;
   city: string | null;
   country: string | null;
-  possibleIoT: string | null;
+  possibleIoT: boolean | null;
 }
 
 const initialState: InfoState = {

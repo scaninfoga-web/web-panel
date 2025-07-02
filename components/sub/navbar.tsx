@@ -725,7 +725,7 @@ export default function Navbar() {
             <span className="sr-only">Toggle menu</span>
           </div>
         )}
-        {(token || !publicPaths.includes(pathname)) && (
+        {token && !publicPaths.includes(pathname) ? (
           <div
             className="mr-4 cursor-pointer md:hidden"
             onClick={() => setSideBarOpen(!sidebarOpen)}
@@ -737,107 +737,58 @@ export default function Navbar() {
             )}
             <span className="sr-only">Toggle menu</span>
           </div>
+        ) : (
+          // <></>
+          <div
+            className={cn(
+              'fixed right-0 top-0 h-screen w-4/5 max-w-xs transform bg-black/95 backdrop-blur-sm transition-transform duration-300 md:hidden',
+              isOpen ? 'translate-x-0' : 'translate-x-full',
+            )}
+          >
+            <div className="flex items-center justify-between p-4">
+              <span className="text-lg font-semibold text-white">Menu</span>
+              <button onClick={() => setIsOpen(false)}>
+                <X className="h-6 w-6 text-white" />
+              </button>
+            </div>
+
+            <nav className="flex flex-col space-y-6 p-8 pt-6">
+              {navItems.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="text-lg font-medium text-white hover:text-emerald-400"
+                  onClick={() => setIsOpen(false)}
+                >
+                  {item.label}
+                </Link>
+              ))}
+
+              <div className="flex flex-col space-y-4 pt-6">
+                <Button
+                  variant="outline"
+                  className="w-full border-emerald-500 text-emerald-500 hover:bg-emerald-500 hover:text-black"
+                  onClick={() => {
+                    setIsOpen(false);
+                    router.push('/auth');
+                  }}
+                >
+                  Sign In
+                </Button>
+                <Button
+                  className="w-full bg-emerald-500 text-black hover:bg-emerald-600"
+                  onClick={() => {
+                    setIsOpen(false);
+                    router.push('/auth');
+                  }}
+                >
+                  Get Started
+                </Button>
+              </div>
+            </nav>
+          </div>
         )}
       </div>
-
-      {(!token || publicPaths.includes(pathname)) && (
-        <div
-          className={cn(
-            'fixed right-0 top-0 h-screen w-4/5 max-w-xs transform bg-black/95 backdrop-blur-sm transition-transform duration-300 md:hidden',
-            isOpen ? 'translate-x-0' : 'translate-x-full',
-          )}
-        >
-          <div className="flex items-center justify-between p-4">
-            <span className="text-lg font-semibold text-white">Menu</span>
-            <button onClick={() => setIsOpen(false)}>
-              <X className="h-6 w-6 text-white" />
-            </button>
-          </div>
-
-          <nav className="flex flex-col space-y-6 p-8 pt-6">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="text-lg font-medium text-white hover:text-emerald-400"
-                onClick={() => setIsOpen(false)}
-              >
-                {item.label}
-              </Link>
-            ))}
-
-            <div className="flex flex-col space-y-4 pt-6">
-              <Button
-                variant="outline"
-                className="w-full border-emerald-500 text-emerald-500 hover:bg-emerald-500 hover:text-black"
-                onClick={() => {
-                  setIsOpen(false);
-                  router.push('/auth');
-                }}
-              >
-                Sign In
-              </Button>
-              <Button
-                className="w-full bg-emerald-500 text-black hover:bg-emerald-600"
-                onClick={() => {
-                  setIsOpen(false);
-                  router.push('/auth');
-                }}
-              >
-                Get Started
-              </Button>
-            </div>
-          </nav>
-        </div>
-      )}
-      {/* <div
-        className={cn(
-          'fixed top-0 right-0 h-screen w-4/5 max-w-xs bg-black/95 backdrop-blur-sm transform transition-transform duration-300 md:hidden',
-          isOpen ? 'translate-x-0' : 'translate-x-full'
-        )}
-      >
-        <div className="flex items-center justify-between p-4">
-          <span className="text-lg font-semibold text-white">Menu</span>
-          <button onClick={() => setIsOpen(false)}>
-            <X className="h-6 w-6 text-white" />
-          </button>
-        </div>
-
-        <nav className="flex flex-col space-y-6 p-8 pt-6">
-          {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="text-lg font-medium text-white hover:text-emerald-400"
-              onClick={() => setIsOpen(false)}
-            >
-              {item.label}
-            </Link>
-          ))}
-
-          <div className="flex flex-col space-y-4 pt-6">
-            <Button
-              variant="outline"
-              className="w-full border-emerald-500 text-emerald-500 hover:bg-emerald-500 hover:text-black"
-              onClick={() => {
-                setIsOpen(false);
-                router.push('/auth');
-              }}
-            >
-              Sign In
-            </Button>
-            <Button
-              className="w-full bg-emerald-500 text-black hover:bg-emerald-600"
-              onClick={() => {
-                setIsOpen(false);
-                router.push('/auth');
-              }}
-            >
-              Get Started
-            </Button>
-          </div>
-        </nav>
-      </div> */}
     </header>
   );
 }
