@@ -884,10 +884,10 @@ export default function BeFiSc() {
             data: BreachInfoType | null;
           }[] = [];
           if (otherEmails.length > 0) {
-            // otherEmails.push({
-            //   type: 'dummy',
-            //   email: 'Support@scaninfoga.in',
-            // });
+            otherEmails.push({
+              type: 'dummy',
+              email: 'Support@scaninfoga.in',
+            });
             let hudsonDataa: {
               value: string;
               type: string;
@@ -941,10 +941,10 @@ export default function BeFiSc() {
               type: string;
               data: LeakHunterType | null;
             }[] = [];
-            // otherEmails.push({
-            //   type: 'Dummy',
-            //   email: 'lucasonicleroy@gmail.com',
-            // });
+            otherEmails.push({
+              type: 'Dummy',
+              email: 'lucasonicleroy@gmail.com',
+            });
             try {
               const results = await Promise.allSettled(
                 otherEmails.map((email) =>

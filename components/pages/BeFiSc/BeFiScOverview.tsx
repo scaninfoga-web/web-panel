@@ -253,6 +253,7 @@ export default function BeFiScOverview({
                 ? 'Business Profile'
                 : 'Personal Profile'
             }
+            className="max-h-[300px]"
             icon={<PieChartIcon className="mr-2 h-5 w-5 text-emerald-500" />}
           >
             {_1tabLoading ? (
@@ -343,13 +344,13 @@ export default function BeFiScOverview({
             )}
           </DashboardCard>
 
-          <div className="grid grid-cols-2 gap-4">
-            <Card className="border-slate-800 bg-[#0e1421]/30 text-white backdrop-blur-xl">
+          <div className="grid grid-cols-2 gap-4 overflow-hidden">
+            <Card className="max-h-[300px] border-slate-800 bg-[#0e1421]/30 text-white backdrop-blur-xl">
               {_2tabLoading ? (
                 <Loader className="h-44 p-4" />
               ) : (
                 <div className="flex flex-col">
-                  <CardHeader className="flex flex-row items-center justify-between py-0 pt-2">
+                  <CardHeader className="flex max-h-16 flex-row items-center justify-between">
                     <CardTitle className="text-sm font-medium">
                       Infected Device
                     </CardTitle>
@@ -365,8 +366,8 @@ export default function BeFiScOverview({
                       className="rounded-full"
                     />
                   </CardHeader>
-                  <CardContent className="flex flex-col justify-between space-y-4">
-                    <div>
+                  <CardContent className="flex flex-col space-y-4">
+                    <div className="lg:relative lg:-top-6">
                       <div className="pb-1 text-2xl font-bold">
                         {formatSentence(deviceDetails?.computerName)}
                       </div>
@@ -459,7 +460,7 @@ export default function BeFiScOverview({
                 </CardTitle>
                 <Activity className="h-4 w-4 text-emerald-500" />
               </CardHeader>
-              <CardContent>
+              <CardContent className="-top-8 lg:relative">
                 <div className="text-2xl font-bold">
                   {timeAgo(
                     lastScanData?.responseData?.last_updated_at ||

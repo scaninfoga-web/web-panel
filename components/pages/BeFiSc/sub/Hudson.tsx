@@ -10,9 +10,14 @@ import React, { useState } from 'react';
 import CustomBadge from './CustomBadge';
 
 import isEqual from 'lodash.isequal';
-import { formatKey } from '@/components/custom/functions/formatUtils';
+import {
+  formatKey,
+  formatSentence,
+} from '@/components/custom/functions/formatUtils';
 import { getValue } from './CustomBeFiScCard';
 import { HudsonEmailType } from '@/types/hudson';
+import CustomPopUp from './CustomPopUp';
+import { Button } from '@/components/ui/button';
 const dangerKeyWords = [
   'top_passwords',
   'malware_path',
@@ -74,8 +79,8 @@ function HudsonComponent({
               item?.data?.responseData?.stealers?.map((data, index) => {
                 return (
                   <div key={index} className="border border-slate-800 p-4">
-                    {data &&
-                      Object.entries(data).map(([key, value], index) => (
+                    {Object.entries(data).map(([key, value], index) => {
+                      return (
                         <div
                           key={`index-${index}`}
                           className="flex justify-between"
@@ -100,12 +105,39 @@ function HudsonComponent({
                               }
                             }}
                           >
-                            {String(value)?.length > 80
-                              ? String(value)?.slice(0, 80)
-                              : getValue(value)}
+                            {['top_passwords', 'top_logins'].includes(key) ? (
+                              <CustomPopUp
+                                dialogTitle={formatSentence(key)}
+                                triggerElement={
+                                  <span className="animate-pulse border border-slate-800 px-2 py-0.5">
+                                    view
+                                  </span>
+                                }
+                                children={
+                                  <div className="flex flex-col space-y-1">
+                                    <div className="flex flex-col">
+                                      {Array.isArray(value) &&
+                                        value.map((item, index) => (
+                                          <span
+                                            className="text-base"
+                                            key={index}
+                                          >
+                                            {item}
+                                          </span>
+                                        ))}
+                                    </div>
+                                  </div>
+                                }
+                              />
+                            ) : String(value)?.length > 80 ? (
+                              String(value)?.slice(0, 80)
+                            ) : (
+                              getValue(value)
+                            )}
                           </span>
                         </div>
-                      ))}
+                      );
+                    })}
                   </div>
                 );
               })}

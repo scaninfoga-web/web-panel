@@ -584,7 +584,7 @@ export function DashboardSidebar() {
         </nav>
 
         <div className="mb-24 border-t border-slate-700 bg-gray-900 p-4">
-          <div className="group mb-3 flex items-center space-x-3 rounded-lg p-2 transition-all duration-300 hover:bg-slate-800/50">
+          <div className="group mb-3 flex items-center space-x-3 rounded-full p-2 transition-all duration-300 hover:bg-slate-800/50">
             <div className="relative">
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-white shadow-lg transition-transform duration-300 group-hover:scale-105">
                 <span className="text-sm font-bold">{initials || 'U'}</span>
@@ -617,7 +617,7 @@ export function DashboardSidebar() {
               <Button
                 variant="outline"
                 size="sm"
-                className="h-8 w-full text-xs font-medium transition-all duration-200 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700 dark:hover:border-blue-700 dark:hover:bg-blue-950 dark:hover:text-blue-300"
+                className="h-8 w-full rounded-full text-xs font-medium transition-all duration-200 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700 dark:hover:border-blue-700 dark:hover:bg-blue-950 dark:hover:text-blue-300"
                 onClick={() => setIsOpen(false)}
               >
                 <User className="mr-1.5 h-3 w-3" />
@@ -629,7 +629,7 @@ export function DashboardSidebar() {
               <Button
                 variant="outline"
                 size="sm"
-                className="h-8 w-full text-xs font-medium transition-all duration-200 hover:border-purple-300 hover:bg-purple-50 hover:text-purple-700 dark:hover:border-purple-700 dark:hover:bg-purple-950 dark:hover:text-purple-300"
+                className="h-8 w-full rounded-full text-xs font-medium transition-all duration-200 hover:border-purple-300 hover:bg-purple-50 hover:text-purple-700 dark:hover:border-purple-700 dark:hover:bg-purple-950 dark:hover:text-purple-300"
                 onClick={() => setIsOpen(false)}
               >
                 <Settings className="mr-1.5 h-3 w-3" />

@@ -741,7 +741,7 @@ export default function BeFiScBreachInfo({
                 }) && <HunterFind hunterFindData={HunterFindData} />}
             </TabsContent>
             <TabsContent value="hudson">
-              {HunterVerifyData?.length > 0 &&
+              {hudsonData?.length > 0 &&
                 hudsonData?.some((item) => {
                   if (
                     item?.data?.responseData?.stealers &&
