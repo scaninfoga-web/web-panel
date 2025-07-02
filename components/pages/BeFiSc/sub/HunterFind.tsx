@@ -11,6 +11,8 @@ import CustomBadge from './CustomBadge';
 import { HunterVerifyType } from '@/types/hunter';
 import CustomBeFiScCard from './CustomBeFiScCard';
 import { JobSeekerType, LeakHunterType } from '@/types/LeakHunter';
+import { InfoText } from '../../dashboard/components/DashboardCard';
+import { formatSentence } from '@/components/custom/functions/formatUtils';
 
 interface PageProps {
   data: {
@@ -89,56 +91,120 @@ export default function HunterFind({
               />
             </div>
           </AccordionTrigger>
-          <AccordionContent className="grid grid-cols-2 gap-4 p-6 leading-relaxed text-slate-300">
-            {item?.data?.responseData?.data?.data?.person && (
-              <CustomBeFiScCard
-                title="Person"
-                data={item?.data?.responseData?.data?.data?.person?.github}
-              />
-            )}
-            {/* {item?.data?.responseData?.data?.data &&
-              item?.data?.responseData?.data?.data?.sources?.length > 0 &&
-              item?.data?.responseData?.data?.data?.sources.map(
-                (data, index) => {
-                  return (
-                    <div key={index} className="border border-slate-800 p-4">
-                      {data &&
-                        Object.entries(data).map(([key, value], index) => (
-                          <div
-                            key={`index-${index}`}
-                            className="flex justify-between"
-                          >
-                            <span className={`text-sm`}>
-                              {formatKey(key) || ''}
-                            </span>
-                            <span
-                              className={cn(
-                                'text-base',
-                                dangerKeyWords.includes(key) && 'text-red-500',
-                                yellowKeyWords.includes(key) &&
-                                  'text-yellow-500',
-                                clickAble.includes(key) &&
-                                  'text-blue-400 underline transition-all duration-300 ease-in-out hover:cursor-pointer',
-                              )}
-                              onClick={() => {
-                                if (
-                                  clickAble.includes(key) &&
-                                  String(value)?.includes('http://')
-                                ) {
-                                  window.open(String(value), '_blank');
-                                }
-                              }}
-                            >
-                              {String(value)?.length > 30
-                                ? String(value)?.slice(0, 30)
-                                : getValue(value)}
-                            </span>
-                          </div>
-                        ))}
-                    </div>
-                  );
-                },
-              )} */}
+          <AccordionContent className="grid grid-cols-1 gap-4 p-6 leading-relaxed text-slate-300">
+            <InfoText
+              label="Github Handle"
+              value={formatSentence(
+                item?.data?.responseData?.data?.data?.person?.github?.handle,
+              )}
+            />
+            <InfoText
+              label="Twitter Handle"
+              value={formatSentence(
+                item?.data?.responseData?.data?.data?.person?.twitter?.handle,
+              )}
+            />
+            <InfoText
+              label="Facebook Handle"
+              value={formatSentence(
+                item?.data?.responseData?.data?.data?.person?.facebook?.handle,
+              )}
+            />
+            <InfoText
+              label="Linkedin Handle"
+              value={formatSentence(
+                item?.data?.responseData?.data?.data?.person?.linkedin?.handle,
+              )}
+            />
+            <InfoText
+              label="Googleplus Handle"
+              value={formatSentence(
+                item?.data?.responseData?.data?.data?.person?.googleplus
+                  ?.handle,
+              )}
+            />
+            <div className="flex flex-col gap-4 border border-slate-800 p-4">
+              <span className="font-bold">Phone Numbers</span>
+              <div className="grid grid-cols-6 gap-4">
+                {item?.data?.responseData?.data?.data?.company?.site?.phoneNumbers?.map?.(
+                  (item, index) => (
+                    <span key={`${item}-${index}`}>{formatSentence(item)}</span>
+                  ),
+                )}
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-4 border border-slate-800 p-4">
+              <span className="font-bold">Email Addresses</span>
+              <div className="grid grid-cols-4 gap-4">
+                {item?.data?.responseData?.data?.data?.company?.site?.emailAddresses?.map?.(
+                  (item, index) => (
+                    <span key={`${item}-${index}`}>{formatSentence(item)}</span>
+                  ),
+                )}
+              </div>
+            </div>
+            <div className="flex flex-col gap-4 border border-slate-800 p-4">
+              <span className="font-bold">Tags</span>
+              <div className="grid grid-cols-6 gap-4">
+                {item?.data?.responseData?.data?.data?.company?.tags?.map?.(
+                  (item, index) => (
+                    <span key={`${item}-${index}`}>{formatSentence(item)}</span>
+                  ),
+                )}
+              </div>
+            </div>
+            <div className="flex flex-col gap-4 border border-slate-800 p-4">
+              <span className="font-bold">Tech</span>
+              <div className="grid grid-cols-6 gap-4">
+                {item?.data?.responseData?.data?.data?.company?.tech?.map?.(
+                  (item, index) => (
+                    <span key={`${item}-${index}`}>{formatSentence(item)}</span>
+                  ),
+                )}
+              </div>
+            </div>
+            <div className="flex flex-col gap-4 border border-slate-800 p-4">
+              <span className="font-bold">Metrics</span>
+              <div className="grid grid-cols-4 gap-4">
+                {Object.entries(
+                  item?.data?.responseData?.data?.data?.company?.metrics || {},
+                ).map(([key, value]) => (
+                  <InfoText
+                    label={formatSentence(key)}
+                    value={formatSentence(value)}
+                  />
+                ))}
+              </div>
+            </div>
+
+            <InfoText
+              label="Company Linkedin"
+              value={formatSentence(
+                item?.data?.responseData?.data?.data?.company?.linkedin?.handle,
+              )}
+            />
+            <InfoText
+              label="Company Description"
+              value={formatSentence(
+                item?.data?.responseData?.data?.data?.company?.description?.slice(
+                  0,
+                  100,
+                ),
+              )}
+            />
+            <InfoText
+              label="Email Provider"
+              value={formatSentence(
+                item?.data?.responseData?.data?.data?.company?.emailProvider,
+              )}
+            />
+            <CustomBeFiScCard
+              title="Tech Categories"
+              data={
+                item?.data?.responseData?.data?.data?.company?.techCategories
+              }
+            />
           </AccordionContent>
         </AccordionItem>
       ))}

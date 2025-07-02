@@ -380,10 +380,10 @@ export default function BeFiScBreachInfo({
                         </AccordionItem>
                       ))}
                   </Accordion>
-                  <AddMoreBreachButton
+                  {/* <AddMoreBreachButton
                     setExtraData={setExtraData}
                     label="Email"
-                  />
+                  /> */}
                 </div>
               )}
             </TabsContent>
@@ -516,7 +516,7 @@ export default function BeFiScBreachInfo({
                   </AccordionItem>
                 ))}
               </Accordion>
-              <AddMoreBreachButton setExtraData={setExtraData} label="Number" />
+              {/* <AddMoreBreachButton setExtraData={setExtraData} label="Number" /> */}
             </TabsContent>
             <TabsContent value="without91" className="flex flex-col space-y-8">
               <Accordion type="single" collapsible className="space-y-4">
@@ -647,7 +647,7 @@ export default function BeFiScBreachInfo({
                   </AccordionItem>
                 ))}
               </Accordion>
-              <AddMoreBreachButton setExtraData={setExtraData} label="Number" />
+              {/* <AddMoreBreachButton setExtraData={setExtraData} label="Number" /> */}
             </TabsContent>
           </Tabs>
         </TabsContent>
@@ -740,7 +740,7 @@ export default function BeFiScBreachInfo({
                   }
                 }) && <HunterFind hunterFindData={HunterFindData} />}
             </TabsContent>
-            {/* <TabsContent value="hudson">
+            <TabsContent value="hudson">
               {HunterVerifyData?.length > 0 &&
                 hudsonData?.some((item) => {
                   if (
@@ -750,7 +750,7 @@ export default function BeFiScBreachInfo({
                     return true;
                   }
                 }) && <Hudson hudsonData={hudsonData} />}
-            </TabsContent> */}
+            </TabsContent>
           </Tabs>
         </TabsContent>
       </Tabs>

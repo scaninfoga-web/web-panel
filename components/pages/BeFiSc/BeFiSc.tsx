@@ -970,6 +970,10 @@ export default function BeFiSc() {
               });
               setLeakHunterData(leakHunterData);
             } catch (error) {}
+            otherEmails.push({
+              type: 'Dummy email',
+              email: 'rohan@scaninfoga.in',
+            });
 
             // calling hunterVerfy
             let hunterData: {
@@ -1014,10 +1018,7 @@ export default function BeFiSc() {
               type: string;
               data: HunterFindType | null;
             }[] = [];
-            // otherEmails.push({
-            //   type: 'Dummy email',
-            //   email: 'rohan@scaninfoga.in',
-            // });
+
             try {
               const results = await Promise.allSettled(
                 otherEmails.map((email) =>

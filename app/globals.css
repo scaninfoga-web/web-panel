@@ -44,10 +44,10 @@ body {
   }
 }
 @layer utilities {
-  /* .scrollbar-custom {
+  .scrollbar-custom {
     scrollbar-width: thin;
     scrollbar-color: theme('colors.slate.600') theme('colors.transparent');
-  } */
+  }
 }
 
 

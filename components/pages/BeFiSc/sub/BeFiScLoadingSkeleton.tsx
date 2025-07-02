@@ -36,8 +36,8 @@ import React from 'react';
 
 export default function BeFiScLoadingSkeleton() {
   return (
-    <div className="flex min-h-[calc(100vh-120px)] items-center justify-center">
-      <div className="max-h-96 max-w-96">
+    <div className="flex min-h-[400px] items-center justify-center">
+      <div className="max-h-52 max-w-52">
         <LottieLoader />
       </div>
     </div>
