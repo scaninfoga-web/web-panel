@@ -633,10 +633,10 @@ export default function Navbar() {
   return (
     <header
       className={cn(
-        'fixed left-0 right-0 top-0 z-50 pb-4 transition-all duration-300 md:px-8',
-        scrolled
-          ? 'bg-black/80 py-2 shadow-lg backdrop-blur-md'
-          : 'bg-transparent py-4',
+        'fixed left-0 right-0 top-0 z-50 bg-[#060b17] pb-4 transition-all duration-300 md:px-8',
+        // scrolled
+        //   ? 'bg-gray-900/50 py-2 shadow-lg backdrop-blur-2xl'
+        //   : 'bg-transparent py-4',
       )}
     >
       <div className="flex items-center justify-between">

@@ -530,9 +530,10 @@ export function DashboardSidebar() {
   const router = useRouter();
 
   return (
+    // class="left-0 top-0 z-40 hidden h-screen w-64 border-r border-gray-800 bg-gray-900/50 pt-16 backdrop-blur-sm md:fixed md:block"
     <div
       className={cn(
-        'fixed inset-y-0 left-0 z-50 w-full transform border-r border-gray-800 bg-gray-900/95 backdrop-blur-2xl transition-all duration-100 md:w-72',
+        'bg-black-900/50 fixed inset-y-0 left-0 z-50 w-full transform border-r border-gray-800 backdrop-blur-2xl transition-all duration-100 md:w-72',
         isOpen ? '-translate-x-0' : '-translate-x-full md:-translate-x-0',
       )}
     >
