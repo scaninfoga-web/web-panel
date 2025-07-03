@@ -383,6 +383,39 @@ export default function BeFiSc() {
       securityScore: score,
       totalBreachFields,
     }));
+    if (totalIp.length > 0) {
+      // calling hudsonIP
+      let hudsonDataa: {
+        value: string;
+        type: string;
+        data: HudsonEmailType | null;
+      }[] = [];
+      // calling hudsonIP
+
+      const fetchByIP = async () => {
+        try {
+          const results = await Promise.allSettled(
+            totalIp.map((ip) =>
+              post('/api/hudson/search-by-ip', {
+                ip,
+                realtimeData: isRealtime,
+              }),
+            ),
+          );
+          results.forEach((item, index) => {
+            if (item.status === 'fulfilled') {
+              hudsonDataa.push({
+                value: totalIp[index],
+                type: 'Breach IP',
+                data: item.value,
+              });
+            }
+          });
+          setHudsonData((prev) => [...prev, ...hudsonDataa]);
+        } catch (error) {}
+      };
+      fetchByIP();
+    }
 
     new Promise((resolve) =>
       setTimeout(() => {
@@ -646,10 +679,7 @@ export default function BeFiSc() {
     if (query.length < 1) {
       return;
     }
-    query = query
-      .normalize('NFKD')
-      .replace(/[\u200B-\u200D\uFEFF\u202C\u202D\u202E]/g, '')
-      .trim();
+
     const isValid = isValidIndianMobileNumber(query);
     if (!isValid.result) {
       toast.error(`Invalid mobile ${query.slice(0, 15)}`, { duration: 800 });
@@ -893,19 +923,19 @@ export default function BeFiSc() {
               type: string;
               data: HudsonEmailType | null;
             }[] = [];
-            // calling hudsonIP
-            const clientInfo = getClientInfo();
-            try {
-              const res = await post('/api/hudson/search-by-ip', {
-                ip: clientInfo?.ip,
-                realtimeData: isRealtime,
-              });
-              hudsonDataa.push({
-                value: clientInfo?.ip,
-                type: 'IP',
-                data: res,
-              });
-            } catch (error) {}
+            // // calling hudsonIP
+            // const clientInfo = getClientInfo();
+            // try {
+            //   const res = await post('/api/hudson/search-by-ip', {
+            //     ip: clientInfo?.ip,
+            //     realtimeData: isRealtime,
+            //   });
+            //   hudsonDataa.push({
+            //     value: clientInfo?.ip,
+            //     type: 'IP',
+            //     data: res,
+            //   });
+            // } catch (error) {}
 
             // calling hudsonEmail
             try {
@@ -1382,7 +1412,7 @@ export default function BeFiSc() {
       </div>
 
       {isLoading ? (
-        <div className="mt-8">
+        <div className="flex h-[400px] items-center justify-center">
           <BeFiScLoadingSkeleton />
         </div>
       ) : mobile360Data ? (

@@ -32,12 +32,22 @@
 // }
 
 import LottieLoader from '@/components/custom/components/LotteLoader';
+import { cn } from '@/lib/utils';
 import React from 'react';
 
-export default function BeFiScLoadingSkeleton() {
+export default function BeFiScLoadingSkeleton({
+  className,
+}: {
+  className?: string;
+}) {
   return (
-    <div className="flex min-h-[400px] items-center justify-center">
-      <div className="max-h-52 max-w-52">
+    <div
+      className={cn(
+        'flex h-[400px] w-full items-center justify-center',
+        className,
+      )}
+    >
+      <div className="h-52 w-52">
         <LottieLoader />
       </div>
     </div>

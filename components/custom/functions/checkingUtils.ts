@@ -3,6 +3,10 @@ export function isValidIndianMobileNumber(input: string): {
   fixedNumber: string;
 } {
   const mobileRegex = /^(?:\+91[\-\s]?)?[5-9]\d{9}$/;
+  input = input
+    .normalize('NFKD')
+    .replace(/[\u200B-\u200D\uFEFF\u202C\u202D\u202E]/g, '')
+    .trim();
   input = input.replace(/\s/g, '');
   if (input.length === 12) {
     input = input.slice(2, 13);

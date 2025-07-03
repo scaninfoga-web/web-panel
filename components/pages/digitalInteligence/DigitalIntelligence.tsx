@@ -1,5 +1,6 @@
 'use client';
 import DashboardTitle from '@/components/common/DashboardTitle';
+import { isValidIndianMobileNumber } from '@/components/custom/functions/checkingUtils';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -10,201 +11,121 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
+import { post } from '@/lib/api';
 
 import { cn } from '@/lib/utils';
 import {
   IconBusinessplan,
+  IconCalendarWeekFilled,
   IconDeviceSim,
   IconDevicesSearch,
   IconFileSearch,
   IconMailSearch,
   IconUserSearch,
 } from '@tabler/icons-react';
-import { BadgeIndianRupee } from 'lucide-react';
-import React, { useState } from 'react';
+import { BadgeIndianRupee, Calendar } from 'lucide-react';
+import { useState } from 'react';
+import { toast } from 'sonner';
+import BeFiScLoadingSkeleton from '../BeFiSc/sub/BeFiScLoadingSkeleton';
+import { formatDateTime } from '@/components/custom/functions/formatUtils';
 
 const tools: {
   toolName: string;
   icon: any;
-  subTools: { toolName: string }[];
+  subTools: { toolName: string; searchKey: string }[];
 }[] = [
   {
     toolName: 'Number Trace',
     icon: IconDeviceSim,
     subTools: [
-      {
-        toolName: 'Mobile 365 Intelligence',
-      },
-      {
-        toolName: 'Mobile to Employee Info',
-      },
-      {
-        toolName: 'Mobile to Doc & Address',
-      },
-      {
-        toolName: 'Mobile to DL',
-      },
-      {
-        toolName: 'Mobile to Email',
-      },
-      {
-        toolName: 'Mobile to Breach Info',
-      },
-      {
-        toolName: 'Mobile to Gas Info',
-      },
+      { toolName: 'Mobile 365 Intelligence', searchKey: '' },
+      { toolName: 'Mobile to Employee Info', searchKey: '' },
+      { toolName: 'Mobile to Doc & Address', searchKey: '' },
+      { toolName: 'Mobile to DL', searchKey: '' },
+      { toolName: 'Mobile to Email', searchKey: '' },
+      { toolName: 'Mobile to Breach Info', searchKey: '' },
+      { toolName: 'Mobile to Gas Info', searchKey: 'get-lpg-info' },
     ],
   },
   {
     toolName: 'Financial Trace',
     icon: BadgeIndianRupee,
     subTools: [
-      {
-        toolName: 'Financial 365 Intelligence',
-      },
-      {
-        toolName: 'Mobile to Bank Info',
-      },
-      {
-        toolName: 'Reverse Account Number',
-      },
-      {
-        toolName: 'Mobile to Multi UPI Info',
-      },
-      {
-        toolName: 'Mobile to Loan Trace',
-      },
+      { toolName: 'Financial 365 Intelligence', searchKey: '' },
+      { toolName: 'Mobile to Bank Info', searchKey: '' },
+      { toolName: 'Reverse Account Number', searchKey: '' },
+      { toolName: 'Mobile to Multi UPI Info', searchKey: '' },
+      { toolName: 'Mobile to Loan Trace', searchKey: '' },
     ],
   },
   {
     toolName: 'Digital Doc',
     icon: IconFileSearch,
     subTools: [
-      {
-        toolName: 'DOC 365 Intelligence',
-      },
-      {
-        toolName: 'Mobile to Pan Card',
-      },
-      {
-        toolName: 'Mobile to Aadhar Trace',
-      },
-      {
-        toolName: 'Mobile All Linked DOC',
-      },
-      {
-        toolName: 'Aadhar Verify',
-      },
-      {
-        toolName: 'Pan Card Info',
-      },
-      {
-        toolName: 'Voter ID Info',
-      },
+      { toolName: 'DOC 365 Intelligence', searchKey: '' },
+      { toolName: 'Mobile to Pan Card', searchKey: '' },
+      { toolName: 'Mobile to Aadhar Trace', searchKey: '' },
+      { toolName: 'Mobile All Linked DOC', searchKey: '' },
+      { toolName: 'Aadhar Verify', searchKey: '' },
+      { toolName: 'Pan Card Info', searchKey: '' },
+      { toolName: 'Voter ID Info', searchKey: '' },
     ],
   },
-
   {
     toolName: 'Employee Info',
     icon: IconUserSearch,
     subTools: [
-      {
-        toolName: 'Mobile to Employee Info',
-      },
-      {
-        toolName: 'Aadhar to Employee Info',
-      },
-      {
-        toolName: 'UAN Trace - Get EPFO Statement',
-      },
-      {
-        toolName: 'ESIC Trace',
-      },
+      { toolName: 'Mobile to Employee Info', searchKey: '' },
+      { toolName: 'Aadhar to Employee Info', searchKey: '' },
+      { toolName: 'UAN Trace - Get EPFO Statement', searchKey: '' },
+      { toolName: 'ESIC Trace', searchKey: '' },
     ],
   },
   {
     toolName: 'Business Track',
     icon: IconBusinessplan,
     subTools: [
-      {
-        toolName: 'GST Info Trace',
-      },
-      {
-        toolName: 'Udyam Verify Info Trace',
-      },
+      { toolName: 'GST Info Trace', searchKey: '' },
+      { toolName: 'Udyam Verify Info Trace', searchKey: '' },
     ],
   },
   {
     toolName: 'Email Investigation',
     icon: IconMailSearch,
     subTools: [
-      {
-        toolName: 'Email 365 Intelligence',
-      },
-      {
-        toolName: 'Google Profile',
-      },
-      {
-        toolName: 'Google Docking',
-      },
-      {
-        toolName: 'Email to Device Track',
-      },
-      {
-        toolName: 'Email to IP Address',
-      },
-      {
-        toolName: 'Email to Data Breach Info',
-      },
-      {
-        toolName: 'Email to Mobile Number',
-      },
-      {
-        toolName: 'Email to Find Social Media',
-      },
+      { toolName: 'Email 365 Intelligence', searchKey: '' },
+      { toolName: 'Google Profile', searchKey: '' },
+      { toolName: 'Google Docking', searchKey: '' },
+      { toolName: 'Email to Device Track', searchKey: '' },
+      { toolName: 'Email to IP Address', searchKey: '' },
+      { toolName: 'Email to Data Breach Info', searchKey: '' },
+      { toolName: 'Email to Mobile Number', searchKey: '' },
+      { toolName: 'Email to Find Social Media', searchKey: '' },
     ],
   },
   {
     toolName: 'Username Trace',
     icon: IconUserSearch,
     subTools: [
-      {
-        toolName: 'Username 365 Intelligence',
-      },
-      {
-        toolName: 'Social Media Trace',
-      },
-      {
-        toolName: 'Google Docking',
-      },
-      {
-        toolName: 'Breach Info Trace',
-      },
+      { toolName: 'Username 365 Intelligence', searchKey: '' },
+      { toolName: 'Social Media Trace', searchKey: '' },
+      { toolName: 'Google Docking', searchKey: '' },
+      { toolName: 'Breach Info Trace', searchKey: '' },
     ],
   },
-
   {
     toolName: 'IP Investigation',
     icon: IconDevicesSearch,
     subTools: [
-      {
-        toolName: 'IP 365 Intelligence',
-      },
-      {
-        toolName: 'IP Address Info',
-      },
-      {
-        toolName: 'Reverse IP Address',
-      },
-      {
-        toolName: 'IP to Device Detect',
-      },
-      {
-        toolName: 'IP to Breach Info',
-      },
+      { toolName: 'IP 365 Intelligence', searchKey: '' },
+      { toolName: 'IP Address Info', searchKey: '' },
+      { toolName: 'Reverse IP Address', searchKey: '' },
+      { toolName: 'IP to Device Detect', searchKey: '' },
+      { toolName: 'IP to Breach Info', searchKey: '' },
     ],
   },
 ];
+
 type Step = 'method' | 'details' | 'confirmation';
 
 const stepNumbers = {
@@ -222,14 +143,57 @@ export default function DigitalIntelligence() {
   const [selectedTool, setSelectedTool] = useState<{
     toolName: string;
     icon: any;
-    subTools: { toolName: string }[];
+    subTools: { toolName: string; searchKey: string }[];
   } | null>(null);
-  const [selectedSubTool, setSelectedSubTool] = useState('');
+  const [selectedSubTool, setSelectedSubTool] = useState<{
+    toolName: string;
+    searchKey: string;
+  }>({ toolName: '', searchKey: '' });
   const [isOpen, setIsOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState<Step>('method');
+  const [searchInputValue, setSearchInputValue] = useState('');
+  const [valid, setValid] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [responseData, setResponseData] = useState<{
+    datetime: string;
+    data: Object;
+  } | null>({
+    datetime: '2025-07-03T05:54:39.304608Z',
+    data: {
+      lpg_info: {
+        code: 'NRF',
+        data: [],
+      },
+    },
+  });
 
-  const handleSearch = (query: string, filter: string) => {
-    console.log(`Searching for ${query} in ${filter}`);
+  const handleSearch = async () => {
+    const toastId = toast.loading('Loading...');
+    setLoading(true);
+    const valid = isValidIndianMobileNumber(searchInputValue);
+    if (valid && valid.result && selectedSubTool.searchKey) {
+      onClose();
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      try {
+        const response = await post(
+          `/api/digital-intelligence/${selectedSubTool.searchKey}`,
+          {
+            mobile_number: valid.fixedNumber,
+            realtimeData: false,
+          },
+        );
+        setResponseData(response?.responseData);
+        toast.success('Data Fetched', {
+          id: toastId,
+        });
+      } catch (error) {
+        toast.error('Error', {
+          id: toastId,
+        });
+      } finally {
+        setLoading(false);
+      }
+    }
   };
 
   const nextStep = () => {
@@ -246,7 +210,8 @@ export default function DigitalIntelligence() {
     setCurrentStep('method');
     setIsOpen(false);
     setSelectedTool(null);
-    setSelectedSubTool('');
+    setSelectedSubTool({ searchKey: '', toolName: '' });
+    setSearchInputValue('');
   }
 
   return (
@@ -256,8 +221,8 @@ export default function DigitalIntelligence() {
         subTitle="customise your api as per your needs & pay for what you use"
       />
 
-      <div className="flex space-x-10">
-        <div className="grid min-w-60 grid-cols-1 gap-4">
+      <div className="flex flex-col space-y-8 lg:flex-row lg:space-x-10 lg:space-y-0">
+        <div className="grid min-w-60 grid-cols-2 gap-4 lg:grid-cols-1">
           {/* main selects */}
           {tools.map((tool) => (
             <div key={`${tool.toolName}`} className="flex">
@@ -270,12 +235,8 @@ export default function DigitalIntelligence() {
                     'bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20',
                 )}
                 onClick={() => {
-                  if (selectedTool && selectedTool.toolName === tool.toolName) {
-                    setSelectedTool(tool);
-                  } else {
-                    setIsOpen(true);
-                    setSelectedTool(tool);
-                  }
+                  setSelectedTool(tool);
+                  setIsOpen(true);
                 }}
               >
                 <tool.icon className="h-5 w-5" />
@@ -284,12 +245,29 @@ export default function DigitalIntelligence() {
             </div>
           ))}
         </div>
+
+        {loading && <BeFiScLoadingSkeleton />}
+        {/* {responseData && !loading && (
+          <div className="flex w-full flex-col">
+            <div className="flex justify-end">
+              <div className="flex items-center space-x-1 text-base font-medium text-gray-400">
+                <IconCalendarWeekFilled className="h-5 w-5 text-blue-500" />
+                <span>{formatDateTime(responseData?.datetime)}</span>
+              </div>
+            </div>
+            <div className="mt-4">
+              <div className="text-xl font-semibold text-white">
+                {selectedSubTool.toolName}
+              </div>
+            </div>
+          </div>
+        )} */}
       </div>
 
       {selectedTool && (
         <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
           <DialogPortal>
-            <DialogContent className="min-[400px] flex min-w-[800px] flex-col border-slate-800 p-10 text-white shadow-2xl shadow-slate-800 backdrop-blur-3xl">
+            <DialogContent className="min-[400px] flex min-w-[800px] flex-col border-slate-800 bg-slate-950 p-10 text-white shadow-2xl shadow-slate-800">
               <DialogTitle className="text-3xl font-bold text-emerald-500">
                 {selectedTool.toolName}
               </DialogTitle>
@@ -344,15 +322,11 @@ export default function DigitalIntelligence() {
                               variant="ghost"
                               className={cn(
                                 'w-full justify-start gap-2 border border-gray-800/50 py-6 shadow-[inset_0px_1px_2px_0px_rgba(255,255,255,0.1),inset_0px_-1px_2px_0px_rgba(255,255,255,0.1)] hover:bg-gray-800/50',
-                                selectedSubTool === subtool.toolName &&
+                                selectedSubTool.toolName === subtool.toolName &&
                                   'bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20',
                               )}
                               onClick={() => {
-                                if (selectedSubTool === subtool.toolName) {
-                                  setSelectedSubTool(subtool.toolName);
-                                } else {
-                                  setSelectedSubTool(subtool.toolName);
-                                }
+                                setSelectedSubTool(subtool);
                               }}
                             >
                               <span className="w-full text-center">
@@ -376,19 +350,51 @@ export default function DigitalIntelligence() {
 
                   <div className="min-w-full">
                     <h1 className="flex w-full text-xl font-semibold">
-                      {selectedSubTool}
+                      {selectedSubTool.toolName}
                     </h1>
-                    <label
+                    {/* <label
                       className="text-sm font-medium text-white text-white/80"
                       htmlFor="firstInput"
                     >
                       optional
-                    </label>
-                    <Input
-                      id="firstInput"
-                      placeholder="Enter mobile no"
-                      className="w-full border border-neutral-700"
-                    />
+                    </label> */}
+                    <div
+                      style={{ height: 'calc(100% - 80px)' }}
+                      className="mt-2 flex h-full flex-col justify-between"
+                    >
+                      <div className="flex flex-col space-y-1">
+                        <Input
+                          id="firstInput"
+                          placeholder="Enter mobile no"
+                          className="w-full border border-neutral-700"
+                          onChange={(e) => {
+                            const isValid = isValidIndianMobileNumber(
+                              e.target.value,
+                            );
+                            if (isValid.result) {
+                              setSearchInputValue(isValid.fixedNumber);
+                              setValid(true);
+                            } else {
+                              setValid(false);
+                            }
+                          }}
+                        />
+                        {!valid && (
+                          <p className="text-sm text-red-500">
+                            Please enter a valid mobile number
+                          </p>
+                        )}
+                      </div>
+                      <div className="min-w-full">
+                        <Button
+                          className="w-full bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20"
+                          disabled={!valid}
+                          onClick={handleSearch}
+                        >
+                          Click to Search
+                        </Button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

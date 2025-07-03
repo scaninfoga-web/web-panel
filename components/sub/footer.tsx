@@ -420,7 +420,7 @@ export default function Footer() {
           </p>
           <div className="flex flex-wrap justify-center space-x-4 text-sm">
             <Link
-              href="/terms"
+              href="/terms-conditions"
               className="text-white/60 transition-colors hover:text-emerald-400"
             >
               Terms & Conditions
@@ -432,7 +432,7 @@ export default function Footer() {
               Privacy Policy
             </Link>
             <Link
-              href="/terms"
+              href="/refund-policy"
               className="text-white/60 transition-colors hover:text-emerald-400"
             >
               Refund Policy
