@@ -1,11 +1,15 @@
 'use client';
 
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 import Cashfree from '@cashfreepayments/cashfree-js';
 
 export default function WalletTopUp() {
   const [amount, setAmount] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // ✅ Get token from Redux state
+  const token = useSelector((state: any) => state.user.token);
 
   const initiatePayment = async () => {
     if (!amount || parseFloat(amount) <= 0) {
@@ -15,12 +19,17 @@ export default function WalletTopUp() {
 
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:8000/api/initiate-payment/', {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amount }),
-      });
+      const res = await fetch(
+        'https://backend.scaninfoga.com/api/payments/initiate-payment',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`, // ✅ Authorization header added
+          },
+          body: JSON.stringify({ amount }),
+        },
+      );
 
       const data = await res.json();
 

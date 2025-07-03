@@ -2,11 +2,15 @@
 
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { useSelector } from 'react-redux';
 
 export default function PaymentSuccess() {
   const searchParams = useSearchParams();
   const orderId = searchParams.get('order_id');
   const [status, setStatus] = useState('Verifying Payment...');
+
+  // ✅ Get token from Redux state
+  const token = useSelector((state: any) => state.user.token);
 
   useEffect(() => {
     const verifyPayment = async () => {
@@ -14,9 +18,12 @@ export default function PaymentSuccess() {
 
       try {
         const res = await fetch(
-          `http://localhost:8000/api/verify-payment/?order_id=${orderId}`,
+          `https://backend.scaninfoga.com/api/payments/verify-payment/?order_id=${orderId}`,
           {
-            credentials: 'include',
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${token}`, // ✅ Token added
+            },
           },
         );
 
@@ -38,7 +45,7 @@ export default function PaymentSuccess() {
     };
 
     verifyPayment();
-  }, [orderId]);
+  }, [orderId, token]); // ✅ Added token to dependency array
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center p-4">
