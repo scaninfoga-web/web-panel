@@ -52,11 +52,11 @@ export default function WalletTopUp() {
   };
 
   const launchCashfreeCheckout = (paymentSessionId: string) => {
-    if (
-      typeof window !== 'undefined' &&
-      (window as any).Cashfree &&
-      typeof (window as any).Cashfree.checkout === 'function'
-    ) {
+    if (typeof window !== 'undefined' && (window as any).Cashfree) {
+      console.log(
+        'Launching Cashfree checkout with session:',
+        paymentSessionId,
+      );
       (window as any).Cashfree.checkout({ paymentSessionId });
     } else {
       alert('Cashfree SDK is not properly loaded.');
@@ -66,7 +66,7 @@ export default function WalletTopUp() {
   return (
     <div className="mx-auto flex max-w-md flex-col space-y-4 p-4">
       <Script
-        src="https://sdk.cashfree.com/js/v3/cashfree.js"
+        src="https://sdk.cashfree.com/js/ui/2.0.0/cashfree.js" // ✅ Correct SDK URL
         strategy="afterInteractive"
         onLoad={() => {
           console.log('Cashfree SDK loaded successfully.');
