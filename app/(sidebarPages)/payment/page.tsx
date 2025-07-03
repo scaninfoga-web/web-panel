@@ -1,15 +1,24 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import Cashfree from '@cashfreepayments/cashfree-js';
 
 export default function WalletTopUp() {
   const [amount, setAmount] = useState('');
   const [loading, setLoading] = useState(false);
-
-  // ✅ Get token from Redux state
   const token = useSelector((state: any) => state.user.token);
+
+  // ✅ Load Cashfree JS SDK when component mounts
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://sdk.cashfree.com/js/v3/cashfree.js';
+    script.async = true;
+    document.body.appendChild(script);
+
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
 
   const initiatePayment = async () => {
     if (!amount || parseFloat(amount) <= 0) {
@@ -25,7 +34,7 @@ export default function WalletTopUp() {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`, // ✅ Authorization header added
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({ amount }),
         },
@@ -47,8 +56,11 @@ export default function WalletTopUp() {
   };
 
   const launchCashfreeCheckout = (paymentSessionId: string) => {
-    const cashfree = new Cashfree({ paymentSessionId });
-    cashfree.redirect();
+    if (typeof window !== 'undefined' && (window as any).Cashfree) {
+      (window as any).Cashfree.checkout({ paymentSessionId });
+    } else {
+      alert('Cashfree SDK not loaded.');
+    }
   };
 
   return (
