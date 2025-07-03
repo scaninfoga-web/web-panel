@@ -1,28 +1,24 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import Script from 'next/script';
 import { useSelector } from 'react-redux';
 
 export default function WalletTopUp() {
   const [amount, setAmount] = useState('');
   const [loading, setLoading] = useState(false);
+  const [cashfreeReady, setCashfreeReady] = useState(false);
+
   const token = useSelector((state: any) => state.user.token);
-
-  // ✅ Load Cashfree JS SDK when component mounts
-  useEffect(() => {
-    const script = document.createElement('script');
-    script.src = 'https://sdk.cashfree.com/js/v3/cashfree.js';
-    script.async = true;
-    document.body.appendChild(script);
-
-    return () => {
-      document.body.removeChild(script);
-    };
-  }, []);
 
   const initiatePayment = async () => {
     if (!amount || parseFloat(amount) <= 0) {
       alert('Enter a valid amount.');
+      return;
+    }
+
+    if (!cashfreeReady) {
+      alert('Cashfree SDK is not loaded yet.');
       return;
     }
 
@@ -56,15 +52,32 @@ export default function WalletTopUp() {
   };
 
   const launchCashfreeCheckout = (paymentSessionId: string) => {
-    if (typeof window !== 'undefined' && (window as any).Cashfree) {
+    if (
+      typeof window !== 'undefined' &&
+      (window as any).Cashfree &&
+      typeof (window as any).Cashfree.checkout === 'function'
+    ) {
       (window as any).Cashfree.checkout({ paymentSessionId });
     } else {
-      alert('Cashfree SDK not loaded.');
+      alert('Cashfree SDK is not properly loaded.');
     }
   };
 
   return (
     <div className="mx-auto flex max-w-md flex-col space-y-4 p-4">
+      <Script
+        src="https://sdk.cashfree.com/js/v3/cashfree.js"
+        strategy="afterInteractive"
+        onLoad={() => {
+          console.log('Cashfree SDK loaded successfully.');
+          setCashfreeReady(true);
+        }}
+        onError={() => {
+          console.error('Failed to load Cashfree SDK.');
+          alert('Failed to load payment SDK.');
+        }}
+      />
+
       <h1 className="mb-4 text-2xl font-bold">Wallet Top-Up</h1>
       <input
         type="number"
