@@ -18,7 +18,7 @@ export default function PaymentSuccess() {
 
       try {
         const res = await fetch(
-          `https://backend.scaninfoga.com/api/payments/verify-payment/?order_id=${orderId}`,
+          `https://backend.scaninfoga.com/api/payments/verify-payment?order_id=${orderId}`,
           {
             method: 'GET',
             headers: {
