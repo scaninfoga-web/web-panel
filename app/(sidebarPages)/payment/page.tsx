@@ -1,24 +1,18 @@
 'use client';
 
 import { useState } from 'react';
-import Script from 'next/script';
 import { useSelector } from 'react-redux';
+import checkout from '@cashfreepayments/cashfree-js'; // ✅ Correct default import
 
 export default function WalletTopUp() {
   const [amount, setAmount] = useState('');
   const [loading, setLoading] = useState(false);
-  const [cashfreeReady, setCashfreeReady] = useState(false);
 
   const token = useSelector((state: any) => state.user.token);
 
   const initiatePayment = async () => {
     if (!amount || parseFloat(amount) <= 0) {
       alert('Enter a valid amount.');
-      return;
-    }
-
-    if (!cashfreeReady) {
-      alert('Cashfree SDK is not loaded yet.');
       return;
     }
 
@@ -52,32 +46,16 @@ export default function WalletTopUp() {
   };
 
   const launchCashfreeCheckout = (paymentSessionId: string) => {
-    if (typeof window !== 'undefined' && (window as any).Cashfree) {
-      console.log(
-        'Launching Cashfree checkout with session:',
-        paymentSessionId,
-      );
-      (window as any).Cashfree.checkout({ paymentSessionId });
-    } else {
-      alert('Cashfree SDK is not properly loaded.');
+    try {
+      checkout({ paymentSessionId }); // ✅ Correct invocation
+    } catch (error) {
+      console.error('Error launching Cashfree checkout:', error);
+      alert('Failed to launch payment window.');
     }
   };
 
   return (
     <div className="mx-auto flex max-w-md flex-col space-y-4 p-4">
-      <Script
-        src="https://sdk.cashfree.com/js/ui/2.0.0/cashfree.js" // ✅ Correct SDK URL
-        strategy="afterInteractive"
-        onLoad={() => {
-          console.log('Cashfree SDK loaded successfully.');
-          setCashfreeReady(true);
-        }}
-        onError={() => {
-          console.error('Failed to load Cashfree SDK.');
-          alert('Failed to load payment SDK.');
-        }}
-      />
-
       <h1 className="mb-4 text-2xl font-bold">Wallet Top-Up</h1>
       <input
         type="number"
