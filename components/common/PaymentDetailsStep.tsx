@@ -230,6 +230,7 @@
 
 // export default PaymentDetailsStep;
 
+'use client';
 import { Button } from '@/components/ui/button';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Copy, ArrowLeft, CreditCard, Building } from 'lucide-react';
@@ -237,6 +238,9 @@ import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 import { FormInput } from '../ui/form-input';
+import { useEffect, useState } from 'react';
+import { load } from '@cashfreepayments/cashfree-js'; // ✅ Correct import
+import { useSelector } from 'react-redux';
 
 interface PaymentDetailsStepProps {
   paymentMethod: 'card' | 'bank' | null;
@@ -275,11 +279,95 @@ const PaymentDetailsStep = ({
     },
   });
 
+  const [loading, setLoading] = useState(false);
+  const [cashfree, setCashfree] = useState<any>(null);
+
   const bankDetails = {
     bankName: 'Kotak Mahindra Bank',
     accountNumber: '7622004401',
     ifsc: 'KKBK0002875',
     accountName: 'SCANINFOGA SOLUTIONS PRIVATE LIMITED',
+  };
+
+  // ✅ Load SDK when component mounts
+  useEffect(() => {
+    const initializeCashfree = async () => {
+      try {
+        const cashfreeInstance = await load({
+          mode: 'production', // Change to 'sandbox' if testing
+        });
+        console.log('Cashfree SDK initialized.');
+        setCashfree(cashfreeInstance);
+      } catch (error) {
+        console.error('Error loading Cashfree SDK:', error);
+      }
+    };
+
+    initializeCashfree();
+  }, []);
+
+  const token = useSelector((state: any) => state.user.token);
+
+  const launchCashfreeCheckout = (paymentSessionId: string) => {
+    try {
+      console.log(
+        'Launching Cashfree checkout with session ID:',
+        paymentSessionId,
+      );
+
+      cashfree.checkout({
+        paymentSessionId,
+        redirectTarget: '_self', // ✅ Can also use '_blank', '_modal', or a DOM element
+      });
+    } catch (error: any) {
+      console.error('Error launching Cashfree checkout:', error);
+      alert('Failed to load payment window: ' + error.message);
+    }
+  };
+
+  const initiatePayment = async () => {
+    if (!form.getValues('amount') || form.getValues('amount') <= 0) {
+      alert('Enter a valid amount.');
+      return;
+    }
+
+    if (!cashfree) {
+      alert('Cashfree SDK is not loaded yet.');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await fetch(
+        'https://backend.scaninfoga.com/api/payments/initiate-payment',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`, // ✅ Passing user token
+          },
+          body: JSON.stringify({ amount: form.getValues('amount') }),
+        },
+      );
+
+      const data = await res.json();
+      console.log('Backend Response:', data);
+
+      if (data.paymentSessionId) {
+        launchCashfreeCheckout(data.paymentSessionId);
+      } else {
+        console.error('Invalid response:', data);
+        alert(
+          'Failed to initiate payment: ' +
+            (data.message || 'No payment session ID'),
+        );
+      }
+    } catch (error) {
+      console.error('Error initiating payment:', error);
+      alert('Something went wrong. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleFormSubmit = () => {};
@@ -346,11 +434,11 @@ const PaymentDetailsStep = ({
         </div>
 
         <div className="space-y-4">
-          <div className="flex justify-center">
+          {/* <div className="flex justify-center">
             <div className="flex h-32 w-32 items-center justify-center rounded-lg bg-gradient-to-r from-teal-500 to-emerald-500">
               <CreditCard className="h-16 w-16 text-white" />
             </div>
-          </div>
+          </div> */}
 
           <div className="rounded-lg border border-teal-500/20 bg-teal-500/10 p-4">
             <h4 className="mb-2 font-medium text-teal-400">
@@ -381,7 +469,7 @@ const PaymentDetailsStep = ({
             Back
           </Button>
           <Button
-            onClick={onClose}
+            onClick={initiatePayment}
             className="flex-1 bg-gradient-to-r from-teal-500 to-emerald-500 font-medium text-white hover:from-teal-600 hover:to-emerald-600"
           >
             Proceed to Payment Gateway
