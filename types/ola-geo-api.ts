@@ -20,3 +20,14 @@ export interface OlaGeoApiType {
     image: string;
   };
 }
+
+export interface userLocation {
+  responseStatus: {
+    status: boolean;
+    message: string;
+  };
+  responseData: {
+    content_type: string;
+    image: string;
+  };
+}

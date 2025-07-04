@@ -8,7 +8,7 @@ export default function DashboardTitle({
   subTitle,
 }: DashboardTitleProps) {
   return (
-    <section>
+    <section className="mt-8 md:mt-0">
       <h1 className="text-3xl font-bold">{title}</h1>
       <p className="text-gray-400">{subTitle}</p>
     </section>

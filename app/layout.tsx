@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { Providers } from './provider';
+import Navbar from '@/components/sub/navbar';
+import { SidebarProvider } from '@/context/SidebarContext';
 
 export const metadata: Metadata = {
   title: 'Scaninfoga',
@@ -15,7 +17,12 @@ export default function RootLayout({
   return (
     <html lang="en" className="scrollbar-custom">
       <body className="">
-        <Providers>{children}</Providers>
+        <SidebarProvider>
+          <Providers>
+            <Navbar />
+            {children}
+          </Providers>
+        </SidebarProvider>
       </body>
     </html>
   );

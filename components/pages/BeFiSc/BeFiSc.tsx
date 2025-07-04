@@ -6,7 +6,7 @@ import CustomCheckBox from '@/components/sub/checkbox';
 import NotFound from '@/components/sub/NotFound';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { getClientInfo, post } from '@/lib/api';
+import { get, getClientInfo, post } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import {
   EquifaxV3Type,
@@ -23,7 +23,7 @@ import {
 import { BreachInfoType } from '@/types/BreachInfo';
 import { GhuntData } from '@/types/ghunt';
 import { OlaGeoApiType } from '@/types/ola-geo-api';
-import axios, { AxiosError } from 'axios';
+import { AxiosError } from 'axios';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
@@ -32,18 +32,8 @@ import { toast } from 'sonner';
 import { DashboardCard } from '../dashboard/components/DashboardCard';
 import BeFiScBreachInfo from './BeFiScBreachInfo';
 import BeFiScBusiness from './BeFiScBusiness';
-import BeFiScDigitalFootprint, {
-  getAddressesWithDifferentPincode,
-  getOtherEmails,
-  getOtherPhoneNumbers,
-} from './BeFiScDigitalFootprint';
 import BeFiScFinancial from './BeFiScFinancial';
 import BefiScPersonal from './BefiScPersonal';
-import {
-  cleanAndCapitalize,
-  formatSentence,
-  numberToIndianRuppe,
-} from './sub/APIUtils';
 import BeFiScLoadingSkeleton from './sub/BeFiScLoadingSkeleton';
 import CustomBadge from './sub/CustomBadge';
 import Ghunt from './sub/Ghunt';
@@ -52,31 +42,26 @@ import SentenceLoader from './sub/SentenceLoader';
 import { HunterFindType, HunterVerifyType } from '@/types/hunter';
 import { PayWorldType } from '@/types/payworld';
 import { JobSeekerType, LeakHunterType } from '@/types/LeakHunter';
-import { Bookmark, BookmarkCheck } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import BookmarkButton from '@/components/BookmarkButton';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/redux/store';
-
-export function isValidIndianMobileNumber(input: string): {
-  result: boolean;
-  fixedNumber: string;
-} {
-  const mobileRegex = /^(?:\+91[\-\s]?)?[5-9]\d{9}$/;
-  input = input.replace(/\s/g, '');
-  if (input.length === 12) {
-    input = input.slice(2, 13);
-  }
-  if (input.length === 13) {
-    input = input.slice(3, 14);
-  }
-  const isValid = mobileRegex.test(input.trim());
-
-  return {
-    result: isValid,
-    fixedNumber: input,
-  };
-}
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '@/redux/store';
+import BookmarkWidget from './sub/BookmarkWidget';
+import { BookMarkOptionScaninFogaIntelligence } from './sub/BookmarkBeFiSc';
+import { fetchWalletBalance } from '@/redux/walletSlice';
+import BeFiScOverview from './BeFiScOverview';
+import { CountScanType } from '@/types/countRequest';
+import { HudsonEmailType } from '@/types/hudson';
+import {
+  getAddressesWithDifferentPincode,
+  getOtherEmails,
+  getOtherPhoneNumbers,
+} from '@/components/custom/functions/befiscUtils';
+import {
+  cleanAndCapitalize,
+  formatSentence,
+  numberToIndianRuppe,
+} from '@/components/custom/functions/formatUtils';
+import BeFiScDigitalFootprint from './BeFiScDigitalFootprint';
+import { isValidIndianMobileNumber } from '@/components/custom/functions/checkingUtils';
 
 export default function BeFiSc() {
   const searchParams = useSearchParams();
@@ -90,9 +75,19 @@ export default function BeFiSc() {
   const [mobile360Data, setMobile360Data] = useState<Mobile360Type | null>(
     null,
   );
+  const wallet = useSelector((state: RootState) => state.wallet);
+  const dispatch = useDispatch<AppDispatch>();
 
   const [ghuntMultipleData, setGhuntMultipleData] = useState<GhuntData[]>([]);
   const [ghuntMultipleLoading, setGhuntMultipleLoading] = useState(false);
+
+  const [hudsonData, setHudsonData] = useState<
+    {
+      value: string;
+      type: string;
+      data: HudsonEmailType | null;
+    }[]
+  >([]);
 
   const [verfiyUdyamData, setVerfiyUdyamData] =
     useState<VerifyUdyamType | null>(null);
@@ -107,7 +102,7 @@ export default function BeFiSc() {
     useState<ProfileAdvanceType | null>(null);
 
   const [esicsData, setEsicsData] = useState<EsicDetailsType | null>(null);
-
+  const [lastScanData, setlastScanData] = useState<CountScanType | null>(null);
   const [mobileToAccountData, setMobileToAccountData] =
     useState<MobileToAccountNumberType | null>(null);
 
@@ -175,9 +170,42 @@ export default function BeFiSc() {
       data: JobSeekerType | null;
     }[]
   >([]);
+  const numbersFoundRef = useRef<number>(0);
+  const addressesFound = useRef<number>(0);
+  const [_1tabLoading, set_1tabLoading] = useState(false);
+  const [_2tabLoading, set_2tabLoading] = useState(false);
+  const [deviceDetails, setDeviceDetails] = useState<{
+    topLogins: string[];
+    topPasswords: string[];
+    infected_Credentials: string;
+    alert: 'Alert' | 'No Alert';
+    ip: string;
+    computerName: string;
+    OS: string;
+    dateCompromised: string;
+    deviceLogo: 'window' | 'mac' | 'android' | null;
+    totalIP: string[];
+    totalPassword: string[];
+    totalEmail: string[];
+    securityScore: number;
+    totalBreachFields: number;
+  }>({
+    topLogins: [],
+    topPasswords: [],
+    infected_Credentials: '',
+    alert: 'No Alert',
+    ip: '',
+    computerName: '',
+    OS: '',
+    dateCompromised: '',
+    deviceLogo: null,
+    totalIP: [],
+    totalPassword: [],
+    totalEmail: [],
+    securityScore: 0,
+    totalBreachFields: 0,
+  });
 
-  const [isBookmarkedChecked, setIsBookmarkedChecked] = useState(false);
-  const [isBookmarkedLoading, setIsBookMarkLoading] = useState(false);
   const setAllOnLoading = () => {
     setIsLoading(true);
     setUpiDetailsLoading(true);
@@ -201,7 +229,207 @@ export default function BeFiSc() {
     setPayworldData(null);
     setLeakHunterData([]);
     setJobSeekerData([]);
+    setHudsonData([]);
+    numbersFoundRef.current = 0;
+    addressesFound.current = 0;
   };
+
+  useEffect(() => {
+    set_1tabLoading(true);
+    let score = 100;
+    let totalEmails: string[] = [];
+    let totalPasswords: string[] = [];
+    let totalBreachFields = 0;
+    let totalIp: string[] = [];
+
+    if (hudsonData?.length > 0) {
+      hudsonData?.forEach((item) => {
+        if (
+          item?.data?.responseData?.total_corporate_services &&
+          item?.data?.responseData?.total_user_services > 0
+        ) {
+        }
+        item?.data?.responseData?.stealers?.forEach((steal) => {
+          if (steal?.top_logins) {
+            score -= steal?.top_logins?.length;
+          }
+          if (steal?.top_passwords) {
+            score -= steal?.top_passwords?.length;
+          }
+          if (steal?.malware_path && steal?.malware_path?.length > 2) {
+            score -= 10;
+          }
+        });
+      });
+    }
+    if (hunterFindData?.length > 0) {
+      hunterFindData?.forEach((item) => {
+        if (
+          item?.data?.responseData &&
+          item?.data?.responseData?.data?.data?.company
+        ) {
+          score -= 5;
+        }
+      });
+    }
+    if (leakHunterData?.length > 0) {
+      leakHunterData?.forEach((item) => {
+        if (
+          item?.data?.responseData?.password &&
+          item?.data?.responseData?.password?.length > 0
+        ) {
+          score -= 10;
+          item?.data?.responseData?.password?.map((item) =>
+            totalPasswords.push(item),
+          );
+        }
+      });
+    }
+    if (breachInfo?.length > 0) {
+      breachInfo?.forEach((item) => {
+        if (item?.value?.includes('@') && !totalEmails.includes(item?.value)) {
+          totalEmails.push(item?.value);
+        }
+        let keysFound = Object.keys(
+          item?.data?.responseData?.data?.List || {},
+        ).length;
+        if (keysFound > 0 && item?.data?.responseData?.data?.List) {
+          score -= keysFound;
+          totalBreachFields += keysFound;
+
+          Object.entries(item?.data?.responseData?.data?.List).forEach(
+            ([_, value]) => {
+              value?.Data?.forEach((item) => {
+                let email =
+                  item?.Email?.toLowerCase()?.replace(/\s/g, '') ||
+                  item?.email?.toLowerCase()?.replace(/\s/g, '') ||
+                  '';
+                let password =
+                  item?.Password?.toLowerCase()?.replace(/\s/g, '') ||
+                  item?.password?.toLowerCase()?.replace(/\s/g, '') ||
+                  '';
+                if (email.length > 0 && !totalEmails.includes(email)) {
+                  totalEmails.push(email);
+                }
+                if (password.length > 0 && !totalPasswords.includes(password)) {
+                  totalPasswords.push(password);
+                }
+                if (item?.IP && !totalIp.includes(item?.IP)) {
+                  totalIp.push(item?.IP);
+                }
+              });
+            },
+          );
+        }
+      });
+    }
+    if (jobSeekerData.length > 0) {
+      jobSeekerData?.forEach((item) => {
+        if (item?.data?.responseData) {
+          score -= Object.keys(item?.data?.responseData).length * 5;
+        }
+      });
+    }
+    if (hunterVerifyData?.length > 0) {
+      hunterVerifyData?.forEach((item) => {
+        if (item?.data?.responseData?.data?.data?.sources?.length || 0 > 0) {
+          score -=
+            (item?.data?.responseData?.data?.data?.sources?.length || 0) * 5;
+        }
+      });
+    }
+    if (hudsonData.length > 0) {
+      set_2tabLoading(true);
+      hudsonData.forEach((item) => {
+        if (
+          item?.data?.responseData?.stealers &&
+          item?.data?.responseData?.stealers?.length > 0 &&
+          item?.data?.responseData?.stealers?.map((steal) => {
+            if (steal?.computer_name && steal?.computer_name?.length > 2) {
+              let deviceLogo: 'window' | 'mac' | 'android' | null = null;
+              if (steal?.operating_system?.toLowerCase().includes('mac')) {
+                deviceLogo = 'mac';
+              }
+              if (steal?.operating_system?.toLowerCase().includes('window')) {
+                deviceLogo = 'window';
+              }
+              if (steal?.operating_system?.length > 2 && !deviceLogo) {
+                deviceLogo = 'android';
+              }
+              setDeviceDetails({
+                ...deviceDetails,
+                topPasswords: steal?.top_passwords || [],
+                topLogins: steal?.top_logins || [],
+                infected_Credentials: steal?.malware_path || '',
+                alert: 'Alert',
+                ip: steal?.ip,
+                deviceLogo,
+                computerName: steal?.computer_name,
+                OS: steal?.operating_system,
+                dateCompromised: steal?.date_compromised,
+              });
+            }
+          })
+        )
+          return;
+      });
+      set_2tabLoading(false);
+    }
+    setDeviceDetails((prev) => ({
+      ...prev,
+      totalIP: totalIp,
+      totalPassword: totalPasswords,
+      totalEmail: totalEmails,
+      securityScore: score,
+      totalBreachFields,
+    }));
+    if (totalIp.length > 0) {
+      // calling hudsonIP
+      let hudsonDataa: {
+        value: string;
+        type: string;
+        data: HudsonEmailType | null;
+      }[] = [];
+      // calling hudsonIP
+
+      const fetchByIP = async () => {
+        try {
+          const results = await Promise.allSettled(
+            totalIp.map((ip) =>
+              post('/api/hudson/search-by-ip', {
+                ip,
+                realtimeData: isRealtime,
+              }),
+            ),
+          );
+          results.forEach((item, index) => {
+            if (item.status === 'fulfilled') {
+              hudsonDataa.push({
+                value: totalIp[index],
+                type: 'Breach IP',
+                data: item.value,
+              });
+            }
+          });
+          setHudsonData((prev) => [...prev, ...hudsonDataa]);
+        } catch (error) {}
+      };
+      fetchByIP();
+    }
+
+    new Promise((resolve) =>
+      setTimeout(() => {
+        set_1tabLoading(false);
+        resolve;
+      }, 1000),
+    );
+  }, [
+    hunterVerifyData,
+    leakHunterData,
+    breachInfo,
+    jobSeekerData,
+    hunterFindData,
+  ]);
 
   useEffect(() => {
     if (mobile360Data) {
@@ -225,6 +453,13 @@ export default function BeFiSc() {
             toast.error('PayWorld Down', { id: toastRef.current! });
           }
         }
+        // countingApi that tells how much time this number is get called
+        try {
+          const res = await get(
+            `/api/mobile/mobile-count?mobile_number=${mobileNo}`,
+          );
+          setlastScanData(res);
+        } catch (error) {}
 
         // profile advance
         let profileAdvanceData = null;
@@ -258,7 +493,6 @@ export default function BeFiSc() {
           mobile360Data?.result?.din_info?.data[0]?.pan ||
           mobile360Data?.result?.director_pan_info?.data[0];
 
-        console.log('PAn numberrrrr', panNumber);
         if (panNumber) {
           // calling panAllInone
           try {
@@ -311,7 +545,6 @@ export default function BeFiSc() {
 
         // epicsInfo
         const EsicsArray = mobile360Data.result?.key_highlights?.esic_number;
-
         if (EsicsArray?.length > 0) {
           try {
             const EsicsInfo = await post('/api/mobile/esicsearch', {
@@ -407,8 +640,15 @@ export default function BeFiSc() {
             );
           }
         }
+
         setIsLoading(false);
         toast.success(`${apiMessage.current!}`, { id: toastRef.current! });
+        new Promise((resolve) =>
+          setTimeout(async () => {
+            await dispatch(fetchWalletBalance());
+            resolve;
+          }, 5000),
+        );
         // calling upi details
         try {
           const UpiDetails = await post('/api/mobile/digitalpayment', {
@@ -428,6 +668,7 @@ export default function BeFiSc() {
         }
         setUpiDetailsLoading(false);
         setisRealtime(false);
+        dispatch(fetchWalletBalance());
       };
       callOtherAPIs();
     }
@@ -438,25 +679,29 @@ export default function BeFiSc() {
     if (query.length < 1) {
       return;
     }
-    query = query
-      .normalize('NFKD')
-      .replace(/[\u200B-\u200D\uFEFF\u202C\u202D\u202E]/g, '')
-      .trim();
+
     const isValid = isValidIndianMobileNumber(query);
     if (!isValid.result) {
       toast.error(`Invalid mobile ${query.slice(0, 15)}`, { duration: 800 });
       return;
     }
     setMobileNo(isValid.fixedNumber);
+    if (wallet?.balance < 3000) {
+      const id = toast.error('Insufficient balance', { id: toastRef.current! });
+      toastRef.current = id;
+      return;
+    }
+
     setAllOnLoading();
     let mobile360R: null | {
       responseData: Mobile360Type;
     } = null;
+
     try {
       const toastId = toast.loading('fetching data...');
       toastRef.current = toastId;
       let mobile360ResponseMessage = null;
-      const MAXDURATION = 2 * 60 * 1000;
+      const MAXDURATION = 30 * 1000;
       const RETRYINTERVAL = 5000;
       const startTime = Date.now();
 
@@ -469,7 +714,6 @@ export default function BeFiSc() {
             mobile_number: isValid.fixedNumber,
             realtimeData: isRealtime,
           });
-
           if (Number(Mobile360Data.responseData?.status) === 1) {
             setMobile360Data(Mobile360Data.responseData);
             mobile360R = Mobile360Data;
@@ -480,6 +724,12 @@ export default function BeFiSc() {
           mobile360R = null;
           return false;
         } catch (error) {
+          if (error instanceof AxiosError) {
+            if (error.status === 402) {
+              toast.error('Insufficent balance api call failed');
+              return true;
+            }
+          }
           return false;
         }
       };
@@ -517,34 +767,6 @@ export default function BeFiSc() {
       }
       toast.error('Something went wrong');
       setIsLoading(false);
-    }
-  };
-
-  const { latitude, longitude } = useSelector((state: RootState) => state.info);
-  console.log('LAtitude, lon: ', latitude, longitude);
-
-  const handleBookmark = async () => {
-    try {
-      setIsBookMarkLoading(true);
-      if (isBookmarkedChecked) {
-        await post('/api/mobile/delBookmark', {
-          mobile_number: mobileNo,
-        });
-        return toast.error('Cannot delete now');
-      } else {
-        await post('/api/auth/addBookmark', {
-          bookmarkPage: 1,
-          payload: { mobileNumber: mobileNo },
-          latitude: latitude,
-          longitude: longitude,
-        });
-        toast.success('Bookmarked Successfully');
-        setIsBookmarkedChecked((c) => !c);
-      }
-    } catch (error) {
-      toast.error('Something went wrong');
-    } finally {
-      setIsBookMarkLoading(false);
     }
   };
 
@@ -613,6 +835,7 @@ export default function BeFiSc() {
     callGeoApi();
   }, [isLoading, mobile360Data]);
 
+  // other address api
   useEffect(() => {
     const callOtherAddressApis = async () => {
       if (!isLoading && mobile360Data) {
@@ -626,6 +849,14 @@ export default function BeFiSc() {
             profileAdvanceData?.result?.address?.[0]?.pincode ||
             '',
         );
+        if (
+          profileAdvanceData?.result?.address ||
+          panAllInOneData?.result?.address?.zip
+        ) {
+          addressesFound.current = otherAddressArray.length + 1;
+        } else {
+          addressesFound.current = otherAddressArray.length;
+        }
         if (otherAddressArray.length > 0) {
           setOtherAddressOlaLoading(true);
           try {
@@ -673,6 +904,7 @@ export default function BeFiSc() {
           mobileNo,
           true,
         );
+        numbersFoundRef.current = otherNumber.length - 1;
 
         if (otherNumber.length > 0 || otherEmails.length > 0) {
           setBreachInfoLoading(true);
@@ -682,6 +914,57 @@ export default function BeFiSc() {
             data: BreachInfoType | null;
           }[] = [];
           if (otherEmails.length > 0) {
+            // otherEmails.push({
+            //   type: 'dummy',
+            //   email: 'Support@scaninfoga.in',
+            // });
+            let hudsonDataa: {
+              value: string;
+              type: string;
+              data: HudsonEmailType | null;
+            }[] = [];
+            // // calling hudsonIP
+            // const clientInfo = getClientInfo();
+            // try {
+            //   const res = await post('/api/hudson/search-by-ip', {
+            //     ip: clientInfo?.ip,
+            //     realtimeData: isRealtime,
+            //   });
+            //   hudsonDataa.push({
+            //     value: clientInfo?.ip,
+            //     type: 'IP',
+            //     data: res,
+            //   });
+            // } catch (error) {}
+
+            // calling hudsonEmail
+            try {
+              const results = await Promise.allSettled(
+                otherEmails.map((email) =>
+                  post('/api/hudson/search-by-email', {
+                    email: email?.email,
+                    realtimeData: isRealtime,
+                  }),
+                ),
+              );
+              results.forEach((result, index) => {
+                if (result.status === 'fulfilled') {
+                  hudsonDataa.push({
+                    value: otherEmails[index]?.email,
+                    type: otherEmails[index]?.type,
+                    data: result.value,
+                  });
+                } else {
+                  hudsonDataa.push({
+                    value: otherEmails[index]?.email,
+                    type: otherEmails[index]?.type,
+                    data: null,
+                  });
+                }
+              });
+              setHudsonData(hudsonDataa);
+            } catch (error) {}
+
             // leakHunterPassword
             let leakHunterData: {
               value: string;
@@ -717,6 +1000,10 @@ export default function BeFiSc() {
               });
               setLeakHunterData(leakHunterData);
             } catch (error) {}
+            // otherEmails.push({
+            //   type: 'Dummy email',
+            //   email: 'rohan@scaninfoga.in',
+            // });
 
             // calling hunterVerfy
             let hunterData: {
@@ -761,10 +1048,7 @@ export default function BeFiSc() {
               type: string;
               data: HunterFindType | null;
             }[] = [];
-            otherEmails.push({
-              type: 'Dummy email',
-              email: 'rohan@scaninfoga.in',
-            });
+
             try {
               const results = await Promise.allSettled(
                 otherEmails.map((email) =>
@@ -916,15 +1200,20 @@ export default function BeFiSc() {
         if (otherEmails.length > 0) {
           setGhuntMultipleLoading(true);
           try {
-            const results = await Promise.all(
+            const results = await Promise.allSettled(
               otherEmails.map((email) =>
                 post('/api/ghunt/getEmailDetails', {
-                  email: email.email,
+                  email: email?.email,
                 }),
               ),
             );
-            const data = results.map((result) => result.responseData);
-            setGhuntMultipleData(data);
+            let ghuntData: GhuntData[] = [];
+            results.forEach((result) => {
+              if (result.status === 'fulfilled') {
+                ghuntData.push(result.value?.responseData);
+              }
+            });
+            setGhuntMultipleData(ghuntData);
             setGhuntMultipleLoading(false);
           } catch (error) {
             setGhuntMultipleLoading(false);
@@ -1094,10 +1383,15 @@ export default function BeFiSc() {
           title="Scaninfoga Intelligence"
           subTitle="Get the info you are looking for"
         />
-        {/* <BookmarkButton
-          whenShown={mobile360Data ? true : false}
-          // handleBookmark={handleBookmark}
-        /> */}
+        {mobile360Data && (
+          <BookmarkWidget
+            isRealtime={isRealtime}
+            mobileNo={mobileNo}
+            bookmarkPage={1}
+            title="Scaninfoga Intelligence Bookmark"
+            tools={BookMarkOptionScaninFogaIntelligence}
+          />
+        )}
       </div>
 
       <SearchBar2
@@ -1118,7 +1412,7 @@ export default function BeFiSc() {
       </div>
 
       {isLoading ? (
-        <div className="mt-8">
+        <div className="flex h-[400px] items-center justify-center">
           <BeFiScLoadingSkeleton />
         </div>
       ) : mobile360Data ? (
@@ -1134,57 +1428,47 @@ export default function BeFiSc() {
               onValueChange={setActiveTab}
             >
               <TabsList className="grid h-auto w-full grid-cols-2 rounded-lg border border-slate-800 bg-slate-900 p-1 text-white sm:w-auto sm:grid-cols-7 md:grid-cols-8">
-                <TabsTrigger
-                  value="overview"
-                  className="rounded-md data-[state=active]:bg-slate-800 data-[state=active]:text-emerald-500"
-                >
-                  Overview
-                </TabsTrigger>
-                <TabsTrigger
-                  value="profile"
-                  className="rounded-md data-[state=active]:bg-slate-800 data-[state=active]:text-emerald-500"
-                >
-                  Profile
-                </TabsTrigger>
-                <TabsTrigger
-                  value="personal"
-                  className="rounded-md data-[state=active]:bg-slate-800 data-[state=active]:text-emerald-500"
-                >
-                  Personal
-                </TabsTrigger>
-                <TabsTrigger
-                  value="financial"
-                  className="rounded-md data-[state=active]:bg-slate-800 data-[state=active]:text-emerald-500"
-                >
-                  Financial
-                </TabsTrigger>
-                <TabsTrigger
-                  value="business"
-                  className="rounded-md data-[state=active]:bg-slate-800 data-[state=active]:text-emerald-500"
-                >
-                  Business
-                </TabsTrigger>
-                <TabsTrigger
-                  value="digitalInfo"
-                  className="rounded-md data-[state=active]:bg-slate-800 data-[state=active]:text-emerald-500"
-                >
-                  Digital Footprint
-                </TabsTrigger>
-                <TabsTrigger
-                  value="breachInfo"
-                  className="rounded-md data-[state=active]:bg-slate-800 data-[state=active]:text-emerald-500"
-                >
-                  Breach Info
-                </TabsTrigger>
-                <TabsTrigger
-                  value="googleProfile"
-                  className="rounded-md data-[state=active]:bg-slate-800 data-[state=active]:text-emerald-500"
-                >
-                  Google Profile
-                </TabsTrigger>
+                {[
+                  { value: 'overview', label: 'Overview' },
+                  { value: 'profile', label: 'Profile' },
+                  { value: 'personal', label: 'Personal' },
+                  { value: 'financial', label: 'Financial' },
+                  { value: 'business', label: 'Business' },
+                  { value: 'digitalInfo', label: 'Digital Footprint' },
+                  { value: 'breachInfo', label: 'Breach Info' },
+                  { value: 'googleProfile', label: 'Google Profile' },
+                ].map((item) => (
+                  <TabsTrigger
+                    key={item.value}
+                    value={item.value}
+                    className="rounded-md data-[state=active]:bg-slate-800 data-[state=active]:text-emerald-500"
+                  >
+                    {item.label}
+                  </TabsTrigger>
+                ))}
               </TabsList>
 
-              <TabsContent value="overview" className="mt-6"></TabsContent>
+              <TabsContent value="overview" className="mt-6">
+                <BeFiScOverview
+                  deviceDetails={deviceDetails}
+                  _1tabLoading={_1tabLoading}
+                  _2tabLoading={_2tabLoading}
+                  numbersFound={numbersFoundRef.current}
+                  addressesFound={addressesFound.current}
+                  hudsonData={hudsonData}
+                  ghuntLoading={ghuntMultipleLoading}
+                  totalGoogleAccount={ghuntMultipleData?.length}
+                  upiLoading={upiDetailsLoading}
+                  upiData={upiDetailsData}
+                  lastScanData={lastScanData}
+                  mobile360Data={mobile360Data}
+                  HunterVerifyData={hunterVerifyData}
+                  leakHunterData={leakHunterData}
+                  LeakPointApi={breachInfo}
+                  jobSeekerData={jobSeekerData}
+                  HunterFindData={hunterFindData}
+                />
+              </TabsContent>
 
               <TabsContent
                 value="profile"
@@ -1305,10 +1589,7 @@ export default function BeFiSc() {
                             <SentenceLoader className="min-h-[280px] w-[420px]" />
                           ) : (
                             <Image
-                              src={
-                                `data:${olaGeoApiData?.responseData?.content_type};base64,${olaGeoApiData?.responseData?.image}` ||
-                                '/null.png'
-                              }
+                              src={`data:${olaGeoApiData?.responseData?.content_type};base64,${olaGeoApiData?.responseData?.image}`}
                               alt="map"
                               width={450}
                               height={450}
@@ -1412,18 +1693,19 @@ export default function BeFiSc() {
                                   )}
                                 </p>
                               </div>
+
+                              <Image
+                                src={
+                                  `data:${item?.olaData?.responseData?.content_type};base64,${item?.olaData?.responseData?.image}` ||
+                                  '/null.png'
+                                }
+                                alt="map"
+                                width={500}
+                                height={500}
+                                className="rounded-xl object-contain"
+                                unoptimized={true}
+                              />
                             </div>
-                            <Image
-                              src={
-                                `data:${item?.olaData?.responseData?.content_type};base64,${item?.olaData?.responseData?.image}` ||
-                                '/null.png'
-                              }
-                              alt="map"
-                              width={500}
-                              height={500}
-                              className="h-[300px] min-w-[400px] rounded-xl"
-                              unoptimized={true}
-                            />
                           </div>
                         ))}
                       </div>
@@ -1467,11 +1749,6 @@ export default function BeFiSc() {
               <TabsContent value="digitalInfo" className="mt-6">
                 <BeFiScDigitalFootprint
                   EcicsData={esicsData}
-                  email={
-                    profileAdvanceData?.result?.email?.[0]?.value.toLowerCase() ||
-                    panAllInOneData?.result?.email ||
-                    ''
-                  }
                   EquifaxData={EquifaxV3Data}
                   PanAllInOneData={panAllInOneData}
                   GstAdvanceData={gstAdvanceData}
@@ -1489,6 +1766,7 @@ export default function BeFiSc() {
                     data={breachInfo}
                     jobSeekerData={jobSeekerData}
                     HunterFindData={hunterFindData}
+                    hudsonData={hudsonData}
                   />
                 )}
               </TabsContent>

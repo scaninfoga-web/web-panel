@@ -217,7 +217,7 @@ export default function AuthPage() {
                   <div className="mb-10 mt-2 w-full text-center text-lg text-white/80">
                     access the Scaninfoga Intelligence of Investigation portal
                   </div>
-                  <Register type="normal" />
+                  <Register type="agent" />
 
                   <div className="mt-6 text-center">
                     <span className="text-gray-400">
@@ -275,7 +275,7 @@ export default function AuthPage() {
                 className="text-center font-semibold text-emerald-500"
                 onClick={() => setIsRegistering('changePass')}
               >
-                Change Password
+                Forget Password
               </div>
             )}
           </div>

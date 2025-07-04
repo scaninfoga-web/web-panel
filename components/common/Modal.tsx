@@ -37,7 +37,7 @@ export function Modal({
     <Dialog open={open} onOpenChange={(val) => !val && onClose()}>
       <DialogContent className="border-gray-500 bg-[#0e1421]/30 bg-[#11151F] bg-gradient-to-br sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>{title || ''}</DialogTitle>
+          <DialogTitle className="text-emerald-500">{title || ''}</DialogTitle>
         </DialogHeader>
 
         <div className="py-2">{children}</div>

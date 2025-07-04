@@ -12,17 +12,22 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
 import { formatDate } from '@/lib/utils';
 import { toast } from 'sonner';
+import { Loader } from '../ui/loader';
 
 interface WalletWidgetProps {
   credits: number;
+  walletLoading: boolean;
   onTopUp: () => void;
 }
 
-export const WalletWidget = ({ credits, onTopUp }: WalletWidgetProps) => {
+export const WalletWidget = ({
+  credits,
+  onTopUp,
+  walletLoading,
+}: WalletWidgetProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [paymentModalOpen, setPaymentModalOpen] = useState(false);
   const wallet = useSelector((state: RootState) => state.wallet);
-
   const { isPendingTxn } = useSelector((state: RootState) => state.wallet);
 
   // Mock transaction data - in a real app this would come from your backend
@@ -55,7 +60,11 @@ export const WalletWidget = ({ credits, onTopUp }: WalletWidgetProps) => {
             onClick={() => setIsOpen(true)}
           >
             <CreditCard className="h-4 w-4 text-teal-500" />
-            <span className="text-sm font-medium text-white">{credits}</span>
+            {walletLoading ? (
+              <Loader className="max-w-20 p-0" />
+            ) : (
+              <span className="text-sm font-medium text-white">{credits}</span>
+            )}
             <span className="text-xs text-gray-400">credits</span>
           </Button>
         </PopoverTrigger>

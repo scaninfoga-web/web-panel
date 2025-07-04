@@ -10,7 +10,7 @@ export interface HunterVerifyType {
         email: string;
         score: number;
         regexp: boolean;
-        result: string; // deprecated, use 'status'
+        result: string;
         status: string;
         sources: {
           uri: string;
@@ -50,20 +50,18 @@ export interface HunterFindType {
           id: string;
           bio: string | null;
           geo: {
-            [key: string]: string | null | boolean;
-            // lat: number | null;
-            // lng: number | null;
-            // city: string | null;
-            // state: string | null;
-            // country: string | null;
-            // stateCode: string | null;
-            // countryCode: string | null;
+            lat: number | null;
+            lng: number | null;
+            city: string | null;
+            state: string | null;
+            country: string | null;
+            stateCode: string | null;
+            countryCode: string | null;
           };
           name: {
-            [key: string]: string | null | boolean;
-            // fullName: string | null;
-            // givenName: string | null;
-            // familyName: string | null;
+            fullName: string | null;
+            givenName: string | null;
+            familyName: string | null;
           };
           site: string | null;
           email: string;

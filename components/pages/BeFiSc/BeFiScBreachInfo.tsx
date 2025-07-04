@@ -11,13 +11,15 @@ import NotFound from '@/components/sub/NotFound';
 import CustomBadge from './sub/CustomBadge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { HunterFindType, HunterVerifyType } from '@/types/hunter';
-import { formatKey, getValue } from './sub/CustomBeFiScCard';
+import { getValue } from './sub/CustomBeFiScCard';
 import AddMoreBreachButton from './sub/AddMoreBreachButton';
 import LeakHunter from './sub/LeakHunter';
 import { JobSeekerType, LeakHunterType } from '@/types/LeakHunter';
 import JobSeeker from './sub/JobSeeker';
 import HunterVerify from './sub/HunterVerify';
 import HunterFind from './sub/HunterFind';
+import { HudsonEmailType } from '@/types/hudson';
+import Hudson from './sub/Hudson';
 interface PageProps {
   data: {
     value: string;
@@ -43,6 +45,11 @@ interface PageProps {
     value: string;
     type: string;
     data: JobSeekerType | null;
+  }[];
+  hudsonData: {
+    value: string;
+    type: string;
+    data: HudsonEmailType | null;
   }[];
 }
 const dangerKeyWords = [
@@ -76,16 +83,12 @@ export default function BeFiScBreachInfo({
   HunterFindData,
   leakHunterData,
   jobSeekerData,
+  hudsonData,
 }: PageProps) {
   const [activeTab, setActiveTab] = useState('breach');
   const [breachSubTab, setBreachSubTab] = useState('emails');
   const [hunterTab, setHunterTab] = useState('hunterVerify');
   const [leakTab, setLeakTab] = useState('leakHunter');
-
-  const memoizedHunterVerifyData = useMemo(
-    () => HunterVerifyData,
-    [HunterVerifyData],
-  );
   const [extraData, setExtraData] = useState<
     {
       value: string;
@@ -156,15 +159,39 @@ export default function BeFiScBreachInfo({
 
   const Expose360Tabs = [
     HunterVerifyData?.length > 0 &&
-    HunterVerifyData?.[0]?.data?.responseData?.data?.data?.sources &&
-    HunterVerifyData?.[0]?.data?.responseData?.data?.data?.sources.length > 0
+    HunterVerifyData?.some((item) => {
+      if (
+        item?.data?.responseData?.data?.data?.sources &&
+        item?.data?.responseData?.data?.data?.sources.length > 0
+      ) {
+        return true;
+      }
+    })
       ? { value: 'hunterVerify', label: 'Hunter Verify' }
       : null,
-    HunterVerifyData?.length > 0 &&
-    HunterVerifyData?.[0]?.data?.responseData?.data?.data &&
-    Object.keys(HunterVerifyData?.[0]?.data?.responseData?.data?.data).length >
-      0
+
+    HunterFindData?.length > 0 &&
+    HunterFindData?.some((item) => {
+      if (
+        item?.data?.responseData?.data?.data?.person &&
+        Object.keys(item?.data?.responseData?.data?.data?.person).length > 0
+      ) {
+        return true;
+      }
+    })
       ? { value: 'hunterFind', label: 'Hunter Find' }
+      : null,
+
+    hudsonData?.length > 0 &&
+    hudsonData?.some((item) => {
+      if (
+        item?.data?.responseData?.stealers &&
+        item?.data?.responseData?.stealers.length > 0
+      ) {
+        return true;
+      }
+    })
+      ? { value: 'hudson', label: 'Hudson' }
       : null,
   ];
 
@@ -248,13 +275,7 @@ export default function BeFiScBreachInfo({
                                 item?.data?.responseData?.data?.List,
                               ).map(([key, value], index) => {
                                 if (key === 'No results found') {
-                                  return (
-                                    <NotFound
-                                      key={`notFound-${index}`}
-                                      value="No Data found"
-                                      className="max-h-20"
-                                    />
-                                  );
+                                  return <></>;
                                 }
                                 return (
                                   <Accordion
@@ -359,10 +380,10 @@ export default function BeFiScBreachInfo({
                         </AccordionItem>
                       ))}
                   </Accordion>
-                  <AddMoreBreachButton
+                  {/* <AddMoreBreachButton
                     setExtraData={setExtraData}
                     label="Email"
-                  />
+                  /> */}
                 </div>
               )}
             </TabsContent>
@@ -495,7 +516,7 @@ export default function BeFiScBreachInfo({
                   </AccordionItem>
                 ))}
               </Accordion>
-              <AddMoreBreachButton setExtraData={setExtraData} label="Number" />
+              {/* <AddMoreBreachButton setExtraData={setExtraData} label="Number" /> */}
             </TabsContent>
             <TabsContent value="without91" className="flex flex-col space-y-8">
               <Accordion type="single" collapsible className="space-y-4">
@@ -626,7 +647,7 @@ export default function BeFiScBreachInfo({
                   </AccordionItem>
                 ))}
               </Accordion>
-              <AddMoreBreachButton setExtraData={setExtraData} label="Number" />
+              {/* <AddMoreBreachButton setExtraData={setExtraData} label="Number" /> */}
             </TabsContent>
           </Tabs>
         </TabsContent>
@@ -684,7 +705,8 @@ export default function BeFiScBreachInfo({
             >
               {Expose360Tabs?.map(
                 (tab) =>
-                  tab && (
+                  tab &&
+                  tab.value && (
                     <TabsTrigger
                       key={tab.value}
                       value={tab.value}
@@ -697,19 +719,37 @@ export default function BeFiScBreachInfo({
             </TabsList>
             <TabsContent value="hunterVerify">
               {HunterVerifyData?.length > 0 &&
-                HunterVerifyData?.[0]?.data?.responseData?.data?.data
-                  ?.sources &&
-                HunterVerifyData?.[0]?.data?.responseData?.data?.data?.sources
-                  .length > 0 && (
-                  <HunterVerify HunterVerifyData={memoizedHunterVerifyData} />
-                )}
+                HunterVerifyData?.some((item) => {
+                  if (
+                    item?.data?.responseData?.data?.data?.sources &&
+                    item?.data?.responseData?.data?.data?.sources.length > 0
+                  ) {
+                    return true;
+                  }
+                }) && <HunterVerify HunterVerifyData={HunterVerifyData} />}
             </TabsContent>
             <TabsContent value="hunterFind">
               {HunterVerifyData?.length > 0 &&
-                HunterVerifyData?.[0]?.data?.responseData?.data?.data &&
-                Object.keys(
-                  HunterVerifyData?.[0]?.data?.responseData?.data?.data,
-                ).length > 0 && <HunterFind hunterFindData={HunterFindData} />}
+                HunterFindData?.some((item) => {
+                  if (
+                    item?.data?.responseData?.data?.data?.person &&
+                    Object.keys(item?.data?.responseData?.data?.data?.person)
+                      .length > 0
+                  ) {
+                    return true;
+                  }
+                }) && <HunterFind hunterFindData={HunterFindData} />}
+            </TabsContent>
+            <TabsContent value="hudson">
+              {hudsonData?.length > 0 &&
+                hudsonData?.some((item) => {
+                  if (
+                    item?.data?.responseData?.stealers &&
+                    item?.data?.responseData?.stealers.length > 0
+                  ) {
+                    return true;
+                  }
+                }) && <Hudson hudsonData={hudsonData} />}
             </TabsContent>
           </Tabs>
         </TabsContent>

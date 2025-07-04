@@ -26,12 +26,12 @@ export const ProfileInformationCard = () => {
   userData = { ...userData, walletBalance, susbcriptionType: 'gold' };
   const getSubscriptionColor = (type: string) => {
     switch (type) {
-      case 'silver':
+      case 'SILVER':
         return 'bg-gradient-to-r from-gray-400 to-gray-600 text-white border-gray-300';
-      case 'gold':
+      case 'GOLD':
         return 'bg-gradient-to-r from-yellow-400 to-yellow-600 text-white border-yellow-300';
-      case 'platinum':
-        return 'bg-gradient-to-r from-purple-400 to-purple-600 text-white border-purple-300';
+      case 'PLATINUM':
+        return 'bg-gradient-to-r from-blue-400 to-blue-600 text-white border-blue-300';
       default:
         return 'bg-gradient-to-r from-gray-400 to-gray-600 text-white border-gray-300';
     }
@@ -118,12 +118,14 @@ export const ProfileInformationCard = () => {
           <div className="flex items-center justify-between py-3">
             <span className="font-medium text-slate-300">Subscription</span>
             <Badge
-              className={`${getSubscriptionColor(userData.subscriptionType)} border-2 px-4 py-2 text-sm font-bold shadow-lg`}
+              className={`${getSubscriptionColor(userData.subscriptionPlan)} border-2 px-4 py-2 text-sm font-bold shadow-lg`}
             >
               {getSubscriptionIcon(userData.subscriptionType)}
               <span className="space-x-1 uppercase tracking-wide">
-                <span>{userData?.subscriptionType} </span>
-                <span className="text-xs">Member</span>
+                <span className="ml-2 text-xs">
+                  {' '}
+                  {userData?.subscriptionPlan}{' '}
+                </span>
               </span>
             </Badge>
           </div>

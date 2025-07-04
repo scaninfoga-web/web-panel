@@ -7,8 +7,8 @@ import {
 } from '@/types/BeFiSc';
 import { DashboardCard } from '../dashboard/components/DashboardCard';
 import CustomBeFiScCard, { getValue } from './sub/CustomBeFiScCard';
-import { formatSentence } from './sub/APIUtils';
 import CustomBadge from './sub/CustomBadge';
+import { formatSentence } from '@/components/custom/functions/formatUtils';
 
 interface Props {
   panAllInOneData: PanAllInOneType | null;

@@ -1,6 +1,6 @@
+import { formatSentence } from '@/components/custom/functions/formatUtils';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
-import { formatSentence } from './APIUtils';
 
 const defaultBadge = [
   'Yes',
@@ -12,6 +12,7 @@ const defaultBadge = [
   'postpaid',
   'Email Linked',
   'Verified',
+  'Found',
 ];
 const dangerBadge = [
   'No',
@@ -19,8 +20,11 @@ const dangerBadge = [
   'Account Not Found',
   'Email Not Linked',
   'Not Verified',
+  'Alert',
+  'Warning',
+  'Not Found',
 ];
-const warningBadge = ['CONNECTED', 'DISCONNECTED', 'PENDING'];
+const warningBadge = ['CONNECTED', 'DISCONNECTED', 'PENDING', 'pending'];
 
 export default function CustomBadge({
   variantToUse,
@@ -33,6 +37,17 @@ export default function CustomBadge({
   isFormat?: boolean;
   blink?: boolean;
 }) {
+  if (typeof value === 'number') {
+    return (
+      <Badge
+        className={cn('mt-1 gap-x-0.5', blink && 'animate-pulse duration-1000')}
+        variant={value < 1 ? 'danger' : 'default'}
+      >
+        {value}
+      </Badge>
+    );
+  }
+
   if (
     typeof value === 'undefined' ||
     (typeof value === 'string' && value.length < 0)
@@ -104,7 +119,10 @@ export default function CustomBadge({
     }
     return (
       <Badge
-        className={cn('mt-1 gap-x-0.5', blink && 'animate-pulse duration-1000')}
+        className={cn(
+          'mt-1 gap-x-0.5 whitespace-nowrap',
+          blink && 'animate-pulse duration-1000',
+        )}
         variant={variantToUse || 'default'}
       >
         {formatSentence(value)}

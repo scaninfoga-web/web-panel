@@ -4,12 +4,10 @@ import {
   DashboardCard,
   InfoText,
 } from '../../dashboard/components/DashboardCard';
-import { formatSentence } from './APIUtils';
-import { formatKey } from './CustomBeFiScCard';
 import { Button } from '@/components/ui/button';
 import { getClientInfo, post } from '@/lib/api';
 import { toast } from 'sonner';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { UPI2AccountType } from '@/types/Upi2Acc';
 const upiIcons = new Map<string, string>([
   ['PhonePe', '/upi/phonepe.png'],
@@ -36,6 +34,8 @@ const upiIcons = new Map<string, string>([
   ['Jupiter', '/upi/jupiter.svg'],
   ['Bank of Baroda', '/upi/BankofBaroda.png'],
   ['Indian Bank', '/upi/Indian_Bank_.png'],
+  ['CRED', '/upi/cred.jpeg'],
+  ['POPclub', '/upi/POPclub.png'],
 ]);
 import {
   Dialog,
@@ -43,9 +43,14 @@ import {
   DialogPortal,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { formatDateTime } from './dateFormat';
 import { Loader } from '@/components/ui/loader';
 import { OlaGeoApiType } from '@/types/ola-geo-api';
+import NotFound from '@/components/sub/NotFound';
+import {
+  cleanToCompare,
+  formatKey,
+  formatSentence,
+} from '@/components/custom/functions/formatUtils';
 
 const mapState: Map<
   string,
@@ -65,7 +70,7 @@ export default function UpiDetails({
   realName: string;
 }) {
   if (!UpiData) {
-    return <></>;
+    return <NotFound value="No data found" />;
   }
 
   const [loading, setLoading] = useState(false);
@@ -86,8 +91,8 @@ export default function UpiDetails({
 
   const handleFetch = async (UpiData: SingleUpiRes, upiId: string) => {
     const nameAndBank =
-      UpiData?.data?.result?.bank?.trim().replace(/\s+/g, '').toLowerCase() +
-      UpiData?.data?.result?.name?.trim().replace(/\s+/g, '').toLowerCase();
+      cleanToCompare(UpiData?.data?.result?.bank) +
+      cleanToCompare(UpiData?.data?.result?.name);
 
     if (!nameBank.includes(nameAndBank)) {
       try {
@@ -136,14 +141,6 @@ export default function UpiDetails({
       }
     }
   };
-
-  // const list =
-  //   selectedData?.Upi2AccData?.responseData?.map((item) => {
-  //     return {
-  //       label: formatDateTime(item?.datetime),
-  //       value: item?.datetime,
-  //     };
-  //   }) || [];
 
   const handleViewDetails = async (upiId: string, data: SingleUpiRes) => {
     try {

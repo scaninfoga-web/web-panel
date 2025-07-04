@@ -44,8 +44,8 @@ export function SearchBar2({
   };
 
   return (
-    <div className="grid grid-cols-12 gap-x-4">
-      <div className="col-span-2 h-full">
+    <div className="flex flex-col gap-y-2 md:grid md:grid-cols-12 md:gap-x-4 md:gap-y-0">
+      <div className="md:col-span-2 md:h-full">
         <Select value={searchFilter} onValueChange={setSearchFilter}>
           <SelectTrigger className="border-gray-700 bg-gray-900/50">
             <SelectValue placeholder="Search by..." />

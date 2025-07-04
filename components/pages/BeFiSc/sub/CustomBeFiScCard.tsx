@@ -4,14 +4,7 @@ import {
   InfoText,
   StatusBadge,
 } from '../../dashboard/components/DashboardCard';
-
-export function formatKey(key: string): string {
-  key = key.replaceAll('_', ' ');
-  const withSpaces = key
-    .replace(/([a-z])([A-Z])/g, '$1 $2')
-    .replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2');
-  return withSpaces.charAt(0).toUpperCase() + withSpaces.slice(1);
-}
+import { formatKey } from '@/components/custom/functions/formatUtils';
 
 const greenWord = [
   'Yes',

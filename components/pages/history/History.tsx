@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 import { RootState } from '@/redux/store';
 import { useSelector } from 'react-redux';
 import DashboardTitle from '@/components/common/DashboardTitle';
-import { formatDateTime } from '../BeFiSc/sub/dateFormat';
+import { formatDateTime } from '@/components/custom/functions/formatUtils';
 
 interface UserActivity {
   id: number;

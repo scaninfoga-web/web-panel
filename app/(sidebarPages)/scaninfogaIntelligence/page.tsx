@@ -7,7 +7,6 @@ export default function Page() {
   return (
     <Suspense fallback={<Loader />}>
       <BeFiSc />
-      {/* <NotFound value="We are working on this tool" /> */}
     </Suspense>
   );
 }

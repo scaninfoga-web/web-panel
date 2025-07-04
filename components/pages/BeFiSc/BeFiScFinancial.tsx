@@ -8,7 +8,7 @@ import {
   UPIType,
 } from '@/types/BeFiSc';
 import React from 'react';
-import { formatSentence, numberToIndianRuppe } from './sub/APIUtils';
+
 import { DashboardCard } from '../dashboard/components/DashboardCard';
 import CustomBeFiScCard, { getValue } from './sub/CustomBeFiScCard';
 import CustomBadge from './sub/CustomBadge';
@@ -17,6 +17,10 @@ import UpiDetails from './sub/UpiDetails';
 import { PayWorldType } from '@/types/payworld';
 import NotFound from '@/components/sub/NotFound';
 import PayWorld from './sub/PayWorld';
+import {
+  formatSentence,
+  numberToIndianRuppe,
+} from '@/components/custom/functions/formatUtils';
 
 interface PageProps {
   mobileNo: string;
@@ -100,7 +104,7 @@ export default function BeFiScFinancial({
     <div className="grid grid-cols-1 gap-2 space-y-4">
       <Tabs value={activeTab} className="w-full" onValueChange={setActiveTab}>
         <TabsList
-          className={`grid h-auto w-full ${gridColsClass} rounded-lg border border-slate-800 bg-slate-900 p-1 text-white sm:w-auto`}
+          className={`grid h-auto w-full grid-cols-2 rounded-lg border border-slate-800 bg-slate-900 p-1 text-white sm:w-auto md:grid-cols-4`}
         >
           {tabs.map((tab) => (
             <TabsTrigger

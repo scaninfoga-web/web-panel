@@ -18,8 +18,8 @@ import { DashboardCard, InfoText } from '../dashboard/components/DashboardCard';
 import CustomBadge from './sub/CustomBadge';
 import { getValue } from './sub/CustomBeFiScCard';
 import { LPGInfoTable } from './sub/LPGTable';
-import { formatSentence } from './sub/APIUtils';
-import NumberDetails from './sub/NumberDetails';
+import { formatSentence } from '@/components/custom/functions/formatUtils';
+
 interface Props {
   Mobile360Data: Mobile360Type | null;
   PanAllInOneData: PanAllInOneType | null;
@@ -243,7 +243,6 @@ export default function BefiScPersonal({
             ))}
           </div>
         )}
-      <NumberDetails mobile360Data={Mobile360Data} />
       {Mobile360Data?.result?.lpg_info?.data &&
         Mobile360Data?.result?.lpg_info?.data.length > 0 && (
           <DashboardCard title="LPG Details">
@@ -380,8 +379,8 @@ export default function BefiScPersonal({
           title="ESIC Info"
           className="scrollbar-custom grid max-h-[400px] grid-cols-3 overflow-auto"
         >
-          {Mobile360Data?.result?.epfo_info?.data.map((val, index) => (
-            <div key={index}>{val}</div>
+          {Mobile360Data?.result?.esic_info?.data.map((val, index) => (
+            <div key={index}>{val?.esic_number}</div>
           ))}
         </DashboardCard>
         <DashboardCard
