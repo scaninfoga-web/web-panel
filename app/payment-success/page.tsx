@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useSelector } from 'react-redux';
+import Link from 'next/link';
 
 export default function PaymentSuccess() {
   const searchParams = useSearchParams();
@@ -48,8 +49,14 @@ export default function PaymentSuccess() {
   }, [orderId, token]); // ✅ Added token to dependency array
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center p-4">
-      <h1 className="mb-4 text-2xl font-bold">{status}</h1>
+    <div className="absolute bottom-0 left-0 right-0 top-0 z-50 flex min-h-screen flex-col items-center justify-center bg-black p-4">
+      <h1 className="mb-4 text-2xl font-bold text-white">{status}</h1>
+      <Link
+        href="/profile"
+        className="mt-4 rounded p-2 text-xl text-emerald-500"
+      >
+        Go back to profile
+      </Link>
     </div>
   );
 }
