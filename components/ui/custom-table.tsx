@@ -83,7 +83,7 @@ import { Loader } from './loader';
 interface Column<T> {
   title: string;
   dataIndex: keyof T;
-  key: string;
+  key?: string;
   width?: string | number;
   render?: (text: any, record: T) => React.ReactNode;
 }
