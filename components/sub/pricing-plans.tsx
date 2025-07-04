@@ -152,7 +152,7 @@ export default function PricingPlans() {
                   </CardDescription>
                   <div className="mt-4">
                     <span className="text-4xl font-bold">
-                      ${annual ? plan.price.yearly : plan.price.monthly}
+                      ₹{annual ? plan.price.yearly : plan.price.monthly}
                     </span>
                     <span className="ml-2 text-white/70">
                       {annual ? '/year' : '/month'}
