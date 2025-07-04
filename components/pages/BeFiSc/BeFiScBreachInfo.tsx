@@ -20,6 +20,9 @@ import HunterVerify from './sub/HunterVerify';
 import HunterFind from './sub/HunterFind';
 import { HudsonEmailType } from '@/types/hudson';
 import Hudson from './sub/Hudson';
+import { HoleheType } from '@/types/holhe';
+import { GhuntData } from '@/types/ghunt';
+import EmailDetector from './sub/EmailDetector';
 interface PageProps {
   data: {
     value: string;
@@ -51,6 +54,12 @@ interface PageProps {
     type: string;
     data: HudsonEmailType | null;
   }[];
+  holeheData: {
+    value: string;
+    type: string;
+    data: HoleheType | null;
+  }[];
+  ghuntMultipleData: GhuntData[];
 }
 const dangerKeyWords = [
   'Password',
@@ -84,6 +93,8 @@ export default function BeFiScBreachInfo({
   leakHunterData,
   jobSeekerData,
   hudsonData,
+  holeheData,
+  ghuntMultipleData,
 }: PageProps) {
   const [activeTab, setActiveTab] = useState('breach');
   const [breachSubTab, setBreachSubTab] = useState('emails');
@@ -192,6 +203,17 @@ export default function BeFiScBreachInfo({
       }
     })
       ? { value: 'hudson', label: 'Hudson' }
+      : null,
+    holeheData?.length > 0 &&
+    holeheData?.some((item) => {
+      if (
+        item?.data?.responseData?.results &&
+        item?.data?.responseData?.results?.length > 0
+      ) {
+        return true;
+      }
+    })
+      ? { value: 'holehe', label: 'Email Detector' }
       : null,
   ];
 
@@ -750,6 +772,22 @@ export default function BeFiScBreachInfo({
                     return true;
                   }
                 }) && <Hudson hudsonData={hudsonData} />}
+            </TabsContent>
+            <TabsContent value="holehe">
+              {holeheData?.length > 0 &&
+                holeheData?.some((item) => {
+                  if (
+                    item?.data?.responseData?.results &&
+                    item?.data?.responseData?.results.length > 0
+                  ) {
+                    return true;
+                  }
+                }) && (
+                  <EmailDetector
+                    ghuntMultipleData={ghuntMultipleData}
+                    holeheData={holeheData}
+                  />
+                )}
             </TabsContent>
           </Tabs>
         </TabsContent>
