@@ -4,6 +4,8 @@ import { Badge } from '@/components/ui/badge';
 import { formatISOtoDDMMYYYY } from '@/lib/utils';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
+import { Button } from '@/components/ui/button';
+import AddPhone from './AddPhone';
 
 interface UserData {
   firstName: string;
@@ -97,6 +99,17 @@ export const ProfileInformationCard = () => {
           <div className="flex items-center justify-between border-b border-slate-600 py-2">
             <span className="text-slate-300">Email</span>
             <span className="font-medium text-white">{userData.email}</span>
+          </div>
+          <div className="flex items-center justify-between border-b border-slate-600 py-2">
+            <span className="text-slate-300">Phone</span>
+            <span className="font-medium text-white">
+              {userData.phone ? (
+                <span className="font-medium text-white">{userData.phone}</span>
+              ) : (
+                // <Button variant="outline" onClick={() => setUpdatePhoneModelOpen(true)}>Add Phone Number</Button>
+                <AddPhone />
+              )}
+            </span>
           </div>
           <div className="flex items-center justify-between border-b border-slate-600 py-2">
             <span className="text-slate-300">Date Joined</span>

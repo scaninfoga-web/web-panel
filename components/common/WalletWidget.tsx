@@ -8,11 +8,13 @@ import {
 } from '@/components/ui/popover';
 import { CreditCard, Plus, Calendar, IndianRupee } from 'lucide-react';
 import PaymentModal from './PaymentModal';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/redux/store';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '@/redux/store';
 import { formatDate } from '@/lib/utils';
 import { toast } from 'sonner';
 import { Loader } from '../ui/loader';
+import { fetchWalletBalance } from '@/redux/walletSlice';
+import { IconRefresh } from '@tabler/icons-react';
 
 interface WalletWidgetProps {
   credits: number;
@@ -29,6 +31,7 @@ export const WalletWidget = ({
   const [paymentModalOpen, setPaymentModalOpen] = useState(false);
   const wallet = useSelector((state: RootState) => state.wallet);
   const { isPendingTxn } = useSelector((state: RootState) => state.wallet);
+  const dispatch = useDispatch<AppDispatch>();
 
   // Mock transaction data - in a real app this would come from your backend
   const lastTransaction = {
@@ -63,9 +66,23 @@ export const WalletWidget = ({
             {walletLoading ? (
               <Loader className="max-w-20 p-0" />
             ) : (
-              <span className="text-sm font-medium text-white">{credits}</span>
+              <span className="flex items-center text-sm font-medium text-white">
+                {credits}
+                <span className="pl-1 text-center text-xs text-slate-400">
+                  credits
+                </span>
+              </span>
             )}
-            <span className="text-xs text-gray-400">credits</span>
+            <span
+              role="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                dispatch(fetchWalletBalance());
+              }}
+              className="group"
+            >
+              <IconRefresh className="h-4 w-4 text-slate-400 transition-all duration-150 group-hover:scale-105 group-hover:text-emerald-500" />
+            </span>
           </Button>
         </PopoverTrigger>
         <PopoverContent

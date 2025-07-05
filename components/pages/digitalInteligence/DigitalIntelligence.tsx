@@ -28,6 +28,7 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 import BeFiScLoadingSkeleton from '../BeFiSc/sub/BeFiScLoadingSkeleton';
 import { formatDateTime } from '@/components/custom/functions/formatUtils';
+import UniversalDigitalIntelligenceComp from './sub/UniversalComp';
 
 const tools: {
   toolName: string;
@@ -156,23 +157,18 @@ export default function DigitalIntelligence() {
   const [loading, setLoading] = useState(false);
   const [responseData, setResponseData] = useState<{
     datetime: string;
-    data: Object;
+    data: Object | null;
   } | null>({
-    datetime: '2025-07-03T05:54:39.304608Z',
-    data: {
-      lpg_info: {
-        code: 'NRF',
-        data: [],
-      },
-    },
+    datetime: '',
+    data: null,
   });
 
   const handleSearch = async () => {
-    const toastId = toast.loading('Loading...');
+    setIsOpen(false);
     setLoading(true);
+    const toastId = toast.loading('Loading...');
     const valid = isValidIndianMobileNumber(searchInputValue);
     if (valid && valid.result && selectedSubTool.searchKey) {
-      onClose();
       await new Promise((resolve) => setTimeout(resolve, 2000));
       try {
         const response = await post(
@@ -182,7 +178,13 @@ export default function DigitalIntelligence() {
             realtimeData: false,
           },
         );
-        setResponseData(response?.responseData);
+        if (
+          response?.responseData &&
+          response.responseData?.data &&
+          response.responseData?.datetime
+        ) {
+          setResponseData(response?.responseData);
+        }
         toast.success('Data Fetched', {
           id: toastId,
         });
@@ -247,21 +249,24 @@ export default function DigitalIntelligence() {
         </div>
 
         {loading && <BeFiScLoadingSkeleton />}
-        {/* {responseData && !loading && (
-          <div className="flex w-full flex-col">
-            <div className="flex justify-end">
+        {responseData?.data && !loading && (
+          <div className="flex w-full flex-col border-t border-slate-900 p-4 lg:border-l lg:border-t-0">
+            <div className="flex h-10 w-full items-center justify-between">
+              <div className="text-xl font-semibold text-white">
+                {selectedSubTool.toolName}
+              </div>
               <div className="flex items-center space-x-1 text-base font-medium text-gray-400">
                 <IconCalendarWeekFilled className="h-5 w-5 text-blue-500" />
                 <span>{formatDateTime(responseData?.datetime)}</span>
               </div>
             </div>
-            <div className="mt-4">
-              <div className="text-xl font-semibold text-white">
-                {selectedSubTool.toolName}
-              </div>
-            </div>
+
+            <UniversalDigitalIntelligenceComp
+              data={responseData?.data}
+              searchKey={selectedSubTool.searchKey}
+            />
           </div>
-        )} */}
+        )}
       </div>
 
       {selectedTool && (

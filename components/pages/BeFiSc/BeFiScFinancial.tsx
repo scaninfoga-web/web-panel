@@ -207,59 +207,58 @@ export default function BeFiScFinancial({
               </div>
             </div>
           </DashboardCard>
-          {Mobile360Data?.result?.esic_info?.data?.length ||
-            (0 > 0 && (
-              <DashboardCard title="Secondary Account">
-                <div
-                  className={`mt-4 grid gap-3 grid-cols-${Mobile360Data?.result?.esic_info?.data?.length}`}
-                >
-                  {Mobile360Data?.result?.esic_info?.data?.map((item) => (
-                    <div
-                      key={item?.account_number}
-                      className="mt-4 grid grid-cols-1 gap-4"
-                    >
-                      <div>
-                        <p className="text-sm text-gray-400">Name</p>
-                        <p className="text-base font-medium">
-                          {formatSentence(item?.name)}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-400">Bank Name</p>
-                        <p className="text-base font-medium text-yellow-500">
-                          {formatSentence(item?.bank_name)}
-                        </p>
-                      </div>
-
-                      <div>
-                        <p className="text-sm text-gray-400">IFSC</p>
-                        <p className="text-base font-medium">
-                          {item?.ifsc?.toUpperCase()}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-400">Account Number</p>
-                        <p className="text-base font-medium text-yellow-500">
-                          {formatSentence(item?.account_number)}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-400">Mobile Number</p>
-                        <p className="text-base font-medium">
-                          {formatSentence(item?.mobile)}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-400">Branch Address</p>
-                        <p className="text-base font-medium">
-                          {formatSentence(item?.branch_name)}
-                        </p>
-                      </div>
+          {(Mobile360Data?.result?.esic_info?.data?.length || 0) > 0 && (
+            <DashboardCard title="Secondary Account">
+              <div
+                className={`mt-4 grid gap-3 grid-cols-${Mobile360Data?.result?.esic_info?.data?.length}`}
+              >
+                {Mobile360Data?.result?.esic_info?.data?.map((item) => (
+                  <div
+                    key={item?.account_number}
+                    className="mt-4 grid grid-cols-1 gap-4"
+                  >
+                    <div>
+                      <p className="text-sm text-gray-400">Name</p>
+                      <p className="text-base font-medium">
+                        {formatSentence(item?.name)}
+                      </p>
                     </div>
-                  ))}
-                </div>
-              </DashboardCard>
-            ))}
+                    <div>
+                      <p className="text-sm text-gray-400">Bank Name</p>
+                      <p className="text-base font-medium text-yellow-500">
+                        {formatSentence(item?.bank_name)}
+                      </p>
+                    </div>
+
+                    <div>
+                      <p className="text-sm text-gray-400">IFSC</p>
+                      <p className="text-base font-medium">
+                        {item?.ifsc?.toUpperCase()}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-400">Account Number</p>
+                      <p className="text-base font-medium text-yellow-500">
+                        {formatSentence(item?.account_number)}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-400">Mobile Number</p>
+                      <p className="text-base font-medium">
+                        {formatSentence(item?.mobile)}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-400">Branch Address</p>
+                      <p className="text-base font-medium">
+                        {formatSentence(item?.branch_name)}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </DashboardCard>
+          )}
         </TabsContent>
         <TabsContent value="loan" className="">
           <div className="grid grid-cols-1 gap-2 space-y-2">

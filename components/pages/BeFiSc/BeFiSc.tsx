@@ -62,6 +62,7 @@ import {
 } from '@/components/custom/functions/formatUtils';
 import BeFiScDigitalFootprint from './BeFiScDigitalFootprint';
 import { isValidIndianMobileNumber } from '@/components/custom/functions/checkingUtils';
+import { HoleheType } from '@/types/holhe';
 
 export default function BeFiSc() {
   const searchParams = useSearchParams();
@@ -170,6 +171,13 @@ export default function BeFiSc() {
       data: JobSeekerType | null;
     }[]
   >([]);
+  const [holeheData, setHoleheData] = useState<
+    {
+      value: string;
+      type: string;
+      data: HoleheType | null;
+    }[]
+  >([]);
   const numbersFoundRef = useRef<number>(0);
   const addressesFound = useRef<number>(0);
   const [_1tabLoading, set_1tabLoading] = useState(false);
@@ -232,6 +240,23 @@ export default function BeFiSc() {
     setHudsonData([]);
     numbersFoundRef.current = 0;
     addressesFound.current = 0;
+    setDeviceDetails({
+      topLogins: [],
+      topPasswords: [],
+      infected_Credentials: '',
+      alert: 'No Alert',
+      ip: '',
+      computerName: '',
+      OS: '',
+      dateCompromised: '',
+      deviceLogo: null,
+      totalIP: [],
+      totalPassword: [],
+      totalEmail: [],
+      securityScore: 0,
+      totalBreachFields: 0,
+    });
+    setHoleheData([]);
   };
 
   useEffect(() => {
@@ -908,6 +933,38 @@ export default function BeFiSc() {
 
         if (otherNumber.length > 0 || otherEmails.length > 0) {
           setBreachInfoLoading(true);
+          let holehe: {
+            value: string;
+            type: string;
+            data: HoleheType | null;
+          }[] = [];
+
+          try {
+            const results = await Promise.allSettled(
+              otherEmails.map((email) =>
+                post('/api/holehe/email_used_only', {
+                  email: email?.email,
+                }),
+              ),
+            );
+            results.forEach((result, index) => {
+              if (result.status === 'fulfilled') {
+                holehe.push({
+                  value: otherEmails[index]?.email,
+                  type: otherEmails[index]?.type,
+                  data: result.value,
+                });
+              } else {
+                holehe.push({
+                  value: otherEmails[index]?.email,
+                  type: otherEmails[index]?.type,
+                  data: null,
+                });
+              }
+            });
+            setHoleheData(holehe);
+          } catch (error) {}
+
           let finalArray: {
             value: string;
             type: string;
@@ -1640,7 +1697,7 @@ export default function BeFiSc() {
                             key={index}
                             className="flex w-full justify-between border border-white/10 p-4"
                           >
-                            <div className="grid grid-cols-1 items-center gap-y-1">
+                            <div className="grid grid-cols-1 items-center gap-y-1 lg:grid-cols-2">
                               <div className="grid grid-cols-2 gap-4">
                                 <div>
                                   <p className="text-sm text-slate-400">
@@ -1682,16 +1739,16 @@ export default function BeFiSc() {
                                     }
                                   </p>
                                 </div>
-                              </div>
-                              <div>
-                                <p className="text-lg text-slate-400">
-                                  Address
-                                </p>
-                                <p className="min-w-[430px] max-w-[430px] opacity-75">
-                                  {formatSentence(
-                                    item?.addressData.detailed_address,
-                                  )}
-                                </p>
+                                <div>
+                                  <p className="text-lg text-slate-400">
+                                    Address
+                                  </p>
+                                  <p className="min-w-[430px] max-w-[430px] opacity-75">
+                                    {formatSentence(
+                                      item?.addressData.detailed_address,
+                                    )}
+                                  </p>
+                                </div>
                               </div>
 
                               <Image
@@ -1702,7 +1759,7 @@ export default function BeFiSc() {
                                 alt="map"
                                 width={500}
                                 height={500}
-                                className="rounded-xl object-contain"
+                                className="rounded-2xl object-contain lg:p-2"
                                 unoptimized={true}
                               />
                             </div>
@@ -1761,6 +1818,8 @@ export default function BeFiSc() {
                   <BeFiScLoadingSkeleton />
                 ) : (
                   <BeFiScBreachInfo
+                    ghuntMultipleData={ghuntMultipleData}
+                    holeheData={holeheData}
                     HunterVerifyData={hunterVerifyData}
                     leakHunterData={leakHunterData}
                     data={breachInfo}

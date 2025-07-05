@@ -351,7 +351,7 @@
 //   const wallet = useSelector((state: RootState) => state.wallet);
 //   const token = useSelector((state: RootState) => state.user.token);
 
-//   const publicPaths = [
+//   const publicRoutes = [
 //     '/',
 //     '/services',
 //     '/aboutUs',
@@ -555,6 +555,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { WalletWidget } from '../common/WalletWidget';
 import Image from 'next/image';
 import { useSidebar } from '@/context/SidebarContext';
+import { publicRoutes } from '@/lib/routePermissions';
 
 const navItems = [
   { label: 'Home', href: '/' },
@@ -578,16 +579,6 @@ export default function Navbar() {
   const accessToken = getCookie('accessToken');
   const wallet = useSelector((state: RootState) => state.wallet);
   const token = useSelector((state: RootState) => state.user.token);
-
-  const publicPaths = [
-    '/',
-    '/services',
-    '/aboutUs',
-    '/contact',
-    '/pricing',
-    '/tools',
-    '/auth',
-  ];
 
   useEffect(() => {
     setHasMounted(true);
@@ -651,7 +642,7 @@ export default function Navbar() {
           />
         </Link>
 
-        {publicPaths.includes(pathname) && (
+        {publicRoutes.includes(pathname) && (
           <nav className="hidden items-center space-x-8 rounded-full border border-slate-500 bg-[#060b17] px-6 py-2.5 shadow-[inset_0px_1px_2px_0px_rgba(255,255,255,0.1),inset_0px_-1px_2px_0px_rgba(255,255,255,0.1)] transition-all md:flex">
             {navItems.map((item) => (
               <Link
@@ -670,7 +661,7 @@ export default function Navbar() {
         )}
 
         <div className="hidden items-center space-x-4 md:flex">
-          {token && !publicPaths.includes(pathname) && (
+          {token && !publicRoutes.includes(pathname) && (
             <WalletWidget
               walletLoading={wallet?.loading}
               credits={wallet.balance}
@@ -678,7 +669,7 @@ export default function Navbar() {
             />
           )}
 
-          {!publicPaths.includes(pathname) && (
+          {!publicRoutes.includes(pathname) && (
             <Button
               variant="outline"
               className="border-emerald-500 text-emerald-500 hover:bg-emerald-500 hover:text-black"
@@ -698,7 +689,7 @@ export default function Navbar() {
           )}
 
           {accessToken ? (
-            publicPaths.includes(pathname) && (
+            publicRoutes.includes(pathname) && (
               <Button
                 className="bg-emerald-500 text-black hover:bg-emerald-600"
                 onClick={() => router.push('/dashboard')}
@@ -716,7 +707,7 @@ export default function Navbar() {
           )}
         </div>
 
-        {(!token || publicPaths.includes(pathname)) && (
+        {(!token || publicRoutes.includes(pathname)) && (
           <div
             className="mr-4 cursor-pointer md:hidden"
             onClick={() => setIsOpen(!isOpen)}
@@ -725,7 +716,7 @@ export default function Navbar() {
             <span className="sr-only">Toggle menu</span>
           </div>
         )}
-        {token && !publicPaths.includes(pathname) ? (
+        {token && !publicRoutes.includes(pathname) ? (
           <div
             className="mr-4 cursor-pointer md:hidden"
             onClick={() => setSideBarOpen(!sidebarOpen)}
@@ -782,7 +773,7 @@ export default function Navbar() {
                   {accessToken ? 'Sign out' : 'Sign in'}
                 </Button>{' '}
                 {accessToken ? (
-                  publicPaths.includes(pathname) && (
+                  publicRoutes.includes(pathname) && (
                     <Button
                       className="w-full bg-emerald-500 text-black hover:bg-emerald-600"
                       onClick={() => router.push('/dashboard')}
