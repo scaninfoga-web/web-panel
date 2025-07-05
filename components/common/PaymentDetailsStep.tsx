@@ -112,7 +112,7 @@ const PaymentDetailsStep = ({
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`, // ✅ Passing user token
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({ amount: form.getValues('amount') }),
         },

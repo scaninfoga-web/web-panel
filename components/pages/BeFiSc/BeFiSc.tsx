@@ -1697,7 +1697,7 @@ export default function BeFiSc() {
                             key={index}
                             className="flex w-full justify-between border border-white/10 p-4"
                           >
-                            <div className="grid grid-cols-1 items-center gap-y-1">
+                            <div className="grid grid-cols-1 items-center gap-y-1 lg:grid-cols-2">
                               <div className="grid grid-cols-2 gap-4">
                                 <div>
                                   <p className="text-sm text-slate-400">
@@ -1739,16 +1739,16 @@ export default function BeFiSc() {
                                     }
                                   </p>
                                 </div>
-                              </div>
-                              <div>
-                                <p className="text-lg text-slate-400">
-                                  Address
-                                </p>
-                                <p className="min-w-[430px] max-w-[430px] opacity-75">
-                                  {formatSentence(
-                                    item?.addressData.detailed_address,
-                                  )}
-                                </p>
+                                <div>
+                                  <p className="text-lg text-slate-400">
+                                    Address
+                                  </p>
+                                  <p className="min-w-[430px] max-w-[430px] opacity-75">
+                                    {formatSentence(
+                                      item?.addressData.detailed_address,
+                                    )}
+                                  </p>
+                                </div>
                               </div>
 
                               <Image
@@ -1759,7 +1759,7 @@ export default function BeFiSc() {
                                 alt="map"
                                 width={500}
                                 height={500}
-                                className="rounded-xl object-contain"
+                                className="rounded-2xl object-contain lg:p-2"
                                 unoptimized={true}
                               />
                             </div>
