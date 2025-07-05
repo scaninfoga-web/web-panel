@@ -7,8 +7,11 @@ import { toast } from 'sonner';
 import { z } from 'zod';
 import { FormInput } from '../ui/form-input';
 import { useEffect, useState } from 'react';
+// @ts-ignore
 import { load } from '@cashfreepayments/cashfree-js'; // ✅ Correct import
 import { useSelector } from 'react-redux';
+import { post } from '@/lib/api';
+import { AxiosError } from 'axios';
 
 interface PaymentDetailsStepProps {
   paymentMethod: 'card' | 'bank' | null;
@@ -106,33 +109,20 @@ const PaymentDetailsStep = ({
 
     setLoading(true);
     try {
-      const res = await fetch(
-        'https://backend.scaninfoga.com/api/payments/initiate-payment',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ amount: form.getValues('amount') }),
-        },
+      const data = await post(
+        '/api/payments/initiate-payment',
+        { amount: form.getValues('amount') },
+        token,
       );
-
-      const data = await res.json();
-      // console.log('Backend Response:', data);
-
-      if (data.paymentSessionId) {
-        launchCashfreeCheckout(data.paymentSessionId);
-      } else {
-        // console.error('Invalid response:', data);
-        alert(
-          'Failed to initiate payment: ' +
-            (data.message || 'No payment session ID'),
+      launchCashfreeCheckout(data.responseData.paymentSessionId);
+    } catch (e) {
+      console.log('ERROR: ', e);
+      if (e instanceof AxiosError) {
+        toast.error(
+          e?.response?.data?.responseStatus?.message ||
+            'Unable to post transaction',
         );
       }
-    } catch (error: any) {
-      // console.error('Error initiating payment:', error);
-      toast.error('Please update phone number in profile to initiate payment');
     } finally {
       setLoading(false);
     }
@@ -239,6 +229,7 @@ const PaymentDetailsStep = ({
           <Button
             onClick={initiatePayment}
             className="flex-1 bg-gradient-to-r from-teal-500 to-emerald-500 font-medium text-white hover:from-teal-600 hover:to-emerald-600"
+            loading={loading}
           >
             Proceed to Payment Gateway
           </Button>
