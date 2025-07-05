@@ -8,7 +8,7 @@ import { z } from 'zod';
 import { FormInput } from '../ui/form-input';
 import { useEffect, useState } from 'react';
 // @ts-ignore
-import { load } from '@cashfreepayments/cashfree-js'; // ✅ Correct import
+import { load } from '@cashfreepayments/cashfree-js';
 import { useSelector } from 'react-redux';
 import { post } from '@/lib/api';
 import { AxiosError } from 'axios';

@@ -8,6 +8,10 @@ export const publicRoutes: string[] = [
   '/contact',
   '/api/ip',
   '/auth/admin',
+  '/auth/reset-password',
+  '/terms-conditions',
+  '/privacy',
+  '/refund-policy',
 ];
 
 export const routeAccess: Record<string, string[]> = {
