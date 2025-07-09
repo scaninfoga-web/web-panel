@@ -8,11 +8,11 @@ import {
 } from '@/components/ui/table';
 import { getValue } from './CustomBeFiScCard';
 import { formatSentence } from '@/components/custom/functions/formatUtils';
+import CustomBadge from './CustomBadge';
 
 type LPGInfo = {
-  code: 'SUC';
   data: Array<{
-    gas_provider: 'Indane Gas' | 'Bharat Gas' | 'HP Gas';
+    gas_provider: string;
     name: string;
     consumer_details: {
       consumer_mobile: string;
@@ -90,7 +90,11 @@ export function LPGInfoTable({ lpgInfo }: LPGInfoTableProps) {
                     {getValue(item?.consumer_details?.consumer_id)}
                   </TableCell>
                   <TableCell className="whitespace-nowrap">
-                    {getValue(item?.consumer_details?.consumer_status)}
+                    {
+                      <CustomBadge
+                        value={item?.consumer_details?.consumer_status}
+                      />
+                    }
                   </TableCell>
                   <TableCell className="whitespace-nowrap">
                     {getValue(item?.consumer_details?.consumer_type)}

@@ -41,11 +41,25 @@ const tools: {
     subTools: [
       { toolName: 'Mobile 365 Intelligence', searchKey: '' },
       { toolName: 'Mobile to Employee Info', searchKey: '' },
-      { toolName: 'Mobile to Doc & Address', searchKey: '' },
+      // { toolName: 'Mobile to Doc', searchKey: '' },
+      {
+        toolName: 'Mobile to Address',
+        searchKey: '/api/digital-intelligence/get-address',
+      },
       { toolName: 'Mobile to DL', searchKey: '' },
-      { toolName: 'Mobile to Email', searchKey: '' },
+      {
+        toolName: 'Mobile to Email',
+        searchKey: '/api/digital-intelligence/get-alt-email',
+      },
+      {
+        toolName: 'Mobile to Alternate Number',
+        searchKey: '/api/digital-intelligence/get-alt-mobile-number',
+      },
       { toolName: 'Mobile to Breach Info', searchKey: '' },
-      { toolName: 'Mobile to Gas Info', searchKey: 'get-lpg-info' },
+      {
+        toolName: 'Mobile to Gas Info',
+        searchKey: '/api/digital-intelligence/get-lpg-info',
+      },
     ],
   },
   {
@@ -55,7 +69,10 @@ const tools: {
       { toolName: 'Financial 365 Intelligence', searchKey: '' },
       { toolName: 'Mobile to Bank Info', searchKey: '' },
       { toolName: 'Reverse Account Number', searchKey: '' },
-      { toolName: 'Mobile to Multi UPI Info', searchKey: '' },
+      {
+        toolName: 'Mobile to Multi UPI Info',
+        searchKey: '/api/mobile/digitalpayment',
+      },
       { toolName: 'Mobile to Loan Trace', searchKey: '' },
     ],
   },
@@ -66,7 +83,10 @@ const tools: {
       { toolName: 'DOC 365 Intelligence', searchKey: '' },
       { toolName: 'Mobile to Pan Card', searchKey: '' },
       { toolName: 'Mobile to Aadhar Trace', searchKey: '' },
-      { toolName: 'Mobile All Linked DOC', searchKey: '' },
+      {
+        toolName: 'Mobile All Linked DOC',
+        searchKey: '/api/digital-intelligence/get-document-data',
+      },
       { toolName: 'Aadhar Verify', searchKey: '' },
       { toolName: 'Pan Card Info', searchKey: '' },
       { toolName: 'Voter ID Info', searchKey: '' },
@@ -77,15 +97,23 @@ const tools: {
     icon: IconUserSearch,
     subTools: [
       { toolName: 'Mobile to Employee Info', searchKey: '' },
+      {
+        toolName: 'Mobile to ESIC, UAN',
+        searchKey: '/api/digital-intelligence/get-esic-uan',
+      },
       { toolName: 'Aadhar to Employee Info', searchKey: '' },
-      { toolName: 'UAN Trace - Get EPFO Statement', searchKey: '' },
       { toolName: 'ESIC Trace', searchKey: '' },
+      { toolName: 'UAN -EPFO Statement', searchKey: '' },
     ],
   },
   {
     toolName: 'Business Track',
     icon: IconBusinessplan,
     subTools: [
+      {
+        toolName: 'Mobile to GST, Udyam, IEC',
+        searchKey: '/api/digital-intelligence/get-gst-udyam-iec',
+      },
       { toolName: 'GST Info Trace', searchKey: '' },
       { toolName: 'Udyam Verify Info Trace', searchKey: '' },
     ],
@@ -169,20 +197,22 @@ export default function DigitalIntelligence() {
     const toastId = toast.loading('Loading...');
     const valid = isValidIndianMobileNumber(searchInputValue);
     if (valid && valid.result && selectedSubTool.searchKey) {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      // await new Promise((resolve) => setTimeout(resolve, 2000));
       try {
-        const response = await post(
-          `/api/digital-intelligence/${selectedSubTool.searchKey}`,
-          {
-            mobile_number: valid.fixedNumber,
-            realtimeData: false,
-          },
-        );
-        if (
-          response?.responseData &&
-          response.responseData?.data &&
-          response.responseData?.datetime
-        ) {
+        const response = await post(`${selectedSubTool.searchKey}`, {
+          mobile_number: valid.fixedNumber,
+          realtimeData: false,
+        });
+        if (selectedSubTool.searchKey === '/api/mobile/digitalpayment') {
+          setResponseData({
+            datetime: new Date().toISOString(),
+            data: response?.responseData,
+          });
+          return toast.success('Data Fetched', {
+            id: toastId,
+          });
+        }
+        if (response.responseData?.data && response.responseData?.datetime) {
           setResponseData(response?.responseData);
         }
         toast.success('Data Fetched', {
@@ -214,6 +244,10 @@ export default function DigitalIntelligence() {
     setSelectedTool(null);
     setSelectedSubTool({ searchKey: '', toolName: '' });
     setSearchInputValue('');
+    setResponseData({
+      datetime: '',
+      data: null,
+    });
   }
 
   return (
@@ -227,16 +261,17 @@ export default function DigitalIntelligence() {
         <div className="grid min-w-60 grid-cols-2 gap-4 lg:grid-cols-1">
           {/* main selects */}
           {tools.map((tool) => (
-            <div key={`${tool.toolName}`} className="flex">
+            <div key={`${tool.toolName}`} className="flex text-xs lg:text-base">
               <Button
                 variant="ghost"
                 className={cn(
-                  'w-full justify-start gap-2 border border-gray-800/50 py-6 hover:bg-gray-800/50',
+                  'w-full justify-start gap-2 overflow-hidden border border-gray-800/50 py-6 hover:bg-gray-800/50',
                   selectedTool &&
                     selectedTool.toolName === tool.toolName &&
                     'bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20',
                 )}
                 onClick={() => {
+                  onClose();
                   setSelectedTool(tool);
                   setIsOpen(true);
                 }}
@@ -252,10 +287,10 @@ export default function DigitalIntelligence() {
         {responseData?.data && !loading && (
           <div className="flex w-full flex-col border-t border-slate-900 p-4 lg:border-l lg:border-t-0">
             <div className="flex h-10 w-full items-center justify-between">
-              <div className="text-xl font-semibold text-white">
+              <div className="text-lg font-semibold text-emerald-500 lg:text-xl">
                 {selectedSubTool.toolName}
               </div>
-              <div className="flex items-center space-x-1 text-base font-medium text-gray-400">
+              <div className="flex items-center space-x-1 whitespace-nowrap text-base font-medium text-gray-400">
                 <IconCalendarWeekFilled className="h-5 w-5 text-blue-500" />
                 <span>{formatDateTime(responseData?.datetime)}</span>
               </div>
@@ -264,6 +299,7 @@ export default function DigitalIntelligence() {
             <UniversalDigitalIntelligenceComp
               data={responseData?.data}
               searchKey={selectedSubTool.searchKey}
+              mobileNo={searchInputValue}
             />
           </div>
         )}
@@ -272,7 +308,7 @@ export default function DigitalIntelligence() {
       {selectedTool && (
         <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
           <DialogPortal>
-            <DialogContent className="min-[400px] flex min-w-[800px] flex-col border-slate-800 bg-slate-950 p-10 text-white shadow-2xl shadow-slate-800">
+            <DialogContent className="flex-col border-slate-800 bg-slate-950 text-white shadow-2xl shadow-slate-800 lg:min-w-[600px] lg:p-10">
               <DialogTitle className="text-3xl font-bold text-emerald-500">
                 {selectedTool.toolName}
               </DialogTitle>
@@ -316,7 +352,7 @@ export default function DigitalIntelligence() {
                   )}
                 >
                   <div className="flex min-w-full flex-col space-y-10">
-                    <div className="grid grid-cols-2 gap-4 p-4">
+                    <div className="grid max-h-[400px] grid-cols-1 gap-4 overflow-auto p-4 lg:grid-cols-2">
                       {selectedTool.subTools.map((subtool) => {
                         return (
                           <div

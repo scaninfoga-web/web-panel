@@ -556,6 +556,7 @@ import { WalletWidget } from '../common/WalletWidget';
 import Image from 'next/image';
 import { useSidebar } from '@/context/SidebarContext';
 import { publicRoutes } from '@/lib/routePermissions';
+import { toast } from 'sonner';
 
 const navItems = [
   { label: 'Home', href: '/' },
@@ -588,9 +589,34 @@ export default function Navbar() {
     const fetchInfo = async () => {
       try {
         const info = await getClientInfo();
-        dispatch(setInfo(info));
+        if (!(info instanceof Error)) {
+          dispatch(setInfo(info));
+        }
       } catch (e) {
-        console.error('Failed to fetch client info', e);
+        if (e instanceof Error) {
+          router.push('/');
+          try {
+            const permission = await navigator.permissions.query({
+              name: 'geolocation',
+            });
+
+            if (permission.state === 'denied') {
+              toast.error(
+                'We need your location to proceed. Please enable it in your browser’s address bar.',
+                {
+                  id: 1,
+                  duration: 8000,
+                },
+              );
+              return;
+            }
+            const retryInfo = await getClientInfo();
+            if (!(retryInfo instanceof Error)) {
+              dispatch(setInfo(retryInfo));
+              return;
+            }
+          } catch (geoError) {}
+        }
       }
     };
     fetchInfo();
@@ -631,7 +657,10 @@ export default function Navbar() {
       )}
     >
       <div className="flex items-center justify-between">
-        <Link href="/" className="h-16 w-52">
+        <Link
+          href="/"
+          className="relative -top-1 -z-50 h-16 w-52 hover:cursor-pointer"
+        >
           <Image
             src="https://website-stuff-logos.s3.ap-south-1.amazonaws.com/1.png"
             alt="scaninfoga"
