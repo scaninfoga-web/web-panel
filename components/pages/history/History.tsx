@@ -48,7 +48,6 @@ const History: React.FC = () => {
         setActivities(data.responseData);
       }
     } catch (error) {
-      console.error('Error fetching activities:', error);
     } finally {
       setLoading(false);
     }

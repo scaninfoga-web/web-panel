@@ -116,30 +116,6 @@ const Profile = () => {
 
   const [qrCode, setQrCode] = useState<boolean>(false);
 
-  //   const handlePasswordChange = async (data: ChangePassFormValues) => {
-  //     try{
-  //         const res = await post("/api/auth/change-password", {
-  //           ...data,
-  //           email: userData.email,
-  //           userType: 'user'
-  //         }) as any;
-
-  //         if(res.responseData.require_otp){
-  //             setQrCode(true);
-  //             toast.warning("Please enter OTP from the authenticator.")
-  //         }
-  //         else{
-  //             toast.success("Password changed successfully")
-  //             form.reset();
-  //             setQrCode(false);
-  //         }
-  //     }
-  //     catch(error){
-  //         console.log(error);
-  //         toast.error("Error changing password")
-  //     }
-  //   }
-
   useEffect(() => {
     if (info.latitude && info.longitude && !olaGeoApiData) {
       populateMapImg();

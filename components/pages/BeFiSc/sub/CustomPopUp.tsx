@@ -28,8 +28,8 @@ export default function CustomPopUp({
       {isOpen && (
         <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
           <DialogPortal>
-            <DialogContent className="min-[400px] flex min-w-[800px] flex-col border-slate-800 bg-[#0e1421]/30 p-10 text-white shadow-2xl shadow-slate-800 backdrop-blur-3xl">
-              <DialogTitle className="text-3xl font-bold text-emerald-500">
+            <DialogContent className="flex flex-col border-slate-800 bg-[#0e1421]/30 p-10 text-white shadow-2xl shadow-slate-800 backdrop-blur-3xl lg:min-w-[800px]">
+              <DialogTitle className="text-xl font-bold text-emerald-500 lg:text-3xl">
                 {dialogTitle}
               </DialogTitle>
 

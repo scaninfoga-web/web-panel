@@ -139,7 +139,7 @@ export default function BefiScPersonal({
                     </div>
                     <div>
                       <p className="text-xs text-slate-400">Age</p>
-                      <p className="font-medium">{item?.age}</p>
+                      <p className="font-medium">{item?.age || '----'}</p>
                     </div>
                     <div>
                       <p className="text-xs text-slate-400">Mobile</p>

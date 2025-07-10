@@ -44,7 +44,6 @@ const ChangePassword = () => {
   });
 
   const handleSubmit = async () => {
-    console.log('Called');
     try {
       const payload = {
         email: form.getValues('email'),
@@ -60,7 +59,6 @@ const ChangePassword = () => {
         toast.success('Password changed successfully');
       }
     } catch (error) {
-      console.log(error);
       toast.error('Error changing password');
     }
   };
@@ -73,7 +71,6 @@ const ChangePassword = () => {
       toast.success('Enter OTP sent to your email');
       setStep(2);
     } catch (error) {
-      console.log(error);
       if (error instanceof AxiosError) {
         toast.error(
           error.response?.data?.responseStatus?.message || 'Some error occured',

@@ -1,1 +1,35 @@
-
+{
+    "responseStatus": {
+        "status": true,
+        "message": "Data fetched from database"
+    },
+    "responseData": {
+        "data": {
+            "List": {
+                "1Win": {
+                    "Data": [
+                        {
+                            "IP": "103.112.19.131",
+                            "Email": "ashishtiwari959937@gmail.com",
+                            "Phone": "919599379326",
+                            "Amount": "0 ",
+                            "Country": "in",
+                            "RegDate": "2024-04-12 10:59:42",
+                            "Currency": "INR",
+                            "FullName": "Ashish",
+                            "Password(SHA-256)": "6e9020fb774bc2ca8bd6633311807a922c8d8f5af88507b0a3c126a1a84a147c"
+                        }
+                    ],
+                    "InfoLeak": "In November 2024, a huge data leak from the 1Win bookmaker appeared in the public domain. 96 million users were affected, mainly from India (26 million), Russia (19 million) and Brazil (17 million). The data contained emails, phone numbers, names, IP addresses, passwords in the form of SHA-256 hashes and dates of birth in encrypted form. Many entries were accounts of bots and autoregisters. Also in the leak was a separate partner table containing 570 thousand records with referral data.",
+                    "NumOfResults": 1
+                }
+            },
+            "price": 0,
+            "search time": 0.0,
+            "NumOfResults": 1,
+            "NumOfDatabase": 1,
+            "free_requests_left": 73
+        },
+        "success": true
+    }
+}

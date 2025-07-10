@@ -61,7 +61,7 @@ interface PageProps {
   }[];
   ghuntMultipleData: GhuntData[];
 }
-const dangerKeyWords = [
+export const dangerKeyWords = [
   'Password',
   'Password(SHA-256)',
   'IP',
@@ -71,7 +71,7 @@ const dangerKeyWords = [
   'Password(bcrypt)',
   'Amount',
 ];
-const yellowKeyWords = [
+export const yellowKeyWords = [
   'domain',
   'uri',
   'FullName',
@@ -84,7 +84,7 @@ const yellowKeyWords = [
   'Company',
   'Credits',
 ];
-const clickAble = ['Url', 'Site', 'Avatar', 'Password(SHA-256)', 'uri'];
+export const clickAble = ['Url', 'Site', 'Avatar', 'Password(SHA-256)', 'uri'];
 
 export default function BeFiScBreachInfo({
   data,

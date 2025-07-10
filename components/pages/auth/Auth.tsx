@@ -133,11 +133,9 @@ export default function AuthPage() {
         toast.success('Logged in successfully!');
         router.push('/combinedDash');
       } else {
-        console.error('Authentication failed:', data.responseStatus?.message);
         toast.error('Login failed. Check your credentials and try again.');
       }
     } catch (error) {
-      console.error('Authentication error:', error);
       toast.error('Login failed. Check your credentials and try again.');
     }
   };
@@ -156,7 +154,6 @@ export default function AuthPage() {
       router.push('/combinedDash');
     } catch (error) {
       toast.error('Login failed. Check your credentials and try again.');
-      console.error(error);
     }
   };
 

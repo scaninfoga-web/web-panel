@@ -62,10 +62,7 @@ export default function Page() {
           },
         },
       );
-      // console.log(response.data);
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   };
   return (
     <div className="container mx-auto mt-16 flex flex-1 flex-col gap-4 overflow-y-auto p-4 px-4 py-8 backdrop-blur-sm md:gap-8 md:p-8">

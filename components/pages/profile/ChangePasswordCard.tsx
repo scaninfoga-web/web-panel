@@ -90,7 +90,7 @@ export const ChangePasswordCard = () => {
 
     try {
       const res = await post('/api/auth/change-password', payload);
-      console.log('RESPO: ', res.responseData);
+
       if (res.responseData?.require_otp) {
         setPasswordQrCode(true);
         toast.warning('Please enter OTP from the authenticator.');
@@ -99,7 +99,6 @@ export const ChangePasswordCard = () => {
         passwordForm.reset();
       }
     } catch (error) {
-      console.log(error);
       toast.error('Error changing password');
     } finally {
       setChangePasswordLoading(false);
@@ -110,13 +109,6 @@ export const ChangePasswordCard = () => {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
 
   const handleEmailChange = async (data: ChangeEmailFormValues) => {
-    // console.log('Email change data:', data);
-    // // Simulate API call
-    // setTimeout(() => {
-    //   setEmailQrCode(true);
-    //   console.log('OTP required for email change');
-    // }, 1000);
-
     setChangeEmailLoading(true);
 
     const payload = {
@@ -126,7 +118,7 @@ export const ChangePasswordCard = () => {
 
     try {
       const res = await post('/api/auth/change-email', payload);
-      console.log('RESPO: ', res.responseData);
+
       if (res.responseData?.require_otp) {
         setEmailQrCode(true);
         toast.warning('Please enter OTP from the authenticator.');
@@ -137,7 +129,6 @@ export const ChangePasswordCard = () => {
         emailForm.reset();
       }
     } catch (error) {
-      console.log(error);
       toast.error('Error changing email');
     } finally {
       setChangeEmailLoading(true);

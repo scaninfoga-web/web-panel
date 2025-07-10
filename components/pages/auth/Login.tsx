@@ -196,7 +196,6 @@ const Login = () => {
           {/* {userType === 'user' && (
             <GoogleLogin
               onSuccess={handleGoogleSuccess}
-              onError={() => console.error('Login Failed')}
               theme="filled_black"
               text="signin_with"
               shape="rectangular"

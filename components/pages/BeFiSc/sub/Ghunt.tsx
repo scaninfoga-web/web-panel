@@ -11,7 +11,6 @@ import {
 const Ghunt: React.FC<{ accountData: GhuntData | null | undefined }> = ({
   accountData,
 }) => {
-  console.log('GHUNT DATA :', accountData);
   const getImageUrl = () => {
     if (
       accountData?.profile?.profilePictureUrl &&

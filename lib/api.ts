@@ -3,7 +3,9 @@ import { store } from '@/redux/store';
 
 // Base URL for your API
 const BASE_URL =
-  process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000/';
+  process.env.NODE_ENV === 'production'
+    ? process.env.NEXT_PUBLIC_BACKEND_URL
+    : 'https://dev-backend.scaninfoga.com';
 
 // Create axios instance with default config
 const axiosInstance = axios.create({
@@ -70,7 +72,6 @@ export const apiCall = async <T = any>(
       config.data = payload;
     }
 
-    // Add query params for GET requests with payload
     if (payload !== null && method.toLowerCase() === 'get') {
       config.params = payload;
     }
@@ -78,12 +79,9 @@ export const apiCall = async <T = any>(
       const response = await axiosInstance(config);
       return response.data;
     } catch (error) {
-      console.log(error);
       throw error;
     }
   } catch (error) {
-    // Handle errors appropriately
-    console.error('API call failed:', error);
     throw error;
   }
 };

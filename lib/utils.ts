@@ -1,51 +1,42 @@
 import { clsx, type ClassValue } from 'clsx';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 import { twMerge } from 'tailwind-merge';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-// export const getClientInfo = async () => {
-//   const position = await new Promise<GeolocationPosition>((resolve, reject) =>
-//     navigator.geolocation.getCurrentPosition(resolve, reject),
-//   );
-//   const latitude = position.coords.latitude.toFixed(6);
-//   const longitude = position.coords.longitude.toFixed(6);
+export interface ClientInfo {
+  latitude: string;
+  longitude: string;
+  ip: string;
+  browser: string;
+  device: string;
+  userAgent: string;
+  platform: string;
+  language: string;
+  cookiesEnabled: boolean;
+  javascriptEnabled: boolean;
+  touchSupport: boolean;
+  deviceType: string;
+  cpuCores: number | null;
+  memory: string | null;
+  screenSize: string;
+  batteryLevel: string;
+  isCharging: string;
+  gpuRenderer: string;
+  cameras: string;
+  microphones: string;
+  publicIp: string;
+  isp: string;
+  asn: string;
+  city: string;
+  country: string;
+  possibleIoT: boolean;
+}
 
-//   const res = await fetch('/api/ip');
-//   const data = await res.json();
-//   const ip = data.ip || 'Unknown';
-
-//   const userAgent = navigator.userAgent;
-
-//   // Basic browser detection using userAgent
-//   let browser = 'Unknown';
-//   if (/Chrome/.test(userAgent)) browser = 'Chrome';
-//   else if (/Safari/.test(userAgent) && !/Chrome/.test(userAgent))
-//     browser = 'Safari';
-//   else if (/Firefox/.test(userAgent)) browser = 'Firefox';
-//   else if (/Edg/.test(userAgent)) browser = 'Edge';
-
-//   // Device type approximation
-//   let device = 'Unknown';
-//   if (/iPhone/.test(userAgent)) device = 'iPhone';
-//   else if (/iPad/.test(userAgent)) device = 'iPad';
-//   else if (/Android/.test(userAgent)) {
-//     const match = userAgent.match(/\((.*?)\)/);
-//     device = match ? match[1] : 'Android';
-//   } else if (/Macintosh/.test(userAgent)) device = 'Mac';
-//   else if (/Windows/.test(userAgent)) device = 'Windows PC';
-
-//   return {
-//     latitude,
-//     longitude,
-//     ip,
-//     browser,
-//     device,
-//   };
-// };
-
-export const getClientInfo = async () => {
+export const getClientInfo = async (): Promise<ClientInfo | Error> => {
   // Geolocation
   let latitude = 'Unavailable';
   let longitude = 'Unavailable';
@@ -55,9 +46,8 @@ export const getClientInfo = async () => {
     );
     latitude = position.coords.latitude.toFixed(6);
     longitude = position.coords.longitude.toFixed(6);
-  } catch {
-    latitude = 'Permission Denied';
-    longitude = 'Permission Denied';
+  } catch (e) {
+    throw new Error('Allow location to continue');
   }
 
   // Internal IP Fetch
