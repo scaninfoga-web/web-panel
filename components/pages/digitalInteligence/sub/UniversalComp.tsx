@@ -7,6 +7,8 @@ import M2MobileNumber from './M2Mobile';
 import M2UPI from './M2UPI';
 import M2EsicUan from './M2UanEsic';
 import M2GstUdyamIEC from './M2GstUdyamIEC';
+import M2Breach from './M2Breach';
+import M2365 from './M2365';
 
 const getComp = new Map<string, React.FC<{ data: any; mobileNo: string }>>([
   ['/api/digital-intelligence/get-lpg-info', LPG as React.FC<{ data: any }>],
@@ -34,10 +36,9 @@ const getComp = new Map<string, React.FC<{ data: any; mobileNo: string }>>([
     '/api/digital-intelligence/get-gst-udyam-iec',
     M2GstUdyamIEC as React.FC<{ data: any }>,
   ],
-  // [
-  //   '/api/mobile/digitalpayment',
-  //   M2UPI as React.FC<{ data: any; mobileNo: string }>,
-  // ],
+  ['/api/mobile/digitalpayment', M2UPI as React.FC<{ data: any }>],
+  ['/api/mobile/breachinfo', M2Breach as React.FC<{ data: any }>],
+  ['/api/mobile/getMobile360Dtls', M2365 as React.FC<{ data: any }>],
 ]);
 
 export default function UniversalDigitalIntelligenceComp({

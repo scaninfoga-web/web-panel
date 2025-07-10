@@ -119,89 +119,81 @@ export default function BeFiScFinancial({
 
         <TabsContent value="bank" className="mt-6 grid grid-cols-1 space-y-4">
           <DashboardCard title="Primary Account">
-            <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-4">
-              <div>
-                <p className="text-sm text-gray-400">Holder Name</p>
-                <p className="text-base font-medium">
-                  {formatSentence(
-                    MobileToAccountData?.result?.vpa_details
-                      ?.account_holder_name,
-                  )}
-                </p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-400">VPA</p>
-                <p className="text-base font-medium">
-                  {getValue(MobileToAccountData?.result?.vpa_details?.vpa)}
-                </p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-400">Bank Name</p>
-                <p className="text-base font-medium text-yellow-500">
-                  {formatSentence(
-                    Mobile360Data?.result?.digital_payment_id_info?.data?.bank,
-                  )}
-                </p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-400">Branch Name</p>
-                <p className="text-base font-medium">
-                  {formatSentence(
-                    Mobile360Data?.result?.digital_payment_id_info?.data
-                      ?.branch,
-                  )}
-                </p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-400">Account Number</p>
-                <p className="text-base font-medium text-yellow-500">
-                  {getValue(
-                    MobileToAccountData?.result?.account_details
-                      ?.account_number,
-                  )}
-                </p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-400">Account IFSC</p>
-                <p className="text-base font-medium">
-                  {getValue(
-                    MobileToAccountData?.result?.account_details?.account_ifsc,
-                  )}
-                </p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-400">Branch Contact</p>
-                <p className="text-base font-medium">
-                  {getValue(
-                    Mobile360Data?.result?.digital_payment_id_info?.data
-                      ?.contact,
-                  )}
-                </p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-400">Account Verified</p>
-                <p className="text-base font-medium">
-                  <CustomBadge value="Verified" />
-                </p>
+            <div className="mt-4 grid grid-cols-1 gap-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-4">
+                <div>
+                  <p className="text-sm text-gray-400">Holder Name</p>
+                  <p className="break-all text-base font-medium">
+                    {formatSentence(
+                      MobileToAccountData?.result?.vpa_details
+                        ?.account_holder_name,
+                    )}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-400">VPA</p>
+                  <p className="break-all text-base font-medium">
+                    {getValue(MobileToAccountData?.result?.vpa_details?.vpa)}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-400">Bank Name</p>
+                  <p className="text-base font-medium text-yellow-500">
+                    {formatSentence(
+                      Mobile360Data?.result?.digital_payment_id_info?.data
+                        ?.bank,
+                    )}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-400">Branch Name</p>
+                  <p className="text-base font-medium">
+                    {formatSentence(
+                      Mobile360Data?.result?.digital_payment_id_info?.data
+                        ?.branch,
+                    )}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-400">Account Number</p>
+                  <p className="text-base font-medium text-yellow-500">
+                    {getValue(
+                      MobileToAccountData?.result?.account_details
+                        ?.account_number,
+                    )}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-400">Account IFSC</p>
+                  <p className="text-base font-medium">
+                    {getValue(
+                      MobileToAccountData?.result?.account_details
+                        ?.account_ifsc,
+                    )}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-400">Branch Contact</p>
+                  <p className="text-base font-medium">
+                    {getValue(
+                      Mobile360Data?.result?.digital_payment_id_info?.data
+                        ?.contact,
+                    )}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-400">Account Verified</p>
+                  <p className="text-base font-medium">
+                    <CustomBadge value="Verified" />
+                  </p>
+                </div>
               </div>
               <div>
                 <p className="text-sm text-gray-400">Branch Address</p>
-                <p className="min-w-[850px] text-base font-medium opacity-80">
+                <p className="break-words text-base font-medium opacity-80">
                   {formatSentence(
-                    getValue(
-                      Mobile360Data?.result?.digital_payment_id_info?.data
-                        ?.address,
-                    ) +
-                      ', ' +
-                      getValue(
-                        Mobile360Data?.result?.digital_payment_id_info?.data
-                          ?.district,
-                      ) +
-                      ', ' +
-                      getValue(
-                        Mobile360Data?.result?.digital_payment_id_info?.data
-                          ?.city,
-                      ),
+                    Mobile360Data?.result?.digital_payment_id_info?.data
+                      ?.address,
                   )}
                 </p>
               </div>
@@ -345,7 +337,7 @@ export default function BeFiScFinancial({
                 </div>
                 <div>
                   <p className="text-sm text-gray-400">Email Address</p>
-                  <p className="text-base font-medium">
+                  <p className="text-base font-medium lowercase">
                     {getValue(
                       EquifaxV3Data?.result?.credit_report?.CCRResponse
                         ?.CIRReportDataLst[0]?.CIRReportData?.IDAndContactInfo

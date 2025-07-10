@@ -473,11 +473,7 @@ export default function BeFiSc() {
           ) {
             setPayworldData(payworldResponse);
           }
-        } catch (error) {
-          if (error instanceof AxiosError) {
-            toast.error('PayWorld Down', { id: toastRef.current! });
-          }
-        }
+        } catch (error) {}
         // countingApi that tells how much time this number is get called
         try {
           const res = await get(
@@ -505,11 +501,6 @@ export default function BeFiSc() {
           }
         } catch (error) {
           if (error instanceof AxiosError) {
-            toast.error(
-              'Profile Advance ' +
-                error.response?.data?.responseStatus?.message,
-              { id: toastRef.current! },
-            );
           }
         }
         const panNumber =
@@ -533,10 +524,6 @@ export default function BeFiSc() {
             }
           } catch (error) {
             if (error instanceof AxiosError) {
-              toast.error(
-                'PanData' + error.response?.data?.responseStatus?.message,
-                { id: toastRef.current! },
-              );
             }
           }
         }
@@ -560,10 +547,6 @@ export default function BeFiSc() {
             }
           } catch (error) {
             if (error instanceof AxiosError) {
-              toast.error(
-                'Equifax Data ' + error.response?.data?.responseStatus?.message,
-                { id: toastRef.current! },
-              );
             }
           }
         }
@@ -584,10 +567,6 @@ export default function BeFiSc() {
             }
           } catch (error) {
             if (error instanceof AxiosError) {
-              toast.error(
-                'ESICS ' + error.response?.data?.responseStatus?.message,
-                { id: toastRef.current! },
-              );
             }
           }
         }
@@ -608,9 +587,6 @@ export default function BeFiSc() {
           }
         } catch (error) {
           if (error instanceof AxiosError) {
-            toast.error('' + error.response?.data?.responseStatus?.message, {
-              id: toastRef.current!,
-            });
           }
         }
 
@@ -643,9 +619,6 @@ export default function BeFiSc() {
           }
         } catch (error) {
           if (error instanceof AxiosError) {
-            toast.error('' + error.response?.data?.responseStatus?.message, {
-              id: toastRef.current!,
-            });
           }
         }
         try {
@@ -658,16 +631,10 @@ export default function BeFiSc() {
           }
         } catch (error) {
           if (error instanceof AxiosError) {
-            toast.error(
-              'Mobile To Account ' +
-                error.response?.data?.responseStatus?.message,
-              { id: toastRef.current! },
-            );
           }
         }
 
         setIsLoading(false);
-        toast.success(`${apiMessage.current!}`, { id: toastRef.current! });
         new Promise((resolve) =>
           setTimeout(async () => {
             await dispatch(fetchWalletBalance());
@@ -685,10 +652,6 @@ export default function BeFiSc() {
           }
         } catch (error) {
           if (error instanceof AxiosError) {
-            toast.error(
-              'M2A ' + error.response?.data?.responseStatus?.message,
-              { id: toastRef.current! },
-            );
           }
         }
         setUpiDetailsLoading(false);
@@ -787,7 +750,7 @@ export default function BeFiSc() {
       }
     } catch (err) {
       if (err instanceof AxiosError) {
-        toast.error(err.response?.data?.responseStatus?.message);
+        toast.error('Something went wrong');
         return;
       }
       toast.error('Something went wrong');
@@ -847,10 +810,7 @@ export default function BeFiSc() {
           }
         } catch (error) {
           if (error instanceof AxiosError) {
-            toast.error(
-              'Map!! ' + error.response?.data?.responseStatus?.message,
-              { id: toastRef.current! },
-            );
+            toast.error('Map!! Failed');
           }
         } finally {
           setOlaGeoApiLoading(false);
@@ -1093,11 +1053,7 @@ export default function BeFiSc() {
                 }
               });
               setHunterVerifyData(hunterData);
-            } catch (error) {
-              if (error instanceof AxiosError) {
-                toast.error('Hunter verify error', { id: toastRef.current! });
-              }
-            }
+            } catch (error) {}
 
             // calling hunterFind
             let hunterFind: {
@@ -1133,7 +1089,6 @@ export default function BeFiSc() {
               setHunterFindData(hunterFind);
             } catch (error) {
               if (error instanceof AxiosError) {
-                toast.error('Hunter verify error', { id: toastRef.current! });
               }
             }
 
@@ -1161,11 +1116,7 @@ export default function BeFiSc() {
                   });
                 }
               });
-            } catch (error) {
-              toast.error('Breach info fetching error', {
-                id: toastRef.current!,
-              });
-            }
+            } catch (error) {}
           }
           if (otherNumber.length > 0) {
             // calling jobSeeker

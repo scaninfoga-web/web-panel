@@ -34,8 +34,6 @@ const PaymentDetailsStep = ({
   onBack,
   onClose,
 }: PaymentDetailsStepProps) => {
-  console.log('PaymentDetailsStep - paymentMethod:', paymentMethod);
-
   const copyToClipboard = (text: string, label: string) => {
     navigator.clipboard.writeText(text);
     toast.success(`${label} copied to clipboard!`);
@@ -67,11 +65,9 @@ const PaymentDetailsStep = ({
         const cashfreeInstance = await load({
           mode: 'production', // Change to 'sandbox' if testing
         });
-        console.log('Cashfree SDK initialized.');
+
         setCashfree(cashfreeInstance);
-      } catch (error) {
-        console.error('Error loading Cashfree SDK:', error);
-      }
+      } catch (error) {}
     };
 
     initializeCashfree();
@@ -81,17 +77,11 @@ const PaymentDetailsStep = ({
 
   const launchCashfreeCheckout = (paymentSessionId: string) => {
     try {
-      console.log(
-        'Launching Cashfree checkout with session ID:',
-        paymentSessionId,
-      );
-
       cashfree.checkout({
         paymentSessionId,
         redirectTarget: '_self', // ✅ Can also use '_blank', '_modal', or a DOM element
       });
     } catch (error: any) {
-      console.error('Error launching Cashfree checkout:', error);
       alert('Failed to load payment window: ' + error.message);
     }
   };
@@ -116,7 +106,6 @@ const PaymentDetailsStep = ({
       );
       launchCashfreeCheckout(data.responseData.paymentSessionId);
     } catch (e) {
-      console.log('ERROR: ', e);
       if (e instanceof AxiosError) {
         toast.error(
           e?.response?.data?.responseStatus?.message ||

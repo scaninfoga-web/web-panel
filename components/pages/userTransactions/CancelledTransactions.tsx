@@ -14,10 +14,9 @@ const CancelledTransactions = () => {
     try {
       setLoading(true);
       const data = await get('/api/payments/getFailedTxns');
-      console.log('DATA: ', data);
+
       setTableData(data?.responseData.transactions || []);
     } catch (e) {
-      console.log('ERROR: ', e);
       toast.error('Error fetching completed transactions');
     } finally {
       setLoading(false);
@@ -32,6 +31,7 @@ const CancelledTransactions = () => {
     <div>
       <h1>Completed Transactions</h1>
       <CustomTable
+        // @ts-ignore
         columns={txnColumns}
         dataSource={tableData}
         loading={loading}

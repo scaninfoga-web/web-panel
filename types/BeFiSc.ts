@@ -10,7 +10,6 @@ export interface Mobile360Type {
   datetime: string;
   result: {
     digital_payment_id_info: {
-      code: 'SUC';
       data: {
         name: string;
         branch: string;
@@ -69,7 +68,7 @@ export interface Mobile360Type {
       }>;
     };
     telco_info: {
-      code: 'SUC';
+      code: string;
       data: {
         is_valid: boolean;
         subscriber_status: string;
@@ -121,7 +120,7 @@ export interface Mobile360Type {
       };
     };
     mobile_age_info: {
-      code: 'SUC';
+      code: string;
       data: {
         is_ported: string;
         mobile_age: string;
@@ -135,15 +134,12 @@ export interface Mobile360Type {
       };
     };
     gst_list: {
-      code: 'SUC';
       data: string[];
     };
     iec_list: {
-      code: 'NRF';
       data: [];
     };
     whatsapp_info: {
-      code: 'SUC';
       data: {
         status: string;
         is_business: string;

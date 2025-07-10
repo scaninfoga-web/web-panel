@@ -24,7 +24,6 @@ const PendingTransactions = () => {
       const data = await get('/api/payments/getPendingTxns');
       setTableData(data?.responseData.transactions || []);
     } catch (e) {
-      console.log('ERROR: ', e);
       toast.error('Error fetching completed transactions');
     } finally {
       setLoading(false);
@@ -68,6 +67,7 @@ const PendingTransactions = () => {
     <div>
       <h1>Completed Transactions</h1>
       <CustomTable
+        // @ts-ignore
         columns={updatedColumns}
         dataSource={tableData}
         loading={loading}

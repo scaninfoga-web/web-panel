@@ -133,7 +133,7 @@ export default function M2UPI({
           if (!totatUpiHandles.includes(value?.platform)) {
             totatUpiHandles.push(value?.platform);
           }
-          if (!totalAccounts.includes(value?.upi_handle)) {
+          if (!totalAccounts.includes(value?.data?.result?.bank)) {
             totalAccounts.push(value?.data?.result?.bank);
           }
           upiIds++;
@@ -229,7 +229,7 @@ export default function M2UPI({
   };
 
   return (
-    <div className="flex flex-col space-y-2 p-2">
+    <div className="flex max-h-[65vh] flex-col space-y-2 overflow-auto p-2">
       <div className="mb-2 grid grid-cols-1 gap-4 space-y-1 text-lg font-semibold text-yellow-500 lg:grid-cols-3">
         <div className="flex items-center space-x-1">
           <Image

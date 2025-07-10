@@ -93,8 +93,6 @@ export function Register({ type: initialType }: RegisterProps) {
     },
   });
 
-  console.log('ForM: ', form.getValues());
-
   const otpForm = useForm({
     resolver: zodResolver(otpSchema),
     defaultValues: {
@@ -141,7 +139,6 @@ export function Register({ type: initialType }: RegisterProps) {
   const getProgressPercentage = () => {
     switch (currentStep) {
       case 'details':
-        console.log('33 returned');
         return 33;
       case 'otp':
         return 66;

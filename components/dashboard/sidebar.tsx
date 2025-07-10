@@ -123,10 +123,9 @@ export function DashboardSidebar() {
       </div>
 
       <div className="flex h-full flex-col justify-between">
-        <nav className="space-y-1 p-4">
+        <nav className="flex flex-col space-y-1 p-4">
           {filteredLinks.map((link) => {
             const isActive = pathname === link.href;
-
             return (
               <Link href={link.href} key={link.href}>
                 <Button

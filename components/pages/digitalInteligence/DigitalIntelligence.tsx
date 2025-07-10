@@ -1,7 +1,6 @@
 'use client';
 import DashboardTitle from '@/components/common/DashboardTitle';
 import { isValidIndianMobileNumber } from '@/components/custom/functions/checkingUtils';
-
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -12,7 +11,6 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { post } from '@/lib/api';
-
 import { cn } from '@/lib/utils';
 import {
   IconBusinessplan,
@@ -29,6 +27,7 @@ import { toast } from 'sonner';
 import BeFiScLoadingSkeleton from '../BeFiSc/sub/BeFiScLoadingSkeleton';
 import { formatDateTime } from '@/components/custom/functions/formatUtils';
 import UniversalDigitalIntelligenceComp from './sub/UniversalComp';
+import { BreachInfoType } from '@/types/BreachInfo';
 
 const tools: {
   toolName: string;
@@ -39,9 +38,11 @@ const tools: {
     toolName: 'Number Trace',
     icon: IconDeviceSim,
     subTools: [
-      { toolName: 'Mobile 365 Intelligence', searchKey: '' },
-      { toolName: 'Mobile to Employee Info', searchKey: '' },
-      // { toolName: 'Mobile to Doc', searchKey: '' },
+      {
+        toolName: 'Mobile 365 Intelligence',
+        searchKey: '/api/mobile/getMobile360Dtls',
+      },
+      { toolName: 'Mobile to Doc', searchKey: '' },
       {
         toolName: 'Mobile to Address',
         searchKey: '/api/digital-intelligence/get-address',
@@ -55,7 +56,10 @@ const tools: {
         toolName: 'Mobile to Alternate Number',
         searchKey: '/api/digital-intelligence/get-alt-mobile-number',
       },
-      { toolName: 'Mobile to Breach Info', searchKey: '' },
+      {
+        toolName: 'Mobile to Breach Info',
+        searchKey: '/api/mobile/breachinfo',
+      },
       {
         toolName: 'Mobile to Gas Info',
         searchKey: '/api/digital-intelligence/get-lpg-info',
@@ -96,6 +100,7 @@ const tools: {
     toolName: 'Employee Info',
     icon: IconUserSearch,
     subTools: [
+      { toolName: 'Mobile to Employee Info', searchKey: '' },
       { toolName: 'Mobile to Employee Info', searchKey: '' },
       {
         toolName: 'Mobile to ESIC, UAN',
@@ -185,7 +190,7 @@ export default function DigitalIntelligence() {
   const [loading, setLoading] = useState(false);
   const [responseData, setResponseData] = useState<{
     datetime: string;
-    data: Object | null;
+    data: Object | null | Array<any>;
   } | null>({
     datetime: '',
     data: null,
@@ -194,18 +199,58 @@ export default function DigitalIntelligence() {
   const handleSearch = async () => {
     setIsOpen(false);
     setLoading(true);
-    const toastId = toast.loading('Loading...');
     const valid = isValidIndianMobileNumber(searchInputValue);
+    const toastId = toast.loading('Loading...');
     if (valid && valid.result && selectedSubTool.searchKey) {
-      // await new Promise((resolve) => setTimeout(resolve, 2000));
       try {
         const response = await post(`${selectedSubTool.searchKey}`, {
           mobile_number: valid.fixedNumber,
           realtimeData: false,
+          request_body: valid.fixedNumber,
         });
+
+        if (selectedSubTool?.searchKey === '/api/mobile/breachinfo') {
+          const callingWith91 = await post('/api/mobile/breachinfo', {
+            request_body: `+91${valid.fixedNumber}`,
+            realtimeData: false,
+          });
+          let dataArray: {
+            mobile: string;
+            data: BreachInfoType | null;
+          }[] = [];
+          if (!response?.responseData?.data?.List?.['No results found']) {
+            dataArray.push({
+              mobile: valid.fixedNumber,
+              data: response,
+            });
+          }
+          if (!callingWith91?.responseData?.data?.List?.['No results found']) {
+            dataArray.push({
+              mobile: `+91${valid.fixedNumber}`,
+              data: callingWith91,
+            });
+          }
+          setResponseData({
+            datetime: new Date().toISOString(),
+            data: dataArray,
+          });
+          return toast.success('Data Fetched', {
+            id: toastId,
+          });
+        }
         if (selectedSubTool.searchKey === '/api/mobile/digitalpayment') {
           setResponseData({
             datetime: new Date().toISOString(),
+            data: response?.responseData,
+          });
+          return toast.success('Data Fetched', {
+            id: toastId,
+          });
+        }
+        if (selectedSubTool.searchKey === '/api/mobile/getMobile360Dtls') {
+          setResponseData({
+            datetime:
+              response?.responseData?.datetime || new Date().toISOString(),
             data: response?.responseData,
           });
           return toast.success('Data Fetched', {
@@ -219,6 +264,171 @@ export default function DigitalIntelligence() {
           id: toastId,
         });
       } catch (error) {
+        let data = {
+          responseStatus: {
+            status: true,
+            message: 'Data fetched from database',
+          },
+          responseData: {
+            txnId: 'b6a9790c-7eaa-4421-be0f-570cba929682',
+            result: {
+              din_info: {
+                code: 'NRF',
+                data: [],
+              },
+              gst_list: {
+                code: 'NRF',
+                data: [],
+              },
+              iec_list: {
+                code: 'NRF',
+                data: [],
+              },
+              lpg_info: {
+                code: 'NRF',
+                data: [],
+              },
+              epfo_info: {
+                code: 'NRF',
+                data: [],
+              },
+              esic_info: {
+                code: 'NRF',
+                data: [],
+              },
+              msme_info: {
+                code: 'SDN',
+                data: [],
+              },
+              telco_info: {
+                code: 'SUC',
+                data: {
+                  msisdn: {
+                    mcc: '405',
+                    mnc: '872',
+                    imsi: '405872000000000',
+                    type: 'MOBILE',
+                    msisdn: '+919599379326',
+                    mcc_mnc: '405872',
+                    msisdn_country_code: 'IN',
+                  },
+                  is_valid: true,
+                  is_roaming: false,
+                  connection_type: 'prepaid',
+                  connection_status: {
+                    status_code: 'DELIVERED',
+                    error_code_id: '',
+                  },
+                  subscriber_status: 'CONNECTED',
+                  current_service_provider: {
+                    mcc: '405',
+                    mnc: '872',
+                    country_code: 'IN',
+                    country_name: 'India',
+                    network_name: 'Reliance Jio',
+                    country_prefix: '+91',
+                    network_prefix: '87003',
+                    network_region: 'Delhi',
+                  },
+                  roaming_service_provider: {
+                    mcc: '',
+                    mnc: '',
+                    country_code: '',
+                    country_name: '',
+                    network_name: '',
+                    country_prefix: '',
+                    network_prefix: '',
+                    network_region: '',
+                  },
+                  original_service_provider: {
+                    mcc: '405',
+                    mnc: '872',
+                    country_code: 'IN',
+                    country_name: 'India',
+                    network_name: 'Airtel',
+                    country_prefix: '+91',
+                    network_prefix: '95993',
+                    network_region: 'Delhi',
+                  },
+                },
+              },
+              revoke_info: {
+                code: 'SUC',
+                data: {
+                  revoke_date: 'OCTOBER/2022',
+                  revoke_status: 'Yes',
+                },
+              },
+              whatsapp_info: {
+                code: 'SUC',
+                data: {
+                  status: 'Account Found',
+                  is_business: '0',
+                },
+              },
+              key_highlights: {
+                ie_codes: [],
+                din_numbers: [],
+                esic_number: [],
+                gst_numbers: [],
+                revoke_date: 'OCTOBER/2022',
+                uan_numbers: [],
+                active_status: 'Yes',
+                age_of_mobile: '2 to 3 Years',
+                udyam_numbers: [],
+                connection_type: 'prepaid',
+                gas_connection_found: 'No',
+                digital_payment_id_name: 'ASHISH TIWARI',
+                whatsapp_business_account_status: 'Non-business',
+              },
+              mobile_age_info: {
+                code: 'SUC',
+                data: {
+                  region: ' Delhi',
+                  roaming: 'No',
+                  telecom: 'Airtel ',
+                  is_ported: 'Yes',
+                  mobile_age: '2 to 3 Years',
+                  number_valid: 'Yes',
+                  number_active: 'Yes',
+                  ported_region: ' Delhi',
+                  ported_telecom: 'Reliance Jio ',
+                },
+              },
+              director_pan_info: {
+                code: 'NRF',
+                data: [],
+              },
+              digital_payment_id_info: {
+                code: 'SUC',
+                data: {
+                  bank: 'Axis Bank',
+                  city: 'NEW DELHI',
+                  name: 'ASHISH TIWARI',
+                  state: 'DELHI',
+                  branch: 'SAMAS PUR KHALSA',
+                  center: '',
+                  address:
+                    'GROUND FLOOR, VILLAGE SAMAS PUR KHALSA, POLE NO 058 ADJACENT TO PRIMARY SCHOOL, PO UJWA, NEW DELHI 110073',
+                  contact: '+917678210137',
+                  district: 'NEW DELHI',
+                },
+              },
+            },
+            status: 1,
+            apiName: 'Mobile 360',
+            message: 'Success',
+            billable: true,
+            datetime: '2025-07-10 06:46:30.096783',
+            apiCategory: 'Fraud Check',
+            mobileNumber: '9599379326',
+          },
+        };
+
+        setResponseData({
+          datetime: data?.responseData?.datetime || new Date().toISOString(),
+          data: data?.responseData,
+        });
         toast.error('Error', {
           id: toastId,
         });
@@ -261,7 +471,7 @@ export default function DigitalIntelligence() {
         <div className="grid min-w-60 grid-cols-2 gap-4 lg:grid-cols-1">
           {/* main selects */}
           {tools.map((tool) => (
-            <div key={`${tool.toolName}`} className="flex text-xs lg:text-base">
+            <div key={`${tool.toolName}`} className="flex text-sm sm:text-base">
               <Button
                 variant="ghost"
                 className={cn(
@@ -308,7 +518,7 @@ export default function DigitalIntelligence() {
       {selectedTool && (
         <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
           <DialogPortal>
-            <DialogContent className="flex-col border-slate-800 bg-slate-950 text-white shadow-2xl shadow-slate-800 lg:min-w-[600px] lg:p-10">
+            <DialogContent className="flex-col border-slate-800 bg-slate-950 text-white shadow-2xl shadow-slate-800 lg:min-w-[700px] lg:p-10">
               <DialogTitle className="text-3xl font-bold text-emerald-500">
                 {selectedTool.toolName}
               </DialogTitle>
@@ -362,14 +572,20 @@ export default function DigitalIntelligence() {
                             <Button
                               variant="ghost"
                               className={cn(
-                                'w-full justify-start gap-2 border border-gray-800/50 py-6 shadow-[inset_0px_1px_2px_0px_rgba(255,255,255,0.1),inset_0px_-1px_2px_0px_rgba(255,255,255,0.1)] hover:bg-gray-800/50',
+                                'relative w-full justify-start gap-2 border border-gray-800/50 py-6 shadow-[inset_0px_1px_2px_0px_rgba(255,255,255,0.1),inset_0px_-1px_2px_0px_rgba(255,255,255,0.1)] hover:bg-gray-800/50',
                                 selectedSubTool.toolName === subtool.toolName &&
                                   'bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20',
                               )}
+                              disabled={subtool.searchKey.length <= 2}
                               onClick={() => {
                                 setSelectedSubTool(subtool);
                               }}
                             >
+                              {subtool.searchKey?.length < 1 && (
+                                <span className="absolute right-2 top-1 rounded-full bg-yellow-400/20 px-1.5 py-0.5 text-[9px] font-semibold text-yellow-400 shadow-sm">
+                                  Coming Soon
+                                </span>
+                              )}
                               <span className="w-full text-center">
                                 {subtool.toolName}
                               </span>

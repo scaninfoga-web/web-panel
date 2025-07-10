@@ -56,7 +56,6 @@ export const authOptions: NextAuthOptions = {
           }
           return false;
         } catch (error) {
-          console.error('Authentication error:', error);
           return false;
         }
       }

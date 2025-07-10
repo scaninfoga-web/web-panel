@@ -32,9 +32,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setToken(data.token);
         localStorage.setItem('token', data.token);
       }
-    } catch (error) {
-      console.error('Authentication error:', error);
-    }
+    } catch (error) {}
   };
 
   useEffect(() => {

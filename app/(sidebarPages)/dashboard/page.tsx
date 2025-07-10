@@ -87,7 +87,6 @@ export default function Dashboard() {
   const handleSearch = (query: string) => {
     setSearchQuery(query);
     // Implement your search logic here based on searchFilter
-    // console.log(`Searching for ${query} in ${searchFilter}`);
   };
 
   // return <NotFound value="We will get back to you soon" />;

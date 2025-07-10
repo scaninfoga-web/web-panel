@@ -58,7 +58,6 @@ const TransactionHistory = () => {
       setTableData(data?.responseData?.result || []);
       setTotalRecords(data?.responseData?.paginationDetails.count || 0);
     } catch (err) {
-      console.error(err);
     } finally {
       setLoading(false);
     }

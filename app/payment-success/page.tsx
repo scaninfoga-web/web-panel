@@ -40,7 +40,6 @@ export default function PaymentSuccess() {
           setStatus('❌ Payment Failed or Not Found.');
         }
       } catch (error) {
-        console.error('Error verifying payment:', error);
         setStatus('Error verifying payment.');
       }
     };

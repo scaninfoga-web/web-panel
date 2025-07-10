@@ -1,132 +1,35 @@
 {
-    "9599379326@axl": {
-        "data": {
-            "result": {
-                "bank": "Axis Bank",
-                "city": "DELHI",
-                "name": "ASHISH TIWARI",
-                "state": "DELHI",
-                "branch": "JANAK PURI B BLOCK",
-                "center": "",
-                "address": "GROUND FLOOR & BASEMENT, B-1/503, JANAKPURI, NEW DELHI-110058",
-                "contact": "+919650960263",
-                "district": "DELHI"
-            },
-            "status": 1,
-            "txn_id": "07e9d0d5-6cdb-48e8-8070-60865b672e0d",
-            "message": "Success",
-            "api_name": "Digital Payment ID Analyser",
-            "billable": true,
-            "datetime": "2025-06-26 12:20:34.255927",
-            "api_category": "Financial Checks"
-        },
-        "success": true,
-        "billable": true,
-        "platform": "PhonePe",
-        "upi_handle": "@axl"
+    "responseStatus": {
+        "status": true,
+        "message": "Data fetched from database"
     },
-    "9599379326@ibl": {
+    "responseData": {
         "data": {
-            "result": {
-                "bank": "Axis Bank",
-                "city": "DELHI",
-                "name": "ASHISH TIWARI",
-                "state": "DELHI",
-                "branch": "JANAK PURI B BLOCK",
-                "center": "",
-                "address": "GROUND FLOOR & BASEMENT, B-1/503, JANAKPURI, NEW DELHI-110058",
-                "contact": "+919650960263",
-                "district": "DELHI"
+            "List": {
+                "1Win": {
+                    "Data": [
+                        {
+                            "IP": "103.112.19.131",
+                            "Email": "ashishtiwari959937@gmail.com",
+                            "Phone": "919599379326",
+                            "Amount": "0 ",
+                            "Country": "in",
+                            "RegDate": "2024-04-12 10:59:42",
+                            "Currency": "INR",
+                            "FullName": "Ashish",
+                            "Password(SHA-256)": "6e9020fb774bc2ca8bd6633311807a922c8d8f5af88507b0a3c126a1a84a147c"
+                        }
+                    ],
+                    "InfoLeak": "In November 2024, a huge data leak from the 1Win bookmaker appeared in the public domain. 96 million users were affected, mainly from India (26 million), Russia (19 million) and Brazil (17 million). The data contained emails, phone numbers, names, IP addresses, passwords in the form of SHA-256 hashes and dates of birth in encrypted form. Many entries were accounts of bots and autoregisters. Also in the leak was a separate partner table containing 570 thousand records with referral data.",
+                    "NumOfResults": 1
+                }
             },
-            "status": 1,
-            "txn_id": "75b17ba2-45ac-4dda-82f4-b2a0cf1bf389",
-            "message": "Success",
-            "api_name": "Digital Payment ID Analyser",
-            "billable": true,
-            "datetime": "2025-06-26 12:20:34.263645",
-            "api_category": "Financial Checks"
+            "price": 0,
+            "search time": 0.0,
+            "NumOfResults": 1,
+            "NumOfDatabase": 1,
+            "free_requests_left": 73
         },
-        "success": true,
-        "billable": true,
-        "platform": "PhonePe",
-        "upi_handle": "@ibl"
-    },
-    "9599379326@yapl": {
-        "data": {
-            "result": {
-                "bank": "Axis Bank",
-                "city": "NEW DELHI",
-                "name": "ASHISH TIWARI",
-                "state": "DELHI",
-                "branch": "SAMAS PUR KHALSA",
-                "center": "",
-                "address": "GROUND FLOOR, VILLAGE SAMAS PUR KHALSA, POLE NO 058 ADJACENT TO PRIMARY SCHOOL, PO UJWA, NEW DELHI 110073",
-                "contact": "+917678210137",
-                "district": "NEW DELHI"
-            },
-            "status": 1,
-            "txn_id": "61afa81c-7166-493e-ba7c-32294dc966db",
-            "message": "Success",
-            "api_name": "Digital Payment ID Analyser",
-            "billable": true,
-            "datetime": "2025-06-26 12:20:34.229003",
-            "api_category": "Financial Checks"
-        },
-        "success": true,
-        "billable": true,
-        "platform": "Amazon Pay",
-        "upi_handle": "@yapl"
-    },
-    "9599379326@paytm": {
-        "data": {
-            "result": {
-                "bank": "Axis Bank",
-                "city": "DELHI",
-                "name": "Ashish Tiwari",
-                "state": "DELHI",
-                "branch": "JANAK PURI B BLOCK",
-                "center": "",
-                "address": "GROUND FLOOR & BASEMENT, B-1/503, JANAKPURI, NEW DELHI-110058",
-                "contact": "+919650960263",
-                "district": "DELHI"
-            },
-            "status": 1,
-            "txn_id": "fe2d4bcd-6a18-40a5-b9e9-10a5db248fd4",
-            "message": "Success",
-            "api_name": "Digital Payment ID Analyser",
-            "billable": true,
-            "datetime": "2025-06-26 12:20:34.238069",
-            "api_category": "Financial Checks"
-        },
-        "success": true,
-        "billable": true,
-        "platform": "Paytm",
-        "upi_handle": "@paytm"
-    },
-    "9599379326@ptyes": {
-        "data": {
-            "result": {
-                "bank": "Axis Bank",
-                "city": "NEW DELHI",
-                "name": "Ashish Tiwari",
-                "state": "DELHI",
-                "branch": "SAMAS PUR KHALSA",
-                "center": "",
-                "address": "GROUND FLOOR, VILLAGE SAMAS PUR KHALSA, POLE NO 058 ADJACENT TO PRIMARY SCHOOL, PO UJWA, NEW DELHI 110073",
-                "contact": "+917678210137",
-                "district": "NEW DELHI"
-            },
-            "status": 1,
-            "txn_id": "df2fa12c-effd-4250-ba8e-f87d6d6b9cb2",
-            "message": "Success",
-            "api_name": "Digital Payment ID Analyser",
-            "billable": true,
-            "datetime": "2025-06-26 12:20:34.284134",
-            "api_category": "Financial Checks"
-        },
-        "success": true,
-        "billable": true,
-        "platform": "Paytm",
-        "upi_handle": "@ptyes"
+        "success": true
     }
 }

@@ -58,9 +58,7 @@ const AdminLogin: React.FC<{}> = () => {
         router.push('/userTransactions');
         router.refresh();
       }
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   };
   return (
     <>
