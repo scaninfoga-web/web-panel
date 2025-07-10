@@ -5,7 +5,7 @@ import { store } from '@/redux/store';
 const BASE_URL =
   process.env.NODE_ENV === 'production'
     ? process.env.NEXT_PUBLIC_BACKEND_URL
-    : 'https://dev-backend.scaninfoga.com';
+    : 'https://backend.scaninfoga.com';
 
 // Create axios instance with default config
 const axiosInstance = axios.create({

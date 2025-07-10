@@ -63,7 +63,7 @@ const PaymentDetailsStep = ({
     const initializeCashfree = async () => {
       try {
         const cashfreeInstance = await load({
-          mode: 'production', // Change to 'sandbox' if testing
+          mode: 'production',
         });
 
         setCashfree(cashfreeInstance);
@@ -74,7 +74,6 @@ const PaymentDetailsStep = ({
   }, []);
 
   const token = useSelector((state: any) => state.user.token);
-
   const launchCashfreeCheckout = (paymentSessionId: string) => {
     try {
       cashfree.checkout({
@@ -91,12 +90,10 @@ const PaymentDetailsStep = ({
       alert('Enter a valid amount.');
       return;
     }
-
     if (!cashfree) {
       alert('Cashfree SDK is not loaded yet.');
       return;
     }
-
     setLoading(true);
     try {
       const data = await post(
