@@ -91,12 +91,10 @@ const PaymentDetailsStep = ({
       alert('Enter a valid amount.');
       return;
     }
-
     if (!cashfree) {
       alert('Cashfree SDK is not loaded yet.');
       return;
     }
-
     setLoading(true);
     try {
       const data = await post(

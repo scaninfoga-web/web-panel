@@ -641,6 +641,7 @@ export default function BeFiSc() {
             resolve;
           }, 5000),
         );
+        toast.success('Fetced', { id: toastRef.current! });
         // calling upi details
         try {
           const UpiDetails = await post('/api/mobile/digitalpayment', {
