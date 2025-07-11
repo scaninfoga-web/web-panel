@@ -189,63 +189,6 @@ export default function BeFiScOverview({
         transition={{ delay: 0.2 }}
       >
         <div className="grid gap-4 md:grid-cols-2">
-          {/* <Card className="border-slate-800 bg-[#0e1421]/30 backdrop-blur-xl text-white">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">
-                Profile Info
-              </CardTitle>
-              <User2 className="h-4 w-4 text-emerald-500" />
-            </CardHeader>
-            <CardContent className="space-y-8">
-              <div className="space-y-0.5 pt-2">
-                <InfoText
-                  value={
-                    <CustomBadge
-                      value={
-                        mobile360Data?.result?.gst_list?.data &&
-                        mobile360Data?.result?.gst_list?.data?.length > 0
-                          ? 'Business'
-                          : 'Personal'
-                      }
-                    />
-                  }
-                  label="Profile"
-                />
-                <InfoText
-                  value={<CustomBadge value={isSoleProprietor} />}
-                  label="isSoleProprietor"
-                />
-                <InfoText
-                  value={<CustomBadge value={isDirector} />}
-                  label="isDirector"
-                />
-              </div>
-              {scoreLoading ? (
-                <Loader className="h-16 p-4" />
-              ) : (
-                <div>
-                  <div className="text-2xl font-bold">{securityScore}/100</div>
-                  <p
-                    className={cn(
-                      'text-xs',
-                      securityScore < 60 ? 'text-red-500' : 'text-slate-400',
-                    )}
-                  >
-                    {securityScore < 60
-                      ? 'Your most of credentials are not secure'
-                      : securityScore > 90
-                        ? 'Your credentials are secure'
-                        : 'Your credentials are almost secure'}
-                  </p>
-                  <CustomProgress
-                    value={securityScore}
-                    variant={securityScore < 60 ? 'danger' : 'default'}
-                    className="mt-3"
-                  />
-                </div>
-              )}
-            </CardContent>
-          </Card> */}
           <DashboardCard
             title={
               mobile360Data?.result?.gst_list?.data &&
@@ -694,13 +637,13 @@ export default function BeFiScOverview({
                       cy="300"
                       r="60"
                       stroke="#000080"
-                      stroke-width="4"
+                      strokeWidth="4"
                       fill="none"
                     />
                     <g
                       transform="translate(450,300)"
                       stroke="#000080"
-                      stroke-width="2"
+                      strokeWidth="2"
                     >
                       <line x1="0" y1="-60" x2="0" y2="60" />
                       <line x1="-60" y1="0" x2="60" y2="0" />

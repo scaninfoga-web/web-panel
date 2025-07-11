@@ -11,6 +11,7 @@ env:
   AWS_DEFAULT_REGION: "ap-south-1"
   ECS_CLUSTER: "scaninfoga-web-cluster"
   ECS_FRONTEND_SERVICE: "scaninfoga-web-app-service"
+  
 jobs:
   deploy:
     runs-on: ubuntu-latest

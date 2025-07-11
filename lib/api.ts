@@ -2,10 +2,7 @@ import axios, { AxiosRequestConfig, Method } from 'axios';
 import { store } from '@/redux/store';
 
 // Base URL for your API
-const BASE_URL =
-  process.env.NODE_ENV === 'production'
-    ? process.env.NEXT_PUBLIC_BACKEND_URL
-    : 'https://backend.scaninfoga.com';
+const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
 
 // Create axios instance with default config
 const axiosInstance = axios.create({

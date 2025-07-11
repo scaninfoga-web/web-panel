@@ -319,7 +319,7 @@ export default function BefiScPersonal({
           </DashboardCard>
         )}
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         {/* din */}
         <DashboardCard
           title="Din Info"
@@ -350,7 +350,7 @@ export default function BefiScPersonal({
           ))}
         </DashboardCard>
       </div>
-      <div className="grid grid-cols-5 gap-2">
+      <div className="grid grid-cols-1 gap-2 lg:grid-cols-5">
         <DashboardCard
           title="GST List"
           className="scrollbar-custom grid max-h-[400px] grid-cols-3 overflow-auto"

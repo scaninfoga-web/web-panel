@@ -25,7 +25,7 @@ export interface Mobile360Type {
     lpg_info: {
       code: 'SUC';
       data: Array<{
-        gas_provider: 'Indane Gas' | 'Bharat Gas' | 'HP Gas';
+        gas_provider: string;
         name: string;
         consumer_details: {
           consumer_mobile: string;
