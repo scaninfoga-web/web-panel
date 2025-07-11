@@ -305,7 +305,7 @@ export default function Footer() {
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
           {/* Brand Info */}
-          <div className="space-y-4">
+          <div className="relative space-y-2 lg:-top-8">
             <Link href="/" className="flex items-center">
               <Image
                 src="https://website-stuff-logos.s3.ap-south-1.amazonaws.com/4.png"
@@ -315,24 +315,54 @@ export default function Footer() {
                 height={180}
               />
             </Link>
-            <p className="text-sm text-white/70">
-              Pioneers in cyber security and digital crime investigation,
-              Scaninfoga proudly launches the world’s first OSINT-based tool
-              offering real, high-sensitive data for law enforcement and private
-              detective work.
+            <p className="flex flex-col space-y-0.5 text-sm">
+              <span className="whitespace-nowrap font-semibold">
+                Scaninfoga Solutions Pvt.Ltd
+              </span>
+
+              <span className="text-sm text-white/70">
+                is a leading provider of OSINT-based investigation tools, VAPT,
+                cyber crime investigation support, and professional private
+                detective services. We empower law enforcement, corporates, and
+                individuals with cutting-edge intelligence solutions for fraud
+                detection, digital forensics, and cyber threat analysis.
+              </span>
             </p>
-            <div className="flex space-x-4">
-              {[Github, Twitter, Linkedin, Facebook].map((Icon, index) => (
-                <Button
-                  key={index}
-                  variant="ghost"
-                  size="icon"
-                  className="text-white/70 hover:bg-emerald-500/10 hover:text-emerald-500"
-                >
-                  <Icon className="h-5 w-5" />
-                  <span className="sr-only">{Icon.name}</span>
-                </Button>
-              ))}
+
+            <div className="flex items-center justify-center gap-4">
+              <div className="flex size-14 items-center justify-center rounded-full bg-slate-200/90">
+                <Image
+                  src={
+                    'https://website-stuff-logos.s3.ap-south-1.amazonaws.com/gdpr.png'
+                  }
+                  alt="GDPR"
+                  width={150}
+                  height={150}
+                  className="scale-150 object-contain"
+                />
+              </div>
+              <div className="flex size-14 items-center justify-center rounded-full bg-slate-200/90">
+                <Image
+                  src={
+                    'https://website-stuff-logos.s3.ap-south-1.amazonaws.com/iso2.png'
+                  }
+                  alt="ISO 2"
+                  width={60}
+                  height={60}
+                  className="object-contain"
+                />
+              </div>
+              <div className="flex size-14 items-center justify-center rounded-full bg-slate-200/90">
+                <Image
+                  src={
+                    'https://website-stuff-logos.s3.ap-south-1.amazonaws.com/iso.png'
+                  }
+                  alt="ISO"
+                  width={60}
+                  height={60}
+                  className="object-contain"
+                />
+              </div>
             </div>
           </div>
 
@@ -410,6 +440,19 @@ export default function Footer() {
                 <span>Lokhand Market Road, Navi Mumbai 410218, MH, India</span>
               </li>
             </ul>
+            <div className="flex space-x-4">
+              {[Github, Twitter, Linkedin, Facebook].map((Icon, index) => (
+                <Button
+                  key={index}
+                  variant="ghost"
+                  size="icon"
+                  className="text-white/70 hover:bg-emerald-500/10 hover:text-emerald-500"
+                >
+                  <Icon className="h-5 w-5" />
+                  <span className="sr-only">{Icon.name}</span>
+                </Button>
+              ))}
+            </div>
           </div>
         </div>
 

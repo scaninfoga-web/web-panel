@@ -40,7 +40,7 @@ const tools: {
     subTools: [
       {
         toolName: 'Mobile 365 Intelligence',
-        searchKey: '/api/mobile/getMobile360Dtls',
+        searchKey: '',
       },
       { toolName: 'Mobile to Doc', searchKey: '' },
       {
@@ -100,7 +100,6 @@ const tools: {
     toolName: 'Employee Info',
     icon: IconUserSearch,
     subTools: [
-      { toolName: 'Mobile to Employee Info', searchKey: '' },
       { toolName: 'Mobile to Employee Info', searchKey: '' },
       {
         toolName: 'Mobile to ESIC, UAN',

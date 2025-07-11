@@ -78,7 +78,7 @@ const PaymentDetailsStep = ({
     try {
       cashfree.checkout({
         paymentSessionId,
-        redirectTarget: '_self', // ✅ Can also use '_blank', '_modal', or a DOM element
+        redirectTarget: '_self',
       });
     } catch (error: any) {
       alert('Failed to load payment window: ' + error.message);

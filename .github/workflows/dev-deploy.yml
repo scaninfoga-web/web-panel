@@ -36,18 +36,21 @@ jobs:
           ./ \
           ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/app/
 
+    # - name: Create .env file on EC2
+    #   run: |
+    #     ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
+    #       cd /home/ubuntu/app
+    #       cat > .env << 'ENVEOF'
+    #     NEXT_PUBLIC_GOOGLE_CLIENT_ID=${{ secrets.NEXT_PUBLIC_GOOGLE_CLIENT_ID }}
+    #     GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
+    #     NEXT_PUBLIC_BACKEND_URL=${{ secrets.NEXT_PUBLIC_BACKEND_URL }}
+    #     NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}
+    #     NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}
+    #     ENVEOF
+    #     EOF
     - name: Create .env file on EC2
       run: |
-        ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
-          cd /home/ubuntu/app
-          cat > .env << 'ENVEOF'
-        NEXT_PUBLIC_GOOGLE_CLIENT_ID=${{ secrets.NEXT_PUBLIC_GOOGLE_CLIENT_ID }}
-        GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
-        NEXT_PUBLIC_BACKEND_URL=${{ secrets.NEXT_PUBLIC_BACKEND_URL }}
-        NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}
-        NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}
-        ENVEOF
-        EOF
+        ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_HOST }} "echo '${{ secrets.DEV_ENV_FILE }}' > /home/ubuntu/app/.env"
 
     - name: Install dependencies and build on EC2
       run: |
