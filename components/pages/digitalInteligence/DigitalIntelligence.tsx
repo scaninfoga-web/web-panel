@@ -28,6 +28,7 @@ import BeFiScLoadingSkeleton from '../BeFiSc/sub/BeFiScLoadingSkeleton';
 import { formatDateTime } from '@/components/custom/functions/formatUtils';
 import UniversalDigitalIntelligenceComp from './sub/UniversalComp';
 import { BreachInfoType } from '@/types/BreachInfo';
+import { MobileToAccountNumberType } from '@/types/BeFiSc';
 
 const tools: {
   toolName: string;
@@ -40,9 +41,9 @@ const tools: {
     subTools: [
       {
         toolName: 'Mobile 365 Intelligence',
-        searchKey: '',
+        searchKey: '/api/mobile/getMobile360Dtls',
       },
-      { toolName: 'Mobile to Doc', searchKey: '' },
+      // { toolName: 'Mobile to Doc', searchKey: '' },
       {
         toolName: 'Mobile to Address',
         searchKey: '/api/digital-intelligence/get-address',
@@ -71,7 +72,10 @@ const tools: {
     icon: BadgeIndianRupee,
     subTools: [
       { toolName: 'Financial 365 Intelligence', searchKey: '' },
-      { toolName: 'Mobile to Bank Info', searchKey: '' },
+      {
+        toolName: 'Mobile to Bank Info',
+        searchKey: '/api/mobile/getAcDtlsFromMobNo',
+      },
       { toolName: 'Reverse Account Number', searchKey: '' },
       {
         toolName: 'Mobile to Multi UPI Info',
@@ -208,6 +212,15 @@ export default function DigitalIntelligence() {
           request_body: valid.fixedNumber,
         });
 
+        if (selectedSubTool?.searchKey === '/api/mobile/getAcDtlsFromMobNo') {
+          setResponseData({
+            datetime: response?.datetime || new Date().toISOString(),
+            data: response.responseData,
+          });
+          return toast.success('Data Fetched', {
+            id: toastId,
+          });
+        }
         if (selectedSubTool?.searchKey === '/api/mobile/breachinfo') {
           const callingWith91 = await post('/api/mobile/breachinfo', {
             request_body: `+91${valid.fixedNumber}`,
