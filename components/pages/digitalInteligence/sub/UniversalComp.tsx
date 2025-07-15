@@ -10,6 +10,7 @@ import M2GstUdyamIEC from './M2GstUdyamIEC';
 import M2Breach from './M2Breach';
 import M2365 from './M2365';
 import M2BankInfo from './M2BankInfo';
+import Fin365Intelligence from './Fin365Intelligence';
 
 const getComp = new Map<string, React.FC<{ data: any; mobileNo: string }>>([
   ['/api/digital-intelligence/get-lpg-info', LPG as React.FC<{ data: any }>],
@@ -41,6 +42,10 @@ const getComp = new Map<string, React.FC<{ data: any; mobileNo: string }>>([
   ['/api/mobile/breachinfo', M2Breach as React.FC<{ data: any }>],
   ['/api/mobile/getMobile360Dtls', M2365 as React.FC<{ data: any }>],
   ['/api/mobile/getAcDtlsFromMobNo', M2BankInfo as React.FC<{ data: any }>],
+  [
+    '/api/mobile/profileadvance',
+    Fin365Intelligence as React.FC<{ data: any; mobileNo: string }>,
+  ],
 ]);
 
 export default function UniversalDigitalIntelligenceComp({

@@ -58,12 +58,18 @@ export const userSlice = createSlice({
       state.user = action.payload.user;
 
       setCookie('accessToken', JSON.stringify(action.payload.token || null), {
-        maxAge: 60 * 60 * 24,
+        maxAge:
+          process.env.NODE_ENV === 'production'
+            ? 60 * 60 * 24
+            : 60 * 60 * 24 * 24,
         path: '/',
       });
 
       setCookie('user', JSON.stringify(action.payload.user || null), {
-        maxAge: 60 * 60 * 24 * 10,
+        maxAge:
+          process.env.NODE_ENV === 'production'
+            ? 60 * 60 * 24
+            : 60 * 60 * 24 * 24,
         path: '/',
       });
     },

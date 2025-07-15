@@ -28,7 +28,15 @@ import BeFiScLoadingSkeleton from '../BeFiSc/sub/BeFiScLoadingSkeleton';
 import { formatDateTime } from '@/components/custom/functions/formatUtils';
 import UniversalDigitalIntelligenceComp from './sub/UniversalComp';
 import { BreachInfoType } from '@/types/BreachInfo';
-import { MobileToAccountNumberType } from '@/types/BeFiSc';
+import {
+  EquifaxV3Type,
+  MobileToAccountNumberType,
+  PanAllInOneType,
+  ProfileAdvanceType,
+  RazorPayUpiType,
+  UPIType,
+} from '@/types/BeFiSc';
+import { PayWorldType } from '@/types/payworld';
 
 const tools: {
   toolName: string;
@@ -71,7 +79,10 @@ const tools: {
     toolName: 'Financial Trace',
     icon: BadgeIndianRupee,
     subTools: [
-      { toolName: 'Financial 365 Intelligence', searchKey: '' },
+      {
+        toolName: 'Financial 365 Intelligence',
+        searchKey: '/api/mobile/profileadvance',
+      },
       {
         toolName: 'Mobile to Bank Info',
         searchKey: '/api/mobile/getAcDtlsFromMobNo',
@@ -212,10 +223,131 @@ export default function DigitalIntelligence() {
           request_body: valid.fixedNumber,
         });
 
+        if (selectedSubTool?.searchKey === '/api/mobile/profileadvance') {
+          let profileAdvanceData: ProfileAdvanceType | null = null;
+          let panAllInOneData: PanAllInOneType | null = null;
+          let equifaxV3Data: EquifaxV3Type | null = null;
+          let upiDetailsData: any = null;
+          let payworldData: PayWorldType | null = null;
+          let razorPayData: RazorPayUpiType | null = null;
+
+          let mobileToAccountData: MobileToAccountNumberType | null = null;
+          if (
+            Number(response.responseData?.status) === 1 ||
+            Number(response.responseData?.status) === 2
+          ) {
+            profileAdvanceData = response.responseData;
+          }
+
+          try {
+            const ActDetails = await post('/api/mobile/getAcDtlsFromMobNo', {
+              mobile_number: valid?.fixedNumber,
+              realtimeData: false,
+            });
+            if (Number(ActDetails.responseData?.status) === 1) {
+              mobileToAccountData = ActDetails.responseData;
+            }
+            const ifsc =
+              ActDetails?.responseData?.result?.account_details?.account_ifsc;
+            if (ifsc) {
+              const ifscRes = await post('/api/secondary/ifsc-data', {
+                ifsc_code: ifsc,
+                realtimeData: false,
+              });
+              razorPayData = ifscRes;
+            }
+          } catch (error) {}
+
+          const panNumber =
+            profileAdvanceData?.result?.document_data?.pan[0]?.value;
+
+          if (panNumber) {
+            // calling panAllInone
+            try {
+              const panAllInOne = await post('/api/mobile/panallinone', {
+                pan_number: panNumber,
+                realtimeData: false,
+              });
+              if (
+                Number(panAllInOne.responseData?.status) === 1 ||
+                Number(panAllInOne.responseData?.status) === 2
+              ) {
+                panAllInOneData = panAllInOne.responseData;
+              }
+            } catch (error) {}
+            try {
+              const EquifaxData = await post('/api/mobile/equifaxv3', {
+                mobile: valid.fixedNumber,
+                name: 'bank',
+                id_type: 'pan',
+                id_number: panNumber,
+                realtimeData: false,
+              });
+              if (
+                Number(EquifaxData.responseData?.status) === 1 ||
+                Number(EquifaxData.responseData?.status) === 2
+              ) {
+                equifaxV3Data = EquifaxData.responseData;
+              }
+            } catch (error) {}
+          }
+
+          try {
+            const UpiDetails = await post('/api/mobile/digitalpayment', {
+              mobile_number: valid?.fixedNumber,
+              realtimeData: false,
+            });
+            if (UpiDetails.responseStatus?.status === true) {
+              upiDetailsData = UpiDetails?.responseData;
+            }
+          } catch (error) {}
+          try {
+            const payworld = await post('/api/secondary/payworld-all-data', {
+              sender_mobile: valid?.fixedNumber,
+            });
+            if (payworld?.responseData) {
+              payworldData = payworld;
+            }
+          } catch (error) {}
+
+          setResponseData({
+            datetime:
+              response?.responseData?.datetime || new Date().toISOString(),
+            data: {
+              profileAdvanceData,
+              panAllInOneData,
+              equifaxV3Data,
+              upiDetailsData,
+              payworldData,
+              mobileToAccountData,
+              razorPayData,
+            },
+          });
+
+          return toast.success('Data Fetched', {
+            id: toastId,
+          });
+        }
+
         if (selectedSubTool?.searchKey === '/api/mobile/getAcDtlsFromMobNo') {
+          const ifsc =
+            response?.responseData?.result?.account_details?.account_ifsc;
+          let ifscData: RazorPayUpiType | null = null;
+          try {
+            if (ifsc) {
+              const ifscRes = await post('/api/secondary/ifsc-data', {
+                ifsc_code: ifsc,
+                realtimeData: false,
+              });
+              ifscData = ifscRes;
+            }
+          } catch (error) {}
           setResponseData({
             datetime: response?.datetime || new Date().toISOString(),
-            data: response.responseData,
+            data: {
+              razorPayData: ifscData,
+              mobileToBankData: response.responseData,
+            },
           });
           return toast.success('Data Fetched', {
             id: toastId,
@@ -276,171 +408,6 @@ export default function DigitalIntelligence() {
           id: toastId,
         });
       } catch (error) {
-        let data = {
-          responseStatus: {
-            status: true,
-            message: 'Data fetched from database',
-          },
-          responseData: {
-            txnId: 'b6a9790c-7eaa-4421-be0f-570cba929682',
-            result: {
-              din_info: {
-                code: 'NRF',
-                data: [],
-              },
-              gst_list: {
-                code: 'NRF',
-                data: [],
-              },
-              iec_list: {
-                code: 'NRF',
-                data: [],
-              },
-              lpg_info: {
-                code: 'NRF',
-                data: [],
-              },
-              epfo_info: {
-                code: 'NRF',
-                data: [],
-              },
-              esic_info: {
-                code: 'NRF',
-                data: [],
-              },
-              msme_info: {
-                code: 'SDN',
-                data: [],
-              },
-              telco_info: {
-                code: 'SUC',
-                data: {
-                  msisdn: {
-                    mcc: '405',
-                    mnc: '872',
-                    imsi: '405872000000000',
-                    type: 'MOBILE',
-                    msisdn: '+919599379326',
-                    mcc_mnc: '405872',
-                    msisdn_country_code: 'IN',
-                  },
-                  is_valid: true,
-                  is_roaming: false,
-                  connection_type: 'prepaid',
-                  connection_status: {
-                    status_code: 'DELIVERED',
-                    error_code_id: '',
-                  },
-                  subscriber_status: 'CONNECTED',
-                  current_service_provider: {
-                    mcc: '405',
-                    mnc: '872',
-                    country_code: 'IN',
-                    country_name: 'India',
-                    network_name: 'Reliance Jio',
-                    country_prefix: '+91',
-                    network_prefix: '87003',
-                    network_region: 'Delhi',
-                  },
-                  roaming_service_provider: {
-                    mcc: '',
-                    mnc: '',
-                    country_code: '',
-                    country_name: '',
-                    network_name: '',
-                    country_prefix: '',
-                    network_prefix: '',
-                    network_region: '',
-                  },
-                  original_service_provider: {
-                    mcc: '405',
-                    mnc: '872',
-                    country_code: 'IN',
-                    country_name: 'India',
-                    network_name: 'Airtel',
-                    country_prefix: '+91',
-                    network_prefix: '95993',
-                    network_region: 'Delhi',
-                  },
-                },
-              },
-              revoke_info: {
-                code: 'SUC',
-                data: {
-                  revoke_date: 'OCTOBER/2022',
-                  revoke_status: 'Yes',
-                },
-              },
-              whatsapp_info: {
-                code: 'SUC',
-                data: {
-                  status: 'Account Found',
-                  is_business: '0',
-                },
-              },
-              key_highlights: {
-                ie_codes: [],
-                din_numbers: [],
-                esic_number: [],
-                gst_numbers: [],
-                revoke_date: 'OCTOBER/2022',
-                uan_numbers: [],
-                active_status: 'Yes',
-                age_of_mobile: '2 to 3 Years',
-                udyam_numbers: [],
-                connection_type: 'prepaid',
-                gas_connection_found: 'No',
-                digital_payment_id_name: 'ASHISH TIWARI',
-                whatsapp_business_account_status: 'Non-business',
-              },
-              mobile_age_info: {
-                code: 'SUC',
-                data: {
-                  region: ' Delhi',
-                  roaming: 'No',
-                  telecom: 'Airtel ',
-                  is_ported: 'Yes',
-                  mobile_age: '2 to 3 Years',
-                  number_valid: 'Yes',
-                  number_active: 'Yes',
-                  ported_region: ' Delhi',
-                  ported_telecom: 'Reliance Jio ',
-                },
-              },
-              director_pan_info: {
-                code: 'NRF',
-                data: [],
-              },
-              digital_payment_id_info: {
-                code: 'SUC',
-                data: {
-                  bank: 'Axis Bank',
-                  city: 'NEW DELHI',
-                  name: 'ASHISH TIWARI',
-                  state: 'DELHI',
-                  branch: 'SAMAS PUR KHALSA',
-                  center: '',
-                  address:
-                    'GROUND FLOOR, VILLAGE SAMAS PUR KHALSA, POLE NO 058 ADJACENT TO PRIMARY SCHOOL, PO UJWA, NEW DELHI 110073',
-                  contact: '+917678210137',
-                  district: 'NEW DELHI',
-                },
-              },
-            },
-            status: 1,
-            apiName: 'Mobile 360',
-            message: 'Success',
-            billable: true,
-            datetime: '2025-07-10 06:46:30.096783',
-            apiCategory: 'Fraud Check',
-            mobileNumber: '9599379326',
-          },
-        };
-
-        setResponseData({
-          datetime: data?.responseData?.datetime || new Date().toISOString(),
-          data: data?.responseData,
-        });
         toast.error('Error', {
           id: toastId,
         });

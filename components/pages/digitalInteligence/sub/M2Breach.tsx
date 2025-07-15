@@ -80,7 +80,7 @@ const M2Breach: React.FC<PageProps> = ({ data }) => {
                                     return (
                                       <div
                                         key={index}
-                                        className="grid grid-cols-3 gap-4 rounded-2xl border border-slate-800 p-3"
+                                        className="grid grid-cols-2 gap-4 rounded-2xl border border-slate-800 p-3"
                                       >
                                         {Object.entries(item).map(
                                           ([key, value], index) => (
@@ -93,7 +93,7 @@ const M2Breach: React.FC<PageProps> = ({ data }) => {
                                               </span>
                                               <span
                                                 className={cn(
-                                                  'text-base',
+                                                  'break-all text-base',
                                                   dangerKeyWords.includes(
                                                     key,
                                                   ) && 'text-red-500',

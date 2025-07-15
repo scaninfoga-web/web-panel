@@ -488,6 +488,7 @@ export interface ProfileAdvanceType {
     }[];
     address: {
       detailed_address: string;
+      city: string;
       state: string;
       pincode: string;
       type: string;
