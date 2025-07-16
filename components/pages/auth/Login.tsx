@@ -13,7 +13,6 @@ import { FormRadioGroup } from '@/components/ui/form-radio-group';
 import { setCredentials } from '@/redux/userSlice';
 import { clearCookies } from '@/actions/clearCookies';
 import { useState } from 'react';
-import Image from 'next/image';
 import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
 import { post } from '@/lib/api';
 const loginSchema = z.object({

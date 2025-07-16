@@ -18,7 +18,6 @@ export async function ServerActions(apiUrl: string, body: Object) {
     return res.data;
   } catch (error) {
     if (error instanceof AxiosError) {
-      console.log(error?.response);
     }
   }
 }

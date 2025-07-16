@@ -46,7 +46,5 @@ export default function UniversalDigitalIntelligenceComp({
   mobileNo: string;
 }) {
   const Comp = getComp.get(searchTool);
-  console.log('data', data);
-  console.log('searchTool', searchTool);
   return <div>{Comp ? <Comp data={data} mobileNo={mobileNo} /> : null}</div>;
 }
