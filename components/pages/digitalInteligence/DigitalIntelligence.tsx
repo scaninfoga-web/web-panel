@@ -9,7 +9,6 @@ import {
   DialogPortal,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
 import { post } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import {
@@ -34,14 +33,23 @@ import {
   PanAllInOneType,
   ProfileAdvanceType,
   RazorPayUpiType,
-  UPIType,
 } from '@/types/BeFiSc';
 import { PayWorldType } from '@/types/payworld';
+import CustomInputSearch from '@/components/custom/components/CustomInput';
 
 const tools: {
   toolName: string;
   icon: any;
-  subTools: { toolName: string; searchKey: string }[];
+  subTools: {
+    toolName: string;
+    searchKey: string;
+    inputs?: {
+      label: string;
+      placeholder: string;
+      type: 'number' | 'text';
+      validCheck: (e: string) => boolean;
+    }[];
+  }[];
 }[] = [
   {
     toolName: 'Number Trace',
@@ -100,14 +108,31 @@ const tools: {
     icon: IconFileSearch,
     subTools: [
       { toolName: 'DOC 365 Intelligence', searchKey: '' },
-      { toolName: 'Mobile to Pan Card', searchKey: '' },
+      {
+        toolName: 'Mobile to Pan Card',
+        searchKey: '/api/digital-intelligence/get-document-data',
+      },
       { toolName: 'Mobile to Aadhar Trace', searchKey: '' },
       {
         toolName: 'Mobile All Linked DOC',
         searchKey: '/api/digital-intelligence/get-document-data',
       },
       { toolName: 'Aadhar Verify', searchKey: '' },
-      { toolName: 'Pan Card Info', searchKey: '' },
+      {
+        toolName: 'Pan Card Info',
+        searchKey: '/api/mobile/panallinone',
+        inputs: [
+          {
+            label: 'Pan Number',
+            placeholder: 'Enter Pan Number',
+            type: 'text',
+            validCheck: (pan) => {
+              const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]$/;
+              return panRegex.test(pan.toUpperCase());
+            },
+          },
+        ],
+      },
       { toolName: 'Voter ID Info', searchKey: '' },
     ],
   },
@@ -196,7 +221,13 @@ export default function DigitalIntelligence() {
   const [selectedSubTool, setSelectedSubTool] = useState<{
     toolName: string;
     searchKey: string;
-  }>({ toolName: '', searchKey: '' });
+    inputs?: {
+      label: string;
+      placeholder: string;
+      type: 'number' | 'text';
+      validCheck: (value: string) => boolean;
+    }[];
+  }>({ toolName: '', searchKey: '', inputs: [] });
   const [isOpen, setIsOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState<Step>('method');
   const [searchInputValue, setSearchInputValue] = useState('');
@@ -210,210 +241,161 @@ export default function DigitalIntelligence() {
     data: null,
   });
 
-  const handleSearch = async () => {
+  const handleSearch = async (searchValue: string) => {
     setIsOpen(false);
     setLoading(true);
-    const valid = isValidIndianMobileNumber(searchInputValue);
+    setSearchInputValue(searchValue);
     const toastId = toast.loading('Loading...');
-    if (valid && valid.result && selectedSubTool.searchKey) {
-      try {
-        const response = await post(`${selectedSubTool.searchKey}`, {
-          mobile_number: valid.fixedNumber,
-          realtimeData: false,
-          request_body: valid.fixedNumber,
+    try {
+      let bodyName = 'mobile_number';
+      if (selectedSubTool.toolName === 'Pan Card Info') {
+        bodyName = 'pan_number';
+      }
+      if (selectedSubTool.toolName === 'Mobile to Breach Info') {
+        bodyName = 'request_body';
+      }
+      const response = await post(`${selectedSubTool.searchKey}`, {
+        [bodyName]: searchValue,
+        realtimeData: false,
+      });
+
+      if (selectedSubTool.toolName === 'Pan Card Info') {
+        setResponseData({
+          datetime:
+            response?.responseData?.datetime || new Date().toISOString(),
+          data: response?.responseData,
         });
-
-        if (selectedSubTool?.searchKey === '/api/mobile/profileadvance') {
-          let profileAdvanceData: ProfileAdvanceType | null = null;
-          let panAllInOneData: PanAllInOneType | null = null;
-          let equifaxV3Data: EquifaxV3Type | null = null;
-          let upiDetailsData: any = null;
-          let payworldData: PayWorldType | null = null;
-          let razorPayData: RazorPayUpiType | null = null;
-
-          let mobileToAccountData: MobileToAccountNumberType | null = null;
-          if (
-            Number(response.responseData?.status) === 1 ||
-            Number(response.responseData?.status) === 2
-          ) {
-            profileAdvanceData = response.responseData;
-          }
-
-          try {
-            const ActDetails = await post('/api/mobile/getAcDtlsFromMobNo', {
-              mobile_number: valid?.fixedNumber,
-              realtimeData: false,
-            });
-            if (Number(ActDetails.responseData?.status) === 1) {
-              mobileToAccountData = ActDetails.responseData;
-            }
-            const ifsc =
-              ActDetails?.responseData?.result?.account_details?.account_ifsc;
-            if (ifsc) {
-              const ifscRes = await post('/api/secondary/ifsc-data', {
-                ifsc_code: ifsc,
-                realtimeData: false,
-              });
-              razorPayData = ifscRes;
-            }
-          } catch (error) {}
-
-          const panNumber =
-            profileAdvanceData?.result?.document_data?.pan[0]?.value;
-
-          if (panNumber) {
-            // calling panAllInone
-            try {
-              const panAllInOne = await post('/api/mobile/panallinone', {
-                pan_number: panNumber,
-                realtimeData: false,
-              });
-              if (
-                Number(panAllInOne.responseData?.status) === 1 ||
-                Number(panAllInOne.responseData?.status) === 2
-              ) {
-                panAllInOneData = panAllInOne.responseData;
-              }
-            } catch (error) {}
-            try {
-              const EquifaxData = await post('/api/mobile/equifaxv3', {
-                mobile: valid.fixedNumber,
-                name: 'bank',
-                id_type: 'pan',
-                id_number: panNumber,
-                realtimeData: false,
-              });
-              if (
-                Number(EquifaxData.responseData?.status) === 1 ||
-                Number(EquifaxData.responseData?.status) === 2
-              ) {
-                equifaxV3Data = EquifaxData.responseData;
-              }
-            } catch (error) {}
-          }
-
-          try {
-            const UpiDetails = await post('/api/mobile/digitalpayment', {
-              mobile_number: valid?.fixedNumber,
-              realtimeData: false,
-            });
-            if (UpiDetails.responseStatus?.status === true) {
-              upiDetailsData = UpiDetails?.responseData;
-            }
-          } catch (error) {}
-          try {
-            const payworld = await post('/api/secondary/payworld-all-data', {
-              sender_mobile: valid?.fixedNumber,
-            });
-            if (payworld?.responseData) {
-              payworldData = payworld;
-            }
-          } catch (error) {}
-
-          setResponseData({
-            datetime:
-              response?.responseData?.datetime || new Date().toISOString(),
-            data: {
-              profileAdvanceData,
-              panAllInOneData,
-              equifaxV3Data,
-              upiDetailsData,
-              payworldData,
-              mobileToAccountData,
-              razorPayData,
-            },
-          });
-
-          return toast.success('Data Fetched', {
-            id: toastId,
-          });
-        }
-
-        if (selectedSubTool?.searchKey === '/api/mobile/getAcDtlsFromMobNo') {
-          const ifsc =
-            response?.responseData?.result?.account_details?.account_ifsc;
-          let ifscData: RazorPayUpiType | null = null;
-          try {
-            if (ifsc) {
-              const ifscRes = await post('/api/secondary/ifsc-data', {
-                ifsc_code: ifsc,
-                realtimeData: false,
-              });
-              ifscData = ifscRes;
-            }
-          } catch (error) {}
-          setResponseData({
-            datetime: response?.datetime || new Date().toISOString(),
-            data: {
-              razorPayData: ifscData,
-              mobileToBankData: response.responseData,
-            },
-          });
-          return toast.success('Data Fetched', {
-            id: toastId,
-          });
-        }
-        if (selectedSubTool?.searchKey === '/api/mobile/breachinfo') {
-          const callingWith91 = await post('/api/mobile/breachinfo', {
-            request_body: `+91${valid.fixedNumber}`,
+        return toast.success('Data Fetched', {
+          id: toastId,
+        });
+      }
+      if (selectedSubTool.toolName === 'Mobile to Pan Card') {
+        const pan = response?.responseData?.data?.document_data?.pan?.[0];
+        if (pan) {
+          // calling profileAdvance
+          const panAllInOne = await post('/api/mobile/panallinone', {
+            pan_number: pan,
             realtimeData: false,
           });
-          let dataArray: {
-            mobile: string;
-            data: BreachInfoType | null;
-          }[] = [];
-          if (!response?.responseData?.data?.List?.['No results found']) {
-            dataArray.push({
-              mobile: valid.fixedNumber,
-              data: response,
-            });
-          }
-          if (!callingWith91?.responseData?.data?.List?.['No results found']) {
-            dataArray.push({
-              mobile: `+91${valid.fixedNumber}`,
-              data: callingWith91,
-            });
-          }
           setResponseData({
-            datetime: new Date().toISOString(),
-            data: dataArray,
-          });
-          return toast.success('Data Fetched', {
-            id: toastId,
-          });
-        }
-        if (selectedSubTool.searchKey === '/api/mobile/digitalpayment') {
-          setResponseData({
-            datetime: new Date().toISOString(),
-            data: response?.responseData,
-          });
-          return toast.success('Data Fetched', {
-            id: toastId,
-          });
-        }
-        if (selectedSubTool.searchKey === '/api/mobile/getMobile360Dtls') {
-          setResponseData({
+            data: panAllInOne?.responseData,
             datetime:
-              response?.responseData?.datetime || new Date().toISOString(),
-            data: response?.responseData,
+              panAllInOne?.responseData?.datetime || new Date().toISOString(),
           });
-          return toast.success('Data Fetched', {
-            id: toastId,
+        } else {
+          setResponseData({
+            data: {},
+            datetime: new Date().toISOString(),
           });
         }
-        if (response.responseData?.data && response.responseData?.datetime) {
-          setResponseData(response?.responseData);
-        }
-        toast.success('Data Fetched', {
+        return toast.success('Data Fetched', {
           id: toastId,
         });
-      } catch (error) {
-        toast.error('Error', {
-          id: toastId,
-        });
-      } finally {
-        setLoading(false);
       }
+      if (selectedSubTool.toolName === 'Financial 365 Intelligence') {
+        const data = await handleFIN365(response, valid);
+        setResponseData({
+          datetime:
+            response?.responseData?.datetime || new Date().toISOString(),
+          data: {
+            profileAdvanceData: data?.profileAdvanceData,
+            panAllInOneData: data?.panAllInOneData,
+            equifaxV3Data: data?.equifaxV3Data,
+            upiDetailsData: data?.upiDetailsData,
+            payworldData: data?.payworldData,
+            mobileToAccountData: data?.mobileToAccountData,
+            razorPayData: data?.razorPayData,
+          },
+        });
+
+        return toast.success('Data Fetched', {
+          id: toastId,
+        });
+      }
+      if (selectedSubTool.toolName === 'Mobile to Bank Info') {
+        const ifsc =
+          response?.responseData?.result?.account_details?.account_ifsc;
+        let ifscData: RazorPayUpiType | null = null;
+        try {
+          if (ifsc) {
+            const ifscRes = await post('/api/secondary/ifsc-data', {
+              ifsc_code: ifsc,
+              realtimeData: false,
+            });
+            ifscData = ifscRes;
+          }
+        } catch (error) {}
+        setResponseData({
+          datetime: response?.datetime || new Date().toISOString(),
+          data: {
+            razorPayData: ifscData,
+            mobileToBankData: response.responseData,
+          },
+        });
+        return toast.success('Data Fetched', {
+          id: toastId,
+        });
+      }
+      if (selectedSubTool.toolName === 'Mobile to Breach Info') {
+        const callingWith91 = await post('/api/mobile/breachinfo', {
+          request_body: `+91${searchValue}`,
+          realtimeData: false,
+        });
+        let dataArray: {
+          mobile: string;
+          data: BreachInfoType | null;
+        }[] = [];
+        if (!response?.responseData?.data?.List?.['No results found']) {
+          dataArray.push({
+            mobile: searchValue,
+            data: response,
+          });
+        }
+        if (!callingWith91?.responseData?.data?.List?.['No results found']) {
+          dataArray.push({
+            mobile: `+91${searchValue}`,
+            data: callingWith91,
+          });
+        }
+        setResponseData({
+          datetime: new Date().toISOString(),
+          data: dataArray,
+        });
+        return toast.success('Data Fetched', {
+          id: toastId,
+        });
+      }
+      if (selectedSubTool.toolName === 'Mobile to Multi UPI Info') {
+        setResponseData({
+          datetime: new Date().toISOString(),
+          data: response?.responseData,
+        });
+        return toast.success('Data Fetched', {
+          id: toastId,
+        });
+      }
+      if (selectedSubTool.toolName === 'Mobile 365 Intelligence') {
+        setResponseData({
+          datetime:
+            response?.responseData?.datetime || new Date().toISOString(),
+          data: response?.responseData,
+        });
+        return toast.success('Data Fetched', {
+          id: toastId,
+        });
+      }
+      if (response.responseData?.data && response.responseData?.datetime) {
+        setResponseData(response?.responseData);
+      }
+      toast.success('Data Fetched', {
+        id: toastId,
+      });
+    } catch (error) {
+      toast.error('Error', {
+        id: toastId,
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -487,7 +469,7 @@ export default function DigitalIntelligence() {
 
             <UniversalDigitalIntelligenceComp
               data={responseData?.data}
-              searchKey={selectedSubTool.searchKey}
+              searchTool={selectedSubTool.toolName}
               mobileNo={searchInputValue}
             />
           </div>
@@ -588,47 +570,36 @@ export default function DigitalIntelligence() {
                     <h1 className="flex w-full text-xl font-semibold">
                       {selectedSubTool.toolName}
                     </h1>
-                    {/* <label
-                      className="text-sm font-medium text-white text-white/80"
-                      htmlFor="firstInput"
-                    >
-                      optional
-                    </label> */}
+
                     <div
                       style={{ height: 'calc(100% - 80px)' }}
                       className="mt-2 flex h-full flex-col justify-between"
                     >
-                      <div className="flex flex-col space-y-1">
-                        <Input
-                          id="firstInput"
-                          placeholder="Enter mobile no"
-                          className="w-full border border-neutral-700"
-                          onChange={(e) => {
-                            const isValid = isValidIndianMobileNumber(
-                              e.target.value,
-                            );
-                            if (isValid.result) {
-                              setSearchInputValue(isValid.fixedNumber);
-                              setValid(true);
-                            } else {
-                              setValid(false);
-                            }
-                          }}
-                        />
-                        {!valid && (
-                          <p className="text-sm text-red-500">
-                            Please enter a valid mobile number
-                          </p>
+                      <div className="flex min-h-full flex-col space-y-4">
+                        {(selectedSubTool?.inputs?.length || 0) > 0 &&
+                          selectedSubTool?.inputs?.map((input) => (
+                            <CustomInputSearch
+                              key={input.label}
+                              label={input.label}
+                              upperOnly={true}
+                              placeholder={input.placeholder}
+                              type={input.type}
+                              handleSearch={handleSearch}
+                              validCheckFunction={input.validCheck}
+                            />
+                          ))}
+                        {!selectedSubTool?.inputs && (
+                          <CustomInputSearch
+                            label="Mobile Number"
+                            upperOnly={true}
+                            placeholder="Enter mobile no"
+                            type="number"
+                            handleSearch={handleSearch}
+                            validCheckFunction={(value: string) => {
+                              return isValidIndianMobileNumber(value).result;
+                            }}
+                          />
                         )}
-                      </div>
-                      <div className="min-w-full">
-                        <Button
-                          className="w-full bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20"
-                          disabled={!valid}
-                          onClick={handleSearch}
-                        >
-                          Click to Search
-                        </Button>
                       </div>
                     </div>
                   </div>
@@ -640,4 +611,101 @@ export default function DigitalIntelligence() {
       )}
     </div>
   );
+}
+
+async function handleFIN365(response: any, valid: any) {
+  let profileAdvanceData: ProfileAdvanceType | null = null;
+  let panAllInOneData: PanAllInOneType | null = null;
+  let equifaxV3Data: EquifaxV3Type | null = null;
+  let upiDetailsData: any = null;
+  let payworldData: PayWorldType | null = null;
+  let razorPayData: RazorPayUpiType | null = null;
+  let mobileToAccountData: MobileToAccountNumberType | null = null;
+
+  if (
+    Number(response.responseData?.status) === 1 ||
+    Number(response.responseData?.status) === 2
+  ) {
+    profileAdvanceData = response.responseData;
+  }
+
+  try {
+    const ActDetails = await post('/api/mobile/getAcDtlsFromMobNo', {
+      mobile_number: valid?.fixedNumber,
+      realtimeData: false,
+    });
+    if (Number(ActDetails.responseData?.status) === 1) {
+      mobileToAccountData = ActDetails.responseData;
+    }
+    const ifsc =
+      ActDetails?.responseData?.result?.account_details?.account_ifsc;
+    if (ifsc) {
+      const ifscRes = await post('/api/secondary/ifsc-data', {
+        ifsc_code: ifsc,
+        realtimeData: false,
+      });
+      razorPayData = ifscRes;
+    }
+  } catch (error) {}
+
+  const panNumber = profileAdvanceData?.result?.document_data?.pan[0]?.value;
+
+  if (panNumber) {
+    // calling panAllInone
+    try {
+      const panAllInOne = await post('/api/mobile/panallinone', {
+        pan_number: panNumber,
+        realtimeData: false,
+      });
+      if (
+        Number(panAllInOne.responseData?.status) === 1 ||
+        Number(panAllInOne.responseData?.status) === 2
+      ) {
+        panAllInOneData = panAllInOne.responseData;
+      }
+    } catch (error) {}
+    try {
+      const EquifaxData = await post('/api/mobile/equifaxv3', {
+        mobile: valid.fixedNumber,
+        name: 'bank',
+        id_type: 'pan',
+        id_number: panNumber,
+        realtimeData: false,
+      });
+      if (
+        Number(EquifaxData.responseData?.status) === 1 ||
+        Number(EquifaxData.responseData?.status) === 2
+      ) {
+        equifaxV3Data = EquifaxData.responseData;
+      }
+    } catch (error) {}
+  }
+
+  try {
+    const UpiDetails = await post('/api/mobile/digitalpayment', {
+      mobile_number: valid?.fixedNumber,
+      realtimeData: false,
+    });
+    if (UpiDetails.responseStatus?.status === true) {
+      upiDetailsData = UpiDetails?.responseData;
+    }
+  } catch (error) {}
+  try {
+    const payworld = await post('/api/secondary/payworld-all-data', {
+      sender_mobile: valid?.fixedNumber,
+    });
+    if (payworld?.responseData) {
+      payworldData = payworld;
+    }
+  } catch (error) {}
+
+  return {
+    profileAdvanceData,
+    panAllInOneData,
+    equifaxV3Data,
+    upiDetailsData,
+    payworldData,
+    razorPayData,
+    mobileToAccountData,
+  };
 }

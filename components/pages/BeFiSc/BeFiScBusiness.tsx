@@ -150,7 +150,7 @@ export default function BeFiScBusiness({
         </div>
       </DashboardCard>
 
-      {/* verfiy udyma */}
+      {/* verfiy udyam */}
       <div>
         <DashboardCard title="Udyam Details" className="">
           <div className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-3">

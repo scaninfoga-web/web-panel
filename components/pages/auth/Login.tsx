@@ -1,10 +1,8 @@
 'use client';
 
 import { useForm } from 'react-hook-form';
-import { date, z } from 'zod';
+import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useAuth } from '@/components/providers/AuthProvider';
-import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
@@ -17,10 +15,7 @@ import { clearCookies } from '@/actions/clearCookies';
 import { useState } from 'react';
 import Image from 'next/image';
 import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
-import { setCookie, getCookie, deleteCookie } from 'cookies-next';
 import { post } from '@/lib/api';
-import { fetchWalletBalance } from '@/redux/walletSlice';
-
 const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
@@ -177,9 +172,9 @@ const Login = () => {
                 <FormInput
                   form={form}
                   name="otp"
-                  label="OTP"
+                  label="Google Authenticator Code"
                   type="text"
-                  placeholder="Enter OTP"
+                  placeholder="enter google authenticator code"
                 />
               </>
             )}

@@ -2,8 +2,11 @@ import NotFound from '@/components/sub/NotFound';
 import React, { useState } from 'react';
 import { formatSentence } from '@/components/custom/functions/formatUtils';
 import { DashboardCard } from '../../dashboard/components/DashboardCard';
-import { MobileToAccountNumberType, RazorPayUpiType } from '@/types/BeFiSc';
-import { getValue } from '../../BeFiSc/sub/CustomBeFiScCard';
+import {
+  MobileToAccountNumberType,
+  PanAllInOneType,
+  RazorPayUpiType,
+} from '@/types/BeFiSc';
 import { getClientInfo, post } from '@/lib/api';
 import { OlaGeoApiType } from '@/types/ola-geo-api';
 import { toast } from 'sonner';
@@ -11,23 +14,31 @@ import SentenceLoader from '../../BeFiSc/sub/SentenceLoader';
 import CustomPopUp from '../../BeFiSc/sub/CustomPopUp';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
+import InfoText2 from '@/components/custom/components/InfoText2';
+import CustomBeFiScCard, { getValue } from '../../BeFiSc/sub/CustomBeFiScCard';
+import CustomBadge from '../../BeFiSc/sub/CustomBadge';
 
 interface PageProps {
-  data: {
-    razorPayData: RazorPayUpiType | null;
-    mobileToBankData: MobileToAccountNumberType | null;
-  };
+  data: PanAllInOneType | null;
 }
 
 const olaData: Map<string, OlaGeoApiType> = new Map();
-const M2BankInfo: React.FC<PageProps> = ({ data }) => {
+const M2PanCard: React.FC<PageProps> = ({ data }) => {
   const [addressData, setAddressData] = useState<null | {
     address: string;
     data: OlaGeoApiType;
   }>(null);
   const [mapLoading, setMapLoading] = useState(false);
+  console.log('panaAlii one Data', data);
 
-  const handleView = async (address: string) => {
+  const handleView = async (
+    address: string,
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+  ) => {
+    if (address?.length < 10) {
+      e.stopPropagation();
+      return toast.error('Address is too small', { id: 1 });
+    }
     const clientInfo = getClientInfo();
     try {
       setMapLoading(true);
@@ -55,128 +66,63 @@ const M2BankInfo: React.FC<PageProps> = ({ data }) => {
       setMapLoading(false);
     }
   };
+  const fullAddress = `${data?.result?.address?.line_1 || ''} ${
+    data?.result?.address?.line_2 || ''
+  } ${data?.result?.address?.city || ''} ${
+    data?.result?.address?.state || ''
+  } ${data?.result?.address?.zip || ''} ${
+    data?.result?.address?.country || ''
+  }`;
+
   return (
     <div className="max-h-[65vh] overflow-auto">
-      {Object.keys(data?.mobileToBankData?.result?.account_details || {})
-        .length > 0 ? (
-        <div className="p-2">
-          <DashboardCard title={``}>
+      {Object.keys(data?.result || {}).length > 0 ? (
+        <div className="grid grid-cols-1 gap-4 p-2">
+          <DashboardCard title={`Details`}>
             <div className="grid grid-cols-1 gap-4">
               <div className="grid grid-cols-3 gap-4">
-                <div>
-                  <p className="text-sm text-gray-400">Account Holder Name</p>
-                  <p className="text-base font-medium">
-                    {formatSentence(
-                      data?.mobileToBankData?.result?.vpa_details
-                        ?.account_holder_name,
-                    )}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-400">Bank</p>
-                  <p className="break-all text-base font-medium">
-                    {formatSentence(
-                      data?.razorPayData?.responseData?.data?.BANK,
-                    )}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-400">VPA</p>
-                  <p className="break-all text-base font-medium">
-                    {getValue(
-                      data?.mobileToBankData?.result?.vpa_details?.vpa?.toLowerCase(),
-                    )}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-400">Account IFSC</p>
-                  <p className="text-base font-medium text-blue-500">
-                    {getValue(
-                      data?.mobileToBankData?.result?.account_details
-                        ?.account_ifsc,
-                    )}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-400">Account Number</p>
-                  <p className="text-base font-medium text-blue-500">
-                    {formatSentence(
-                      data?.mobileToBankData?.result?.account_details
-                        ?.account_number,
-                    )}
-                  </p>
-                </div>
-                {/* raxorpay  */}
-                <div>
-                  <p className="text-sm text-gray-400">UPI</p>
-                  <p className="text-base font-medium text-yellow-500">
-                    {formatSentence(
-                      data?.razorPayData?.responseData?.data?.UPI,
-                    )}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-400">NEFT</p>
-                  <p className="text-base font-medium text-yellow-500">
-                    {formatSentence(
-                      data?.razorPayData?.responseData?.data?.NEFT,
-                    )}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-400">SWIFT</p>
-                  <p className="text-base font-medium text-yellow-500">
-                    {formatSentence(
-                      data?.razorPayData?.responseData?.data?.SWIFT,
-                    )}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-400">RTGS</p>
-                  <p className="text-base font-medium text-yellow-500">
-                    {formatSentence(
-                      data?.razorPayData?.responseData?.data?.RTGS,
-                    )}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-400">IMPS</p>
-                  <p className="text-base font-medium text-yellow-500">
-                    {formatSentence(
-                      data?.razorPayData?.responseData?.data?.IMPS,
-                    )}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-400">MICR</p>
-                  <p className="text-base font-medium text-yellow-500">
-                    {formatSentence(
-                      data?.razorPayData?.responseData?.data?.MICR,
-                    )}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-400">ISO3166</p>
-                  <p className="text-base font-medium">
-                    {data?.razorPayData?.responseData?.data?.ISO3166?.toUpperCase()}
-                  </p>
-                </div>
+                <InfoText2
+                  label="Name"
+                  value={formatSentence(data?.result?.full_name)}
+                />
+                <InfoText2
+                  label="DOB"
+                  value={formatSentence(data?.result?.dob || '')}
+                />
+                <InfoText2
+                  label="Gender"
+                  value={formatSentence(data?.result?.gender)}
+                />
+                <InfoText2
+                  label="Phone Number"
+                  value={formatSentence(data?.result?.phone_number)}
+                  valueClassName="text-yellow-500"
+                />
+                <InfoText2
+                  label="Aadhaar"
+                  value={getValue(data?.result?.masked_aadhaar)}
+                  valueClassName="text-yellow-500"
+                />
+                <InfoText2
+                  label="Email"
+                  value={formatSentence(data?.result?.email)}
+                  valueClassName="text-yellow-500"
+                />
+                <InfoText2
+                  label="Aadhaar Linked"
+                  value={<CustomBadge value={data?.result?.aadhaar_linked} />}
+                />
               </div>
               <div>
                 <p className="text-sm text-gray-400">Address</p>
                 <div className="text-base font-medium">
-                  {formatSentence(
-                    data?.razorPayData?.responseData?.data?.ADDRESS,
-                  )}
+                  {formatSentence(fullAddress)}
                   <CustomPopUp
                     dialogTitle={''}
                     triggerElement={
                       <Button
-                        onClick={() => {
-                          handleView(
-                            data?.razorPayData?.responseData?.data?.ADDRESS ||
-                              '',
-                          );
+                        onClick={(e) => {
+                          handleView(fullAddress, e);
                         }}
                         size={'sm'}
                         variant={'ghost'}
@@ -251,14 +197,28 @@ const M2BankInfo: React.FC<PageProps> = ({ data }) => {
               </div>
             </div>
           </DashboardCard>
+          <div className="grid grid-cols-2 gap-3">
+            <CustomBeFiScCard
+              data={data?.result?.is_sole_proprietor?.info}
+              title="isSoleProprietor"
+            />
+            <CustomBeFiScCard
+              data={data?.result?.is_director?.info}
+              title="isDirector"
+            />
+          </div>
+          <CustomBeFiScCard
+            data={data?.result?.din_info?.company_list}
+            title={`Din  Info: ${data?.result?.din_info?.din}`}
+          />
         </div>
       ) : (
         <div>
-          <NotFound value="No Account Detected" />
+          <NotFound value="No Pan Details Found" />
         </div>
       )}
     </div>
   );
 };
 
-export default M2BankInfo;
+export default M2PanCard;

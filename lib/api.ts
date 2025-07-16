@@ -14,7 +14,7 @@ const axiosInstance = axios.create({
 });
 
 // Function to get current auth token
-const getAuthToken = () => {
+export const getAuthToken = () => {
   return store.getState().user.token || null;
 };
 
