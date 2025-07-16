@@ -28,7 +28,7 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 const userTypeOptions = [
   { label: 'Agent', value: 'user' },
   { label: 'Corporate', value: 'corporate' },
-  { label: 'Developer', value: 'developer' },
+  // { label: 'Developer', value: 'developer' },
 ];
 
 const Login = () => {
@@ -37,12 +37,15 @@ const Login = () => {
   // const { login } = useAuth();
   const dispatch = useDispatch();
   const [qrCode, setQrCode] = useState<string | null>(null);
+  const [userType, setUserType] = useState<'user' | 'corporate' | 'developer'>(
+    'user',
+  );
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       email: '',
       password: '',
-      userType: 'user',
+      userType: userType,
     },
   });
   // const userType = form.watch('userType');
@@ -144,12 +147,49 @@ const Login = () => {
       >
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onLogin)} className="space-y-4">
-            <FormRadioGroup
+            {/* <FormRadioGroup
               form={form}
               name="userType"
               label="Account Type"
               options={userTypeOptions}
-            />
+            /> */}
+            <div className="mb-8">
+              <div className="flex gap-2 rounded-lg bg-[#0A0D14] p-1">
+                <button
+                  type="button"
+                  className={`flex-1 rounded-md px-4 py-2 transition-colors ${
+                    userType === 'user'
+                      ? 'bg-emerald-500 text-black'
+                      : 'text-white hover:bg-emerald-500/20'
+                  }`}
+                  onClick={() => setUserType('user')}
+                >
+                  Agent
+                </button>
+                {/* <button
+              type="button"
+              className={`flex-1 rounded-md px-4 py-2 transition-colors ${
+                type === 'developer'
+                  ? 'bg-emerald-500 text-black'
+                  : 'text-white hover:bg-emerald-500/20'
+              }`}
+              onClick={() => setType('developer')}
+            >
+              Developer
+            </button> */}
+                <button
+                  type="button"
+                  className={`flex-1 rounded-md px-4 py-2 transition-colors ${
+                    userType === 'corporate'
+                      ? 'bg-emerald-500 text-black'
+                      : 'text-white hover:bg-emerald-500/20'
+                  }`}
+                  onClick={() => setUserType('corporate')}
+                >
+                  Corporate
+                </button>
+              </div>
+            </div>
 
             <FormInput
               form={form}
