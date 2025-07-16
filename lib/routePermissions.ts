@@ -12,6 +12,7 @@ export const publicRoutes: string[] = [
   '/terms-conditions',
   '/privacy',
   '/refund-policy',
+  '/services',
 ];
 
 export const routeAccess: Record<string, string[]> = {

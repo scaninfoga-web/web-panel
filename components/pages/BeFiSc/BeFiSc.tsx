@@ -621,6 +621,7 @@ export default function BeFiSc() {
           if (error instanceof AxiosError) {
           }
         }
+        // mobile to account
         try {
           const ActDetails = await post('/api/mobile/getAcDtlsFromMobNo', {
             mobile_number: mobileNo,

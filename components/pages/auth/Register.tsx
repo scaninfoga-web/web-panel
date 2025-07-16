@@ -223,7 +223,9 @@ export function Register({ type: initialType }: RegisterProps) {
 
       // toast.error('Registeration is Off Now');
       // return;
-
+      if (process.env.NEXT_PUBLIC_BACKEND_URL?.includes('dev')) {
+        return toast.error('Registeration is Off');
+      }
       if (type !== 'agent') {
         toast.error(type + ' registeration are OFF');
         return;
@@ -550,7 +552,7 @@ export function Register({ type: initialType }: RegisterProps) {
             >
               Agent
             </button>
-            <button
+            {/* <button
               type="button"
               className={`flex-1 rounded-md px-4 py-2 transition-colors ${
                 type === 'developer'
@@ -560,7 +562,7 @@ export function Register({ type: initialType }: RegisterProps) {
               onClick={() => setType('developer')}
             >
               Developer
-            </button>
+            </button> */}
             <button
               type="button"
               className={`flex-1 rounded-md px-4 py-2 transition-colors ${

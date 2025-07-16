@@ -46,14 +46,21 @@ export default function BeFiScFinancial({
   payworldData,
 }: PageProps) {
   const [activeTab, setActiveTab] = React.useState('bank');
-  let creditCount = 0;
-  let loanCount = 0;
-  EquifaxV3Data?.result?.credit_report?.CCRResponse?.CIRReportDataLst[0]?.CIRReportData?.RetailAccountDetails.map(
-    (val) =>
-      val?.AccountType === 'Credit Card'
-        ? (creditCount = creditCount + 1)
-        : (loanCount = loanCount + 1),
-  );
+
+  const getCount = () => {
+    let creditCount = 0;
+    let loanCount = 0;
+    EquifaxV3Data?.result?.credit_report?.CCRResponse?.CIRReportDataLst[0]?.CIRReportData?.RetailAccountDetails.map(
+      (val) =>
+        val?.AccountType === 'Credit Card'
+          ? (creditCount = creditCount + 1)
+          : (loanCount = loanCount + 1),
+    );
+    return {
+      creditCount,
+      loanCount,
+    };
+  };
 
   const tabs = [
     { value: 'bank', label: 'Bank Details' },
@@ -257,11 +264,11 @@ export default function BeFiScFinancial({
             <div className="flex flex-col pl-1 text-xl font-semibold uppercase">
               <span className="flex text-red-400">
                 Total Loans :{' '}
-                <p className="pl-2 text-yellow-500">{loanCount}</p>
+                <p className="pl-2 text-yellow-500">{getCount().loanCount}</p>
               </span>
               <span className="flex text-red-400">
                 Total Credit Cards :{' '}
-                <p className="pl-2 text-yellow-500">{creditCount}</p>
+                <p className="pl-2 text-yellow-500">{getCount().creditCount}</p>
               </span>
             </div>
             <DashboardCard title="Details">

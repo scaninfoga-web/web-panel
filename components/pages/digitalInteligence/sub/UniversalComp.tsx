@@ -9,47 +9,44 @@ import M2EsicUan from './M2UanEsic';
 import M2GstUdyamIEC from './M2GstUdyamIEC';
 import M2Breach from './M2Breach';
 import M2365 from './M2365';
+import M2BankInfo from './M2BankInfo';
+import Fin365Intelligence from './Fin365Intelligence';
+import M2PanCard from './M2PanCard';
 
 const getComp = new Map<string, React.FC<{ data: any; mobileNo: string }>>([
-  ['/api/digital-intelligence/get-lpg-info', LPG as React.FC<{ data: any }>],
   [
-    '/api/digital-intelligence/get-alt-email',
-    M2Emails as React.FC<{ data: any }>,
+    'Financial 365 Intelligence',
+    Fin365Intelligence as React.FC<{ data: any; mobileNo: string }>,
   ],
   [
-    '/api/digital-intelligence/get-document-data',
-    M2Documents as React.FC<{ data: any }>,
-  ],
-  [
-    '/api/digital-intelligence/get-address',
-    M2Address as React.FC<{ data: any }>,
-  ],
-  [
-    '/api/digital-intelligence/get-alt-mobile-number',
+    'Mobile to Alternate Number',
     M2MobileNumber as React.FC<{ data: any; mobileNo: string }>,
   ],
-  [
-    '/api/digital-intelligence/get-esic-uan',
-    M2EsicUan as React.FC<{ data: any }>,
-  ],
-  [
-    '/api/digital-intelligence/get-gst-udyam-iec',
-    M2GstUdyamIEC as React.FC<{ data: any }>,
-  ],
-  ['/api/mobile/digitalpayment', M2UPI as React.FC<{ data: any }>],
-  ['/api/mobile/breachinfo', M2Breach as React.FC<{ data: any }>],
-  ['/api/mobile/getMobile360Dtls', M2365 as React.FC<{ data: any }>],
+  ['Mobile to Gas Info', LPG as React.FC<{ data: any }>],
+  ['Mobile to Email', M2Emails as React.FC<{ data: any }>],
+  ['Mobile All Linked DOC', M2Documents as React.FC<{ data: any }>],
+  ['Mobile to Address', M2Address as React.FC<{ data: any }>],
+  ['Mobile to ESIC, UAN', M2EsicUan as React.FC<{ data: any }>],
+  ['Mobile to GST, Udyam, IEC', M2GstUdyamIEC as React.FC<{ data: any }>],
+  ['Mobile to Multi UPI Info', M2UPI as React.FC<{ data: any }>],
+  ['Mobile to Breach Info', M2Breach as React.FC<{ data: any }>],
+  ['Mobile 365 Intelligence', M2365 as React.FC<{ data: any }>],
+  ['Mobile to Bank Info', M2BankInfo as React.FC<{ data: any }>],
+  ['Mobile to Pan Card', M2PanCard as React.FC<{ data: any }>],
+  ['Pan Card Info', M2PanCard as React.FC<{ data: any }>],
 ]);
 
 export default function UniversalDigitalIntelligenceComp({
   data,
-  searchKey,
+  searchTool,
   mobileNo,
 }: {
   data: any;
-  searchKey: string;
+  searchTool: string;
   mobileNo: string;
 }) {
-  const Comp = getComp.get(searchKey);
+  const Comp = getComp.get(searchTool);
+  console.log('data', data);
+  console.log('searchTool', searchTool);
   return <div>{Comp ? <Comp data={data} mobileNo={mobileNo} /> : null}</div>;
 }
