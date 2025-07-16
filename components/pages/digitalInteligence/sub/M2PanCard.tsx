@@ -29,7 +29,6 @@ const M2PanCard: React.FC<PageProps> = ({ data }) => {
     data: OlaGeoApiType;
   }>(null);
   const [mapLoading, setMapLoading] = useState(false);
-  console.log('panaAlii one Data', data);
 
   const handleView = async (
     address: string,
@@ -81,6 +80,11 @@ const M2PanCard: React.FC<PageProps> = ({ data }) => {
           <DashboardCard title={`Details`}>
             <div className="grid grid-cols-1 gap-4">
               <div className="grid grid-cols-3 gap-4">
+                <InfoText2
+                  label="Pan Number"
+                  value={data?.result?.pan_number?.toUpperCase()}
+                  valueClassName="text-yellow-500"
+                />
                 <InfoText2
                   label="Name"
                   value={formatSentence(data?.result?.full_name)}
