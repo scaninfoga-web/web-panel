@@ -223,6 +223,7 @@ export function Register({ type: initialType }: RegisterProps) {
 
       // toast.error('Registeration is Off Now');
       // return;
+
       if (process.env.NEXT_PUBLIC_BACKEND_URL?.includes('dev')) {
         return toast.error('Registeration is Off');
       }
@@ -539,11 +540,11 @@ export function Register({ type: initialType }: RegisterProps) {
 
       {/* Type Selection - Only show on details step */}
       {currentStep === 'details' && (
-        <div className="mb-8">
-          <div className="flex gap-2 rounded-lg bg-[#0A0D14] p-1">
+        <div className="mb-8 rounded-2xl">
+          <div className="flex gap-2 rounded-2xl bg-[#0A0D14] p-1">
             <button
               type="button"
-              className={`flex-1 rounded-md px-4 py-2 transition-colors ${
+              className={`flex-1 rounded-2xl px-4 py-2 transition-colors ${
                 type === 'agent'
                   ? 'bg-emerald-500 text-black'
                   : 'text-white hover:bg-emerald-500/20'
@@ -565,7 +566,7 @@ export function Register({ type: initialType }: RegisterProps) {
             </button> */}
             <button
               type="button"
-              className={`flex-1 rounded-md px-4 py-2 transition-colors ${
+              className={`flex-1 rounded-2xl px-4 py-2 transition-colors ${
                 type === 'corporate'
                   ? 'bg-emerald-500 text-black'
                   : 'text-white hover:bg-emerald-500/20'

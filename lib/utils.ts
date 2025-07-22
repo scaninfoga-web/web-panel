@@ -42,7 +42,11 @@ export const getClientInfo = async (): Promise<ClientInfo | Error> => {
   let longitude = 'Unavailable';
   try {
     const position = await new Promise<GeolocationPosition>((resolve, reject) =>
-      navigator.geolocation.getCurrentPosition(resolve, reject),
+      navigator.geolocation.getCurrentPosition(resolve, reject, {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0,
+      }),
     );
     latitude = position.coords.latitude.toFixed(6);
     longitude = position.coords.longitude.toFixed(6);

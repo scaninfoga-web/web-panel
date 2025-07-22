@@ -63,14 +63,15 @@ export function DashboardCard({
 interface InfoTextProps {
   label: string;
   value: React.ReactElement | string;
+  valueClassname?: string;
 }
 
-export function InfoText({ label, value }: InfoTextProps) {
+export function InfoText({ label, value, valueClassname }: InfoTextProps) {
   // return <p className="text-sm text-gray-400">{value}</p>;
   return (
     <div className="flex items-center justify-between gap-x-8">
       <div className="whitespace-nowrap text-sm text-white">{label}</div>
-      <div className="whitespace-nowrap break-all text-sm text-gray-400">
+      <div className={cn('break-words text-sm text-gray-400', valueClassname)}>
         {value}
       </div>
     </div>

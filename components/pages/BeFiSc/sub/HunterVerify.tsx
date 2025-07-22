@@ -52,7 +52,7 @@ function HunterVerifyComponent({
           !item?.data?.responseData?.data?.data.sources ||
           item?.data?.responseData?.data?.data.sources?.length === 0
         ) {
-          return <></>;
+          return null;
         }
 
         return (

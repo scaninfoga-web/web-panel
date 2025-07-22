@@ -152,11 +152,11 @@ const Login = () => {
               label="Account Type"
               options={userTypeOptions}
             /> */}
-            <div className="mb-8">
-              <div className="flex gap-2 rounded-lg bg-[#0A0D14] p-1">
+            <div className="mb-8 rounded-2xl">
+              <div className="flex gap-2 rounded-2xl bg-[#0A0D14] p-1">
                 <button
                   type="button"
-                  className={`flex-1 rounded-md px-4 py-2 transition-colors ${
+                  className={`flex-1 rounded-2xl px-4 py-2 transition-colors ${
                     userType === 'user'
                       ? 'bg-emerald-500 text-black'
                       : 'text-white hover:bg-emerald-500/20'
@@ -178,7 +178,7 @@ const Login = () => {
             </button> */}
                 <button
                   type="button"
-                  className={`flex-1 rounded-md px-4 py-2 transition-colors ${
+                  className={`flex-1 rounded-2xl px-4 py-2 transition-colors ${
                     userType === 'corporate'
                       ? 'bg-emerald-500 text-black'
                       : 'text-white hover:bg-emerald-500/20'
@@ -211,9 +211,9 @@ const Login = () => {
                 <FormInput
                   form={form}
                   name="otp"
-                  label="Google Authenticator Code"
+                  label="Google Authenticator"
                   type="text"
-                  placeholder="enter google authenticator code"
+                  placeholder="Enter code from google authenticator"
                 />
               </>
             )}

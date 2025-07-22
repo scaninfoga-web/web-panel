@@ -55,29 +55,17 @@ export default function Navbar() {
         }
       } catch (e) {
         if (e instanceof Error) {
+          console.log(e);
           router.push('/');
-          try {
-            const permission = await navigator.permissions.query({
-              name: 'geolocation',
-            });
-
-            if (permission.state === 'denied') {
-              toast.error(
-                'We need your location to proceed. Please enable it in your browser’s address bar.',
-                {
-                  id: 1,
-                  duration: 3000,
-                },
-              );
-              router.refresh();
-              return;
-            }
-            const retryInfo = await getClientInfo();
-            if (!(retryInfo instanceof Error)) {
-              dispatch(setInfo(retryInfo));
-              return;
-            }
-          } catch (geoError) {}
+          toast.error(
+            'We need your location to proceed. Please enable it in your browser’s address bar.',
+            {
+              id: 1,
+              duration: 3000,
+            },
+          );
+          router.refresh();
+          return;
         }
       }
     };

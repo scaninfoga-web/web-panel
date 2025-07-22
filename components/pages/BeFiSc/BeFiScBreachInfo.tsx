@@ -23,6 +23,9 @@ import Hudson from './sub/Hudson';
 import { HoleheType } from '@/types/holhe';
 import { GhuntData } from '@/types/ghunt';
 import EmailDetector from './sub/EmailDetector';
+import { DarkWebType, ObjectArrayLeakType } from '@/types/dark-web';
+import DarkWebComponent from './sub/DarkWebComponent';
+
 interface PageProps {
   data: {
     value: string;
@@ -60,6 +63,31 @@ interface PageProps {
     data: HoleheType | null;
   }[];
   ghuntMultipleData: GhuntData[];
+  zomatoLeakData: {
+    value: string;
+    type: string;
+    data: DarkWebType | null;
+  }[];
+  coperateLeakData: {
+    value: string;
+    type: string;
+    data: DarkWebType | null;
+  }[];
+  cbseLeakData: {
+    value: string;
+    type: string;
+    data: DarkWebType | null;
+  }[];
+  olxLeakData: {
+    value: string;
+    type: string;
+    data: ObjectArrayLeakType | null;
+  }[];
+  indiaMartLeakData: {
+    value: string;
+    type: string;
+    data: ObjectArrayLeakType | null;
+  }[];
 }
 export const dangerKeyWords = [
   'Password',
@@ -95,6 +123,11 @@ export default function BeFiScBreachInfo({
   hudsonData,
   holeheData,
   ghuntMultipleData,
+  zomatoLeakData,
+  coperateLeakData,
+  cbseLeakData,
+  olxLeakData,
+  indiaMartLeakData,
 }: PageProps) {
   const [activeTab, setActiveTab] = useState('breach');
   const [breachSubTab, setBreachSubTab] = useState('emails');
@@ -157,14 +190,64 @@ export default function BeFiScBreachInfo({
 
   const darkWebTabs = [
     leakHunterData?.length > 0 &&
-    leakHunterData?.[0]?.data?.responseData?.password &&
-    leakHunterData?.[0]?.data?.responseData?.password?.length > 0
+    leakHunterData?.some((item) => {
+      if (
+        item?.data?.responseData?.password &&
+        item?.data?.responseData?.password?.length > 0
+      ) {
+        return true;
+      }
+    })
       ? { value: 'leakHunter', label: 'Leak Hunter' }
       : null,
     jobSeekerData?.length > 0 &&
-    jobSeekerData?.[0]?.data?.responseData &&
-    Object.keys(jobSeekerData?.[0]?.data?.responseData).length > 0
+    jobSeekerData?.some((item) => {
+      if (Object.keys(item?.data?.responseData || {}).length > 0) {
+        return true;
+      }
+    })
       ? { value: 'jobSeeker', label: 'Job Seeker' }
+      : null,
+
+    zomatoLeakData?.length > 0 &&
+    zomatoLeakData?.some((item) => {
+      if (Object.keys(item?.data?.responseData || {}).length > 0) {
+        return true;
+      }
+    })
+      ? { value: 'zomatoLeak', label: 'Zomato Leak' }
+      : null,
+    coperateLeakData?.length > 0 &&
+    coperateLeakData?.some((item) => {
+      if (Object.keys(item?.data?.responseData || {}).length > 0) {
+        return true;
+      }
+    })
+      ? { value: 'coperateLeak', label: 'Cooperate Leak' }
+      : null,
+    cbseLeakData?.length > 0 &&
+    cbseLeakData?.some((item) => {
+      if (Object.keys(item?.data?.responseData || {}).length > 0) {
+        return true;
+      }
+    })
+      ? { value: 'cbseLeak', label: 'CBSE Leak' }
+      : null,
+    olxLeakData?.length > 0 &&
+    olxLeakData?.some((item) => {
+      if ((item?.data?.responseData?.length || 0) > 0) {
+        return true;
+      }
+    })
+      ? { value: 'olxLeak', label: 'OLX Leak' }
+      : null,
+    indiaMartLeakData?.length > 0 &&
+    indiaMartLeakData?.some((item) => {
+      if ((item?.data?.responseData?.length || 0) > 0) {
+        return true;
+      }
+    })
+      ? { value: 'indiaMartLeak', label: 'India Mart Leak' }
       : null,
   ];
 
@@ -711,6 +794,64 @@ export default function BeFiScBreachInfo({
               ) && (
                 <TabsContent value="jobSeeker">
                   <JobSeeker jobSeekerData={jobSeekerData} />
+                </TabsContent>
+              )}
+
+            {zomatoLeakData?.length > 0 &&
+              zomatoLeakData?.some((item) => {
+                if (Object.keys(item?.data?.responseData || {}).length > 0) {
+                  return true;
+                }
+              }) && (
+                <TabsContent value="zomatoLeak">
+                  <DarkWebComponent leakData={zomatoLeakData} />
+                </TabsContent>
+              )}
+            {coperateLeakData?.length > 0 &&
+              coperateLeakData?.some((item) => {
+                if (Object.keys(item?.data?.responseData || {}).length > 0) {
+                  return true;
+                }
+              }) && (
+                <TabsContent value="coperateLeak">
+                  <DarkWebComponent leakData={coperateLeakData} />
+                </TabsContent>
+              )}
+
+            {cbseLeakData?.length > 0 &&
+              cbseLeakData?.some((item) => {
+                if (Object.keys(item?.data?.responseData || {}).length > 0) {
+                  return true;
+                }
+              }) && (
+                <TabsContent value="cbseLeak">
+                  <DarkWebComponent leakData={cbseLeakData} />
+                </TabsContent>
+              )}
+            {olxLeakData?.length > 0 &&
+              olxLeakData?.some((item) => {
+                if ((item?.data?.responseData?.length || 0) > 0) {
+                  return true;
+                }
+              }) && (
+                <TabsContent value="olxLeak">
+                  <DarkWebComponent
+                    leakData={olxLeakData}
+                    isArrayObject={true}
+                  />
+                </TabsContent>
+              )}
+            {indiaMartLeakData?.length > 0 &&
+              indiaMartLeakData?.some((item) => {
+                if ((item?.data?.responseData?.length || 0) > 0) {
+                  return true;
+                }
+              }) && (
+                <TabsContent value="indiaMartLeak">
+                  <DarkWebComponent
+                    leakData={indiaMartLeakData}
+                    isArrayObject={true}
+                  />
                 </TabsContent>
               )}
           </Tabs>

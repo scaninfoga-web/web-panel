@@ -63,6 +63,7 @@ import {
 import BeFiScDigitalFootprint from './BeFiScDigitalFootprint';
 import { isValidIndianMobileNumber } from '@/components/custom/functions/checkingUtils';
 import { HoleheType } from '@/types/holhe';
+import { DarkWebType, ObjectArrayLeakType } from '@/types/dark-web';
 
 export default function BeFiSc() {
   const searchParams = useSearchParams();
@@ -178,6 +179,41 @@ export default function BeFiSc() {
       data: HoleheType | null;
     }[]
   >([]);
+  const [zomatoLeakData, setZomatoLeakData] = useState<
+    {
+      value: string;
+      type: string;
+      data: DarkWebType | null;
+    }[]
+  >([]);
+  const [coperateLeakData, setCoperateLeakData] = useState<
+    {
+      value: string;
+      type: string;
+      data: DarkWebType | null;
+    }[]
+  >([]);
+  const [cbseLeakData, setcbseLeakData] = useState<
+    {
+      value: string;
+      type: string;
+      data: DarkWebType | null;
+    }[]
+  >([]);
+  const [olxLeakData, setolxLeakData] = useState<
+    {
+      value: string;
+      type: string;
+      data: ObjectArrayLeakType | null;
+    }[]
+  >([]);
+  const [indiaMartLeakData, setindiaMartLeakData] = useState<
+    {
+      value: string;
+      type: string;
+      data: ObjectArrayLeakType | null;
+    }[]
+  >([]);
   const numbersFoundRef = useRef<number>(0);
   const addressesFound = useRef<number>(0);
   const [_1tabLoading, set_1tabLoading] = useState(false);
@@ -257,6 +293,11 @@ export default function BeFiSc() {
       totalBreachFields: 0,
     });
     setHoleheData([]);
+    setZomatoLeakData([]);
+    setCoperateLeakData([]);
+    setcbseLeakData([]);
+    setolxLeakData([]);
+    setindiaMartLeakData([]);
   };
 
   useEffect(() => {
@@ -895,6 +936,7 @@ export default function BeFiSc() {
 
         if (otherNumber.length > 0 || otherEmails.length > 0) {
           setBreachInfoLoading(true);
+
           let holehe: {
             value: string;
             type: string;
@@ -1121,6 +1163,201 @@ export default function BeFiSc() {
             } catch (error) {}
           }
           if (otherNumber.length > 0) {
+            // otherNumber.push({
+            //   number: '9599374108',
+            //   type: 'Demo purpose',
+            // });
+            // calling indiaMart Leaks
+            let indiaMarkLeak: {
+              value: string;
+              type: string;
+              data: ObjectArrayLeakType | null;
+            }[] = [];
+            // calling with emails
+            if (otherEmails.length > 0) {
+              try {
+                const emailResults = await Promise.allSettled(
+                  otherEmails.map((email) =>
+                    post('/api/leak-data/get-india-mart', {
+                      request_body: email?.email,
+                    }),
+                  ),
+                );
+                emailResults.forEach((result, index) => {
+                  if (result.status === 'fulfilled') {
+                    indiaMarkLeak.push({
+                      value: otherEmails[index]?.email,
+                      type: otherEmails[index]?.type,
+                      data: result.value,
+                    });
+                  } else {
+                    indiaMarkLeak.push({
+                      value: otherEmails[index]?.email,
+                      type: otherEmails[index]?.type,
+                      data: null,
+                    });
+                  }
+                });
+              } catch (error) {}
+            }
+            // calling with number
+            try {
+              const numberResults = await Promise.allSettled(
+                otherNumber.map((number) =>
+                  post('/api/leak-data/get-india-mart', {
+                    request_body: number.number,
+                  }),
+                ),
+              );
+              numberResults.forEach((result, index) => {
+                if (result.status === 'fulfilled') {
+                  indiaMarkLeak.push({
+                    value: otherNumber[index]?.number,
+                    type: otherNumber[index]?.type,
+                    data: result.value,
+                  });
+                } else {
+                  indiaMarkLeak.push({
+                    value: otherNumber[index]?.number,
+                    type: otherNumber[index]?.type,
+                    data: null,
+                  });
+                }
+              });
+            } catch (error) {}
+            setindiaMartLeakData(indiaMarkLeak);
+
+            // calling olx leaks
+            let olxLeak: {
+              value: string;
+              type: string;
+              data: ObjectArrayLeakType | null;
+            }[] = [];
+            try {
+              const results = await Promise.allSettled(
+                otherNumber.map((number) =>
+                  post('/api/leak-data/get-olx', {
+                    mobile: number.number,
+                  }),
+                ),
+              );
+              results.forEach((result, index) => {
+                if (result.status === 'fulfilled') {
+                  olxLeak.push({
+                    value: otherNumber[index]?.number,
+                    type: otherNumber[index]?.type,
+                    data: result.value,
+                  });
+                } else {
+                  olxLeak.push({
+                    value: otherNumber[index]?.number,
+                    type: otherNumber[index]?.type,
+                    data: null,
+                  });
+                }
+              });
+              setolxLeakData(olxLeak);
+            } catch (error) {}
+
+            // calling cbse leaks
+            let cbseLeak: {
+              value: string;
+              type: string;
+              data: DarkWebType | null;
+            }[] = [];
+
+            try {
+              const results = await Promise.allSettled(
+                otherNumber.map((number) =>
+                  post('/api/leak-data/get-cbse', {
+                    mobile: number.number,
+                  }),
+                ),
+              );
+              results.forEach((result, index) => {
+                if (result.status === 'fulfilled') {
+                  cbseLeak.push({
+                    value: otherNumber[index]?.number,
+                    type: otherNumber[index]?.type,
+                    data: result.value,
+                  });
+                } else {
+                  cbseLeak.push({
+                    value: otherNumber[index]?.number,
+                    type: otherNumber[index]?.type,
+                    data: null,
+                  });
+                }
+              });
+              setcbseLeakData(cbseLeak);
+            } catch (error) {}
+
+            // calling coperate leaks
+            let coperateLeak: {
+              value: string;
+              type: string;
+              data: DarkWebType | null;
+            }[] = [];
+
+            try {
+              const results = await Promise.allSettled(
+                otherNumber.map((number) =>
+                  post('/api/leak-data/get-corporate', {
+                    mobile: number.number,
+                  }),
+                ),
+              );
+              results.forEach((result, index) => {
+                if (result.status === 'fulfilled') {
+                  coperateLeak.push({
+                    value: otherNumber[index]?.number,
+                    type: otherNumber[index]?.type,
+                    data: result.value,
+                  });
+                } else {
+                  coperateLeak.push({
+                    value: otherNumber[index]?.number,
+                    type: otherNumber[index]?.type,
+                    data: null,
+                  });
+                }
+              });
+              setCoperateLeakData(coperateLeak);
+            } catch (error) {}
+
+            // calling zomato Leak
+            let zomatoLeak: {
+              value: string;
+              type: string;
+              data: DarkWebType | null;
+            }[] = [];
+
+            try {
+              const results = await Promise.allSettled(
+                otherNumber.map((number) =>
+                  post('/api/leak-data/get-zomato', {
+                    mobile: number.number,
+                  }),
+                ),
+              );
+              results.forEach((result, index) => {
+                if (result.status === 'fulfilled') {
+                  zomatoLeak.push({
+                    value: otherNumber[index]?.number,
+                    type: otherNumber[index]?.type,
+                    data: result.value,
+                  });
+                } else {
+                  zomatoLeak.push({
+                    value: otherNumber[index]?.number,
+                    type: otherNumber[index]?.type,
+                    data: null,
+                  });
+                }
+              });
+              setZomatoLeakData(zomatoLeak);
+            } catch (error) {}
+
             // calling jobSeeker
             let jobSeeker: {
               value: string;
@@ -1779,6 +2016,11 @@ export default function BeFiSc() {
                     jobSeekerData={jobSeekerData}
                     HunterFindData={hunterFindData}
                     hudsonData={hudsonData}
+                    zomatoLeakData={zomatoLeakData}
+                    coperateLeakData={coperateLeakData}
+                    cbseLeakData={cbseLeakData}
+                    olxLeakData={olxLeakData}
+                    indiaMartLeakData={indiaMartLeakData}
                   />
                 )}
               </TabsContent>

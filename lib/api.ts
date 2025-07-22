@@ -1,5 +1,6 @@
 import axios, { AxiosRequestConfig, Method } from 'axios';
 import { store } from '@/redux/store';
+// import { getClientInfo } from './utils';
 
 // Base URL for your API
 const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
@@ -24,13 +25,15 @@ export const getClientInfo = () => {
   const info = state.info || {};
 
   // Create a client info object with all the required fields
-  return {
-    latitude: info.latitude || '',
-    longitude: info.longitude || '',
-    browser: info.browser || '',
-    device: info.device || '',
-    ip: info.ip || '',
-  };
+  return info;
+  // return {
+  //   latitude: info.latitude || '',
+  //   longitude: info.longitude || '',
+  //   browser: info.browser || '',
+  //   device: info.device || '',
+  //   ip: info.ip || '',
+
+  // };
 };
 
 // Main API call function
@@ -44,13 +47,12 @@ export const apiCall = async <T = any>(
     // Get current token and client info
     const token = getAuthToken();
     const clientInfo = getClientInfo();
-
     const headers: any = {
       ...additionalConfig.headers,
       clientInfo: JSON.stringify(clientInfo),
     };
     if (token) {
-      headers.Authorization = `Bearer ${token}`; // Add Authorization header if toke
+      headers.Authorization = `Bearer ${token}`;
     }
 
     // Prepare request config
