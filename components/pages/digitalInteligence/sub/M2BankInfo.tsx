@@ -14,8 +14,8 @@ import Image from 'next/image';
 
 interface PageProps {
   data: {
-    razorPayData: RazorPayUpiType | null;
-    mobileToBankData: MobileToAccountNumberType | null;
+    razorPayData: RazorPayUpiType | null | undefined;
+    mobileToBankData: MobileToAccountNumberType | null | undefined;
   };
 }
 

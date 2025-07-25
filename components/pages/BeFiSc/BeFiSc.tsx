@@ -64,6 +64,7 @@ import BeFiScDigitalFootprint from './BeFiScDigitalFootprint';
 import { isValidIndianMobileNumber } from '@/components/custom/functions/checkingUtils';
 import { HoleheType } from '@/types/holhe';
 import { DarkWebType, ObjectArrayLeakType } from '@/types/dark-web';
+import { AddressTracingType } from '@/types/addressTrace';
 
 export default function BeFiSc() {
   const searchParams = useSearchParams();
@@ -250,6 +251,9 @@ export default function BeFiSc() {
     totalBreachFields: 0,
   });
 
+  const [ecomAddresses, setECOMAddresses] = useState<AddressTracingType | null>(
+    null,
+  );
   const setAllOnLoading = () => {
     setIsLoading(true);
     setUpiDetailsLoading(true);
@@ -298,6 +302,7 @@ export default function BeFiSc() {
     setcbseLeakData([]);
     setolxLeakData([]);
     setindiaMartLeakData([]);
+    setECOMAddresses(null);
   };
 
   useEffect(() => {
@@ -500,6 +505,22 @@ export default function BeFiSc() {
   useEffect(() => {
     if (mobile360Data) {
       const callOtherAPIs = async () => {
+        // calling ecom address
+        try {
+          const ecomResponse = await post(
+            '/api/mobile/address-trace-full-data',
+            {
+              mobile: mobileNo,
+            },
+          );
+          if (
+            ecomResponse.responseData &&
+            ecomResponse.responseData.length > 0
+          ) {
+            setECOMAddresses(ecomResponse);
+          }
+        } catch (error) {}
+
         //calling payworldApi
         try {
           const payworldResponse = await post(
@@ -1425,6 +1446,16 @@ export default function BeFiSc() {
               });
             } catch (error) {}
           }
+          const numbersDetected = getOtherPhoneNumbers(
+            esicsData,
+            gstAdvanceData,
+            EquifaxV3Data,
+            profileAdvanceData,
+            mobileNo,
+            true,
+            finalArray,
+          );
+          numbersFoundRef.current = numbersDetected.length - 1;
           setBreachInfo(finalArray);
           setBreachInfoLoading(false);
         }
@@ -1994,14 +2025,21 @@ export default function BeFiSc() {
                 )}
               </TabsContent>
               <TabsContent value="digitalInfo" className="mt-6">
-                <BeFiScDigitalFootprint
-                  EcicsData={esicsData}
-                  EquifaxData={EquifaxV3Data}
-                  PanAllInOneData={panAllInOneData}
-                  GstAdvanceData={gstAdvanceData}
-                  ProfileAdvanceData={profileAdvanceData}
-                  mobileNumber={mobileNo}
-                />
+                {breachInfoLoading ? (
+                  <BeFiScLoadingSkeleton />
+                ) : (
+                  <BeFiScDigitalFootprint
+                    EcicsData={esicsData}
+                    EquifaxData={EquifaxV3Data}
+                    PanAllInOneData={panAllInOneData}
+                    GstAdvanceData={gstAdvanceData}
+                    ProfileAdvanceData={profileAdvanceData}
+                    mobileNumber={mobileNo}
+                    breachInfoLeakData={breachInfo}
+                    breachInfoLoading={breachInfoLoading}
+                    ECOMAddresses={ecomAddresses}
+                  />
+                )}
               </TabsContent>
               <TabsContent value="breachInfo" className="mt-6">
                 {breachInfoLoading ? (

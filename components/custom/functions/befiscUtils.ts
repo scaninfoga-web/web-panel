@@ -6,6 +6,7 @@ import {
   ProfileAdvanceType,
 } from '@/types/BeFiSc';
 import { isValidIndianMobileNumber } from './checkingUtils';
+import { BreachInfoType } from '@/types/BreachInfo';
 
 export function getOtherEmails(
   EcicsData: EsicDetailsType | null,
@@ -13,6 +14,11 @@ export function getOtherEmails(
   EquifaxData: EquifaxV3Type | null,
   ProfileAdvanceData: ProfileAdvanceType | null,
   email: string,
+  breachInfoLeakData?: {
+    value: string;
+    type: string;
+    data: BreachInfoType | null;
+  }[],
 ): {
   type: string;
   email: string;
@@ -88,6 +94,35 @@ export function getOtherEmails(
       }
     });
   }
+  if ((breachInfoLeakData?.length || 0) > 0) {
+    breachInfoLeakData?.map((item) =>
+      Object.entries(item?.data?.responseData?.data?.List || {}).map(
+        ([key, value]) => {
+          if (key === 'No results found') {
+            return;
+          }
+          value?.Data?.map((item) => {
+            Object.entries(item).map(([key, value]) => {
+              if (key?.toLowerCase().includes('email')) {
+                if (
+                  value &&
+                  value.toLowerCase() !== email.toLowerCase() &&
+                  !seen.has(value.toLowerCase())
+                ) {
+                  seen.add(value.toLowerCase());
+                  emailArray.push({
+                    type: 'This email is related from the leak data',
+                    email: value.toLowerCase(),
+                  });
+                }
+              }
+            });
+          });
+        },
+      ),
+    );
+  }
+
   return emailArray;
 }
 export function getOtherPhoneNumbers(
@@ -97,6 +132,11 @@ export function getOtherPhoneNumbers(
   profileAdvanceData: ProfileAdvanceType | null,
   mobileNumber: string,
   isIncluded: boolean = false,
+  breachInfoLeakData?: {
+    value: string;
+    type: string;
+    data: BreachInfoType | null;
+  }[],
 ): {
   number: string;
   type: string;
@@ -185,6 +225,44 @@ export function getOtherPhoneNumbers(
       }
     });
   }
+
+  if ((breachInfoLeakData?.length || 0) > 0) {
+    breachInfoLeakData?.map((item) =>
+      Object.entries(item?.data?.responseData?.data?.List || {}).map(
+        ([key, value]) => {
+          if (key === 'No results found') {
+            return;
+          }
+          value?.Data?.map((item) => {
+            Object.entries(item).map(([key, value]) => {
+              if (
+                key?.toLowerCase().includes('phone') ||
+                key?.includes('mobile')
+              ) {
+                const formattedNumber = isValidIndianMobileNumber(
+                  value?.toString() || '',
+                );
+                if (formattedNumber.result) {
+                  if (
+                    formattedNumber.fixedNumber !== mobileNumber &&
+                    !seen.has(formattedNumber.fixedNumber) &&
+                    formattedNumber.result
+                  ) {
+                    seen.add(formattedNumber.fixedNumber);
+                    filteredNumber.push({
+                      number: formattedNumber.fixedNumber,
+                      type: 'Mobile obtained from leak data',
+                    });
+                  }
+                }
+              }
+            });
+          });
+        },
+      ),
+    );
+  }
+
   return filteredNumber;
 }
 

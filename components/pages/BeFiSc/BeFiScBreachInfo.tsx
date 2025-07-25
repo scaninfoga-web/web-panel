@@ -346,10 +346,10 @@ export default function BeFiScBreachInfo({
               {emails && emails?.length === 0 ? (
                 <div className="flex flex-col space-y-8">
                   <NotFound value="No Breach found" className="max-h-52" />
-                  <AddMoreBreachButton
+                  {/* <AddMoreBreachButton
                     setExtraData={setExtraData}
                     label="Email"
-                  />
+                  /> */}
                 </div>
               ) : (
                 <div className="flex flex-col space-y-8">
@@ -380,17 +380,17 @@ export default function BeFiScBreachInfo({
                                 item?.data?.responseData?.data?.List,
                               ).map(([key, value], index) => {
                                 if (key === 'No results found') {
-                                  return <></>;
+                                  return null;
                                 }
                                 return (
                                   <Accordion
                                     type="single"
-                                    key={`innerAcc-${index}`}
+                                    key={`innerAcc-${index}-${key}`}
                                     collapsible
                                     className="space-y-4"
                                   >
                                     <AccordionItem
-                                      key={index}
+                                      key={`innerAcc-${index}-${key}-${value}`}
                                       value={`index-${index}`}
                                       className="border-b border-slate-800"
                                     >
@@ -627,7 +627,7 @@ export default function BeFiScBreachInfo({
               <Accordion type="single" collapsible className="space-y-4">
                 {withOut91?.map?.((item, index) => (
                   <AccordionItem
-                    key={`outer-${index}`}
+                    key={`outer-${index}-${item?.value}`}
                     value={`item-${index}`}
                     className="overflow-hidden rounded-lg border border-slate-700/50 bg-gradient-to-br from-slate-900/50 to-slate-800/50 backdrop-blur-xl"
                   >
@@ -650,23 +650,16 @@ export default function BeFiScBreachInfo({
                           item?.data?.responseData?.data?.List,
                         ).map(([key, value], index) => {
                           if (key === 'No results found') {
-                            return (
-                              <NotFound
-                                key={`notFound-${index}`}
-                                value="No Data found"
-                                className="max-h-20"
-                              />
-                            );
+                            return null;
                           }
                           return (
                             <Accordion
                               type="single"
-                              key={`innerAcc-${index}`}
+                              key={`innerAcc-${index}-${key}`}
                               collapsible
                               className="space-y-4"
                             >
                               <AccordionItem
-                                key={index}
                                 value={`index-${index}`}
                                 className="border-b border-slate-800"
                               >
@@ -684,13 +677,13 @@ export default function BeFiScBreachInfo({
                                       {value?.Data?.map((item, index) => {
                                         return (
                                           <div
-                                            key={index}
+                                            key={`innerAcc-${index}-${key}`}
                                             className="grid grid-cols-3 gap-4 rounded-2xl border border-slate-800 p-3"
                                           >
                                             {Object.entries(item).map(
                                               ([key, value], index) => (
                                                 <div
-                                                  key={`index-${index}`}
+                                                  key={`innerAcc-${index}-${key}`}
                                                   className="flex flex-col"
                                                 >
                                                   <span className={`text-sm`}>

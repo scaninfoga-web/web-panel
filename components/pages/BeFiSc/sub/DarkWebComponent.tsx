@@ -42,7 +42,7 @@ export default function DarkWebComponent({
             return (
               <Accordion type="single" collapsible className="space-y-4">
                 <AccordionItem
-                  key={`outer-${index}`}
+                  key={`outer-${index}-${item?.value}`}
                   value={`item-${index}`}
                   className="overflow-hidden rounded-lg border border-slate-700/50 bg-gradient-to-br from-slate-900/50 to-slate-800/50 backdrop-blur-xl"
                 >
@@ -109,7 +109,7 @@ export default function DarkWebComponent({
           return (
             <Accordion type="single" collapsible className="space-y-4">
               <AccordionItem
-                key={`outer-${index}`}
+                key={`outer-${index}-${item?.value}`}
                 value={`item-${index}`}
                 className="overflow-hidden rounded-lg border border-slate-700/50 bg-gradient-to-br from-slate-900/50 to-slate-800/50 backdrop-blur-xl"
               >
