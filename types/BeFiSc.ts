@@ -1,3 +1,171 @@
+export interface ChallanType {
+  responseStatus: {
+    status: boolean;
+    message: string;
+  };
+  responseData: Array<{
+    datetime: string;
+    data: {
+      result: Array<{
+        rto: string;
+        state: string;
+        amount: number;
+        number: number;
+        pdfUrl: string;
+        recieptUrl: string;
+        accused_name: string;
+        challan_date: string;
+        challan_place: string;
+        court_challan: boolean;
+        upstream_code: string;
+        challan_number: string;
+        challan_status: string;
+        offense_details: string;
+        challan_date_time: string;
+        offence_details_list: string[];
+      }>;
+      status: number;
+      message: string;
+      api_name: string;
+      billable: boolean;
+      api_category: string;
+    };
+  }>;
+}
+
+export interface RCVerifyType {
+  responseStatus: {
+    status: boolean;
+    message: string;
+  };
+  responseData: {
+    datetime: string;
+    data: {
+      result: {
+        pan: string;
+        dl_no: string;
+        email: string;
+        state: string;
+        width: string;
+        height: string;
+        length: string;
+        mobile: string;
+        status: string;
+        aadhaar: string;
+        financer: {
+          op_dt: string;
+          hp_type: string;
+          financer_name: string;
+          financer_state: string;
+          financer_pincode: string;
+          hypothecation_dt: string;
+          financer_district: string;
+          financer_full_address: string;
+          financer_address_line1: string;
+          financer_address_line2: string;
+          financer_address_line3: string;
+        };
+        fit_upto: string;
+        tax_mode: string;
+        voter_id: string;
+        ac_fitted: string;
+        insurance: {
+          opdt: string;
+          company: string;
+          validFrom: string;
+          validTill: string;
+          policyNumber: string;
+          insurance_company_code: string;
+          month_year_remaining_for_insurance_exp: string;
+        };
+        user_name: string;
+        floor_area: string;
+        model_code: string;
+        state_code: string;
+        vehicle_hp: string;
+        expiry_date: string;
+        father_name: string;
+        office_code: string;
+        office_name: string;
+        passport_no: string;
+        sale_amount: string;
+        tax_details: {
+          reg_no: string;
+          rcpt_dt: string;
+          rcpt_no: string;
+          tax_amt: string;
+          tax_fine: string;
+          tax_from: string;
+          tax_mode: string;
+          tax_upto: string;
+          collected_by: string;
+          payment_mode: string;
+        };
+        vehicle_age: string;
+        audio_fitted: string;
+        pucc_details: {
+          op_dt: string;
+          pucc_no: string;
+          pucc_from: string;
+          pucc_upto: string;
+          pucc_centreno: string;
+        };
+        vehicle_type: string;
+        video_fitted: string;
+        annual_income: string;
+        engine_number: string;
+        purchase_date: string;
+        vehicle_color: string;
+        chassis_number: string;
+        dealer_details: {
+          dealer_code: string;
+          dealer_name: string;
+          dealer_pincode: string;
+          dealer_district: string;
+          dealer_address_line1: string;
+          dealer_address_line2: string;
+          dealer_address_line3: string;
+        };
+        permit_details: string;
+        ration_card_no: string;
+        reg_type_descr: string;
+        imported_vehicle: string;
+        owner_code_descr: string;
+        vehicle_category: string;
+        vehicle_financed: boolean;
+        insurance_expired: string;
+        norms_description: string;
+        registration_date: string;
+        vehicle_wheelbase: string;
+        vehicle_make_model: string;
+        registration_number: string;
+        user_present_address: string;
+        vehicle_gross_weight: string;
+        vehicle_owner_number: number;
+        body_type_description: string;
+        user_permanent_address: string;
+        vehicle_cubic_capacity: string;
+        vehicle_stand_capacity: string;
+        vehicle_unladen_weight: string;
+        vehicle_fitness_expired: string;
+        vehicle_fuel_description: string;
+        vehicle_seating_capacity: string;
+        vehicle_sleeper_capacity: string;
+        vehicle_class_description: string;
+        vehicle_gross_comb_weight: string;
+        vehicle_maker_description: string;
+        vehicle_manufactured_date: string;
+        vehicle_number_of_cylinders: string;
+      };
+      status: number;
+      message: string;
+      api_name: string;
+      billable: boolean;
+      api_category: string;
+    };
+  }[];
+}
+
 export interface MobileToDLAdvanceType {
   responseStatus: {
     status: boolean;

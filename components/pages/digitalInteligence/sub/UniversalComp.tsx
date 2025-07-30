@@ -12,6 +12,7 @@ import M2365 from './M2365';
 import M2BankInfo from './M2BankInfo';
 import Fin365Intelligence from './Fin365Intelligence';
 import M2PanCard from './M2PanCard';
+import RCVerify from './RCVerify';
 
 const getComp = new Map<string, React.FC<{ data: any; mobileNo: string }>>([
   [
@@ -34,6 +35,7 @@ const getComp = new Map<string, React.FC<{ data: any; mobileNo: string }>>([
   ['Mobile to Bank Info', M2BankInfo as React.FC<{ data: any }>],
   ['Mobile to Pan Card', M2PanCard as React.FC<{ data: any }>],
   ['Pan Card Info', M2PanCard as React.FC<{ data: any }>],
+  ['RC Verify', RCVerify as React.FC<{ data: any }>],
 ]);
 
 export default function UniversalDigitalIntelligenceComp({

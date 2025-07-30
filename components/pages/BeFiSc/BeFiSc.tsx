@@ -1519,7 +1519,7 @@ export default function BeFiSc() {
                     data: result.value as RapidSearchAPIType,
                   });
                 } else {
-                  finalArray.push({
+                  rapidApiData.push({
                     value: numbersDetected[correspondingIndex]?.number,
                     type: numbersDetected[correspondingIndex]?.type,
                     data: null,
@@ -1552,7 +1552,7 @@ export default function BeFiSc() {
                     data: result.value as RapidSearchAPIType,
                   });
                 } else {
-                  finalArray.push({
+                  rapidApiData.push({
                     value: emailsDetected[correspondingIndex]?.email,
                     type: emailsDetected[correspondingIndex]?.type,
                     data: null,
@@ -1560,15 +1560,6 @@ export default function BeFiSc() {
                 }
               });
             } catch (error) {}
-            // dummy2222.map((item) => (
-            //   rapidApiData.push({
-            //     value: item?.value,
-            //     type: item?.type,
-            //     data: item?.data,
-            //   })
-            // ))
-            // console.log('HERE IS rapidApiData', rapidApiData);
-
             setRapidApiData(rapidApiData);
           }
 

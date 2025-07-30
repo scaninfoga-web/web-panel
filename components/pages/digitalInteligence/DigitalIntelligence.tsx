@@ -28,6 +28,7 @@ import { formatDateTime } from '@/components/custom/functions/formatUtils';
 import UniversalDigitalIntelligenceComp from './sub/UniversalComp';
 import { BreachInfoType } from '@/types/BreachInfo';
 import {
+  ChallanType,
   EquifaxV3Type,
   MobileToAccountNumberType,
   PanAllInOneType,
@@ -118,7 +119,8 @@ const tools: {
             type: 'text',
             upperOnly: true,
             validCheck: (vehicle) => {
-              const vehicleRegex = /^[A-Z]{2}[0-9]{2}[A-Z]{1,2}[0-9]{1,4}$/;
+              const vehicleRegex =
+                /^[A-Z]{2}[0-9]{1,2}[A-Z]?[A-Z]{1,2}[0-9]{1,4}$/;
               return vehicleRegex.test(vehicle.toUpperCase());
             },
           },
@@ -279,10 +281,37 @@ export default function DigitalIntelligence() {
       if (selectedSubTool.toolName === 'Mobile to Breach Info') {
         bodyName = 'request_body';
       }
+      if (selectedSubTool.toolName === 'RC Verify') {
+        bodyName = 'vehicle_no';
+      }
       const response = await post(`${selectedSubTool.searchKey}`, {
         [bodyName]: searchValue,
         realtimeData: false,
       });
+
+      if (selectedSubTool.toolName === 'RC Verify') {
+        // also fetch challan
+        let challanData: ChallanType | null = null;
+        try {
+          const challan = await post('/api/mobile/challan-full-data', {
+            vehicle_no: searchValue,
+          });
+          if (challan?.responseData?.length > 0) {
+            challanData = challan;
+          }
+        } catch (error) {}
+        setResponseData({
+          datetime:
+            response?.responseData?.[0]?.datetime || new Date().toISOString(),
+          data: {
+            challanData: challanData,
+            rcVerifyData: response,
+          },
+        });
+        return toast.success('Data Fetched', {
+          id: toastId,
+        });
+      }
 
       if (selectedSubTool.toolName === 'Pan Card Info') {
         setResponseData({
