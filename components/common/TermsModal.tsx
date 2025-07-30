@@ -14,6 +14,7 @@ interface TermsModalProps {
 
 const TermsModal = ({ open, onClose, onAgree }: TermsModalProps) => {
   const [isChecked, setIsChecked] = useState(false);
+  const formattedDate = new Date().toLocaleDateString('en-GB');
 
   const handleAgree = () => {
     if (isChecked) {
@@ -45,7 +46,7 @@ const TermsModal = ({ open, onClose, onAgree }: TermsModalProps) => {
 
             <div className="space-y-2">
               <p className="text-emerald-500">
-                <strong>Effective Date:</strong> [Date]
+                <strong>Effective Date:</strong> {formattedDate}
               </p>
               <p>
                 This Non-Disclosure Agreement ("Agreement") is entered into by
@@ -56,8 +57,9 @@ const TermsModal = ({ open, onClose, onAgree }: TermsModalProps) => {
                   Scaninfoga Solutions Private Limited
                 </strong>
                 , a company registered under the Companies Act, 2013, having its
-                principal office at [Company Address], India (hereinafter
-                referred to as the "Company" or "Disclosing Party"),
+                principal office at Apt 10B Flat 13, Vadod Road, Rajwadi, Surat,
+                Gujarat, 395023, India (hereinafter referred to as the "Company"
+                or "Disclosing Party"),
               </p>
               <p>
                 <strong>AND</strong>
@@ -266,7 +268,9 @@ const TermsModal = ({ open, onClose, onAgree }: TermsModalProps) => {
 
             <div>
               <h3 className="font-semibold text-emerald-500">Contact</h3>
-              <p>Scaninfoga Solutions Private Limited</p>
+              <p>
+                <strong> Scaninfoga Solutions Private Limited </strong>
+              </p>
               <p>Email: support@scaninfoga.com</p>
               <p>
                 Website:{' '}
@@ -274,6 +278,10 @@ const TermsModal = ({ open, onClose, onAgree }: TermsModalProps) => {
                   https://www.scaninfoga.com
                 </strong>
               </p>
+              {/* <p>
+                Address: Apt 10B Flat 13, Vadod Road, Rajwadi, Surat, Gujarat,
+                395023
+              </p> */}
             </div>
           </div>
         </ScrollArea>
