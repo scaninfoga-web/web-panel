@@ -3,7 +3,7 @@
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { Form } from '@/components/ui/form';
@@ -15,6 +15,7 @@ import { clearCookies } from '@/actions/clearCookies';
 import { useState } from 'react';
 import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
 import { post } from '@/lib/api';
+import { RootState } from '@/redux/store';
 const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
@@ -39,6 +40,8 @@ const Login = () => {
   const [userType, setUserType] = useState<'user' | 'corporate' | 'developer'>(
     'user',
   );
+
+  const { fetched } = useSelector((state: RootState) => state.info);
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -103,6 +106,10 @@ const Login = () => {
   // };
 
   const onLogin = async (data: LoginFormValues) => {
+    if (!fetched) {
+      toast.error('Please wait. Fetching details.');
+      return;
+    }
     try {
       setLoading(true);
       const response = await post(

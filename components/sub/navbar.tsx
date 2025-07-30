@@ -51,7 +51,7 @@ export default function Navbar() {
       try {
         const info = await getClientInfo();
         if (!(info instanceof Error)) {
-          dispatch(setInfo(info));
+          dispatch(setInfo({ ...info, fetched: true }));
         }
       } catch (e) {
         if (e instanceof Error) {
