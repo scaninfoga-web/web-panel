@@ -580,7 +580,7 @@ export function Register({ type: initialType }: RegisterProps) {
       )}
 
       <TermsModal
-        open={true}
+        open={open}
         onClose={() => setIsOpen(false)}
         onAgree={handleAgree}
       />
