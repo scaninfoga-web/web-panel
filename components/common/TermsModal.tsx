@@ -57,8 +57,9 @@ const TermsModal = ({ open, onClose, onAgree }: TermsModalProps) => {
                   Scaninfoga Solutions Private Limited
                 </strong>
                 , a company registered under the Companies Act, 2013, having its
-                principal office at [Company Address], India (hereinafter
-                referred to as the "Company" or "Disclosing Party"),
+                principal office at Apt 10B Flat 13, Vadod Road, Rajwadi, Surat,
+                Gujarat, 395023, India (hereinafter referred to as the "Company"
+                or "Disclosing Party"),
               </p>
               <p>
                 <strong>AND</strong>
@@ -277,10 +278,10 @@ const TermsModal = ({ open, onClose, onAgree }: TermsModalProps) => {
                   https://www.scaninfoga.com
                 </strong>
               </p>
-              <p>
+              {/* <p>
                 Address: Apt 10B Flat 13, Vadod Road, Rajwadi, Surat, Gujarat,
                 395023
-              </p>
+              </p> */}
             </div>
           </div>
         </ScrollArea>
