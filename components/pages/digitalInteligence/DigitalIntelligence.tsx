@@ -20,7 +20,7 @@ import {
   IconMailSearch,
   IconUserSearch,
 } from '@tabler/icons-react';
-import { BadgeIndianRupee, Calendar } from 'lucide-react';
+import { BadgeIndianRupee, CarFront } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import BeFiScLoadingSkeleton from '../BeFiSc/sub/BeFiScLoadingSkeleton';
@@ -45,6 +45,7 @@ const tools: {
     searchKey: string;
     inputs?: {
       label: string;
+      upperOnly?: boolean;
       placeholder: string;
       type: 'number' | 'text';
       validCheck: (e: string) => boolean;
@@ -104,6 +105,28 @@ const tools: {
     ],
   },
   {
+    toolName: 'Vehicle Trace',
+    icon: CarFront,
+    subTools: [
+      {
+        toolName: 'RC Verify',
+        searchKey: '/api/mobile/rc-verify-full-data',
+        inputs: [
+          {
+            label: 'Vehicle Number',
+            placeholder: 'Enter Vehicle Number',
+            type: 'text',
+            upperOnly: true,
+            validCheck: (vehicle) => {
+              const vehicleRegex = /^[A-Z]{2}[0-9]{2}[A-Z]{1,2}[0-9]{1,4}$/;
+              return vehicleRegex.test(vehicle.toUpperCase());
+            },
+          },
+        ],
+      },
+    ],
+  },
+  {
     toolName: 'Digital Doc',
     icon: IconFileSearch,
     subTools: [
@@ -125,6 +148,7 @@ const tools: {
           {
             label: 'Pan Number',
             placeholder: 'Enter Pan Number',
+            upperOnly: true,
             type: 'text',
             validCheck: (pan) => {
               const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]$/;
@@ -224,6 +248,7 @@ export default function DigitalIntelligence() {
     inputs?: {
       label: string;
       placeholder: string;
+      upperOnly?: boolean;
       type: 'number' | 'text';
       validCheck: (value: string) => boolean;
     }[];
@@ -581,7 +606,7 @@ export default function DigitalIntelligence() {
                             <CustomInputSearch
                               key={input.label}
                               label={input.label}
-                              upperOnly={true}
+                              upperOnly={input?.upperOnly}
                               placeholder={input.placeholder}
                               type={input.type}
                               handleSearch={handleSearch}

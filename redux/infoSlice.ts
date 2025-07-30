@@ -70,6 +70,7 @@ interface InfoState {
   city: string | null;
   country: string | null;
   possibleIoT: boolean | null;
+  fetched: boolean;
 }
 
 const initialState: InfoState = {
@@ -99,6 +100,7 @@ const initialState: InfoState = {
   city: null,
   country: null,
   possibleIoT: null,
+  fetched: false,
 };
 
 export const infoSlice = createSlice({

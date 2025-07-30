@@ -23,6 +23,12 @@ import Hudson from './sub/Hudson';
 import { HoleheType } from '@/types/holhe';
 import { GhuntData } from '@/types/ghunt';
 import EmailDetector from './sub/EmailDetector';
+import { DarkWebType, ObjectArrayLeakType } from '@/types/dark-web';
+import DarkWebComponent from './sub/DarkWebComponent';
+import { RapidSearchAPIType } from '@/types/rapidAPI';
+import { DashboardCard, InfoText } from '../dashboard/components/DashboardCard';
+import InfoText2 from '@/components/custom/components/InfoText2';
+
 interface PageProps {
   data: {
     value: string;
@@ -60,6 +66,36 @@ interface PageProps {
     data: HoleheType | null;
   }[];
   ghuntMultipleData: GhuntData[];
+  zomatoLeakData: {
+    value: string;
+    type: string;
+    data: DarkWebType | null;
+  }[];
+  coperateLeakData: {
+    value: string;
+    type: string;
+    data: DarkWebType | null;
+  }[];
+  cbseLeakData: {
+    value: string;
+    type: string;
+    data: DarkWebType | null;
+  }[];
+  olxLeakData: {
+    value: string;
+    type: string;
+    data: ObjectArrayLeakType | null;
+  }[];
+  indiaMartLeakData: {
+    value: string;
+    type: string;
+    data: ObjectArrayLeakType | null;
+  }[];
+  rapidApiData: {
+    value: string;
+    type: string;
+    data: RapidSearchAPIType | null;
+  }[];
 }
 export const dangerKeyWords = [
   'Password',
@@ -95,6 +131,12 @@ export default function BeFiScBreachInfo({
   hudsonData,
   holeheData,
   ghuntMultipleData,
+  zomatoLeakData,
+  coperateLeakData,
+  cbseLeakData,
+  olxLeakData,
+  indiaMartLeakData,
+  rapidApiData,
 }: PageProps) {
   const [activeTab, setActiveTab] = useState('breach');
   const [breachSubTab, setBreachSubTab] = useState('emails');
@@ -137,6 +179,7 @@ export default function BeFiScBreachInfo({
     { value: 'breach', label: 'Breach Watch' },
     { value: 'darkWeb', label: 'Dark Web' },
     { value: 'Expose360', label: 'Expose360' },
+    { value: 'docking', label: 'Docking' },
   ];
 
   const getGridCols = (tabCount: number) => {
@@ -157,14 +200,64 @@ export default function BeFiScBreachInfo({
 
   const darkWebTabs = [
     leakHunterData?.length > 0 &&
-    leakHunterData?.[0]?.data?.responseData?.password &&
-    leakHunterData?.[0]?.data?.responseData?.password?.length > 0
+    leakHunterData?.some((item) => {
+      if (
+        item?.data?.responseData?.password &&
+        item?.data?.responseData?.password?.length > 0
+      ) {
+        return true;
+      }
+    })
       ? { value: 'leakHunter', label: 'Leak Hunter' }
       : null,
     jobSeekerData?.length > 0 &&
-    jobSeekerData?.[0]?.data?.responseData &&
-    Object.keys(jobSeekerData?.[0]?.data?.responseData).length > 0
+    jobSeekerData?.some((item) => {
+      if (Object.keys(item?.data?.responseData || {}).length > 0) {
+        return true;
+      }
+    })
       ? { value: 'jobSeeker', label: 'Job Seeker' }
+      : null,
+
+    zomatoLeakData?.length > 0 &&
+    zomatoLeakData?.some((item) => {
+      if (Object.keys(item?.data?.responseData || {}).length > 0) {
+        return true;
+      }
+    })
+      ? { value: 'zomatoLeak', label: 'Zomato Leak' }
+      : null,
+    coperateLeakData?.length > 0 &&
+    coperateLeakData?.some((item) => {
+      if (Object.keys(item?.data?.responseData || {}).length > 0) {
+        return true;
+      }
+    })
+      ? { value: 'coperateLeak', label: 'Cooperate Leak' }
+      : null,
+    cbseLeakData?.length > 0 &&
+    cbseLeakData?.some((item) => {
+      if (Object.keys(item?.data?.responseData || {}).length > 0) {
+        return true;
+      }
+    })
+      ? { value: 'cbseLeak', label: 'CBSE Leak' }
+      : null,
+    olxLeakData?.length > 0 &&
+    olxLeakData?.some((item) => {
+      if ((item?.data?.responseData?.length || 0) > 0) {
+        return true;
+      }
+    })
+      ? { value: 'olxLeak', label: 'OLX Leak' }
+      : null,
+    indiaMartLeakData?.length > 0 &&
+    indiaMartLeakData?.some((item) => {
+      if ((item?.data?.responseData?.length || 0) > 0) {
+        return true;
+      }
+    })
+      ? { value: 'indiaMartLeak', label: 'India Mart Leak' }
       : null,
   ];
 
@@ -263,10 +356,10 @@ export default function BeFiScBreachInfo({
               {emails && emails?.length === 0 ? (
                 <div className="flex flex-col space-y-8">
                   <NotFound value="No Breach found" className="max-h-52" />
-                  <AddMoreBreachButton
+                  {/* <AddMoreBreachButton
                     setExtraData={setExtraData}
                     label="Email"
-                  />
+                  /> */}
                 </div>
               ) : (
                 <div className="flex flex-col space-y-8">
@@ -297,17 +390,17 @@ export default function BeFiScBreachInfo({
                                 item?.data?.responseData?.data?.List,
                               ).map(([key, value], index) => {
                                 if (key === 'No results found') {
-                                  return <></>;
+                                  return null;
                                 }
                                 return (
                                   <Accordion
                                     type="single"
-                                    key={`innerAcc-${index}`}
+                                    key={`innerAcc-${index}-${key}`}
                                     collapsible
                                     className="space-y-4"
                                   >
                                     <AccordionItem
-                                      key={index}
+                                      key={`innerAcc-${index}-${key}-${value}`}
                                       value={`index-${index}`}
                                       className="border-b border-slate-800"
                                     >
@@ -544,7 +637,7 @@ export default function BeFiScBreachInfo({
               <Accordion type="single" collapsible className="space-y-4">
                 {withOut91?.map?.((item, index) => (
                   <AccordionItem
-                    key={`outer-${index}`}
+                    key={`outer-${index}-${item?.value}`}
                     value={`item-${index}`}
                     className="overflow-hidden rounded-lg border border-slate-700/50 bg-gradient-to-br from-slate-900/50 to-slate-800/50 backdrop-blur-xl"
                   >
@@ -567,23 +660,16 @@ export default function BeFiScBreachInfo({
                           item?.data?.responseData?.data?.List,
                         ).map(([key, value], index) => {
                           if (key === 'No results found') {
-                            return (
-                              <NotFound
-                                key={`notFound-${index}`}
-                                value="No Data found"
-                                className="max-h-20"
-                              />
-                            );
+                            return null;
                           }
                           return (
                             <Accordion
                               type="single"
-                              key={`innerAcc-${index}`}
+                              key={`innerAcc-${index}-${key}`}
                               collapsible
                               className="space-y-4"
                             >
                               <AccordionItem
-                                key={index}
                                 value={`index-${index}`}
                                 className="border-b border-slate-800"
                               >
@@ -601,13 +687,13 @@ export default function BeFiScBreachInfo({
                                       {value?.Data?.map((item, index) => {
                                         return (
                                           <div
-                                            key={index}
+                                            key={`innerAcc-${index}-${key}`}
                                             className="grid grid-cols-3 gap-4 rounded-2xl border border-slate-800 p-3"
                                           >
                                             {Object.entries(item).map(
                                               ([key, value], index) => (
                                                 <div
-                                                  key={`index-${index}`}
+                                                  key={`innerAcc-${index}-${key}`}
                                                   className="flex flex-col"
                                                 >
                                                   <span className={`text-sm`}>
@@ -713,6 +799,64 @@ export default function BeFiScBreachInfo({
                   <JobSeeker jobSeekerData={jobSeekerData} />
                 </TabsContent>
               )}
+
+            {zomatoLeakData?.length > 0 &&
+              zomatoLeakData?.some((item) => {
+                if (Object.keys(item?.data?.responseData || {}).length > 0) {
+                  return true;
+                }
+              }) && (
+                <TabsContent value="zomatoLeak">
+                  <DarkWebComponent leakData={zomatoLeakData} />
+                </TabsContent>
+              )}
+            {coperateLeakData?.length > 0 &&
+              coperateLeakData?.some((item) => {
+                if (Object.keys(item?.data?.responseData || {}).length > 0) {
+                  return true;
+                }
+              }) && (
+                <TabsContent value="coperateLeak">
+                  <DarkWebComponent leakData={coperateLeakData} />
+                </TabsContent>
+              )}
+
+            {cbseLeakData?.length > 0 &&
+              cbseLeakData?.some((item) => {
+                if (Object.keys(item?.data?.responseData || {}).length > 0) {
+                  return true;
+                }
+              }) && (
+                <TabsContent value="cbseLeak">
+                  <DarkWebComponent leakData={cbseLeakData} />
+                </TabsContent>
+              )}
+            {olxLeakData?.length > 0 &&
+              olxLeakData?.some((item) => {
+                if ((item?.data?.responseData?.length || 0) > 0) {
+                  return true;
+                }
+              }) && (
+                <TabsContent value="olxLeak">
+                  <DarkWebComponent
+                    leakData={olxLeakData}
+                    isArrayObject={true}
+                  />
+                </TabsContent>
+              )}
+            {indiaMartLeakData?.length > 0 &&
+              indiaMartLeakData?.some((item) => {
+                if ((item?.data?.responseData?.length || 0) > 0) {
+                  return true;
+                }
+              }) && (
+                <TabsContent value="indiaMartLeak">
+                  <DarkWebComponent
+                    leakData={indiaMartLeakData}
+                    isArrayObject={true}
+                  />
+                </TabsContent>
+              )}
           </Tabs>
         </TabsContent>
 
@@ -790,6 +934,65 @@ export default function BeFiScBreachInfo({
                 )}
             </TabsContent>
           </Tabs>
+        </TabsContent>
+        <TabsContent value="docking">
+          <div className="grid grid-cols-1 gap-4">
+            {rapidApiData?.map((item, index) => {
+              if (item?.data?.responseData?.results?.length === 0) {
+                return null;
+              }
+              return (
+                <DashboardCard
+                  key={`${item?.type}${item?.value}${index}`}
+                  title={`${item?.data?.responseData?.search_term}`}
+                  icon={
+                    <CustomBadge
+                      blink={true}
+                      variantToUse="warning"
+                      isFormat={false}
+                      value={item?.type}
+                    />
+                  }
+                  className="max-h-[400px] overflow-auto"
+                >
+                  <div className="flex flex-col space-y-2">
+                    <div className="grid grid-cols-1 gap-2 lg:grid-cols-2">
+                      {item?.data?.responseData?.results?.map(
+                        (result, index) => (
+                          <div
+                            className="flex flex-col space-y-1 rounded-2xl border border-slate-800 p-4"
+                            key={index}
+                          >
+                            <InfoText
+                              value={
+                                <a
+                                  href={result?.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-base font-medium text-blue-600 underline hover:cursor-pointer"
+                                >
+                                  {result?.url?.slice(0, 25)}
+                                </a>
+                              }
+                              label="URL"
+                            />
+                            <InfoText value={result?.title} label="Title" />
+                            <div
+                              className={cn(
+                                'break-words text-sm text-gray-400',
+                              )}
+                            >
+                              {result?.description}
+                            </div>
+                          </div>
+                        ),
+                      )}
+                    </div>
+                  </div>
+                </DashboardCard>
+              );
+            })}
+          </div>
         </TabsContent>
       </Tabs>
     </div>

@@ -15,6 +15,7 @@ import {
   GstVerificationAdvanceType,
   Mobile360Type,
   MobileToAccountNumberType,
+  MobileToDLAdvanceType,
   PanAllInOneType,
   ProfileAdvanceType,
   UPIType,
@@ -63,6 +64,10 @@ import {
 import BeFiScDigitalFootprint from './BeFiScDigitalFootprint';
 import { isValidIndianMobileNumber } from '@/components/custom/functions/checkingUtils';
 import { HoleheType } from '@/types/holhe';
+import { DarkWebType, ObjectArrayLeakType } from '@/types/dark-web';
+import { AddressTracingType } from '@/types/addressTrace';
+import { RapidSearchAPIType } from '@/types/rapidAPI';
+import { dummy2222 } from './dummy';
 
 export default function BeFiSc() {
   const searchParams = useSearchParams();
@@ -178,6 +183,41 @@ export default function BeFiSc() {
       data: HoleheType | null;
     }[]
   >([]);
+  const [zomatoLeakData, setZomatoLeakData] = useState<
+    {
+      value: string;
+      type: string;
+      data: DarkWebType | null;
+    }[]
+  >([]);
+  const [coperateLeakData, setCoperateLeakData] = useState<
+    {
+      value: string;
+      type: string;
+      data: DarkWebType | null;
+    }[]
+  >([]);
+  const [cbseLeakData, setcbseLeakData] = useState<
+    {
+      value: string;
+      type: string;
+      data: DarkWebType | null;
+    }[]
+  >([]);
+  const [olxLeakData, setolxLeakData] = useState<
+    {
+      value: string;
+      type: string;
+      data: ObjectArrayLeakType | null;
+    }[]
+  >([]);
+  const [indiaMartLeakData, setindiaMartLeakData] = useState<
+    {
+      value: string;
+      type: string;
+      data: ObjectArrayLeakType | null;
+    }[]
+  >([]);
   const numbersFoundRef = useRef<number>(0);
   const addressesFound = useRef<number>(0);
   const [_1tabLoading, set_1tabLoading] = useState(false);
@@ -213,6 +253,20 @@ export default function BeFiSc() {
     securityScore: 0,
     totalBreachFields: 0,
   });
+
+  const [ecomAddresses, setECOMAddresses] = useState<AddressTracingType | null>(
+    null,
+  );
+  const [mobileToDLAdvance, setMobileToDLAdvance] =
+    useState<MobileToDLAdvanceType | null>(null);
+
+  const [rapidApiData, setRapidApiData] = useState<
+    {
+      value: string;
+      type: string;
+      data: RapidSearchAPIType | null;
+    }[]
+  >([]);
 
   const setAllOnLoading = () => {
     setIsLoading(true);
@@ -257,6 +311,14 @@ export default function BeFiSc() {
       totalBreachFields: 0,
     });
     setHoleheData([]);
+    setZomatoLeakData([]);
+    setCoperateLeakData([]);
+    setcbseLeakData([]);
+    setolxLeakData([]);
+    setindiaMartLeakData([]);
+    setECOMAddresses(null);
+    setMobileToDLAdvance(null);
+    setRapidApiData([]);
   };
 
   useEffect(() => {
@@ -459,6 +521,35 @@ export default function BeFiSc() {
   useEffect(() => {
     if (mobile360Data) {
       const callOtherAPIs = async () => {
+        // calling mobile to dl advance
+        try {
+          const dlAdvanceResponse = await post(
+            '/api/mobile/mobile-to-dl-advance-full-data',
+            {
+              mobile: mobileNo,
+            },
+          );
+          if (dlAdvanceResponse?.responseData) {
+            setMobileToDLAdvance(dlAdvanceResponse);
+          }
+        } catch (error) {}
+
+        // calling ecom address
+        try {
+          const ecomResponse = await post(
+            '/api/mobile/address-trace-full-data',
+            {
+              mobile: mobileNo,
+            },
+          );
+          if (
+            ecomResponse.responseData &&
+            ecomResponse.responseData.length > 0
+          ) {
+            setECOMAddresses(ecomResponse);
+          }
+        } catch (error) {}
+
         //calling payworldApi
         try {
           const payworldResponse = await post(
@@ -761,6 +852,10 @@ export default function BeFiSc() {
   };
 
   const getImageUrl = (): string => {
+    if (mobileToDLAdvance?.responseData?.[0]?.data?.result?.user_image) {
+      return `data:image/png;base64,${mobileToDLAdvance?.responseData?.[0]?.data?.result?.user_image}`;
+    }
+
     if (ghuntMultipleData[0]?.profile?.profilePictureUrl) {
       return ghuntMultipleData[0]?.profile.profilePictureUrl;
     }
@@ -895,6 +990,7 @@ export default function BeFiSc() {
 
         if (otherNumber.length > 0 || otherEmails.length > 0) {
           setBreachInfoLoading(true);
+
           let holehe: {
             value: string;
             type: string;
@@ -942,19 +1038,6 @@ export default function BeFiSc() {
               type: string;
               data: HudsonEmailType | null;
             }[] = [];
-            // // calling hudsonIP
-            // const clientInfo = getClientInfo();
-            // try {
-            //   const res = await post('/api/hudson/search-by-ip', {
-            //     ip: clientInfo?.ip,
-            //     realtimeData: isRealtime,
-            //   });
-            //   hudsonDataa.push({
-            //     value: clientInfo?.ip,
-            //     type: 'IP',
-            //     data: res,
-            //   });
-            // } catch (error) {}
 
             // calling hudsonEmail
             try {
@@ -1121,6 +1204,201 @@ export default function BeFiSc() {
             } catch (error) {}
           }
           if (otherNumber.length > 0) {
+            // otherNumber.push({
+            //   number: '9599374108',
+            //   type: 'Demo purpose',
+            // });
+            // calling indiaMart Leaks
+            let indiaMarkLeak: {
+              value: string;
+              type: string;
+              data: ObjectArrayLeakType | null;
+            }[] = [];
+            // calling with emails
+            if (otherEmails.length > 0) {
+              try {
+                const emailResults = await Promise.allSettled(
+                  otherEmails.map((email) =>
+                    post('/api/leak-data/get-india-mart', {
+                      request_body: email?.email,
+                    }),
+                  ),
+                );
+                emailResults.forEach((result, index) => {
+                  if (result.status === 'fulfilled') {
+                    indiaMarkLeak.push({
+                      value: otherEmails[index]?.email,
+                      type: otherEmails[index]?.type,
+                      data: result.value,
+                    });
+                  } else {
+                    indiaMarkLeak.push({
+                      value: otherEmails[index]?.email,
+                      type: otherEmails[index]?.type,
+                      data: null,
+                    });
+                  }
+                });
+              } catch (error) {}
+            }
+            // calling with number
+            try {
+              const numberResults = await Promise.allSettled(
+                otherNumber.map((number) =>
+                  post('/api/leak-data/get-india-mart', {
+                    request_body: number.number,
+                  }),
+                ),
+              );
+              numberResults.forEach((result, index) => {
+                if (result.status === 'fulfilled') {
+                  indiaMarkLeak.push({
+                    value: otherNumber[index]?.number,
+                    type: otherNumber[index]?.type,
+                    data: result.value,
+                  });
+                } else {
+                  indiaMarkLeak.push({
+                    value: otherNumber[index]?.number,
+                    type: otherNumber[index]?.type,
+                    data: null,
+                  });
+                }
+              });
+            } catch (error) {}
+            setindiaMartLeakData(indiaMarkLeak);
+
+            // calling olx leaks
+            let olxLeak: {
+              value: string;
+              type: string;
+              data: ObjectArrayLeakType | null;
+            }[] = [];
+            try {
+              const results = await Promise.allSettled(
+                otherNumber.map((number) =>
+                  post('/api/leak-data/get-olx', {
+                    mobile: number.number,
+                  }),
+                ),
+              );
+              results.forEach((result, index) => {
+                if (result.status === 'fulfilled') {
+                  olxLeak.push({
+                    value: otherNumber[index]?.number,
+                    type: otherNumber[index]?.type,
+                    data: result.value,
+                  });
+                } else {
+                  olxLeak.push({
+                    value: otherNumber[index]?.number,
+                    type: otherNumber[index]?.type,
+                    data: null,
+                  });
+                }
+              });
+              setolxLeakData(olxLeak);
+            } catch (error) {}
+
+            // calling cbse leaks
+            let cbseLeak: {
+              value: string;
+              type: string;
+              data: DarkWebType | null;
+            }[] = [];
+
+            try {
+              const results = await Promise.allSettled(
+                otherNumber.map((number) =>
+                  post('/api/leak-data/get-cbse', {
+                    mobile: number.number,
+                  }),
+                ),
+              );
+              results.forEach((result, index) => {
+                if (result.status === 'fulfilled') {
+                  cbseLeak.push({
+                    value: otherNumber[index]?.number,
+                    type: otherNumber[index]?.type,
+                    data: result.value,
+                  });
+                } else {
+                  cbseLeak.push({
+                    value: otherNumber[index]?.number,
+                    type: otherNumber[index]?.type,
+                    data: null,
+                  });
+                }
+              });
+              setcbseLeakData(cbseLeak);
+            } catch (error) {}
+
+            // calling coperate leaks
+            let coperateLeak: {
+              value: string;
+              type: string;
+              data: DarkWebType | null;
+            }[] = [];
+
+            try {
+              const results = await Promise.allSettled(
+                otherNumber.map((number) =>
+                  post('/api/leak-data/get-corporate', {
+                    mobile: number.number,
+                  }),
+                ),
+              );
+              results.forEach((result, index) => {
+                if (result.status === 'fulfilled') {
+                  coperateLeak.push({
+                    value: otherNumber[index]?.number,
+                    type: otherNumber[index]?.type,
+                    data: result.value,
+                  });
+                } else {
+                  coperateLeak.push({
+                    value: otherNumber[index]?.number,
+                    type: otherNumber[index]?.type,
+                    data: null,
+                  });
+                }
+              });
+              setCoperateLeakData(coperateLeak);
+            } catch (error) {}
+
+            // calling zomato Leak
+            let zomatoLeak: {
+              value: string;
+              type: string;
+              data: DarkWebType | null;
+            }[] = [];
+
+            try {
+              const results = await Promise.allSettled(
+                otherNumber.map((number) =>
+                  post('/api/leak-data/get-zomato', {
+                    mobile: number.number,
+                  }),
+                ),
+              );
+              results.forEach((result, index) => {
+                if (result.status === 'fulfilled') {
+                  zomatoLeak.push({
+                    value: otherNumber[index]?.number,
+                    type: otherNumber[index]?.type,
+                    data: result.value,
+                  });
+                } else {
+                  zomatoLeak.push({
+                    value: otherNumber[index]?.number,
+                    type: otherNumber[index]?.type,
+                    data: null,
+                  });
+                }
+              });
+              setZomatoLeakData(zomatoLeak);
+            } catch (error) {}
+
             // calling jobSeeker
             let jobSeeker: {
               value: string;
@@ -1188,6 +1466,112 @@ export default function BeFiSc() {
               });
             } catch (error) {}
           }
+          const numbersDetected = getOtherPhoneNumbers(
+            esicsData,
+            gstAdvanceData,
+            EquifaxV3Data,
+            profileAdvanceData,
+            mobileNo,
+            true,
+            finalArray,
+          );
+          numbersFoundRef.current = numbersDetected.length - 1;
+          const emailsDetected = getOtherEmails(
+            esicsData,
+            gstAdvanceData,
+            EquifaxV3Data,
+            profileAdvanceData,
+            '',
+            finalArray,
+          );
+          // calling search api after breach data
+          if (emailsDetected.length > 0 || numbersDetected.length > 0) {
+            let rapidApiData: {
+              value: string;
+              type: string;
+              data: RapidSearchAPIType | null;
+            }[] = [];
+            const queries = [
+              "AND 'email' OR 'address'",
+              'intex:',
+              'filetype:pdf OR filetype:doc',
+            ];
+            try {
+              const flatPromises: Promise<RapidSearchAPIType>[] = [];
+              numbersDetected.forEach((number) => {
+                queries.forEach((query, index) => {
+                  const q =
+                    index === 1
+                      ? `${query}'${number?.number}'`
+                      : `'${number?.number} '${query}`;
+                  flatPromises.push(
+                    post('/api/secondary/rapid-search', { query: q }),
+                  );
+                });
+              });
+              const numberResults = await Promise.allSettled(flatPromises);
+              numberResults.forEach((result, index) => {
+                const correspondingIndex = Math.floor(index / queries.length);
+                if (result.status === 'fulfilled') {
+                  rapidApiData.push({
+                    value: numbersDetected[correspondingIndex]?.number,
+                    type: numbersDetected[correspondingIndex]?.type,
+                    data: result.value as RapidSearchAPIType,
+                  });
+                } else {
+                  finalArray.push({
+                    value: numbersDetected[correspondingIndex]?.number,
+                    type: numbersDetected[correspondingIndex]?.type,
+                    data: null,
+                  });
+                }
+              });
+            } catch (error) {}
+
+            try {
+              // similary for emails
+              const flatPromises2: Promise<RapidSearchAPIType>[] = [];
+              emailsDetected.forEach((email) => {
+                queries.forEach((query, index) => {
+                  const q =
+                    index === 1
+                      ? `${query}'${email?.email}'`
+                      : `'${email?.email} '${query}`;
+                  flatPromises2.push(
+                    post('/api/secondary/rapid-search', { query: q }),
+                  );
+                });
+              });
+              const emailsResult = await Promise.allSettled(flatPromises2);
+              emailsResult.forEach((result, index) => {
+                const correspondingIndex = Math.floor(index / queries.length);
+                if (result.status === 'fulfilled') {
+                  rapidApiData.push({
+                    value: emailsDetected[correspondingIndex]?.email,
+                    type: emailsDetected[correspondingIndex]?.type,
+                    data: result.value as RapidSearchAPIType,
+                  });
+                } else {
+                  finalArray.push({
+                    value: emailsDetected[correspondingIndex]?.email,
+                    type: emailsDetected[correspondingIndex]?.type,
+                    data: null,
+                  });
+                }
+              });
+            } catch (error) {}
+            // dummy2222.map((item) => (
+            //   rapidApiData.push({
+            //     value: item?.value,
+            //     type: item?.type,
+            //     data: item?.data,
+            //   })
+            // ))
+            // console.log('HERE IS rapidApiData', rapidApiData);
+
+            setRapidApiData(rapidApiData);
+          }
+
           setBreachInfo(finalArray);
           setBreachInfoLoading(false);
         }
@@ -1236,8 +1620,11 @@ export default function BeFiSc() {
 
   const OverviewData = [
     {
-      title: 'Father Name',
-      value: formatSentence(panAllInOneData?.result?.fname),
+      title: 'Father Or Husband',
+      value: formatSentence(
+        panAllInOneData?.result?.fname ||
+          mobileToDLAdvance?.responseData?.[0]?.data?.result?.father_or_husband,
+      ),
       titleClassname: '',
       valueClassname: '',
     },
@@ -1486,13 +1873,12 @@ export default function BeFiSc() {
               >
                 <DashboardCard title="" className="col-span-full lg:col-span-2">
                   <div className="mb-2 flex items-center gap-x-2">
-                    <div className="group relative h-[65px] w-[65px]">
+                    <div className="group relative h-[65px] w-[65px] overflow-hidden rounded-full">
                       <Image
                         src={getImageUrl()}
                         alt="user"
-                        width={65}
-                        height={65}
-                        className="rounded-full border hover:cursor-pointer"
+                        fill
+                        className="rounded-full border object-cover hover:cursor-pointer"
                       />
 
                       {/* enlarged image */}
@@ -1502,7 +1888,7 @@ export default function BeFiSc() {
                           alt="user enlarged"
                           width={460}
                           height={460}
-                          className="scale-75 transform rounded-full border shadow-xl transition-transform duration-300 ease-in-out group-hover:scale-100"
+                          className="scale-75 transform rounded-full border object-cover shadow-xl transition-transform duration-300 ease-in-out group-hover:scale-100"
                         />
                       </div>
                     </div>
@@ -1729,6 +2115,7 @@ export default function BeFiSc() {
                   ProfileAdvanceData={profileAdvanceData}
                   EsicsData={esicsData}
                   PanAllInOneData={panAllInOneData}
+                  mobileToDLAdvance={mobileToDLAdvance}
                 />
               </TabsContent>
               <TabsContent value="financial" className="mt-6">
@@ -1757,14 +2144,21 @@ export default function BeFiSc() {
                 )}
               </TabsContent>
               <TabsContent value="digitalInfo" className="mt-6">
-                <BeFiScDigitalFootprint
-                  EcicsData={esicsData}
-                  EquifaxData={EquifaxV3Data}
-                  PanAllInOneData={panAllInOneData}
-                  GstAdvanceData={gstAdvanceData}
-                  ProfileAdvanceData={profileAdvanceData}
-                  mobileNumber={mobileNo}
-                />
+                {breachInfoLoading ? (
+                  <BeFiScLoadingSkeleton />
+                ) : (
+                  <BeFiScDigitalFootprint
+                    EcicsData={esicsData}
+                    EquifaxData={EquifaxV3Data}
+                    PanAllInOneData={panAllInOneData}
+                    GstAdvanceData={gstAdvanceData}
+                    ProfileAdvanceData={profileAdvanceData}
+                    mobileNumber={mobileNo}
+                    breachInfoLeakData={breachInfo}
+                    breachInfoLoading={breachInfoLoading}
+                    ECOMAddresses={ecomAddresses}
+                  />
+                )}
               </TabsContent>
               <TabsContent value="breachInfo" className="mt-6">
                 {breachInfoLoading ? (
@@ -1779,6 +2173,12 @@ export default function BeFiSc() {
                     jobSeekerData={jobSeekerData}
                     HunterFindData={hunterFindData}
                     hudsonData={hudsonData}
+                    zomatoLeakData={zomatoLeakData}
+                    coperateLeakData={coperateLeakData}
+                    cbseLeakData={cbseLeakData}
+                    olxLeakData={olxLeakData}
+                    indiaMartLeakData={indiaMartLeakData}
+                    rapidApiData={rapidApiData}
                   />
                 )}
               </TabsContent>

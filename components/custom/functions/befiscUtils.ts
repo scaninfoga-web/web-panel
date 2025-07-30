@@ -6,6 +6,7 @@ import {
   ProfileAdvanceType,
 } from '@/types/BeFiSc';
 import { isValidIndianMobileNumber } from './checkingUtils';
+import { BreachInfoType } from '@/types/BreachInfo';
 
 export function getOtherEmails(
   EcicsData: EsicDetailsType | null,
@@ -13,6 +14,11 @@ export function getOtherEmails(
   EquifaxData: EquifaxV3Type | null,
   ProfileAdvanceData: ProfileAdvanceType | null,
   email: string,
+  breachInfoLeakData?: {
+    value: string;
+    type: string;
+    data: BreachInfoType | null;
+  }[],
 ): {
   type: string;
   email: string;
@@ -32,7 +38,7 @@ export function getOtherEmails(
       ) {
         seen.add(item.value.toLowerCase());
         emailArray.push({
-          type: 'Obtained this email from profile',
+          type: 'email from profile',
           email: item.value.toLowerCase(),
         });
       }
@@ -49,7 +55,7 @@ export function getOtherEmails(
           ) {
             seen.add(emailData?.EmailAddress.toLowerCase());
             emailArray.push({
-              type: 'This email is related from the Loans',
+              type: 'email is related from the Loans',
               email: emailData?.EmailAddress.toLowerCase(),
             });
           }
@@ -65,7 +71,7 @@ export function getOtherEmails(
     ) {
       seen.add(GstAdvanceData?.result?.business_email.toLowerCase());
       emailArray.push({
-        type: 'This email is related to business',
+        type: 'email is related to business',
         email: GstAdvanceData?.result?.business_email.toLowerCase(),
       });
     }
@@ -82,12 +88,41 @@ export function getOtherEmails(
       ) {
         seen.add(item?.employer_details?.email.toLowerCase());
         emailArray.push({
-          type: 'This email is related from the person working place',
+          type: 'email is related from the person working place',
           email: item?.employer_details?.email.toLowerCase(),
         });
       }
     });
   }
+  if ((breachInfoLeakData?.length || 0) > 0) {
+    breachInfoLeakData?.map((item) =>
+      Object.entries(item?.data?.responseData?.data?.List || {}).map(
+        ([key, value]) => {
+          if (key === 'No results found') {
+            return;
+          }
+          value?.Data?.map((item) => {
+            Object.entries(item).map(([key, value]) => {
+              if (key?.toLowerCase().includes('email')) {
+                if (
+                  value &&
+                  value.toLowerCase() !== email.toLowerCase() &&
+                  !seen.has(value.toLowerCase())
+                ) {
+                  seen.add(value.toLowerCase());
+                  emailArray.push({
+                    type: 'email is retrived from the leak data',
+                    email: value.toLowerCase(),
+                  });
+                }
+              }
+            });
+          });
+        },
+      ),
+    );
+  }
+
   return emailArray;
 }
 export function getOtherPhoneNumbers(
@@ -97,6 +132,11 @@ export function getOtherPhoneNumbers(
   profileAdvanceData: ProfileAdvanceType | null,
   mobileNumber: string,
   isIncluded: boolean = false,
+  breachInfoLeakData?: {
+    value: string;
+    type: string;
+    data: BreachInfoType | null;
+  }[],
 ): {
   number: string;
   type: string;
@@ -185,6 +225,44 @@ export function getOtherPhoneNumbers(
       }
     });
   }
+
+  if ((breachInfoLeakData?.length || 0) > 0) {
+    breachInfoLeakData?.map((item) =>
+      Object.entries(item?.data?.responseData?.data?.List || {}).map(
+        ([key, value]) => {
+          if (key === 'No results found') {
+            return;
+          }
+          value?.Data?.map((item) => {
+            Object.entries(item).map(([key, value]) => {
+              if (
+                key?.toLowerCase().includes('phone') ||
+                key?.includes('mobile')
+              ) {
+                const formattedNumber = isValidIndianMobileNumber(
+                  value?.toString() || '',
+                );
+                if (formattedNumber.result) {
+                  if (
+                    formattedNumber.fixedNumber !== mobileNumber &&
+                    !seen.has(formattedNumber.fixedNumber) &&
+                    formattedNumber.result
+                  ) {
+                    seen.add(formattedNumber.fixedNumber);
+                    filteredNumber.push({
+                      number: formattedNumber.fixedNumber,
+                      type: 'Mobile obtained from leak data',
+                    });
+                  }
+                }
+              }
+            });
+          });
+        },
+      ),
+    );
+  }
+
   return filteredNumber;
 }
 

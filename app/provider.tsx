@@ -14,10 +14,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     // Disable right-click
-    if (
-      process.env.NEXT_PUBLIC_BACKEND_URL !==
-      'https://dev-backend.scaninfoga.com'
-    ) {
+    if (!process.env.NEXT_PUBLIC_BACKEND_URL?.includes('dev')) {
       const handleContextMenu = (e: MouseEvent) => e.preventDefault();
       document.addEventListener('contextmenu', handleContextMenu);
 

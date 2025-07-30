@@ -38,14 +38,14 @@ export function DashboardCard({
           <div className="flex items-center">
             {notifytitle && (
               <span className="absolute -top-1 right-0 animate-pulse rounded-2xl border border-red-400 px-3 py-0.5 text-sm text-red-400 transition-opacity hover:opacity-75">
-                suspicous
+                {notifytitle}
               </span>
             )}
             {icon}
             {title.length > 0 && (
               <h2
                 className={cn(
-                  'mb-2 mt-2 font-semibold text-emerald-500',
+                  'mb-2 ml-2 mt-2 font-semibold text-emerald-500',
                   titleBig ? 'text-2xl' : 'text-xl',
                 )}
               >
@@ -63,14 +63,15 @@ export function DashboardCard({
 interface InfoTextProps {
   label: string;
   value: React.ReactElement | string;
+  valueClassname?: string;
 }
 
-export function InfoText({ label, value }: InfoTextProps) {
+export function InfoText({ label, value, valueClassname }: InfoTextProps) {
   // return <p className="text-sm text-gray-400">{value}</p>;
   return (
     <div className="flex items-center justify-between gap-x-8">
       <div className="whitespace-nowrap text-sm text-white">{label}</div>
-      <div className="whitespace-nowrap break-all text-sm text-gray-400">
+      <div className={cn('break-words text-sm text-gray-400', valueClassname)}>
         {value}
       </div>
     </div>

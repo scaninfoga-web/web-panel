@@ -1,4 +1,3 @@
-'use client';
 export async function collectClientInfo() {
   const location = await new Promise<{ lat: number; lon: number }>(
     (resolve) => {

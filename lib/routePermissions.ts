@@ -7,6 +7,7 @@ export const publicRoutes: string[] = [
   '/tools',
   '/contact',
   '/api/ip',
+  '/api/ipinfo',
   '/auth/admin',
   '/auth/reset-password',
   '/terms-conditions',

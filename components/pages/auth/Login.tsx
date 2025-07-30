@@ -3,7 +3,7 @@
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { Form } from '@/components/ui/form';
@@ -15,6 +15,7 @@ import { clearCookies } from '@/actions/clearCookies';
 import { useState } from 'react';
 import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
 import { post } from '@/lib/api';
+import { RootState } from '@/redux/store';
 const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
@@ -39,6 +40,8 @@ const Login = () => {
   const [userType, setUserType] = useState<'user' | 'corporate' | 'developer'>(
     'user',
   );
+
+  const { fetched } = useSelector((state: RootState) => state.info);
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -103,6 +106,10 @@ const Login = () => {
   // };
 
   const onLogin = async (data: LoginFormValues) => {
+    if (!fetched) {
+      toast.error('Please wait. Fetching details.');
+      return;
+    }
     try {
       setLoading(true);
       const response = await post(
@@ -152,11 +159,11 @@ const Login = () => {
               label="Account Type"
               options={userTypeOptions}
             /> */}
-            <div className="mb-8">
-              <div className="flex gap-2 rounded-lg bg-[#0A0D14] p-1">
+            <div className="mb-8 rounded-2xl">
+              <div className="flex gap-2 rounded-2xl bg-[#0A0D14] p-1">
                 <button
                   type="button"
-                  className={`flex-1 rounded-md px-4 py-2 transition-colors ${
+                  className={`flex-1 rounded-2xl px-4 py-2 transition-colors ${
                     userType === 'user'
                       ? 'bg-emerald-500 text-black'
                       : 'text-white hover:bg-emerald-500/20'
@@ -178,7 +185,7 @@ const Login = () => {
             </button> */}
                 <button
                   type="button"
-                  className={`flex-1 rounded-md px-4 py-2 transition-colors ${
+                  className={`flex-1 rounded-2xl px-4 py-2 transition-colors ${
                     userType === 'corporate'
                       ? 'bg-emerald-500 text-black'
                       : 'text-white hover:bg-emerald-500/20'
@@ -211,9 +218,9 @@ const Login = () => {
                 <FormInput
                   form={form}
                   name="otp"
-                  label="Google Authenticator Code"
+                  label="Google Authenticator"
                   type="text"
-                  placeholder="enter google authenticator code"
+                  placeholder="Enter code from google authenticator"
                 />
               </>
             )}

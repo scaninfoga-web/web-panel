@@ -1,26 +1,5 @@
-{
-    "responseStatus": {
-        "status": true,
-        "message": "Data fetched from database"
-    },
-    "responseData": {
-        "result": {
-            "vpa_details": {
-                "vpa": "iamashishtiwari2004@okhdfcbank",
-                "account_holder_name": "ASHISH TIWARI"
-            },
-            "account_details": {
-                "account_ifsc": "UTIB0004922",
-                "account_number": "923010017433645",
-                "amount_deposited": "0.01"
-            }
-        },
-        "status": 1,
-        "txn_id": "cf82bcc8-ff9a-4e73-9c69-d3206976b073",
-        "message": "Success",
-        "api_name": "Mobile to Account Number",
-        "billable": true,
-        "datetime": "2025-06-26 12:20:29.259105",
-        "api_category": "Financial Check"
-    }
-}
+/api/leak-data/get-corporate
+/api/leak-data/get-zomato
+/api/leak-data/get-cbse
+/api/leak-data/get-olx
+/api/leak-data/get-india-mart

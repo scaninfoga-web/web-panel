@@ -61,15 +61,16 @@ function EmailDetectorComponent({
 
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-      {holeheData?.map((item) => {
+      {holeheData?.map((item, index) => {
         if (
           !item?.data?.responseData?.results ||
           item?.data?.responseData?.results?.length === 0
         ) {
-          return <></>;
+          return null;
         }
         return (
           <DashboardCard
+            key={`${item?.value}--${index}`}
             icon={
               <Image
                 src={getProfileIcon(
