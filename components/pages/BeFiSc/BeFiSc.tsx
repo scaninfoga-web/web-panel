@@ -15,6 +15,7 @@ import {
   GstVerificationAdvanceType,
   Mobile360Type,
   MobileToAccountNumberType,
+  MobileToDLAdvanceType,
   PanAllInOneType,
   ProfileAdvanceType,
   UPIType,
@@ -65,6 +66,8 @@ import { isValidIndianMobileNumber } from '@/components/custom/functions/checkin
 import { HoleheType } from '@/types/holhe';
 import { DarkWebType, ObjectArrayLeakType } from '@/types/dark-web';
 import { AddressTracingType } from '@/types/addressTrace';
+import { RapidSearchAPIType } from '@/types/rapidAPI';
+import { dummy2222 } from './dummy';
 
 export default function BeFiSc() {
   const searchParams = useSearchParams();
@@ -254,6 +257,17 @@ export default function BeFiSc() {
   const [ecomAddresses, setECOMAddresses] = useState<AddressTracingType | null>(
     null,
   );
+  const [mobileToDLAdvance, setMobileToDLAdvance] =
+    useState<MobileToDLAdvanceType | null>(null);
+
+  const [rapidApiData, setRapidApiData] = useState<
+    {
+      value: string;
+      type: string;
+      data: RapidSearchAPIType | null;
+    }[]
+  >([]);
+
   const setAllOnLoading = () => {
     setIsLoading(true);
     setUpiDetailsLoading(true);
@@ -303,6 +317,8 @@ export default function BeFiSc() {
     setolxLeakData([]);
     setindiaMartLeakData([]);
     setECOMAddresses(null);
+    setMobileToDLAdvance(null);
+    setRapidApiData([]);
   };
 
   useEffect(() => {
@@ -505,6 +521,19 @@ export default function BeFiSc() {
   useEffect(() => {
     if (mobile360Data) {
       const callOtherAPIs = async () => {
+        // calling mobile to dl advance
+        try {
+          const dlAdvanceResponse = await post(
+            '/api/mobile/mobile-to-dl-advance-full-data',
+            {
+              mobile: mobileNo,
+            },
+          );
+          if (dlAdvanceResponse?.responseData) {
+            setMobileToDLAdvance(dlAdvanceResponse);
+          }
+        } catch (error) {}
+
         // calling ecom address
         try {
           const ecomResponse = await post(
@@ -823,6 +852,10 @@ export default function BeFiSc() {
   };
 
   const getImageUrl = (): string => {
+    if (mobileToDLAdvance?.responseData?.[0]?.data?.result?.user_image) {
+      return `data:image/png;base64,${mobileToDLAdvance?.responseData?.[0]?.data?.result?.user_image}`;
+    }
+
     if (ghuntMultipleData[0]?.profile?.profilePictureUrl) {
       return ghuntMultipleData[0]?.profile.profilePictureUrl;
     }
@@ -1005,19 +1038,6 @@ export default function BeFiSc() {
               type: string;
               data: HudsonEmailType | null;
             }[] = [];
-            // // calling hudsonIP
-            // const clientInfo = getClientInfo();
-            // try {
-            //   const res = await post('/api/hudson/search-by-ip', {
-            //     ip: clientInfo?.ip,
-            //     realtimeData: isRealtime,
-            //   });
-            //   hudsonDataa.push({
-            //     value: clientInfo?.ip,
-            //     type: 'IP',
-            //     data: res,
-            //   });
-            // } catch (error) {}
 
             // calling hudsonEmail
             try {
@@ -1456,6 +1476,102 @@ export default function BeFiSc() {
             finalArray,
           );
           numbersFoundRef.current = numbersDetected.length - 1;
+          const emailsDetected = getOtherEmails(
+            esicsData,
+            gstAdvanceData,
+            EquifaxV3Data,
+            profileAdvanceData,
+            '',
+            finalArray,
+          );
+          // calling search api after breach data
+          if (emailsDetected.length > 0 || numbersDetected.length > 0) {
+            let rapidApiData: {
+              value: string;
+              type: string;
+              data: RapidSearchAPIType | null;
+            }[] = [];
+            const queries = [
+              "AND 'email' OR 'address'",
+              'intex:',
+              'filetype:pdf OR filetype:doc',
+            ];
+            try {
+              const flatPromises: Promise<RapidSearchAPIType>[] = [];
+              numbersDetected.forEach((number) => {
+                queries.forEach((query, index) => {
+                  const q =
+                    index === 1
+                      ? `${query}'${number?.number}'`
+                      : `'${number?.number} '${query}`;
+                  flatPromises.push(
+                    post('/api/secondary/rapid-search', { query: q }),
+                  );
+                });
+              });
+              const numberResults = await Promise.allSettled(flatPromises);
+              numberResults.forEach((result, index) => {
+                const correspondingIndex = Math.floor(index / queries.length);
+                if (result.status === 'fulfilled') {
+                  rapidApiData.push({
+                    value: numbersDetected[correspondingIndex]?.number,
+                    type: numbersDetected[correspondingIndex]?.type,
+                    data: result.value as RapidSearchAPIType,
+                  });
+                } else {
+                  finalArray.push({
+                    value: numbersDetected[correspondingIndex]?.number,
+                    type: numbersDetected[correspondingIndex]?.type,
+                    data: null,
+                  });
+                }
+              });
+            } catch (error) {}
+
+            try {
+              // similary for emails
+              const flatPromises2: Promise<RapidSearchAPIType>[] = [];
+              emailsDetected.forEach((email) => {
+                queries.forEach((query, index) => {
+                  const q =
+                    index === 1
+                      ? `${query}'${email?.email}'`
+                      : `'${email?.email} '${query}`;
+                  flatPromises2.push(
+                    post('/api/secondary/rapid-search', { query: q }),
+                  );
+                });
+              });
+              const emailsResult = await Promise.allSettled(flatPromises2);
+              emailsResult.forEach((result, index) => {
+                const correspondingIndex = Math.floor(index / queries.length);
+                if (result.status === 'fulfilled') {
+                  rapidApiData.push({
+                    value: emailsDetected[correspondingIndex]?.email,
+                    type: emailsDetected[correspondingIndex]?.type,
+                    data: result.value as RapidSearchAPIType,
+                  });
+                } else {
+                  finalArray.push({
+                    value: emailsDetected[correspondingIndex]?.email,
+                    type: emailsDetected[correspondingIndex]?.type,
+                    data: null,
+                  });
+                }
+              });
+            } catch (error) {}
+            // dummy2222.map((item) => (
+            //   rapidApiData.push({
+            //     value: item?.value,
+            //     type: item?.type,
+            //     data: item?.data,
+            //   })
+            // ))
+            // console.log('HERE IS rapidApiData', rapidApiData);
+
+            setRapidApiData(rapidApiData);
+          }
+
           setBreachInfo(finalArray);
           setBreachInfoLoading(false);
         }
@@ -1504,8 +1620,11 @@ export default function BeFiSc() {
 
   const OverviewData = [
     {
-      title: 'Father Name',
-      value: formatSentence(panAllInOneData?.result?.fname),
+      title: 'Father Or Husband',
+      value: formatSentence(
+        panAllInOneData?.result?.fname ||
+          mobileToDLAdvance?.responseData?.[0]?.data?.result?.father_or_husband,
+      ),
       titleClassname: '',
       valueClassname: '',
     },
@@ -1754,13 +1873,12 @@ export default function BeFiSc() {
               >
                 <DashboardCard title="" className="col-span-full lg:col-span-2">
                   <div className="mb-2 flex items-center gap-x-2">
-                    <div className="group relative h-[65px] w-[65px]">
+                    <div className="group relative h-[65px] w-[65px] overflow-hidden rounded-full">
                       <Image
                         src={getImageUrl()}
                         alt="user"
-                        width={65}
-                        height={65}
-                        className="rounded-full border hover:cursor-pointer"
+                        fill
+                        className="rounded-full border object-cover hover:cursor-pointer"
                       />
 
                       {/* enlarged image */}
@@ -1770,7 +1888,7 @@ export default function BeFiSc() {
                           alt="user enlarged"
                           width={460}
                           height={460}
-                          className="scale-75 transform rounded-full border shadow-xl transition-transform duration-300 ease-in-out group-hover:scale-100"
+                          className="scale-75 transform rounded-full border object-cover shadow-xl transition-transform duration-300 ease-in-out group-hover:scale-100"
                         />
                       </div>
                     </div>
@@ -1997,6 +2115,7 @@ export default function BeFiSc() {
                   ProfileAdvanceData={profileAdvanceData}
                   EsicsData={esicsData}
                   PanAllInOneData={panAllInOneData}
+                  mobileToDLAdvance={mobileToDLAdvance}
                 />
               </TabsContent>
               <TabsContent value="financial" className="mt-6">
@@ -2059,6 +2178,7 @@ export default function BeFiSc() {
                     cbseLeakData={cbseLeakData}
                     olxLeakData={olxLeakData}
                     indiaMartLeakData={indiaMartLeakData}
+                    rapidApiData={rapidApiData}
                   />
                 )}
               </TabsContent>

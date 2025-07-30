@@ -15,8 +15,6 @@ import {
   ProfileAdvanceType,
   RazorPayUpiType,
 } from '@/types/BeFiSc';
-import { DashboardCard } from '../dashboard/components/DashboardCard';
-import CustomBadge from './sub/CustomBadge';
 import {
   getAddressesWithDifferentPincode,
   getOtherEmails,
@@ -26,15 +24,13 @@ import {
   formatDateTime,
   formatSentence,
 } from '@/components/custom/functions/formatUtils';
+import { DashboardCard } from '../dashboard/components/DashboardCard';
+import CustomBadge from './sub/CustomBadge';
 import { BreachInfoType } from '@/types/BreachInfo';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import SentenceLoader from './sub/SentenceLoader';
-import { OlaGeoApiType } from '@/types/ola-geo-api';
 import { getClientInfo, post } from '@/lib/api';
-import { toast } from 'sonner';
 import CustomPopUp from './sub/CustomPopUp';
-import Image from 'next/image';
 import M2BankInfo from '../digitalInteligence/sub/M2BankInfo';
 import { Loader } from '@/components/ui/loader';
 import { TrucallerVerifyType } from '@/types/trucaller';
@@ -93,7 +89,6 @@ export default function BeFiScDigitalFootprint({
     trucallerVerifyData: TrucallerVerifyType | null;
   }>(null);
   const [loading, setLoading] = useState(false);
-
   useEffect(() => {
     if (!breachInfoLoading) {
       const result = getOtherPhoneNumbers(
@@ -113,9 +108,7 @@ export default function BeFiScDigitalFootprint({
     const clientInfo = getClientInfo();
     try {
       setLoading(true);
-
       const mapData = data.get(mobile);
-
       if (mapData) {
         setMobileData({
           mobile,
@@ -131,12 +124,16 @@ export default function BeFiScDigitalFootprint({
         razorPayData: null,
         mobileToBankData: null,
       });
+      let responseData1: any = null;
+      try {
+        const response = await post('/api/mobile/getAcDtlsFromMobNo', {
+          mobile_number: mobile,
+        });
+        responseData1 = response;
+      } catch (error) {}
 
-      const response = await post('/api/mobile/getAcDtlsFromMobNo', {
-        mobile_number: mobile,
-      });
       const ifsc =
-        response?.responseData?.result?.account_details?.account_ifsc;
+        responseData1?.responseData?.result?.account_details?.account_ifsc;
       let ifscData: RazorPayUpiType | null = null;
       try {
         if (ifsc) {
@@ -149,25 +146,23 @@ export default function BeFiScDigitalFootprint({
       } catch (error) {}
       let trucallerVerify: TrucallerVerifyType | null = null;
       try {
-        if (ifsc) {
-          const trucallerVerifyRes = await post('/api/verify/trucallerVerify', {
-            mobile_number: mobile,
-            realtimeData: false,
-          });
-          trucallerVerify = trucallerVerifyRes;
-        }
+        const trucallerVerifyRes = await post('/api/verify/trucallerVerify', {
+          mobile_number: mobile,
+          realtimeData: false,
+        });
+        trucallerVerify = trucallerVerifyRes;
       } catch (error) {}
       data.set(mobile, {
         mobile,
         trucallerVerifyData: trucallerVerify,
         razorPayData: ifscData,
-        mobileToBankData: response.responseData,
+        mobileToBankData: responseData1?.responseData,
       });
       setMobileData({
         mobile,
         trucallerVerifyData: trucallerVerify,
         razorPayData: ifscData,
-        mobileToBankData: response.responseData,
+        mobileToBankData: responseData1?.responseData,
       });
     } catch (error) {
     } finally {
@@ -258,7 +253,7 @@ export default function BeFiScDigitalFootprint({
 
   return (
     <div className="grid grid-cols-1 gap-4">
-      <div className="flex gap-4">
+      <div className="grid w-full grid-cols-1 lg:grid-cols-2">
         {alternatePhoneNumbers.length > 0 ? (
           <DashboardCard title="Alternate Number" className="max-w-[490px]">
             {alternatePhoneNumbers.map((item, index) => (
@@ -293,12 +288,16 @@ export default function BeFiScDigitalFootprint({
                         <Loader className="max-h-[400px]" />
                       ) : (
                         <div className="grid grid-cols-1 gap-4">
-                          <M2BankInfo
-                            data={{
-                              razorPayData: mobileData?.razorPayData,
-                              mobileToBankData: mobileData?.mobileToBankData,
-                            }}
-                          />
+                          {mobileData?.razorPayData &&
+                            mobileData?.mobileToBankData && (
+                              <M2BankInfo
+                                data={{
+                                  razorPayData: mobileData?.razorPayData,
+                                  mobileToBankData:
+                                    mobileData?.mobileToBankData,
+                                }}
+                              />
+                            )}
                           <TrucallerVerifyInfo
                             data={{
                               trucallerVerifyData:
@@ -323,7 +322,7 @@ export default function BeFiScDigitalFootprint({
                 className="flex items-center justify-between border-b border-slate-800 pb-2"
                 key={index}
               >
-                <span>{item?.email}</span>
+                <span className="max-w-64 break-all">{item?.email}</span>
                 <CustomBadge
                   blink={true}
                   variantToUse="warning"
@@ -336,26 +335,6 @@ export default function BeFiScDigitalFootprint({
         ) : (
           <></>
         )}
-      </div>
-
-      <div className="max-h-[450px] min-w-full overflow-auto">
-        {(ECOMAddresses?.responseData?.length || 0) > 0
-          ? ECOMAddresses?.responseData?.map((item, index) => {
-              return (
-                <DashboardCard
-                  key={item?.datetime}
-                  title={`Ecom Address-${formatDateTime(item?.datetime)}`}
-                >
-                  <CustomTable
-                    //@ts-ignore
-                    columns={ecomAddressesColumns}
-                    dataSource={item?.data?.result?.addresses || []}
-                    loading={loading}
-                  />
-                </DashboardCard>
-              );
-            })
-          : null}
       </div>
 
       <div className="scrollbar-custom min-w-full">
@@ -389,6 +368,26 @@ export default function BeFiScDigitalFootprint({
         ) : (
           <></>
         )}
+      </div>
+
+      <div className="max-h-[450px] min-w-full overflow-auto">
+        {(ECOMAddresses?.responseData?.length || 0) > 0
+          ? ECOMAddresses?.responseData?.map((item, index) => {
+              return (
+                <DashboardCard
+                  key={item?.datetime}
+                  title={`Ecommerce Address-${formatDateTime(item?.datetime)}`}
+                >
+                  <CustomTable
+                    //@ts-ignore
+                    columns={ecomAddressesColumns}
+                    dataSource={item?.data?.result?.addresses || []}
+                    loading={loading}
+                  />
+                </DashboardCard>
+              );
+            })
+          : null}
       </div>
     </div>
   );

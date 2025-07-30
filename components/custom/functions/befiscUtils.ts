@@ -38,7 +38,7 @@ export function getOtherEmails(
       ) {
         seen.add(item.value.toLowerCase());
         emailArray.push({
-          type: 'Obtained this email from profile',
+          type: 'email from profile',
           email: item.value.toLowerCase(),
         });
       }
@@ -55,7 +55,7 @@ export function getOtherEmails(
           ) {
             seen.add(emailData?.EmailAddress.toLowerCase());
             emailArray.push({
-              type: 'This email is related from the Loans',
+              type: 'email is related from the Loans',
               email: emailData?.EmailAddress.toLowerCase(),
             });
           }
@@ -71,7 +71,7 @@ export function getOtherEmails(
     ) {
       seen.add(GstAdvanceData?.result?.business_email.toLowerCase());
       emailArray.push({
-        type: 'This email is related to business',
+        type: 'email is related to business',
         email: GstAdvanceData?.result?.business_email.toLowerCase(),
       });
     }
@@ -88,7 +88,7 @@ export function getOtherEmails(
       ) {
         seen.add(item?.employer_details?.email.toLowerCase());
         emailArray.push({
-          type: 'This email is related from the person working place',
+          type: 'email is related from the person working place',
           email: item?.employer_details?.email.toLowerCase(),
         });
       }
@@ -111,7 +111,7 @@ export function getOtherEmails(
                 ) {
                   seen.add(value.toLowerCase());
                   emailArray.push({
-                    type: 'This email is related from the leak data',
+                    type: 'email is retrived from the leak data',
                     email: value.toLowerCase(),
                   });
                 }

@@ -25,6 +25,9 @@ import { GhuntData } from '@/types/ghunt';
 import EmailDetector from './sub/EmailDetector';
 import { DarkWebType, ObjectArrayLeakType } from '@/types/dark-web';
 import DarkWebComponent from './sub/DarkWebComponent';
+import { RapidSearchAPIType } from '@/types/rapidAPI';
+import { DashboardCard, InfoText } from '../dashboard/components/DashboardCard';
+import InfoText2 from '@/components/custom/components/InfoText2';
 
 interface PageProps {
   data: {
@@ -88,6 +91,11 @@ interface PageProps {
     type: string;
     data: ObjectArrayLeakType | null;
   }[];
+  rapidApiData: {
+    value: string;
+    type: string;
+    data: RapidSearchAPIType | null;
+  }[];
 }
 export const dangerKeyWords = [
   'Password',
@@ -128,6 +136,7 @@ export default function BeFiScBreachInfo({
   cbseLeakData,
   olxLeakData,
   indiaMartLeakData,
+  rapidApiData,
 }: PageProps) {
   const [activeTab, setActiveTab] = useState('breach');
   const [breachSubTab, setBreachSubTab] = useState('emails');
@@ -170,6 +179,7 @@ export default function BeFiScBreachInfo({
     { value: 'breach', label: 'Breach Watch' },
     { value: 'darkWeb', label: 'Dark Web' },
     { value: 'Expose360', label: 'Expose360' },
+    { value: 'docking', label: 'Docking' },
   ];
 
   const getGridCols = (tabCount: number) => {
@@ -924,6 +934,65 @@ export default function BeFiScBreachInfo({
                 )}
             </TabsContent>
           </Tabs>
+        </TabsContent>
+        <TabsContent value="docking">
+          <div className="grid grid-cols-1 gap-4">
+            {rapidApiData?.map((item, index) => {
+              if (item?.data?.responseData?.results?.length === 0) {
+                return null;
+              }
+              return (
+                <DashboardCard
+                  key={`${item?.type}${item?.value}${index}`}
+                  title={`${item?.data?.responseData?.search_term}`}
+                  icon={
+                    <CustomBadge
+                      blink={true}
+                      variantToUse="warning"
+                      isFormat={false}
+                      value={item?.type}
+                    />
+                  }
+                  className="max-h-[400px] overflow-auto"
+                >
+                  <div className="flex flex-col space-y-2">
+                    <div className="grid grid-cols-1 gap-2 lg:grid-cols-2">
+                      {item?.data?.responseData?.results?.map(
+                        (result, index) => (
+                          <div
+                            className="flex flex-col space-y-1 rounded-2xl border border-slate-800 p-4"
+                            key={index}
+                          >
+                            <InfoText
+                              value={
+                                <a
+                                  href={result?.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-base font-medium text-blue-600 underline hover:cursor-pointer"
+                                >
+                                  {result?.url?.slice(0, 25)}
+                                </a>
+                              }
+                              label="URL"
+                            />
+                            <InfoText value={result?.title} label="Title" />
+                            <div
+                              className={cn(
+                                'break-words text-sm text-gray-400',
+                              )}
+                            >
+                              {result?.description}
+                            </div>
+                          </div>
+                        ),
+                      )}
+                    </div>
+                  </div>
+                </DashboardCard>
+              );
+            })}
+          </div>
         </TabsContent>
       </Tabs>
     </div>

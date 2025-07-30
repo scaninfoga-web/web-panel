@@ -157,7 +157,6 @@ export default function Navbar() {
                   router.push('/');
                   await new Promise((resolve) => setTimeout(resolve, 1000));
                   dispatch(logout());
-                  await clearCookies();
                   return;
                 }
                 router.push('/auth');

@@ -19,7 +19,7 @@ export default function CustomInputSearch({
   searchButton = true,
   className,
   label,
-  upperOnly,
+  upperOnly = false,
   placeholder,
   type,
   handleSearch,
@@ -71,7 +71,7 @@ export default function CustomInputSearch({
 
       {searchButton && (
         <Button
-          className="w-full bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20"
+          className="mt-6 w-full bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20"
           disabled={!valid}
           onClick={() => {
             if (type === 'number') {

@@ -23,7 +23,7 @@ export default function TrucallerVerifyInfo({ data }: Props) {
   const last_entry = entries?.at(-1);
 
   return (
-    <DashboardCard title={`${last_entry?.number}`}>
+    <DashboardCard title={`Trucaller-${last_entry?.number}`}>
       <div className="grid grid-cols-1 gap-4">
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
           <InfoText2 label="Name" value={formatSentence(last_entry?.name)} />
