@@ -38,6 +38,7 @@ import TrucallerVerifyInfo from '../digitalInteligence/sub/TrucallerVerifyInfo';
 import { AddressTracingType } from '@/types/addressTrace';
 import { CustomTable } from '@/components/ui/custom-table';
 import { formatDate } from '@/lib/utils';
+import { getValue } from './sub/CustomBeFiScCard';
 
 interface PageProps {
   mobileNumber: string;
@@ -211,11 +212,16 @@ export default function BeFiScDigitalFootprint({
       title: 'Address 1',
       dataIndex: 'address1',
       key: 'address1',
+      width: 300,
+      render: (text: string) => (
+        <span className="min-w-30">{getValue(text)}</span>
+      ),
     },
     {
       title: 'Address 2',
       dataIndex: 'address2',
       key: 'address2',
+      width: 300,
     },
     {
       title: 'Updated At',
@@ -253,9 +259,9 @@ export default function BeFiScDigitalFootprint({
 
   return (
     <div className="grid grid-cols-1 gap-4">
-      <div className="grid w-full grid-cols-1 lg:grid-cols-2">
+      <div className="grid w-full grid-cols-1 gap-4 lg:grid-cols-2">
         {alternatePhoneNumbers.length > 0 ? (
-          <DashboardCard title="Alternate Number" className="max-w-[490px]">
+          <DashboardCard title="Alternate Number">
             {alternatePhoneNumbers.map((item, index) => (
               <div
                 className="flex items-center justify-between space-x-2 border-b border-slate-800 pb-2"

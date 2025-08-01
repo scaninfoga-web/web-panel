@@ -267,6 +267,7 @@ export default function BeFiSc() {
       data: RapidSearchAPIType | null;
     }[]
   >([]);
+  const [breachAddharNumber, setBreachAddharNumber] = useState<string>('');
 
   const setAllOnLoading = () => {
     setIsLoading(true);
@@ -319,6 +320,7 @@ export default function BeFiSc() {
     setECOMAddresses(null);
     setMobileToDLAdvance(null);
     setRapidApiData([]);
+    setBreachAddharNumber('');
   };
 
   useEffect(() => {
@@ -518,6 +520,30 @@ export default function BeFiSc() {
     hunterFindData,
   ]);
 
+  // useEffect just for aadhar number validationf from breach info
+  useEffect(() => {
+    if (breachInfo?.length > 0) {
+      const lastFourDigitsAaddhar =
+        panAllInOneData?.result?.masked_aadhaar?.slice(-4) || '';
+      const lastFourDigitsBreach = breachInfo.map((item) => {
+        Object.entries(item?.data?.responseData?.data?.List || {}).map(
+          ([_, value]) => {
+            value?.Data?.forEach((item) => {
+              Object.entries(item).map(([key, value]) => {
+                if (
+                  lastFourDigitsAaddhar === value?.slice(-4) &&
+                  value.length === 12
+                ) {
+                  setBreachAddharNumber(value);
+                }
+              });
+            });
+          },
+        );
+      });
+    }
+  }, [breachInfo]);
+
   useEffect(() => {
     if (mobile360Data) {
       const callOtherAPIs = async () => {
@@ -611,6 +637,11 @@ export default function BeFiSc() {
               panAllInOne.responseData?.status === 1 ||
               panAllInOne.responseData?.status === 2
             ) {
+              // also set aadhar number which by later get updated to unmasked after breach info get fetched
+              setBreachAddharNumber(
+                panAllInOne?.responseData?.result?.masked_aadhaar,
+              );
+
               setPanAllInOneData(panAllInOne.responseData);
             }
           } catch (error) {
@@ -1680,9 +1711,10 @@ export default function BeFiSc() {
     },
     {
       title: 'Aadhaar Number',
-      value: panAllInOneData?.result?.masked_aadhaar || '----',
+      value: breachAddharNumber || '----',
       titleClassname: '',
       valueClassname: 'text-yellow-500',
+      loading: breachInfoLoading,
     },
     {
       title: 'Email Address',
@@ -1907,14 +1939,19 @@ export default function BeFiSc() {
                               >
                                 {item.title}
                               </p>
-                              <p
-                                className={cn(
-                                  'font-medium',
-                                  item.valueClassname,
-                                )}
-                              >
-                                {item.value}
-                              </p>
+                              {item.title === 'Aadhaar Number' &&
+                              breachInfoLoading ? (
+                                <SentenceLoader />
+                              ) : (
+                                <p
+                                  className={cn(
+                                    'font-medium',
+                                    item.valueClassname,
+                                  )}
+                                >
+                                  {item.value}
+                                </p>
+                              )}
                             </div>
                           );
                         })}
@@ -2102,6 +2139,7 @@ export default function BeFiSc() {
               </TabsContent>
               <TabsContent value="personal" className="mt-6 space-y-4">
                 <BefiScPersonal
+                  aadharNumber={breachAddharNumber}
                   Mobile360Data={mobile360Data}
                   ProfileAdvanceData={profileAdvanceData}
                   EsicsData={esicsData}
@@ -2156,6 +2194,7 @@ export default function BeFiSc() {
                   <BeFiScLoadingSkeleton />
                 ) : (
                   <BeFiScBreachInfo
+                    panAllInOneData={panAllInOneData}
                     ghuntMultipleData={ghuntMultipleData}
                     holeheData={holeheData}
                     HunterVerifyData={hunterVerifyData}

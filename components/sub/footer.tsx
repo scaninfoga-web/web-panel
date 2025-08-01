@@ -363,6 +363,17 @@ export default function Footer() {
                   className="object-contain"
                 />
               </div>
+              <div className="flex size-14 items-center justify-center rounded-full bg-slate-200/90">
+                <Image
+                  src={
+                    'https://website-stuff-logos.s3.ap-south-1.amazonaws.com/soc2.png'
+                  }
+                  alt="ISO"
+                  width={60}
+                  height={60}
+                  className="object-contain"
+                />
+              </div>
             </div>
           </div>
 

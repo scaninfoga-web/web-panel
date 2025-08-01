@@ -1,6 +1,10 @@
 'use client';
 import DashboardTitle from '@/components/common/DashboardTitle';
-import { isValidIndianMobileNumber } from '@/components/custom/functions/checkingUtils';
+import {
+  isValidIndianMobileNumber,
+  isValidPanNumber,
+  isValidVehicleNumber,
+} from '@/components/custom/functions/checkingUtils';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -118,11 +122,7 @@ const tools: {
             placeholder: 'Enter Vehicle Number',
             type: 'text',
             upperOnly: true,
-            validCheck: (vehicle) => {
-              const vehicleRegex =
-                /^[A-Z]{2}[0-9]{1,2}[A-Z]?[A-Z]{1,2}[0-9]{1,4}$/;
-              return vehicleRegex.test(vehicle.toUpperCase());
-            },
+            validCheck: (vehicle) => isValidVehicleNumber(vehicle).result,
           },
         ],
       },
@@ -152,10 +152,7 @@ const tools: {
             placeholder: 'Enter Pan Number',
             upperOnly: true,
             type: 'text',
-            validCheck: (pan) => {
-              const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]$/;
-              return panRegex.test(pan.toUpperCase());
-            },
+            validCheck: (pan) => isValidPanNumber(pan).result,
           },
         ],
       },

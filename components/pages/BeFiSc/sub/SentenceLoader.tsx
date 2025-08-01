@@ -10,7 +10,7 @@ export default function SentenceLoader({
   return (
     <div
       className={cn(
-        'mt-2 h-7 min-w-[180px] animate-pulse rounded-xl bg-slate-900 opacity-50',
+        'mt-2 h-7 min-w-[180px] animate-pulse rounded-xl bg-slate-800 opacity-70',
         className,
       )}
       {...props}
