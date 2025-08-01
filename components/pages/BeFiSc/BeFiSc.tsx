@@ -522,7 +522,7 @@ export default function BeFiSc() {
 
   // useEffect just for aadhar number validationf from breach info
   useEffect(() => {
-    if (breachInfo?.length > 0) {
+    if (breachInfo?.length > 0 && !breachInfoLoading) {
       const lastFourDigitsAaddhar =
         panAllInOneData?.result?.masked_aadhaar?.slice(-4) || '';
       const lastFourDigitsBreach = breachInfo.map((item) => {
