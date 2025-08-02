@@ -16,6 +16,7 @@ import { useState } from 'react';
 import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
 import { post } from '@/lib/api';
 import { RootState } from '@/redux/store';
+import { AxiosError } from 'axios';
 const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
@@ -140,7 +141,12 @@ const Login = () => {
       }
     } catch (error) {
       await clearCookies();
-      toast.error('Login failed. Check your credentials and try again.');
+      if (error instanceof AxiosError) {
+        toast.error(
+          error.response?.data?.responseStatus?.message ||
+            'Login failed. Check your credentials and try again.',
+        );
+      }
     } finally {
       setLoading(false);
     }

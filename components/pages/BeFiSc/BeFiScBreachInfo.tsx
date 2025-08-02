@@ -29,6 +29,8 @@ import { RapidSearchAPIType } from '@/types/rapidAPI';
 import { DashboardCard, InfoText } from '../dashboard/components/DashboardCard';
 import InfoText2 from '@/components/custom/components/InfoText2';
 import Docking from './sub/Docking';
+import BreachComp from './sub/BreachComp';
+import { PanAllInOneType } from '@/types/BeFiSc';
 
 interface PageProps {
   data: {
@@ -97,31 +99,37 @@ interface PageProps {
     type: string;
     data: RapidSearchAPIType | null;
   }[];
+  panAllInOneData: PanAllInOneType | null;
 }
 export const dangerKeyWords = [
-  'Password',
-  'Password(SHA-256)',
-  'IP',
-  'Phone',
-  'Password(SHA1)',
-  'Device',
-  'Password(bcrypt)',
-  'Amount',
+  'password',
+  'password(sha-256)',
+  'ip',
+  'password(sha1)',
+  'device',
+  'password(bcrypt)',
+  'amount',
 ];
 export const yellowKeyWords = [
+  'phone',
+  ...Array.from({ length: 15 }, (_, i) => `phone${i}`),
+  'mobile',
   'domain',
   'uri',
-  'FullName',
-  'NickName',
-  'State',
-  'LeakSite',
+  'fullname',
+  'nickname',
+  'state',
+  'leaksite',
   'Latitude',
-  'Longitude',
-  'LastLogin',
-  'Company',
-  'Credits',
+  'longitude',
+  'lastlogin',
+  'company',
+  'credits',
+  'passportnumber',
+  'docnumber',
+  ...Array.from({ length: 15 }, (_, i) => `docnumber${i}`),
 ];
-export const clickAble = ['Url', 'Site', 'Avatar', 'Password(SHA-256)', 'uri'];
+export const clickAble = ['url', 'site', 'avatar', 'password(sha-256)', 'uri'];
 
 export default function BeFiScBreachInfo({
   data,
@@ -138,18 +146,12 @@ export default function BeFiScBreachInfo({
   olxLeakData,
   indiaMartLeakData,
   rapidApiData,
+  panAllInOneData,
 }: PageProps) {
   const [activeTab, setActiveTab] = useState('breach');
   const [breachSubTab, setBreachSubTab] = useState('emails');
   const [hunterTab, setHunterTab] = useState('hunterVerify');
   const [leakTab, setLeakTab] = useState('leakHunter');
-  const [extraData, setExtraData] = useState<
-    {
-      value: string;
-      type: string;
-      data: BreachInfoType | null;
-    }[]
-  >([]);
 
   const with91: {
     value: string;
@@ -175,12 +177,19 @@ export default function BeFiScBreachInfo({
     }
     withOut91.push(item);
   });
+  const toShowDocking =
+    rapidApiData?.length > 0 &&
+    rapidApiData?.some((item) => {
+      if ((item?.data?.responseData?.results?.length || 0) > 0) {
+        return true;
+      }
+    });
 
   const tabs = [
     { value: 'breach', label: 'Breach Watch' },
     { value: 'darkWeb', label: 'Dark Web' },
     { value: 'Expose360', label: 'Expose360' },
-    { value: 'docking', label: 'Docking' },
+    toShowDocking && { value: 'docking', label: 'Docking' },
   ];
 
   const getGridCols = (tabCount: number) => {
@@ -197,7 +206,9 @@ export default function BeFiScBreachInfo({
     return gridClasses[tabCount as keyof typeof gridClasses] || 'grid-cols-8';
   };
 
-  const gridColsClass = getGridCols(tabs.length);
+  const gridColsClass = getGridCols(
+    toShowDocking ? tabs.length : tabs.length - 1,
+  );
 
   const darkWebTabs = [
     leakHunterData?.length > 0 &&
@@ -310,13 +321,6 @@ export default function BeFiScBreachInfo({
       ? { value: 'holehe', label: 'Email Detector' }
       : null,
   ];
-  const toShowDocking =
-    rapidApiData?.length > 0 &&
-    rapidApiData?.some((item) => {
-      if ((item?.data?.responseData?.results?.length || 0) > 0) {
-        return true;
-      }
-    });
 
   return (
     <div>
@@ -371,138 +375,7 @@ export default function BeFiScBreachInfo({
                 </div>
               ) : (
                 <div className="flex flex-col space-y-8">
-                  <Accordion type="single" collapsible className="space-y-4">
-                    {emails &&
-                      emails?.map?.((item, index) => (
-                        <AccordionItem
-                          key={`outer-${index}`}
-                          value={`item-${index}`}
-                          className="overflow-hidden rounded-lg border border-slate-700/50 bg-gradient-to-br from-slate-900/50 to-slate-800/50 backdrop-blur-xl"
-                        >
-                          <AccordionTrigger className="px-6 py-4 text-left transition-colors hover:bg-slate-800/30 hover:no-underline">
-                            <div className="flex items-center space-x-4">
-                              <span className="text-lg font-medium text-white">
-                                {item?.value}
-                              </span>
-                              <CustomBadge
-                                blink={true}
-                                variantToUse="warning"
-                                isFormat={false}
-                                value={item?.type}
-                              />
-                            </div>
-                          </AccordionTrigger>
-                          <AccordionContent className="flex flex-col space-y-4 px-6 pb-4 leading-relaxed text-slate-300">
-                            {item?.data?.responseData?.data?.List &&
-                              Object.entries(
-                                item?.data?.responseData?.data?.List,
-                              ).map(([key, value], index) => {
-                                if (key === 'No results found') {
-                                  return null;
-                                }
-                                return (
-                                  <Accordion
-                                    type="single"
-                                    key={`innerAcc-${index}-${key}`}
-                                    collapsible
-                                    className="space-y-4"
-                                  >
-                                    <AccordionItem
-                                      key={`innerAcc-${index}-${key}-${value}`}
-                                      value={`index-${index}`}
-                                      className="border-b border-slate-800"
-                                    >
-                                      <AccordionTrigger className="px-6 py-4 text-left transition-colors hover:bg-slate-800/30 hover:no-underline">
-                                        <span className="text-lg font-medium text-white">
-                                          {key || ''}
-                                        </span>
-                                      </AccordionTrigger>
-                                      <AccordionContent>
-                                        <div
-                                          key={index}
-                                          className="space-y-3 border-b border-slate-800 p-4"
-                                        >
-                                          <div className="space-y-4">
-                                            {value?.Data?.map((item, index) => {
-                                              return (
-                                                <div
-                                                  key={index}
-                                                  className="grid grid-cols-3 gap-4 rounded-2xl border border-slate-800 p-3"
-                                                >
-                                                  {Object.entries(item).map(
-                                                    ([key, value], index) => (
-                                                      <div
-                                                        key={`index-${index}`}
-                                                        className="flex flex-col"
-                                                      >
-                                                        <span
-                                                          className={`text-sm`}
-                                                        >
-                                                          {key || ''}
-                                                        </span>
-                                                        <span
-                                                          className={cn(
-                                                            'text-base',
-                                                            dangerKeyWords?.includes(
-                                                              key || '',
-                                                            ) && 'text-red-500',
-                                                            yellowKeyWords?.includes(
-                                                              key || '',
-                                                            ) &&
-                                                              'text-yellow-500',
-                                                            clickAble.includes(
-                                                              key,
-                                                            ) &&
-                                                              'text-blue-400 underline transition-all duration-300 ease-in-out hover:cursor-pointer',
-                                                          )}
-                                                          onClick={() => {
-                                                            if (
-                                                              clickAble.includes(
-                                                                key,
-                                                              ) &&
-                                                              value.includes(
-                                                                'http://',
-                                                              )
-                                                            ) {
-                                                              window.open(
-                                                                value,
-                                                                '_blank',
-                                                              );
-                                                            }
-                                                          }}
-                                                        >
-                                                          {value?.length > 30
-                                                            ? value?.slice(
-                                                                0,
-                                                                30,
-                                                              ) + '....'
-                                                            : getValue(value)}
-                                                        </span>
-                                                      </div>
-                                                    ),
-                                                  )}
-                                                </div>
-                                              );
-                                            })}
-                                          </div>
-                                          <div className="p-4">
-                                            <h1 className="text-sm">
-                                              Description
-                                            </h1>
-                                            <div className="text-sm">
-                                              {value?.InfoLeak}
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </AccordionContent>
-                                    </AccordionItem>
-                                  </Accordion>
-                                );
-                              })}
-                          </AccordionContent>
-                        </AccordionItem>
-                      ))}
-                  </Accordion>
+                  <BreachComp panAllInOneData={panAllInOneData} data={emails} />
                   {/* <AddMoreBreachButton
                     setExtraData={setExtraData}
                     label="Email"
@@ -511,259 +384,47 @@ export default function BeFiScBreachInfo({
               )}
             </TabsContent>
             <TabsContent className="flex flex-col space-y-8" value="with91">
-              <Accordion type="single" collapsible className="space-y-4">
-                {with91?.map?.((item, index) => (
-                  <AccordionItem
-                    key={`outer-${index}`}
-                    value={`item-${index}`}
-                    className="overflow-hidden rounded-lg border border-slate-700/50 bg-gradient-to-br from-slate-900/50 to-slate-800/50 backdrop-blur-xl"
-                  >
-                    <AccordionTrigger className="px-6 py-4 text-left transition-colors hover:bg-slate-800/30 hover:no-underline">
-                      <div className="flex items-center space-x-4">
-                        <span className="text-lg font-medium text-white">
-                          {item?.value || ''}
-                        </span>
-                        <CustomBadge
-                          blink={true}
-                          variantToUse="warning"
-                          isFormat={false}
-                          value={item?.type}
-                        />
-                      </div>
-                    </AccordionTrigger>
-                    <AccordionContent className="flex flex-col space-y-4 px-6 pb-4 leading-relaxed text-slate-300">
-                      {item?.data?.responseData?.data?.List &&
-                        Object.entries(
-                          item?.data?.responseData?.data?.List,
-                        ).map(([key, value], index) => {
-                          if (key === 'No results found') {
-                            return (
-                              <NotFound
-                                key={`notFound-${index}`}
-                                value="No Data found"
-                                className="max-h-20"
-                              />
-                            );
-                          }
-                          return (
-                            <Accordion
-                              type="single"
-                              key={`innerAcc-${index}`}
-                              collapsible
-                              className="space-y-4"
-                            >
-                              <AccordionItem
-                                key={index}
-                                value={`index-${index}`}
-                                className="border-b border-slate-800"
-                              >
-                                <AccordionTrigger className="px-6 py-4 text-left transition-colors hover:bg-slate-800/30 hover:no-underline">
-                                  <span className="text-lg font-medium text-white">
-                                    {key || ''}
-                                  </span>
-                                </AccordionTrigger>
-                                <AccordionContent>
-                                  <div
-                                    key={index}
-                                    className="space-y-3 border-b border-slate-800 p-4"
-                                  >
-                                    <div className="space-y-4">
-                                      {value?.Data?.map((item, index) => {
-                                        return (
-                                          <div
-                                            key={index}
-                                            className="grid grid-cols-3 gap-4 rounded-2xl border border-slate-800 p-3"
-                                          >
-                                            {Object.entries(item).map(
-                                              ([key, value], index) => (
-                                                <div
-                                                  key={`index-${index}`}
-                                                  className="flex flex-col"
-                                                >
-                                                  <span className={`text-sm`}>
-                                                    {key || ''}
-                                                  </span>
-                                                  <span
-                                                    className={cn(
-                                                      'text-base',
-                                                      dangerKeyWords.includes(
-                                                        key,
-                                                      ) && 'text-red-500',
-                                                      yellowKeyWords.includes(
-                                                        key,
-                                                      ) && 'text-yellow-500',
-                                                      clickAble.includes(key) &&
-                                                        'text-blue-400 underline transition-all duration-300 ease-in-out hover:cursor-pointer',
-                                                    )}
-                                                    onClick={() => {
-                                                      if (
-                                                        clickAble.includes(
-                                                          key,
-                                                        ) &&
-                                                        value.includes(
-                                                          'http://',
-                                                        )
-                                                      ) {
-                                                        window.open(
-                                                          value,
-                                                          '_blank',
-                                                        );
-                                                      }
-                                                    }}
-                                                  >
-                                                    {value?.length > 30
-                                                      ? value?.slice(0, 30) +
-                                                        '....'
-                                                      : getValue(value)}
-                                                  </span>
-                                                </div>
-                                              ),
-                                            )}
-                                          </div>
-                                        );
-                                      })}
-                                    </div>
-                                    <div className="p-4">
-                                      <h1 className="text-sm">Description</h1>
-                                      <div className="text-sm">
-                                        {value?.InfoLeak}
-                                      </div>
-                                    </div>
-                                  </div>
-                                </AccordionContent>
-                              </AccordionItem>
-                            </Accordion>
-                          );
-                        })}
-                    </AccordionContent>
-                  </AccordionItem>
-                ))}
-              </Accordion>
-              {/* <AddMoreBreachButton setExtraData={setExtraData} label="Number" /> */}
+              {with91 && with91?.length === 0 ? (
+                <div className="flex flex-col space-y-8">
+                  <NotFound value="No Breach found" className="max-h-52" />
+                  {/* <AddMoreBreachButton
+                    setExtraData={setExtraData}
+                    label="Email"
+                  /> */}
+                </div>
+              ) : (
+                <div className="flex flex-col space-y-8">
+                  <BreachComp panAllInOneData={panAllInOneData} data={with91} />
+
+                  {/* <AddMoreBreachButton
+                    setExtraData={setExtraData}
+                    label="Email"
+                  /> */}
+                </div>
+              )}
             </TabsContent>
             <TabsContent value="without91" className="flex flex-col space-y-8">
-              <Accordion type="single" collapsible className="space-y-4">
-                {withOut91?.map?.((item, index) => (
-                  <AccordionItem
-                    key={`outer-${index}-${item?.value}`}
-                    value={`item-${index}`}
-                    className="overflow-hidden rounded-lg border border-slate-700/50 bg-gradient-to-br from-slate-900/50 to-slate-800/50 backdrop-blur-xl"
-                  >
-                    <AccordionTrigger className="px-6 py-4 text-left transition-colors hover:bg-slate-800/30 hover:no-underline">
-                      <div className="flex items-center space-x-4">
-                        <span className="text-lg font-medium text-white">
-                          {item?.value}
-                        </span>
-                        <CustomBadge
-                          blink={true}
-                          variantToUse="warning"
-                          isFormat={false}
-                          value={item?.type}
-                        />
-                      </div>
-                    </AccordionTrigger>
-                    <AccordionContent className="flex flex-col space-y-4 px-6 pb-4 leading-relaxed text-slate-300">
-                      {item?.data?.responseData?.data?.List &&
-                        Object.entries(
-                          item?.data?.responseData?.data?.List,
-                        ).map(([key, value], index) => {
-                          if (key === 'No results found') {
-                            return null;
-                          }
-                          return (
-                            <Accordion
-                              type="single"
-                              key={`innerAcc-${index}-${key}`}
-                              collapsible
-                              className="space-y-4"
-                            >
-                              <AccordionItem
-                                value={`index-${index}`}
-                                className="border-b border-slate-800"
-                              >
-                                <AccordionTrigger className="px-6 py-4 text-left transition-colors hover:bg-slate-800/30 hover:no-underline">
-                                  <span className="text-lg font-medium text-white">
-                                    {key || ''}
-                                  </span>
-                                </AccordionTrigger>
-                                <AccordionContent>
-                                  <div
-                                    key={index}
-                                    className="space-y-3 border-b border-slate-800 p-4"
-                                  >
-                                    <div className="space-y-4">
-                                      {value?.Data?.map((item, index) => {
-                                        return (
-                                          <div
-                                            key={`innerAcc-${index}-${key}`}
-                                            className="grid grid-cols-3 gap-4 rounded-2xl border border-slate-800 p-3"
-                                          >
-                                            {Object.entries(item).map(
-                                              ([key, value], index) => (
-                                                <div
-                                                  key={`innerAcc-${index}-${key}`}
-                                                  className="flex flex-col"
-                                                >
-                                                  <span className={`text-sm`}>
-                                                    {key || ''}
-                                                  </span>
-                                                  <span
-                                                    className={cn(
-                                                      'text-base',
-                                                      dangerKeyWords.includes(
-                                                        key,
-                                                      ) && 'text-red-500',
-                                                      yellowKeyWords.includes(
-                                                        key,
-                                                      ) && 'text-yellow-500',
-                                                      clickAble.includes(key) &&
-                                                        'text-blue-400 underline transition-all duration-300 ease-in-out hover:cursor-pointer',
-                                                    )}
-                                                    onClick={() => {
-                                                      if (
-                                                        clickAble.includes(
-                                                          key,
-                                                        ) &&
-                                                        value?.includes(
-                                                          'http://',
-                                                        )
-                                                      ) {
-                                                        window.open(
-                                                          value,
-                                                          '_blank',
-                                                        );
-                                                      }
-                                                    }}
-                                                  >
-                                                    {value?.length > 30
-                                                      ? value?.slice(0, 30) +
-                                                        '....'
-                                                      : getValue(value)}
-                                                  </span>
-                                                </div>
-                                              ),
-                                            )}
-                                          </div>
-                                        );
-                                      })}
-                                    </div>
-                                    <div className="p-4">
-                                      <h1 className="text-sm">Description</h1>
-                                      <div className="text-sm">
-                                        {value?.InfoLeak}
-                                      </div>
-                                    </div>
-                                  </div>
-                                </AccordionContent>
-                              </AccordionItem>
-                            </Accordion>
-                          );
-                        })}
-                    </AccordionContent>
-                  </AccordionItem>
-                ))}
-              </Accordion>
-              {/* <AddMoreBreachButton setExtraData={setExtraData} label="Number" /> */}
+              {withOut91 && withOut91?.length === 0 ? (
+                <div className="flex flex-col space-y-8">
+                  <NotFound value="No Breach found" className="max-h-52" />
+                  {/* <AddMoreBreachButton
+                    setExtraData={setExtraData}
+                    label="Email"
+                  /> */}
+                </div>
+              ) : (
+                <div className="flex flex-col space-y-8">
+                  <BreachComp
+                    panAllInOneData={panAllInOneData}
+                    data={withOut91}
+                  />
+
+                  {/* <AddMoreBreachButton
+                    setExtraData={setExtraData}
+                    label="Email"
+                  /> */}
+                </div>
+              )}
             </TabsContent>
           </Tabs>
         </TabsContent>

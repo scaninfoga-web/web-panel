@@ -51,10 +51,18 @@ export const apiCall = async <T = any>(
       ...additionalConfig.headers,
       clientInfo: JSON.stringify(clientInfo),
     };
-    if (token) {
-      headers.Authorization = `Bearer ${token}`;
-    }
 
+    if (
+      !endpoint.includes('verifyOTP') ||
+      !endpoint.includes('resendOTP') ||
+      !endpoint.includes('login') ||
+      !endpoint.includes('register') ||
+      !endpoint.includes('forget-password')
+    ) {
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
+      }
+    }
     // Prepare request config
     const config: AxiosRequestConfig = {
       method,

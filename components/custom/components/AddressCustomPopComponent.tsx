@@ -8,15 +8,19 @@ import { OlaGeoApiType } from '@/types/ola-geo-api';
 import SentenceLoader from '@/components/pages/BeFiSc/sub/SentenceLoader';
 import Image from 'next/image';
 interface Props {
-  title: string;
+  title?: string;
   address: string | undefined | null;
   className?: string;
+  addressToShown?: boolean;
+  shorterAddress?: boolean;
 }
 const olaData: Map<string, OlaGeoApiType> = new Map();
 export default function AddressCustomPopComponent({
   title,
   address,
   className,
+  addressToShown = true,
+  shorterAddress = false,
 }: Props) {
   const [addressData, setAddressData] = useState<null | {
     address: string;
@@ -62,10 +66,15 @@ export default function AddressCustomPopComponent({
   return (
     <div>
       <p className="text-sm text-gray-400">{title}</p>
-      <div className={`text-base font-medium ${className}`}>
-        {formatSentence(address)}
+      <div className={`flex items-center text-base font-medium ${className}`}>
+        <span>
+          {addressToShown &&
+            formatSentence(
+              shorterAddress ? address?.slice(0, 20) + '...' : address,
+            )}
+        </span>
         <CustomPopUp
-          dialogTitle={title}
+          dialogTitle={title || ''}
           triggerElement={
             <Button
               onClick={(e) => {

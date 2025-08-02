@@ -19,13 +19,12 @@ import { DashboardCard, InfoText } from '../dashboard/components/DashboardCard';
 import CustomBadge from './sub/CustomBadge';
 import { getValue } from './sub/CustomBeFiScCard';
 import { LPGInfoTable } from './sub/LPGTable';
-import {
-  formatDateTime,
-  formatSentence,
-} from '@/components/custom/functions/formatUtils';
+import { formatSentence } from '@/components/custom/functions/formatUtils';
 import InfoText2 from '@/components/custom/components/InfoText2';
+import M2DL from './sub/M2DL';
 
 interface Props {
+  aadharNumber: string;
   Mobile360Data: Mobile360Type | null;
   PanAllInOneData: PanAllInOneType | null;
   ProfileAdvanceData: ProfileAdvanceType | null;
@@ -39,6 +38,7 @@ export default function BefiScPersonal({
   PanAllInOneData,
   ProfileAdvanceData,
   mobileToDLAdvance,
+  aadharNumber,
 }: Props) {
   return (
     <div className="grid grid-cols-1 gap-6">
@@ -55,7 +55,7 @@ export default function BefiScPersonal({
               <div>
                 <p className="text-xs text-slate-400">Aadhaar Number</p>
                 <p className="font-medium text-yellow-500">
-                  {getValue(PanAllInOneData?.result?.masked_aadhaar)}
+                  {getValue(aadharNumber)}
                 </p>
               </div>
               <div>
@@ -121,115 +121,7 @@ export default function BefiScPersonal({
       </div>
 
       {(mobileToDLAdvance?.responseData?.length || 0) > 0 && (
-        <div>
-          {mobileToDLAdvance?.responseData?.map((item, index) => (
-            <DashboardCard
-              key={`${item?.datetime}--${index}`}
-              title={`Driving Licence-${formatDateTime(item?.datetime)}`}
-              className="scrollbar-custom overflow-auto"
-            >
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <InfoText2
-                    value={formatSentence(item?.data?.result?.user_full_name)}
-                    label="Full Name"
-                  />
-                  <InfoText2
-                    value={formatSentence(item?.data?.result?.user_blood_group)}
-                    label="Blood Group"
-                  />
-                  <InfoText2
-                    value={formatSentence(
-                      item?.data?.result?.father_or_husband,
-                    )}
-                    label="Father or Husband"
-                  />
-                  <InfoText2
-                    value={getValue(item?.data?.result?.dl_number)}
-                    label="DL Number"
-                  />
-                  <InfoText2
-                    value={getValue(item?.data?.result?.endorse_date)}
-                    label="Endorsement Date"
-                  />
-                  <InfoText2
-                    value={getValue(item?.data?.result?.endorse_number)}
-                    label="Endorsement Number"
-                  />
-                  <InfoText2
-                    value={getValue(item?.data?.result?.issued_date)}
-                    label="Issued Date"
-                  />
-                  <InfoText2
-                    value={getValue(item?.data?.result?.expiry_date)}
-                    label="Expiry Date"
-                  />
-                  <InfoText2
-                    value={`${getValue(item?.data?.result?.transport_validity?.from)} - ${getValue(item?.data?.result?.transport_validity?.to)}`}
-                    label="Transport Validity"
-                  />
-                  <InfoText2
-                    value={`${getValue(item?.data?.result?.non_transport_validity?.from)} - ${getValue(item?.data?.result?.non_transport_validity?.to)}`}
-                    label="Non Transport Validity"
-                  />
-                </div>
-                <Separator className="bg-slate-800" />
-                <div className="grid grid-cols-1 gap-4">
-                  {item?.data?.result?.vehicle_category_details?.map(
-                    (item, index) => (
-                      <div
-                        key={`${item?.cov}--${index}`}
-                        className="grid grid-cols-3 gap-4"
-                      >
-                        <div>
-                          <p className="text-xs text-slate-400">COV</p>
-                          <Badge className="mt-1 bg-emerald-500/20 text-emerald-500">
-                            {item?.cov}
-                          </Badge>
-                        </div>
-                        <InfoText2
-                          value={getValue(item?.issueDate)}
-                          label="Issue Date"
-                        />
-                        <InfoText2
-                          value={getValue(item?.expiryDate)}
-                          label="Expiry Date"
-                        />
-                      </div>
-                    ),
-                  )}
-                </div>
-                <Separator className="bg-slate-800" />
-                <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-                  {item?.data?.result?.user_address?.map((item, index) => (
-                    <div
-                      key={`${item?.completeAddress}--${index}`}
-                      className="grid grid-cols-1 gap-4"
-                    >
-                      <div>
-                        <p className="text-xs text-slate-400">Type</p>
-                        <Badge className="mt-1 bg-emerald-500/20 text-emerald-500">
-                          {item?.type}
-                        </Badge>
-                      </div>
-                      <InfoText2
-                        value={formatSentence(item?.completeAddress)}
-                        label="Address"
-                      />
-                    </div>
-                  ))}
-                </div>
-                <Separator className="bg-slate-800" />
-                <div>
-                  <p className="text-xs text-slate-400">Status</p>
-                  <Badge className="mt-1 bg-emerald-500/20 text-emerald-500">
-                    {item?.data?.result?.status}
-                  </Badge>
-                </div>
-              </div>
-            </DashboardCard>
-          ))}
-        </div>
+        <M2DL mobileToDLAdvance={mobileToDLAdvance} />
       )}
 
       {EsicsData?.result?.esic_details &&
